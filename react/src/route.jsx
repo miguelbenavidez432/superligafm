@@ -7,6 +7,8 @@ import DefaultLayout from './components/DefaultLayout';
 import Dashboard from './views/Dashboard';
 import GuestLayout from './components/Guestlayout';
 import UserForm from './views/UserForm';
+import Players from './views/Players';
+import PlayerForm from './views/PlayerForm';
 
 const router = createBrowserRouter ([
     {
@@ -32,6 +34,18 @@ const router = createBrowserRouter ([
             {
                 path: '/users/:id',
                 element: <UserForm key='userUpdate'/>
+            },
+            {
+                path: '/players',
+                element: <Players/>
+            },
+            {
+                path: '/players/new',
+                element: <PlayerForm key='playerCreate'/>
+            },
+            {
+                path: '/players/:id',
+                element: <PlayerForm key='playerUpdate'/>
             },
         ]
     },

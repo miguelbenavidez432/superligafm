@@ -1,34 +1,29 @@
-/* eslint-disable no-debugger */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"
-import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosClient from "../axios";
 
-export default function UserForm() {
-
+export default function PlayerForm() {
+    const [players, setPlayers] = useState({
+        team: '',
+        status: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const { setNotification } = useStateContext();
+    const [errors, setErrors] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
-    const { notification, setNotification } =useStateContext();
-    const [user, setUser] = useState({
-        id: null,
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-    });
-    const [errors, setErrors] = useState(null);
-    const [loading, setLoading] = useState(false);
 
     if (id) {
         useEffect(() => {
             setLoading(true)
-            axiosClient.get(`/users/${id}`)
+            axiosClient.get(`/players/${id}`)
                 .then(({ data }) => {
                     console.log(data)
                     setLoading(false)
-                    setUser(data)
+                    setPlayers(data)
                 })
                 .catch(() => {
                     setLoading(false)
@@ -36,13 +31,14 @@ export default function UserForm() {
         }, [])
     }
 
+
     const onSubmit = (e) => {
         e.preventDefault();
-        if (user.id) {
-            axiosClient.put(`/users/${user.id}`, user)
+        if (players.id) {
+            axiosClient.put(`/players/${players.id}`, players)
                 .then(() => {
-                    setNotification('Usuario actualizado satisfactoriamente')
-                    navigate('/users')
+                    setNotification('Jugador actualizado satisfactoriamente')
+                    navigate('/players')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -50,11 +46,11 @@ export default function UserForm() {
                         setErrors(response.data.errors)
                     }
                 })
-        }else{
-            axiosClient.post(`/users/`, user)
+        } else {
+            axiosClient.post(`/players/`, players)
                 .then(() => {
-                    setNotification('Usuario creado satisfactoriamente')
-                    navigate('/users')
+                    setNotification('Players creado satisfactoriamente')
+                    navigate('/players')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -66,10 +62,11 @@ export default function UserForm() {
         }
 
     }
+
     return (
         <>
-            {user.id && <h1>ACTUALIZAR USUARIO: {user.name}</h1>}
-            {!user.id && <h1>NUEVO USUARIO</h1>}
+            {players.id && <h1>ACTUALIZAR A: {players.name}</h1>}
+            {!players.id && <h1>NUEVO JUGADOR</h1>}
 
             <div className="card animated fadeInDown">
                 {loading &&
@@ -84,10 +81,9 @@ export default function UserForm() {
                 }
                 {!loading &&
                     <form onSubmit={onSubmit}>
-                        <input value={user.name} onChange={e => setUser({ ...user, name: e.target.value })} placeholder="Nombre" />
-                        <input value={user.email} onChange={e => setUser({ ...user, email: e.target.value })} placeholder="Email" type="email"/>
-                        <input onChange={e => setUser({ ...user, password: e.target.value })} placeholder="Password" type="password" />
-                        <input onChange={e => setUser({ ...user, password_confirmation: e.target.value })} placeholder="Confirmar password" type="password" />
+                        <input value={players.status} onChange={e => setPlayers({ ...players, status: e.target.value })} placeholder="Nombre" />
+                        <input value={players.team} onChange={e => setPlayers({ ...players, team: e.target.value })} placeholder="Email" type="email" />
+
                         <button className="btn">Guardar cambios</button>
                     </form>
                 }
