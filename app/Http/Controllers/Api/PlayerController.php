@@ -26,7 +26,7 @@ class PlayerController extends Controller
     public function store(StorePlayerRequest $request)
     {
         $data = $request->validated();
-        $player = Player::create();
+        $player = Player::create($data);
         return response (new PlayerResource($player), 201);
     }
 
@@ -54,7 +54,6 @@ class PlayerController extends Controller
     public function destroy(Player $player)
     {
         $player->delete();
-
         return response ('',204);
     }
 }
