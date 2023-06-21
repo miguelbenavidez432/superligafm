@@ -45,7 +45,7 @@ export default function Players() {
         <div>
             <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center' }}>
                 <h1>Jugadores</h1>
-                <Link to='/players/new'>Agregar nuevo jugador</Link>
+                <Link to='/players/new' className="btn-add">Agregar nuevo jugador</Link>
             </div>
             <div className="card animated fadeInDown">
                 <table>
@@ -105,7 +105,7 @@ export default function Players() {
                                     <td>{p.mvp}</td> */}
                                         <td>
                                             <Link className="btn-edit" to={'players/' + p.id}>Editar</Link>
-                                            <button onClick={e => onDelete(p)} className="btn-edit">Borrar</button>
+                                            <button onClick={e => onDelete(p)} className="btn-delete">Borrar</button>
                                         </td>
                                     </tr>
                                 ))

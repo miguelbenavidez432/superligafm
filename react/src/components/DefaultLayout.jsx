@@ -37,6 +37,7 @@ export default function DefaultLayout() {
             <aside className="">
                 <Link to='/dashboard'>Dashboard</Link>
                 <Link to='/users'>Users</Link>
+                <Link to='/players'>Jugadores</Link>
             </aside>
             <div className="content">
                 <header>

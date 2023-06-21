@@ -7,8 +7,12 @@ import axiosClient from "../axios";
 
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
+        name: '',
         team: '',
-        status: ''
+        value: '',
+        ca: '',
+        pa: '',
+        age: '',
     });
     const [loading, setLoading] = useState(false);
     const { setNotification } = useStateContext();
@@ -81,9 +85,12 @@ export default function PlayerForm() {
                 }
                 {!loading &&
                     <form onSubmit={onSubmit}>
-                        <input value={players.status} onChange={e => setPlayers({ ...players, status: e.target.value })} placeholder="Nombre" />
-                        <input value={players.team} onChange={e => setPlayers({ ...players, team: e.target.value })} placeholder="Email" type="email" />
-
+                        <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
+                        <input value={players.team} onChange={e => setPlayers({ ...players, team: e.target.value })} placeholder="Equipo" type="text" />
+                        <input value={players.age} onChange={e => setPlayers({ ...players, age: e.target.value })} placeholder="Edad" type="text" />
+                        <input value={players.ca} onChange={e => setPlayers({ ...players, ca: e.target.value })} placeholder="CA" type="text" />
+                        <input value={players.pa} onChange={e => setPlayers({ ...players, pa: e.target.value })} placeholder="PA" type="text" />
+                        <input value={players.value} onChange={e => setPlayers({ ...players, value: e.target.value })} placeholder="Valor" type="text" />
                         <button className="btn">Guardar cambios</button>
                     </form>
                 }
