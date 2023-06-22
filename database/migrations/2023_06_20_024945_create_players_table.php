@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Team;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->integer('ca');
             $table->integer('pa');
             $table->string('nation')->nullable();
-            $table->string('team')->nullable();
+            $table->foreignIdFor(Team::class, 'team_id');
             $table->integer('value');
             $table->string('status')->nullable();
             $table->integer('goal')->nullable();
