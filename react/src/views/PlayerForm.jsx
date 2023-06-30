@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
@@ -8,7 +10,7 @@ import axiosClient from "../axios";
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
         name: '',
-        team: '',
+        id_team: '',
         value: '',
         ca: '',
         pa: '',
@@ -19,6 +21,7 @@ export default function PlayerForm() {
     const [errors, setErrors] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
+    const [team, setTeam] = useState([]);
 
     if (id) {
         useEffect(() => {
@@ -28,6 +31,7 @@ export default function PlayerForm() {
                     console.log(data)
                     setLoading(false)
                     setPlayers(data)
+                    getTeam()
                 })
                 .catch(() => {
                     setLoading(false)
@@ -35,6 +39,18 @@ export default function PlayerForm() {
         }, [])
     }
 
+    const getTeam = () => {
+        setLoading(true)
+        axiosClient.get('/teams')
+            .then(({ data }) => {
+                setLoading(false)
+                setTeam(data.data)
+                console.log(team)
+            })
+            .catch(() => {
+                setLoading(false)
+            })
+    }
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -62,9 +78,7 @@ export default function PlayerForm() {
                         setErrors(response.data.errors)
                     }
                 })
-
         }
-
     }
 
     return (
@@ -86,7 +100,16 @@ export default function PlayerForm() {
                 {!loading &&
                     <form onSubmit={onSubmit}>
                         <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
-                        <input value={players.team} onChange={e => setPlayers({ ...players, team: e.target.value })} placeholder="Equipo" type="text" />
+                        <select name="" id="" onClick={e => setPlayers({ ...players, id_team: e.target.value })}>
+                            {
+                                team.map((t, index) => {
+                                    return (
+                                        <option value={t.id} key={index}>{t.name}</option>
+                                    )
+                                })
+                            }
+                        </select>
+                        <input hidden value={players.id_team} onChange={e => setPlayers({ ...players, id_team: e.target.value })} placeholder="Equipo" type="text" />
                         <input value={players.age} onChange={e => setPlayers({ ...players, age: e.target.value })} placeholder="Edad" type="text" />
                         <input value={players.ca} onChange={e => setPlayers({ ...players, ca: e.target.value })} placeholder="CA" type="text" />
                         <input value={players.pa} onChange={e => setPlayers({ ...players, pa: e.target.value })} placeholder="PA" type="text" />

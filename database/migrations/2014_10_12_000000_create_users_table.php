@@ -10,7 +10,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('equipo')->nullable();
-            $table->string('rol')->nullable();
-            $table->integer('gastos')->nullable();
-            $table->integer('ganancias')->nullable();
-            $table->foreignIdFor(Team::class,'team_id')->nullable();
+            $table->string('rol')->default('Visitante');
+            $table->integer('profits')->nullable();
+            $table->integer('costs')->nullable();
+            $table->boolean('active')->default(true);
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -104,7 +104,7 @@ export default function Players() {
                                     <td>{p.heavy_injured}</td>
                                     <td>{p.mvp}</td> */}
                                         <td>
-                                            <Link className="btn-edit" to={'players/' + p.id}>Editar</Link>
+                                            <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
                                             <button onClick={e => onDelete(p)} className="btn-delete">Borrar</button>
                                         </td>
                                     </tr>

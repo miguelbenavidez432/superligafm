@@ -23,10 +23,11 @@ class UpdatePlayerRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'age' => 'required|integer|max:2',
-            'ca' => 'integer|max:3|required',
-            'pa' => 'integer|max:3|required',
-            'value' => 'integer|required'
+            'age' => 'required|integer|max:50',
+            'ca' => 'integer|max:200|required',
+            'pa' => 'integer|max:200|required',
+            'value' => 'integer|required',
+            'id_team' => 'required'
         ];
     }
 }

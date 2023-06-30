@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\TeamResource;
 
 class UserResource extends JsonResource
 {
@@ -19,10 +20,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'equipo' => $this->equipo,
             'rol' => $this->rol,
-            'gastos' => $this->gastos,
-            'ganancias' => $this->ganancias,
+            'profits' => $this->profits,
+            'costs' => $this->costs,
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
         ];
     }

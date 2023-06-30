@@ -10,7 +10,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('players', function (Blueprint $table) {
             $table->id();
@@ -19,17 +19,18 @@ return new class extends Migration
             $table->integer('ca');
             $table->integer('pa');
             $table->string('nation')->nullable();
-            $table->foreignIdFor(Team::class, 'team_id');
-            $table->integer('value');
+            $table->foreignId('id_team')->nullable();
+            $table->foreign('id_team')->on('teams')->references('id');
+            $table->integer('value')->default(15000000);
             $table->string('status')->nullable();
-            $table->integer('goal')->nullable();
-            $table->integer('assistance')->nullable();
-            $table->integer('yellow_card')->nullable();
-            $table->integer('double_yellow_card')->nullable();
-            $table->integer('red_card')->nullable();
-            $table->integer('injured')->nullable();
-            $table->integer('heavy_injured')->nullable();
-            $table->integer('mvp')->nullable();
+            $table->integer('goal')->nullable()->default(0);
+            $table->integer('assistance')->nullable()->default(0);
+            $table->integer('yellow_card')->nullable()->default(0);
+            $table->integer('double_yellow_card')->nullable()->default(0);
+            $table->integer('red_card')->nullable()->default(0);
+            $table->integer('injured')->nullable()->default(0);
+            $table->integer('heavy_injured')->nullable()->default(0);
+            $table->integer('mvp')->nullable()->default(0);
             $table->timestamps();
         });
     }

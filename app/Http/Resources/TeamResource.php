@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+
 class TeamResource extends JsonResource
 {
     public static $wrap = false;
@@ -19,6 +20,7 @@ class TeamResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'division' => $this->division,
+            'id_user' => $this->id_user,
         ];
     }
 }

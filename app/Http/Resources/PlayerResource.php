@@ -22,7 +22,7 @@ class PlayerResource extends JsonResource
             'ca'=>$this->ca,
             'pa'=>$this->pa,
             'nation'=>$this->nation,
-            'team'=>$this->team,
+            'id_team' =>$this->id_team,
             'value'=>$this->value,
             'status'=>$this->status,
             'goal'=>$this->goal,

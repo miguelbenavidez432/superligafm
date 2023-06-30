@@ -21,7 +21,7 @@ body {
     background-color: #f6f6f6;
 }
 
-input {
+input, select {
     outline: 0;
     background: #ffffff;
     width: 100%;

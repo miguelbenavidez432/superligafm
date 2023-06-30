@@ -18,4 +18,8 @@ class Team extends Model
     {
         return $this->hasMany(Team::class);
     }
+    public function users()
+    {
+        return $this->hasOne(User::class);    
+    }
 }
