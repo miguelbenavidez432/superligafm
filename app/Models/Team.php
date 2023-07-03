@@ -14,9 +14,9 @@ class Team extends Model
         'division',
     ];
 
-    public function player()
+    public function players()
     {
-        return $this->hasMany(Team::class);
+        return $this->hasMany(Player::class);
     }
     public function users()
     {

@@ -58,7 +58,7 @@ export default function Dashboard() {
         axiosClient.get('/players')
             .then(({ data }) => {
                 setLoading(false)
-                const playersFiltered = data.data.filter((p) => p.id_team !== team.id)
+                const playersFiltered = data.data.filter((p) => p.id_team === team.id)
                 console.log(playersFiltered)
                 setPlayers(playersFiltered)
             })
@@ -72,9 +72,8 @@ export default function Dashboard() {
         <>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div>Plantel</div>
-                <button className="btn-add" onClick={cargarJugadores}>Cargar</button>
+                <button className="btn-add" onClick={cargarJugadores}>Cargar plantel</button>
             </div>
-            {console.log(players)}
             <div className="card animated fadeInDown">
                 <table>
                     <thead>
@@ -110,7 +109,7 @@ export default function Dashboard() {
                     {!loading &&
                         <tbody>
                             {
-                                players && players.map(p => (
+                                team ? players && players.map(p => (
                                     <tr key={p.id}>
                                         <td>{p.name}</td>
                                         <td>{p.age}</td>
@@ -134,6 +133,12 @@ export default function Dashboard() {
                                         </td>
                                     </tr>
                                 ))
+                                    :
+                                    <tr>
+                                        <td colSpan="10" className="text-center">
+                                          <strong>  No tienes equipo asignado  </strong> 
+                                        </td>
+                                    </tr>
                             }
                         </tbody>
                     }

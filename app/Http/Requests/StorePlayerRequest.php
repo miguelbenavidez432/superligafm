@@ -26,7 +26,7 @@ class StorePlayerRequest extends FormRequest
             'age' => 'required|integer|max:50',
             'ca' => 'integer|max:200|required',
             'pa' => 'integer|max:200|required',
-            'value' => 'integer|required'
+            'value' => 'integer|required',
         ];
     }
 }
