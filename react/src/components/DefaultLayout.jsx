@@ -38,6 +38,7 @@ export default function DefaultLayout() {
                 <Link to='/dashboard'>Dashboard</Link>
                 <Link to='/users'>Users</Link>
                 <Link to='/players'>Jugadores</Link>
+                <Link to='/transfer'>Transferencia</Link>
             </aside>
             <div className="content">
                 <header>

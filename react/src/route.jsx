@@ -9,6 +9,7 @@ import GuestLayout from './components/Guestlayout';
 import UserForm from './views/UserForm';
 import Players from './views/Players';
 import PlayerForm from './views/PlayerForm';
+import TransferForm from './views/TransferForm';
 
 const router = createBrowserRouter ([
     {
@@ -47,6 +48,10 @@ const router = createBrowserRouter ([
                 path: '/players/:id',
                 element: <PlayerForm key='playerUpdate'/>
             },
+            {
+                path: '/transfer',
+                element: <TransferForm/>
+            },
         ]
     },
     {
@@ -61,7 +66,6 @@ const router = createBrowserRouter ([
                 path: '/signup',
                 element: <Signup/>
             },
-
         ]
     },
     {

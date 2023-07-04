@@ -20,6 +20,7 @@ export default function Players() {
         axiosClient.get('/players')
             .then(({ data }) => {
                 setLoading(false)
+                console.log(data)
                 setPlayers(data.data)
             })
             .catch(() => {

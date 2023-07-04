@@ -31,7 +31,7 @@ export default function Login() {
                     setMessage(response.data.message)
                 }
             })
-    }   
+    }
     return (
         <div className="login-signup-form animated fadeInDown">
             <div className="form">
