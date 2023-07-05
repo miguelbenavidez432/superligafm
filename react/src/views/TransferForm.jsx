@@ -50,10 +50,10 @@ export default function TransferForm() {
     }
 
     return (
-        <>
+        <>  
             <button className="btn-add" onClick={cargarJugadores}> comenzar transferencia</button>
             <select name="" id=""
-                onClick={e => setPlayers({ ...players, id_team: e.target.value })}
+                onClick={e => setTeam({ ...team, name: e.target.value })}
                 onChange={handlerChange}
             >
                 {

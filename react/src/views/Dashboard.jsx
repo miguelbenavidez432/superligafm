@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
@@ -10,33 +11,34 @@ export default function Dashboard() {
     const [manager, setManager] = useState([]);
     const [team, setTeam] = useState([]);
     const [players, setPlayers] = useState([]);
+    const [player, setPlayer] = useState({
+        status: ''
+    })
     const [loading, setLoading] = useState(false);
-    const { user, setNotification } = useStateContext();
+    const { user, setUser, setNotification } = useStateContext();
 
     useEffect(() => {
-        //getUsers();
         setManager(user);
     }, [])
-
+    
     const cargarJugadores = () => {
         getTeam();
         getPlayers();
     }
 
-    const release = (e) => {
-        e.preventDefault()
-        if (players.id) {
-            setLoading(true)
-            axiosClient.put(`/players/${players.id}`)
-                .then(({ data }) => {
-                    setLoading(false)
-                    console.log(data)
-                    setManager(data.data)
-                })
-                .catch(() => {
-                    setLoading(false)
-                })
+    const release = (p) => {
+        if (!window.confirm('Estas seguro de liberar al jugador?')) {
+            return
         }
+
+        axiosClient.put(`/players/${p.id}`, player)
+            .then(() => {
+                setNotification('Jugador eliminado satisfactoriamente');
+                getPlayers();
+            })
+            .catch(() => {
+
+            })
     }
 
     const getTeam = () => {
@@ -44,7 +46,7 @@ export default function Dashboard() {
         axiosClient.get('/teams')
             .then(({ data }) => {
                 setLoading(false)
-                const teamFilter = data.data.find((t) => t.id_user === manager.id)
+                const teamFilter = data.data.find((t) => t.id_user === user.id)
                 console.log(teamFilter)
                 setTeam(teamFilter)
             })
@@ -70,6 +72,7 @@ export default function Dashboard() {
 
     return (
         <>
+            
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div>Plantel</div>
                 <button className="btn-add" onClick={cargarJugadores}>Cargar plantel</button>
@@ -83,8 +86,8 @@ export default function Dashboard() {
                             <th>CA</th>
                             <th>PA</th>
                             <th>NACIONALIDAD</th>
-                            <th>EQUIPO</th>
                             <th>VALOR</th>
+                            <th>BLOQUEAR</th>
                             <th>ESTADO</th>
                             {/* <th>GOLES</th>
                             <th>ASISTENCIAS</th>
@@ -116,8 +119,10 @@ export default function Dashboard() {
                                         <td>{p.ca}</td>
                                         <td>{p.pa}</td>
                                         <td>{p.nation}</td>
-                                        <td>{p.id_team}</td>
                                         <td>{p.value}</td>
+                                        <td>
+                                            <button onClick={e => setPlayer({ ...player, status: e.target.value })} className="btn-add"> Liberar </button>
+                                        </td>
                                         <td>{p.status}</td>
                                         {/* <td>{p.goal}</td>
                                     <td>{p.assistance}</td>
@@ -128,8 +133,7 @@ export default function Dashboard() {
                                     <td>{p.heavy_injured}</td>
                                    <td>{p.mvp}</td> */}
                                         <td>
-                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar</Link>
-                                            <button onClick={e => onDelete(p)} className="btn-delete">Borrar</button>
+                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                         </td>
                                     </tr>
                                 ))

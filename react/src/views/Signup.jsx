@@ -36,7 +36,14 @@ export default function Signup() {
     }
 
     return (
-        <div className="login-signup-form animated fadeInDown">
+        <div className="login-signup-form animated fadeInDown flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                <img
+                    className="mx-auto my-5 h-20 w-auto"
+                    src="public/logo_superligafm.png"
+                    alt="Your Company"
+                />
+            </div>
             <div className="form">
                 <form onSubmit={onSubmit}>
                     <h1 className="title"> Registrate </h1>
