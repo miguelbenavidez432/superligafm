@@ -8,37 +8,20 @@ import { Link } from "react-router-dom";
 
 export default function Dashboard() {
 
-    const [manager, setManager] = useState([]);
     const [team, setTeam] = useState([]);
     const [players, setPlayers] = useState([]);
-    const [player, setPlayer] = useState({
-        status: ''
-    })
     const [loading, setLoading] = useState(false);
-    const { user, setUser, setNotification } = useStateContext();
+    const { user } = useStateContext();
 
     useEffect(() => {
-        setManager(user);
+        getTeam()
+        setTimeout(()=>{
+            getPlayers()
+        }, 1000)
     }, [])
-    
+
     const cargarJugadores = () => {
-        getTeam();
-        getPlayers();
-    }
-
-    const release = (p) => {
-        if (!window.confirm('Estas seguro de liberar al jugador?')) {
-            return
-        }
-
-        axiosClient.put(`/players/${p.id}`, player)
-            .then(() => {
-                setNotification('Jugador eliminado satisfactoriamente');
-                getPlayers();
-            })
-            .catch(() => {
-
-            })
+        getPlayers()
     }
 
     const getTeam = () => {
@@ -49,6 +32,17 @@ export default function Dashboard() {
                 const teamFilter = data.data.find((t) => t.id_user === user.id)
                 console.log(teamFilter)
                 setTeam(teamFilter)
+            })
+            .catch(() => {
+                setLoading(false)
+            })
+        axiosClient.get('/players')
+            .then(({ data }) => {
+                setLoading(false)
+                const playersFiltered = data.data.filter((p) => p.id_team === team.id)
+                console.log(playersFiltered)
+                setPlayers(playersFiltered)
+                setLoading(false)
             })
             .catch(() => {
                 setLoading(false)
@@ -69,10 +63,9 @@ export default function Dashboard() {
             })
     }
 
-
     return (
         <>
-            
+
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div>Plantel</div>
                 <button className="btn-add" onClick={cargarJugadores}>Cargar plantel</button>
@@ -87,7 +80,6 @@ export default function Dashboard() {
                             <th>PA</th>
                             <th>NACIONALIDAD</th>
                             <th>VALOR</th>
-                            <th>BLOQUEAR</th>
                             <th>ESTADO</th>
                             {/* <th>GOLES</th>
                             <th>ASISTENCIAS</th>
@@ -120,9 +112,6 @@ export default function Dashboard() {
                                         <td>{p.pa}</td>
                                         <td>{p.nation}</td>
                                         <td>{p.value}</td>
-                                        <td>
-                                            <button onClick={e => setPlayer({ ...player, status: e.target.value })} className="btn-add"> Liberar </button>
-                                        </td>
                                         <td>{p.status}</td>
                                         {/* <td>{p.goal}</td>
                                     <td>{p.assistance}</td>
@@ -140,7 +129,7 @@ export default function Dashboard() {
                                     :
                                     <tr>
                                         <td colSpan="10" className="text-center">
-                                          <strong>  No tienes equipo asignado  </strong> 
+                                            <strong>  No tienes equipo asignado. Prueba presionando el botón Cargar plantel </strong>
                                         </td>
                                     </tr>
                             }

@@ -5,11 +5,14 @@ import Users from './views/Users';
 import NotFound from './views/NotFound';
 import DefaultLayout from './components/DefaultLayout';
 import Dashboard from './views/Dashboard';
-import GuestLayout from './components/Guestlayout';
+import GuestLayout from './components/GuestLayout';
 import UserForm from './views/UserForm';
 import Players from './views/Players';
 import PlayerForm from './views/PlayerForm';
 import TransferForm from './views/TransferForm';
+import About from './components/About';
+import Rules from './components/Rules';
+import Prode from './views/Prode';
 
 const router = createBrowserRouter ([
     {
@@ -51,6 +54,18 @@ const router = createBrowserRouter ([
             {
                 path: '/transfer',
                 element: <TransferForm/>
+            },
+            {
+                path: '/about',
+                element: <About/>
+            },
+            {
+                path: '/reglamento',
+                element: <Rules/>
+            },
+            {
+                path: '/prode',
+                element: <Prode/>
             },
         ]
     },

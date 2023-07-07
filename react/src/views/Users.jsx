@@ -78,10 +78,10 @@ export default function Users() {
                                         <th>{u.id}</th>
                                         <th>{u.name}</th>
                                         <th>{u.email}</th>
-                                        <th>{u.equipo}</th>
+                                        <th>{u.team}</th>
                                         <th>{u.rol}</th>
-                                        <th>{u.gastos}</th>
-                                        <th>{u.ganancias}</th>
+                                        <th>{u.costs}</th>
+                                        <th>{u.profits}</th>
                                         <th>{u.created_at}</th>
                                         <th>
                                             <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>

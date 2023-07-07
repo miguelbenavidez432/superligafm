@@ -3,25 +3,27 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useStateContext } from "../context/ContextProvider";
 import { useNavigate, useParams } from "react-router-dom";
+import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
 
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
         name: '',
         id_team: '',
+        status: '',
         value: '',
         ca: '',
         pa: '',
         age: '',
     });
-    const [loading, setLoading] = useState(false);
-    const { setNotification } = useStateContext();
-    const [errors, setErrors] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
+    const { setNotification } = useStateContext();
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState(null);
     const [team, setTeam] = useState([]);
+    const { user} = useStateContext();
 
     if (id) {
         useEffect(() => {
@@ -45,7 +47,6 @@ export default function PlayerForm() {
             .then(({ data }) => {
                 setLoading(false)
                 setTeam(data.data)
-                console.log(team)
             })
             .catch(() => {
                 setLoading(false)
@@ -58,7 +59,7 @@ export default function PlayerForm() {
             axiosClient.put(`/players/${players.id}`, players)
                 .then(() => {
                     setNotification('Jugador actualizado satisfactoriamente')
-                    navigate('/players')
+                    navigate('/dashboard')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -97,8 +98,8 @@ export default function PlayerForm() {
                         ))}
                     </div>
                 }
-                {!loading &&
-                    <form onSubmit={onSubmit}>
+                {!loading && user.rol === 'Admin' || user.rol === 'Organizador' ?
+                    <form onSubmit={onSubmit}>                    
                         <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
                         <select name="" id="" onClick={e => setPlayers({ ...players, id_team: e.target.value })}>
                             {
@@ -110,12 +111,45 @@ export default function PlayerForm() {
                             }
                         </select>
                         <input hidden value={players.id_team} onChange={e => setPlayers({ ...players, id_team: e.target.value })} placeholder="Equipo" type="text" />
+                        
+                        <span>Estado</span>
+                        <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
+                            <option value=''></option>
+                            <option value="liberado">Liberado</option>
+                            <option value="bloqueado">Bloqueado</option>
+                            <option value="registrado">Registrado</option>
+                        </select>
                         <input value={players.age} onChange={e => setPlayers({ ...players, age: e.target.value })} placeholder="Edad" type="text" />
                         <input value={players.ca} onChange={e => setPlayers({ ...players, ca: e.target.value })} placeholder="CA" type="text" />
                         <input value={players.pa} onChange={e => setPlayers({ ...players, pa: e.target.value })} placeholder="PA" type="text" />
                         <input value={players.value} onChange={e => setPlayers({ ...players, value: e.target.value })} placeholder="Valor" type="text" />
                         <button className="btn">Guardar cambios</button>
                     </form>
+                    : user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' || team.find(t => t.id_user === user.id)? 
+                    <form onSubmit={onSubmit}>
+                        <span>Estado</span>
+                        <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
+                            <option value=''></option>
+                            <option value="liberado">Liberado</option>
+                            <option value="bloqueado">Bloqueado</option>
+                            <option value="registrado">Registrado</option>
+                        </select>
+                        <button className="btn">Guardar cambios</button>
+                    </form>
+                    : !loading &&
+                    <div>
+                        <h1>NO PUEDES ACTUALIZAR EL JUGADOR PORQUE NO TIENES UN EQUIPO ASIGNADO</h1>
+                        <br />
+                        <span><strong>Jugador: </strong>{players.name}</span>
+                        <br />
+                        <span><strong>Edad: </strong>{players.age}</span>
+                        <br />
+                        <span><strong>CA: </strong>{players.ca}</span>
+                        <br />
+                        <span><strong>PA: </strong>{players.pa}</span>
+                        <br />
+                        <span><strong>Valor: </strong>{players.value}</span>
+                    </div>
                 }
             </div>
         </>

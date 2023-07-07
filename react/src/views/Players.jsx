@@ -9,7 +9,7 @@ export default function Players() {
 
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { setNotification } = useStateContext();
+    const { user, setNotification } = useStateContext();
 
     useEffect(() => {
         getPlayers()
@@ -68,8 +68,10 @@ export default function Players() {
                             <th>ROJA DIRECTA</th>
                             <th>LESIONES LEVES</th>
                             <th>LESIONES GRAVES</th>
-                            <th>MVP</th> */}
+                            <th>MVP</th> */}{
+                                user.rol === 'Admin' &&
                             <th>ACCIONES</th>
+                            }
                         </tr>
                     </thead>
                     {loading &&
@@ -103,11 +105,14 @@ export default function Players() {
                                     <td>{p.red_card}</td>
                                     <td>{p.injured}</td>
                                     <td>{p.heavy_injured}</td>
-                                    <td>{p.mvp}</td> */}
+                                    <td>{p.mvp}</td> */}{
+                                        user.rol === 'Admin' &&
                                         <td>
                                             <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
+                                            &nbsp;
                                             <button onClick={e => onDelete(p)} className="btn-delete">Borrar</button>
                                         </td>
+                                    }
                                     </tr>
                                 ))
                             }

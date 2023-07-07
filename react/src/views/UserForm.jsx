@@ -4,24 +4,25 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
+import axiosClient from "../axios";
 
 export default function UserForm() {
-
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const { notification, setNotification } = useStateContext();
     const [user, setUser] = useState({
         id: null,
         name: '',
         email: '',
         rol: '',
+        profits: 0,
+        costs: 0,
         password: '',
         password_confirmation: '',
     });
-    const [errors, setErrors] = useState(null);
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { setNotification } = useStateContext();
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState(null);
 
     if (id) {
         useEffect(() => {
@@ -64,9 +65,7 @@ export default function UserForm() {
                         setErrors(response.data.errors)
                     }
                 })
-
         }
-
     }
     return (
         <>
@@ -95,8 +94,10 @@ export default function UserForm() {
                             <option value="Manager Segunda">Manager Segunda</option>
                             <option value="En lista de espera">Lista de espera</option>
                         </select>
-                        <input hidden value={user.rol} onChange={e => setUser({ ...user, rol: e.target.value })} placeholder="Email" type="email" />
-                        <input onChange={e => setUser({ ...user, password: e.target.value })} placeholder="Password" type="password" />
+                        <input hidden value={user.rol} onChange={e => setUser({ ...user, rol: e.target.value })} placeholder="Email" />
+                        <input value={user.profits} onChange={e => setUser({ ...user, profits: e.target.value })} placeholder="Ganancias" />
+                        <input value={user.costs} onChange={e => setUser({ ...user, costs: e.target.value })} placeholder="Gastos" />
+                        <input onChange={e => setUser({ ...user, password: e.target.value })} placeholder="Password" type="password" autoComplete="off"/>
                         <input onChange={e => setUser({ ...user, password_confirmation: e.target.value })} placeholder="Confirmar password" type="password" />
                         <button className="btn">Guardar cambios</button>
                     </form>
