@@ -7,6 +7,7 @@ use App\Models\Player;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
+use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
@@ -27,7 +28,7 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
         $player = Player::create($data);
-        return response (new PlayerResource($player), 201);
+        return response(new PlayerResource($player), 201);
     }
 
     /**
@@ -38,13 +39,40 @@ class PlayerController extends Controller
         return new PlayerResource($player);
     }
 
+    
+    public function transfer(Request $request)
+    {
+        $datosActualizados = $request->input('data');
+
+        $upsertData = [];
+        foreach ($datosActualizados as $dato) {
+            $upsertData[] = [
+                'id' => $dato['id'],
+                'id_team' => $dato['id_team'],
+                'name' => $dato['name'],
+                'age' => $dato['age'],
+                'ca' => $dato['ca'],
+                'pa' => $dato['pa'],
+                'value' => $dato['value'],
+                // Agrega más columnas según tus necesidades
+            ];
+        }
+
+        Player::upsert($upsertData, 'id', ['id_team']);
+
+        return response()->json(['message' => 'Datos actualizados correctamente']);
+    }
+
     /**
      * Update the specified resource in storage.
      */
+
     public function update(UpdatePlayerRequest $request, Player $player)
     {
         $data = $request->validated();
+
         $player->update($data);
+
         return new PlayerResource($player);
     }
 
@@ -54,6 +82,6 @@ class PlayerController extends Controller
     public function destroy(Player $player)
     {
         $player->delete();
-        return response ('',204);
+        return response('', 204);
     }
 }

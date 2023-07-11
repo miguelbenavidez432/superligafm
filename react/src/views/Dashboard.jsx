@@ -36,17 +36,6 @@ export default function Dashboard() {
             .catch(() => {
                 setLoading(false)
             })
-        axiosClient.get('/players')
-            .then(({ data }) => {
-                setLoading(false)
-                const playersFiltered = data.data.filter((p) => p.id_team === team.id)
-                console.log(playersFiltered)
-                setPlayers(playersFiltered)
-                setLoading(false)
-            })
-            .catch(() => {
-                setLoading(false)
-            })
     }
 
     const getPlayers = () => {

@@ -28,7 +28,9 @@ class UpdatePlayerRequest extends FormRequest
             'pa' => 'integer|max:200|required',
             'value' => 'integer|required',
             'id_team' => 'required',
-            'status' => 'string'
+            'status' => 'string',
+            'data' => 'required|array',
+            'data.*.id_team' => 'required',
         ];
     }
 }

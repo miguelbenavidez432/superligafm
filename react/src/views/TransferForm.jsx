@@ -7,27 +7,27 @@ import { useStateContext } from "../context/ContextProvider";
 export default function TransferForm() {
 
     const [loading, setLoading] = useState(false);
-    const [manager, setManager] = useState();
-    const { setNotification, user } = useStateContext();
     const [players, setPlayers] = useState([]);
-    const [team, setTeam] = useState([])
-
+    const [teams, setTeams] = useState([])
+    const [selectedEquipo, setSelectedEquipo] = useState('');
+    const [selectedJugador, setSelectedJugador] = useState('');
+    const [datosActualizados, setDatosActualizados] = useState([]);
+    const [secondTeam, setSecondTeam] = useState();
+    const [playersToSend, setPlayersToSend] = useState([]);
 
     useEffect(() => {
-        //getUsers();
-        setManager(user);
-    }, [])
-
-    const cargarJugadores = () => {
         getTeam();
         getPlayers();
-    }
+    }, [])
+
     const getTeam = () => {
         setLoading(true)
         axiosClient.get('/teams')
             .then(({ data }) => {
                 setLoading(false)
-                setTeam(data.data)
+                const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
+                console.log(teamFilter)
+                setTeams(teamFilter)
             })
             .catch(() => {
                 setLoading(false)
@@ -46,28 +46,116 @@ export default function TransferForm() {
             })
     }
 
-    const handlerChange = (e) => {
-        setTeam(e.target.value)
+    const handleIdEquipoChange = (event) => {
+        const equipoId = event.target.value;
+        setSecondTeam(equipoId);
+
+        const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
+        setSelectedJugador('');
+
+        console.log(jugadoresEquipo);
+    };
+
+    const handleEquipoChange = (event) => {
+        const equipoId = event.target.value;
+        setSelectedEquipo(equipoId);
+
+        const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
+        setSelectedJugador('');
+
+        console.log(jugadoresEquipo);
+    };
+
+    const handleJugadorChange = (event) => {
+        const jugadorId = event.target.value;
+        setSelectedJugador(jugadorId);
+
+        const jugadorSeleccionado = players.find(jugador => jugador.id === parseInt(jugadorId));
+
+        const datosJugadorEquipo = {
+            id: jugadorSeleccionado.id,
+            id_team: secondTeam,
+            name: jugadorSeleccionado.name,
+            age: jugadorSeleccionado.age,
+            ca: jugadorSeleccionado.ca,
+            pa: jugadorSeleccionado.pa,
+            value: jugadorSeleccionado.value,
+        };
+
+        setDatosActualizados([...datosActualizados, datosJugadorEquipo]);
+
+        console.log(datosActualizados);
+    };
+
+    const sendInfo = (e) => {
+        e.preventDefault();
+
+        axiosClient.post('/transfer', { data: datosActualizados })
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error(error)
+            });
+    };
+
+    const resetInfo = () => {
+        setDatosActualizados([]);
     }
 
     return (
-        <>  
-            <button className="btn-add" onClick={cargarJugadores}> comenzar transferencia</button>
-            <select name="" id=""
-                onClick={e => setTeam({ ...team, name: e.target.value })}
-                onChange={handlerChange}
-            >
-                {
-                    team.map((t, index) => {
-                        return (
-                            <option value={t.id} key={index}>{t.name}</option>
-                        )
-                    })
-                }
-            </select>
-            {
-                console.log(team)
-            }
+        <>
+            <div>
+                <label htmlFor="equipo">Seleccionar equipo:</label>
+                <select id="equipo" value={selectedEquipo} onChange={handleEquipoChange}>
+                    <option value="">Seleccione un equipo</option>
+                    {
+                        teams.map(equipo => (
+                            <option key={equipo.id} value={equipo.id}>{equipo.name}</option>
+                        ))}
+                </select>
+
+                {selectedEquipo &&
+                    (
+                        <div>
+                            <label htmlFor="equipo">Seleccionar equipo a traspasar:</label>
+                            <select id="equipo" value={teams.name} onChange={handleIdEquipoChange}>
+                                <option value="">Seleccione un equipo</option>
+                                {
+                                    teams.map(equipo => (
+                                        <option key={equipo.id} value={equipo.id}>{equipo.name}</option>
+                                    ))}
+                            </select>
+                            <br />
+                            <label htmlFor="jugador">Seleccionar jugador:</label>
+                            <select id="jugador" value={selectedJugador} onChange={handleJugadorChange}>
+                                <option value="">Seleccione un jugador</option>
+                                {players
+                                    .filter(jugador => jugador.id_team.toString() === selectedEquipo)
+                                    .map(jugador => (
+                                        <option key={jugador.id} value={jugador.id}>{jugador.name}</option>
+                                    ))}
+                            </select>
+
+
+                        </div>
+
+                    )}
+
+                <h3>Datos actualizados:</h3>
+                <ul>
+                    {datosActualizados.map(dato => (
+                        <li key={dato.id}>
+                            ID: {dato.id}, ID Equipo: {dato.id_team}, Nombre: {dato.name}
+                        </li>
+                    ))}
+                </ul>
+                <br />
+                <button onClick={resetInfo} className="btn-add"> Agregar Info</button>
+                <br />
+                <br />
+                <button onClick={sendInfo} className="btn-add">Enviar Transferencia</button>
+            </div>
         </>
     )
 }

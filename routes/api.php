@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('/players', PlayerController::class);
+    Route::post('/transfer', [PlayerController::class, 'transfer']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
 });
