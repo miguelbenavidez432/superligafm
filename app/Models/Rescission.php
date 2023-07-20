@@ -11,6 +11,7 @@ class Rescission extends Model
 
     protected $fillable = [
         'name',
+        'id_player',
         'id_team',
         'value',
         'other_players',
@@ -19,4 +20,9 @@ class Rescission extends Model
         'total_value',
         'confirmed',
     ];
+
+    public function player()
+    {
+        return $this->belongsTo(Player::class, 'id_player');
+    }
 }

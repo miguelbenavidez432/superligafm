@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/players', PlayerController::class);
     Route::post('/transfer', [PlayerController::class, 'transfer']);
+    Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
     Route::apiResource('/traspasos', TransferController::class);

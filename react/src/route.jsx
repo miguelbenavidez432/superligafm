@@ -17,6 +17,8 @@ import Plantel from './views/Plantel';
 import Announcement from './views/Announcement';
 import Teams from './views/Teams';
 import TeamForm from './views/TeamForm';
+import OffersList from './views/OffersList';
+import PlayerOffers from './views/PlayerOffers';
 
 const router = createBrowserRouter ([
     {
@@ -86,6 +88,14 @@ const router = createBrowserRouter ([
             {
                 path: '/teams/:id',
                 element: <TeamForm key='playerUpdate'/>
+            },
+            {
+                path: '/offers',
+                element: <OffersList/>
+            },
+            {
+                path: '/offers/:id',
+                element: <PlayerOffers/>
             },
         ]
     },

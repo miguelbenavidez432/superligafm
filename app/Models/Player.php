@@ -23,4 +23,9 @@ class Player extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function rescissions()
+    {
+        return $this->hasMany(Rescission::class, 'id_player');
+    }
 }

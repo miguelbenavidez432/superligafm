@@ -11,7 +11,7 @@ class StoreRescissionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,7 @@ class StoreRescissionRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'id_player' => 'required|integer',
             'id_team' => 'required|integer',
             'value' => 'required|integer',
             'extra_value' => 'integer|nullable',

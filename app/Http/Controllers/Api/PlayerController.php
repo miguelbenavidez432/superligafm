@@ -7,6 +7,7 @@ use App\Models\Player;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
+use App\Models\Rescission;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
@@ -39,7 +40,7 @@ class PlayerController extends Controller
         return new PlayerResource($player);
     }
 
-    
+
     public function transfer(Request $request)
     {
         $datosActualizados = $request->input('data');
@@ -84,5 +85,16 @@ class PlayerController extends Controller
     {
         $player->delete();
         return response('', 204);
+    }
+
+    public function playerOffers($id)
+    {
+        $player = Player::findOrFail($id);
+        $offers = Rescission::where('id_player', $id)->get();
+
+        return response()->json([
+            'player' => $player,
+            'offers' => $offers,
+        ]);
     }
 }

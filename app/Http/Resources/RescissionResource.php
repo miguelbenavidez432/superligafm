@@ -16,6 +16,7 @@ class RescissionResource extends JsonResource
     {
         return[
             'id' => $this->id,
+            'id_player' =>$this->id_player,
             'name' => $this->name,
             'id_team' => $this->id_team,
             'value' => $this->value,

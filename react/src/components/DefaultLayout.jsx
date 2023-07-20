@@ -38,7 +38,8 @@ export default function DefaultLayout() {
                 {
                     user.rol === 'Admin' || user.rol === 'Organizador' ?
                     <div className="flex flex-col  text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Dashboard</Link>
+                        <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                        <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                         <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                         <Link className="mt-4 hover:text-base" to='/users'>Users</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
@@ -52,7 +53,8 @@ export default function DefaultLayout() {
                     :
                     user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ? 
                     <div className="flex flex-col text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Dashboard</Link>
+                        <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                        <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                         <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
                         <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
@@ -63,7 +65,7 @@ export default function DefaultLayout() {
                     </div>
                     :user.rol === 'En lista de espera' || user.rol === 'Visitante' &&
                     <div className="flex flex-col text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Dashboard</Link>
+                        <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
                         <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
                         <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>

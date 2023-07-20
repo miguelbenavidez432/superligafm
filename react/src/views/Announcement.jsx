@@ -4,26 +4,26 @@ import { useEffect, useState } from "react";
 import axiosClient from "../axios"
 import { useStateContext } from "../context/ContextProvider";
 
-export default function Ejecucion() {
+export default function Announcement() {
 
     const [team, setTeam] = useState([]);
     const [players, setPlayers] = useState([]);
     const [filteredTeam, setFilteredTeam] = useState();
-    const { user } = useStateContext();
+    const { user, setNotification } = useStateContext();
     const [selectedEquipo, setSelectedEquipo] = useState()
     const [playerToBlock, setPlayerToBlock] = useState([])
     const [errors, setErrors] = useState(null);
     const [playerTransfered, setPlayerTransfered] = useState({
+        id_player: '',
         name: '',
         id_team: '',
         created_by: user.id,
         value: 0,
-        otherPlayers: [],
-        extraValue: 0,
-        totalValue: 0
+        other_players: [],
+        extra_value: 0,
+        total_value: 0
     })
     const [inputValue, setInputValue] = useState()
-
 
     useEffect(() => {
         getTeam()
@@ -68,7 +68,7 @@ export default function Ejecucion() {
         setPlayerTransfered({
             ...playerTransfered,
             value: newValue,
-            totalValue: newValue
+            total_value: newValue
         });
     };
 
@@ -77,14 +77,14 @@ export default function Ejecucion() {
         const playerData = players.find(p => p.id === newIdPlayer)
         setPlayerTransfered({
             ...playerTransfered,
-            otherPlayers: [...playerTransfered.otherPlayers, playerData.name],
-            extraValue: parseInt(playerTransfered.extraValue) + parseInt(playerData.value),
-            totalValue: parseInt(playerTransfered.value) + parseInt(playerTransfered.extraValue) + parseInt(playerData.value),
+            other_players: [...playerTransfered.other_players, playerData.name],
+            extra_value: parseInt(playerTransfered.extra_value) + parseInt(playerData.value),
+            total_value: parseInt(playerTransfered.value) + parseInt(playerTransfered.extra_value) + parseInt(playerData.value),
         })
 
         const datosJugadorEquipo = {
             id: playerData.id,
-            id_team: playerData.id_team,
+            id_team: parseInt(playerData.id_team),
             name: playerData.name,
             age: playerData.age,
             ca: playerData.ca,
@@ -110,6 +110,30 @@ export default function Ejecucion() {
                     setErrors(response.data.errors)
                 }
             });
+        axiosClient.post('/clausula_rescision', {
+            ...playerTransfered,
+            other_players: JSON.stringify(playerTransfered.other_players)
+        })
+            .then((response) => {
+                console.log(response.data);
+                setNotification('Ejecución de claúsula enviada')
+                setPlayerTransfered({
+                    id_player: '',
+                    name: '',
+                    id_team: '',
+                    created_by: user.id,
+                    value: 0,
+                    other_players: [],
+                    extra_value: 0,
+                    total_value: 0
+                })
+            })
+            .catch(error => {
+                const response = error.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors)
+                }
+            });
     }
 
 
@@ -122,7 +146,7 @@ export default function Ejecucion() {
             <select id="equipo"
                 value={team.id}
                 onChange={handleIdEquipoChange}
-                onClick={e => setPlayerTransfered({ ...playerTransfered, id_team: e.target.value })}>
+                onClick={e => setPlayerTransfered({ ...playerTransfered, id_team: parseInt(e.target.value) })}>
                 <option value=""></option>
                 {
                     team.map((t, index) => {
@@ -148,6 +172,7 @@ export default function Ejecucion() {
                                     );
                                     setPlayerTransfered({
                                         ...playerTransfered,
+                                        id_player: parseInt(selectedPlayer.id),
                                         name: selectedPlayer.name,
                                         value: selectedPlayer.value
                                     });
@@ -199,11 +224,11 @@ export default function Ejecucion() {
             <br />
             <span>Oferta a realizar por {playerTransfered.name}</span>
             <br />
-            <span>Valor extra: {playerTransfered.extraValue}</span>
+            <span>Valor extra: {playerTransfered.extra_value}</span>
             <br />
-            <span>Jugadores extra: {playerTransfered.otherPlayers + ' '} </span>
+            <span>Jugadores extra: {playerTransfered.other_players + ' '} </span>
             <br />
-            <span>Oferta a realizar por un total de: {playerTransfered.totalValue}</span>
+            <span>Oferta a realizar por un total de: {playerTransfered.total_value}</span>
 
         </>
     )
