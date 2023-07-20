@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import axiosClient from "../axios"
 import { useStateContext } from "../context/ContextProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function TransferForm() {
 
@@ -14,11 +15,30 @@ export default function TransferForm() {
     const [datosActualizados, setDatosActualizados] = useState([]);
     const [secondTeam, setSecondTeam] = useState();
     const [playersToSend, setPlayersToSend] = useState([]);
+    const [transfer, setTransfer] = useState({
+        transferred_players: '',
+        id_team_from: '',
+        id_team_to: '',
+        budget: 0,
+        created_by: '',
+        buy_by: '',
+        sold_by: '',
+    })
+    const { user, setNotification } = useStateContext();
+    const navigate = useNavigate();
+    const [errors, setErrors] = useState(null);
 
     useEffect(() => {
         getTeam();
         getPlayers();
     }, [])
+
+    useEffect(() => {
+        setTransfer((prevTransfer) => ({
+          ...prevTransfer,
+          transferred_players: playersToSend.toString(),
+        }));
+      }, [playersToSend]);
 
     const getTeam = () => {
         setLoading(true)
@@ -80,8 +100,20 @@ export default function TransferForm() {
             ca: jugadorSeleccionado.ca,
             pa: jugadorSeleccionado.pa,
             value: jugadorSeleccionado.value,
+            status: ''
         };
 
+        setPlayersToSend([...playersToSend, jugadorSeleccionado.name])
+
+        setTransfer({
+            transferred_players: playersToSend.toString(),
+            id_team_from: jugadorSeleccionado.id_team,
+            id_team_to: parseInt(secondTeam),
+            budget: 0,
+            created_by: user.id,
+            buy_by: user.id,
+            sold_by: user.id,
+        })
         setDatosActualizados([...datosActualizados, datosJugadorEquipo]);
 
         console.log(datosActualizados);
@@ -93,14 +125,36 @@ export default function TransferForm() {
         axiosClient.post('/transfer', { data: datosActualizados })
             .then((response) => {
                 console.log(response.data);
+
             })
             .catch(error => {
-                console.error(error)
+                const response = error.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors)
+                }
+            });
+        setTransfer({
+            transferred_players: playersToSend.toString(),
+        })
+        axiosClient.post('/traspasos', transfer)
+            .then((response) => {
+                console.log(response.data);
+                setNotification('Transferencia realizada correctamente')
+                navigate('/transfer')
+                setDatosActualizados([])
+                setPlayersToSend([])
+            })
+            .catch(error => {
+                const response = error.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors)
+                }
             });
     };
 
     const resetInfo = () => {
         setDatosActualizados([]);
+        setPlayersToSend([]);
     }
 
     return (
@@ -151,7 +205,7 @@ export default function TransferForm() {
                     ))}
                 </ul>
                 <br />
-                <button onClick={resetInfo} className="btn-add"> Agregar Info</button>
+                <button onClick={resetInfo} className="btn-add"> Cancelar transferencia</button>
                 <br />
                 <br />
                 <button onClick={sendInfo} className="btn-add">Enviar Transferencia</button>

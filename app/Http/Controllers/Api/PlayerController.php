@@ -54,11 +54,12 @@ class PlayerController extends Controller
                 'ca' => $dato['ca'],
                 'pa' => $dato['pa'],
                 'value' => $dato['value'],
+                'status' => $dato['status'],
                 // Agrega más columnas según tus necesidades
             ];
         }
 
-        Player::upsert($upsertData, 'id', ['id_team']);
+        Player::upsert($upsertData, 'id', ['id_team', 'status']);
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }

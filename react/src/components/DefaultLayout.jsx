@@ -38,10 +38,13 @@ export default function DefaultLayout() {
                 {
                     user.rol === 'Admin' || user.rol === 'Organizador' ?
                     <div className="flex flex-col  text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Plantel</Link>
+                        <Link className="mt-4 hover:text-base" to='/dashboard'>Dashboard</Link>
+                        <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                         <Link className="mt-4 hover:text-base" to='/users'>Users</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
+                        <Link className="mt-4 hover:text-base" to='/teams'>Equipos</Link>
                         <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
+                        <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
                         <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
                         <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
                         <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
@@ -49,16 +52,18 @@ export default function DefaultLayout() {
                     :
                     user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ? 
                     <div className="flex flex-col text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Plantel</Link>
+                        <Link className="mt-4 hover:text-base" to='/dashboard'>Dashboard</Link>
+                        <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
                         <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
+                        <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
                         <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
                         <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
                         <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
                     </div>
                     :user.rol === 'En lista de espera' || user.rol === 'Visitante' &&
                     <div className="flex flex-col text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Plantel</Link>
+                        <Link className="mt-4 hover:text-base" to='/dashboard'>Dashboard</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
                         <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
                         <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>

@@ -9,19 +9,17 @@ import { Link } from "react-router-dom";
 export default function Dashboard() {
 
     const [team, setTeam] = useState([]);
-    const [players, setPlayers] = useState([]);
+    const [transfer, setTransfer] = useState([]);
     const [loading, setLoading] = useState(false);
     const { user } = useStateContext();
 
     useEffect(() => {
         getTeam()
-        setTimeout(()=>{
-            getPlayers()
-        }, 1000)
+        getTransfers()
     }, [])
 
     const cargarJugadores = () => {
-        getPlayers()
+        getTransfers()
     }
 
     const getTeam = () => {
@@ -29,23 +27,22 @@ export default function Dashboard() {
         axiosClient.get('/teams')
             .then(({ data }) => {
                 setLoading(false)
-                const teamFilter = data.data.find((t) => t.id_user === user.id)
-                console.log(teamFilter)
-                setTeam(teamFilter)
+                setTeam(data.data)
             })
             .catch(() => {
                 setLoading(false)
             })
     }
 
-    const getPlayers = () => {
+    const getTransfers = () => {
         setLoading(true)
-        axiosClient.get('/players')
+        axiosClient.get('/traspasos')
             .then(({ data }) => {
                 setLoading(false)
-                const playersFiltered = data.data.filter((p) => p.id_team === team.id)
-                console.log(playersFiltered)
-                setPlayers(playersFiltered)
+                console.log(data)
+                const transfersFiltered = data.data.filter((t) => t.buy_by === user.id || t.sold_by === user.id)
+                console.log(transfersFiltered)
+                setTransfer(transfersFiltered)
             })
             .catch(() => {
                 setLoading(false)
@@ -63,8 +60,8 @@ export default function Dashboard() {
                 <table>
                     <thead>
                         <tr>
-                            <th>NOMBRE</th>
-                            <th>EDAD</th>
+                            <th>JUGADORES TRANSFERIDOS</th>
+                            <th>EQUIPOS ORIGEN/DESTINO</th>
                             <th>CA</th>
                             <th>PA</th>
                             <th>NACIONALIDAD</th>
@@ -93,16 +90,19 @@ export default function Dashboard() {
                     {!loading &&
                         <tbody>
                             {
-                                team ? players && players.map(p => (
-                                    <tr key={p.id}>
-                                        <td>{p.name}</td>
-                                        <td>{p.age}</td>
-                                        <td>{p.ca}</td>
-                                        <td>{p.pa}</td>
-                                        <td>{p.nation}</td>
-                                        <td>{p.value}</td>
-                                        <td>{p.status}</td>
-                                        {/* <td>{p.goal}</td>
+                                transfer && transfer.map(p => {
+                                    const teamName = team.find(t => t.id === p.id_team_from);
+                                    const teamNameToShow = teamName ? teamName.name : '';
+                                    return (
+                                        <tr key={p.id}>
+                                            <td>{p.transferred_players}</td>
+                                            <td>{teamNameToShow}</td>
+                                            <td>{p.ca}</td>
+                                            <td>{p.pa}</td>
+                                            <td>{p.nation}</td>
+                                            <td>{p.value}</td>
+                                            <td>{p.status}</td>
+                                            {/* <td>{p.goal}</td>
                                     <td>{p.assistance}</td>
                                     <td>{p.yellow_card}</td>
                                    <td>{p.double_yellow_card}</td>
@@ -110,17 +110,12 @@ export default function Dashboard() {
                                    <td>{p.injured}</td>
                                     <td>{p.heavy_injured}</td>
                                    <td>{p.mvp}</td> */}
-                                        <td>
-                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
-                                        </td>
-                                    </tr>
-                                ))
-                                    :
-                                    <tr>
-                                        <td colSpan="10" className="text-center">
-                                            <strong>  No tienes equipo asignado. Prueba presionando el botón Cargar plantel </strong>
-                                        </td>
-                                    </tr>
+                                            <td>
+                                                <Link className="btn-edit" to={`/traspasos/${p.id}`}>Editar estado</Link>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
                             }
                         </tbody>
                     }

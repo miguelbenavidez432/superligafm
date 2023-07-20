@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePlayerRequest extends FormRequest
+class UpdateRescissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,13 +22,7 @@ class UpdatePlayerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'age' => 'required|integer|max:50',
-            'ca' => 'integer|max:200|required',
-            'pa' => 'integer|max:200|required',
-            'value' => 'integer|required',
-            'id_team' => 'required',
-            'status' => 'string|nullable',
+            'confirmed' => 'boolean|required',
         ];
     }
 }

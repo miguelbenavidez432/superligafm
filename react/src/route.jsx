@@ -13,6 +13,10 @@ import TransferForm from './views/TransferForm';
 import About from './components/About';
 import Rules from './components/Rules';
 import Prode from './views/Prode';
+import Plantel from './views/Plantel';
+import Announcement from './views/Announcement';
+import Teams from './views/Teams';
+import TeamForm from './views/TeamForm';
 
 const router = createBrowserRouter ([
     {
@@ -66,6 +70,22 @@ const router = createBrowserRouter ([
             {
                 path: '/prode',
                 element: <Prode/>
+            },
+            {
+                path: '/plantel', 
+                element: <Plantel/>
+            },
+            {
+                path: '/clausula_rescision', 
+                element: <Announcement/>
+            },
+            {
+                path: '/teams',
+                element: <Teams/>
+            },
+            {
+                path: '/teams/:id',
+                element: <TeamForm key='playerUpdate'/>
             },
         ]
     },

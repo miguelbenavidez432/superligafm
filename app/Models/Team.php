@@ -20,6 +20,10 @@ class Team extends Model
     }
     public function users()
     {
-        return $this->hasOne(User::class);    
+        return $this->belongsTo(User::class);    
+    }
+    public function transfers()
+    {
+        return $this->hasMany(Transfer::class);
     }
 }

@@ -52,4 +52,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(Team::class);
     }
+
+    public function bets()
+    {
+        return $this->hasMany(Bet::class);
+    }
+    
+    public function playerBets()
+    {
+        return $this->hasMany(PlayerBet::class);
+    }
+
+    public function transfers()
+    {
+        return $this->hasMany(Transfer::class);
+    }
 }

@@ -59,7 +59,7 @@ export default function PlayerForm() {
             axiosClient.put(`/players/${players.id}`, players)
                 .then(() => {
                     setNotification('Jugador actualizado satisfactoriamente')
-                    navigate('/dashboard')
+                    navigate('/plantel' || '/players')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -71,7 +71,7 @@ export default function PlayerForm() {
             axiosClient.post(`/players/`, players)
                 .then(() => {
                     setNotification('Players creado satisfactoriamente')
-                    navigate('/players')
+                    navigate('/plantel')
                 })
                 .catch(err => {
                     const response = err.response;
