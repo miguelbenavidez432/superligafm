@@ -32,12 +32,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/players', PlayerController::class);
     Route::post('/transfer', [PlayerController::class, 'transfer']);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
+    Route::get('playername', [PlayerController::class, 'searchPlayers']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
     Route::apiResource('/traspasos', TransferController::class);
     Route::apiResource('/bet', BetController::class);
     Route::apiResource('/singlebet', PlayerBetController::class);
     Route::apiResource('/clausula_rescision', RescissionController::class);
+    Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);

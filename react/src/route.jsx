@@ -19,6 +19,7 @@ import Teams from './views/Teams';
 import TeamForm from './views/TeamForm';
 import OffersList from './views/OffersList';
 import PlayerOffers from './views/PlayerOffers';
+import AuctionConfirmation from './views/AuctionConfirmation';
 
 const router = createBrowserRouter ([
     {
@@ -96,6 +97,10 @@ const router = createBrowserRouter ([
             {
                 path: '/offers/:id',
                 element: <PlayerOffers/>
+            },
+            {
+                path: '/subastas',
+                element: <AuctionConfirmation/>
             },
         ]
     },

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function TransferForm() {
 
-    const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState([])
     const [players, setPlayers] = useState([]);
     const [teams, setTeams] = useState([])
     const [selectedEquipo, setSelectedEquipo] = useState('');
@@ -35,34 +35,37 @@ export default function TransferForm() {
 
     useEffect(() => {
         setTransfer((prevTransfer) => ({
-          ...prevTransfer,
-          transferred_players: playersToSend.toString(),
+            ...prevTransfer,
+            transferred_players: playersToSend.toString(),
         }));
-      }, [playersToSend]);
+    }, [playersToSend]);
 
     const getTeam = () => {
-        setLoading(true)
         axiosClient.get('/teams')
             .then(({ data }) => {
-                setLoading(false)
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
                 console.log(teamFilter)
                 setTeams(teamFilter)
             })
             .catch(() => {
-                setLoading(false)
             })
     }
 
+    const getUsers = () => {
+        axiosClient.get('/users')
+            .then(({ data }) => {
+                setUsers(data.data);
+            })
+            .catch(() => {
+            });
+    };
+
     const getPlayers = () => {
-        setLoading(true)
         axiosClient.get('/players')
             .then(({ data }) => {
-                setLoading(false)
                 setPlayers(data.data)
             })
             .catch(() => {
-                setLoading(false)
             })
     }
 
@@ -82,7 +85,7 @@ export default function TransferForm() {
 
         const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
         setSelectedJugador('');
-
+        
         console.log(jugadoresEquipo);
     };
 

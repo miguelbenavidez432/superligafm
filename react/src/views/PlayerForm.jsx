@@ -23,7 +23,7 @@ export default function PlayerForm() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
     const [team, setTeam] = useState([]);
-    const { user} = useStateContext();
+    const { user } = useStateContext();
 
     if (id) {
         useEffect(() => {
@@ -55,6 +55,10 @@ export default function PlayerForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        if (players.status == 'liberado') {
+            setPlayers({ ...players, id_team: 62 });
+            console.log(players)
+        }
         if (players.id) {
             axiosClient.put(`/players/${players.id}`, players)
                 .then(() => {
@@ -99,9 +103,9 @@ export default function PlayerForm() {
                     </div>
                 }
                 {!loading && user.rol === 'Admin' || user.rol === 'Organizador' ?
-                    <form onSubmit={onSubmit}>                    
+                    <form onSubmit={onSubmit}>
                         <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
-                        <select name="" id="" onClick={e => setPlayers({ ...players, id_team: e.target.value })}>
+                        <select name="" id="" onChange={e => setPlayers({ ...players, id_team: e.target.value })}>
                             {
                                 team.map((t, index) => {
                                     return (
@@ -110,10 +114,8 @@ export default function PlayerForm() {
                                 })
                             }
                         </select>
-                        <input hidden value={players.id_team} onChange={e => setPlayers({ ...players, id_team: e.target.value })} placeholder="Equipo" type="text" />
-                        
                         <span>Estado</span>
-                        <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
+                        <select name="" id="" onChange={e => e.target.value === 'liberado'? setPlayers({ ...players, status: e.target.value, id_team: 62 }) : setPlayers({ ...players, status: e.target.value})} placeholder="Estado">
                             <option value=''></option>
                             <option value="liberado">Liberado</option>
                             <option value="bloqueado">Bloqueado</option>
@@ -125,31 +127,31 @@ export default function PlayerForm() {
                         <input value={players.value} onChange={e => setPlayers({ ...players, value: e.target.value })} placeholder="Valor" type="text" />
                         <button className="btn">Guardar cambios</button>
                     </form>
-                    : user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' || team.find(t => t.id_user === user.id)? 
-                    <form onSubmit={onSubmit}>
-                        <span>Estado</span>
-                        <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
-                            <option value=''></option>
-                            <option value="liberado">Liberado</option>
-                            <option value="bloqueado">Bloqueado</option>
-                            <option value="registrado">Registrado</option>
-                        </select>
-                        <button className="btn">Guardar cambios</button>
-                    </form>
-                    : !loading &&
-                    <div>
-                        <h1>NO PUEDES ACTUALIZAR EL JUGADOR PORQUE NO TIENES UN EQUIPO ASIGNADO</h1>
-                        <br />
-                        <span><strong>Jugador: </strong>{players.name}</span>
-                        <br />
-                        <span><strong>Edad: </strong>{players.age}</span>
-                        <br />
-                        <span><strong>CA: </strong>{players.ca}</span>
-                        <br />
-                        <span><strong>PA: </strong>{players.pa}</span>
-                        <br />
-                        <span><strong>Valor: </strong>{players.value}</span>
-                    </div>
+                    : user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' || team.find(t => t.id_user === user.id) ?
+                        <form onSubmit={onSubmit}>
+                            <span>Estado</span>
+                            <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
+                                <option value=''></option>
+                                <option value="liberado">Liberado</option>
+                                <option value="bloqueado">Bloqueado</option>
+                                <option value="registrado">Registrado</option>
+                            </select>
+                            <button className="btn">Guardar cambios</button>
+                        </form>
+                        : !loading &&
+                        <div>
+                            <h1>NO PUEDES ACTUALIZAR EL JUGADOR PORQUE NO TIENES UN EQUIPO ASIGNADO</h1>
+                            <br />
+                            <span><strong>Jugador: </strong>{players.name}</span>
+                            <br />
+                            <span><strong>Edad: </strong>{players.age}</span>
+                            <br />
+                            <span><strong>CA: </strong>{players.ca}</span>
+                            <br />
+                            <span><strong>PA: </strong>{players.pa}</span>
+                            <br />
+                            <span><strong>Valor: </strong>{players.value}</span>
+                        </div>
                 }
             </div>
         </>

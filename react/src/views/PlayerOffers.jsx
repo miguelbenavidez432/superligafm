@@ -1,72 +1,146 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../axios";
 import moment from "moment";
+import { useStateContext } from "../context/ContextProvider";
 
 const PlayerOffers = () => {
     const { id } = useParams();
     const [users, setUsers] = useState([]);
     const [offers, setOffers] = useState([]);
-    const [players, setPlayers] = useState([]);
+    const [player, setPlayer] = useState({
+        name: '',
+        id_team: '',
+        status: '',
+        value: '',
+        ca: '',
+        pa: '',
+        age: '',
+    })
+    const [teams, setTeams] = useState([]);
     const [isAvailable, setIsAvailable] = useState(false);
+    const [errors, setErrors] = useState(null);
+    const navigate = useNavigate()
+    const { user, setNotification } = useStateContext();
+    const [userProfit, setUserProfit] = useState({
+        id: '',
+        name: '',
+        rol: '',
+        email: '',
+        profits: 0
+    });
+    const [userCost, setUserCost] = useState({
+        id: '',
+        name: '',
+        rol: '',
+        email: '',
+        profits: 0
+    });
 
     useEffect(() => {
         axiosClient.get(`/clausulas/${id}`)
             .then(({ data }) => {
                 console.log(data);
-                setOffers(data.offers);
-                checkOffersAvailability(data.offers)
-                getPlayers();
-                getUsers();
+                setPlayer(data.player); 
+                setOffers(data.offers); 
+                checkOffersAvailability(data.offers);
+
             })
             .catch((error) => {
             });
-    }, [id]);
-
-
-    const getPlayers = () => {
-        axiosClient.get('/players')
-            .then(({ data }) => {
-                const playerData = data.data.find((player) => player.id === id);
-                if (playerData) {
-                    setPlayers(playerData);
-                    console.log(playerData)
-                }
-            })
-            .catch(() => {
-            });
-    }
+        getUsers();
+        getTeam();
+        console.log("userProfit actualizado:", userProfit);
+        console.log("userProfit actualizado:", userCost)
+    }, [id, userProfit, userCost]);
 
     const getUsers = () => {
         axiosClient.get('/users')
             .then(({ data }) => {
-                console.log(data);
                 setUsers(data.data);
             })
             .catch(() => {
             });
     };
 
+    const getTeam = () => {
+        axiosClient.get('/teams')
+            .then(({ data }) => {
+                setTeams(data.data)
+            })
+            .catch(() => {
+            })
+    }
+
     const checkOffersAvailability = (playerOffers) => {
         if (playerOffers && playerOffers.length > 0) {
-            // Obtener la fecha de la primera oferta
             const firstOfferDate = moment(playerOffers[0].created_at);
-            // Calcular la fecha y hora de expiración (6 horas después de la primera oferta)
             const expirationDate = firstOfferDate.add(6, 'hours');
-            // Obtener la fecha y hora actual
             const currentDate = moment();
-            // Comparar la fecha y hora actual con la fecha y hora de expiración
             if (currentDate.isAfter(expirationDate)) {
                 setIsAvailable(true);
             }
         }
     };
 
+    const handleConfirmOffer = async (offerId) => {
+        const oferta = offers.find(o => o.id === offerId)
+        console.log(oferta)
+
+        const teamId = teams.find(t => t.id === oferta.id_team)
+        if (teamId) {
+            const getUser = users.find(u => u.id === teamId.id_user)
+            const getUserCreated = users.find(u => u.id === oferta.created_by)
+            const teamTo = teams.find(t => t.id_user === getUserCreated.id)
+
+            const updatedPlayer = {
+                ...player,
+                id_team: teamTo.id
+            }
+
+            const updatedUserProfit = {
+                ...userProfit,
+                id: getUser.id,
+                name: getUser.name,
+                rol: getUser.rol,
+                email: getUser.email,
+                profits: getUser.profits + oferta.total_value,
+            };
+
+            const updatedUserCost = {
+                ...userCost,
+                id: getUserCreated.id,
+                name: getUserCreated.name,
+                rol: getUserCreated.rol,
+                email: getUserCreated.email,
+                profits: getUserCreated.profits + oferta.total_value,
+            };
+
+            try {
+                setUserProfit(updatedUserProfit);
+                setUserCost(updatedUserCost);
+                setPlayer(updatedPlayer)
+                
+                await axiosClient.put(`/users/${getUser.id}`, updatedUserProfit);
+                await axiosClient.put(`/users/${getUserCreated.id}`, updatedUserCost);
+                await axiosClient.put(`/players/${oferta.id_player}`, updatedPlayer);
+                setNotification("Oferta confirmada satisfactoriamente");
+                navigate("/offers");
+            } catch (error) {
+                setNotification("Error al confirmar la oferta:", error);
+                const response = error.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
+            }
+
+        }
+    };
+
     return (
         <div>
-            {players && <h2>Ofertas por el Jugador {players.name}</h2>}
             {isAvailable ? (<ul>
                 {Array.isArray(offers) && offers.length > 0 ? (
                     offers.map((oferta) => {
@@ -79,14 +153,9 @@ const PlayerOffers = () => {
                                 <br />
                                 <span>Usuario: {userNameToShow}</span>
                                 <br />
-                                {
-                                    // isOfferHidden(oferta.created_at) ? (
-                                    //     <span>Valor total: Oferta incógnita</span>
-                                    // ) : 
-                                    (
-                                        <span>Valor total: {oferta.total_value}</span>
-                                    )}
+                                <span>Valor total: {oferta.total_value}</span>
                                 <br />
+                                <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
                             </li>
                         )
                     })

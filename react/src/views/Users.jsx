@@ -53,10 +53,8 @@ export default function Users() {
                             <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Equipo</th>
                             <th>Rol</th>
-                            <th>Gastos</th>
-                            <th>Ganancias</th>
+                            <th>Presupuesto</th>
                             <th>Create Date</th>
                             <th>Actions</th>
                         </tr>
@@ -78,9 +76,7 @@ export default function Users() {
                                         <th>{u.id}</th>
                                         <th>{u.name}</th>
                                         <th>{u.email}</th>
-                                        <th>{u.team}</th>
                                         <th>{u.rol}</th>
-                                        <th>{u.costs}</th>
                                         <th>{u.profits}</th>
                                         <th>{u.created_at}</th>
                                         <th>

@@ -37,7 +37,7 @@ export default function Login() {
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
                     className="mx-auto my-5 h-20 w-auto"
-                    src="public/logo_superligafm.png"
+                    src="/logo_superligafm.png"
                     alt="Your Company"
                 />
             </div>

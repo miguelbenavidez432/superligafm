@@ -23,14 +23,15 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:55',
+            'name' => 'required|string|max:55|nullable',
             'email' => 'required|email|unique:users,email,'.$this->id,
-            'rol' => 'required',
+            'rol' => 'required|nullable',
             'profits' => 'integer',
-            'costs' => 'integer',
+            'costs' => 'integer|nullable',
             'password' => [
                 'confirmed',
-                Password::min(8)
+                Password::min(8),
+                'nullable'
             ]
         ];
     }

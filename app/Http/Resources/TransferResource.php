@@ -23,7 +23,8 @@ class TransferResource extends JsonResource
             'created_by' => $this->created_by,
             'confirmed_by' => $this->confirmed_by,
             'sold_by' => $this->sold_by,
-            'buy_by' => $this->buy_by
+            'buy_by' => $this->buy_by,
+            'created_at' => $this->created_at->format('d-m-Y H:i:s'),
         ];
     }
 }

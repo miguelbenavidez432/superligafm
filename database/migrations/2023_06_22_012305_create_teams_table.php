@@ -18,7 +18,15 @@ return new class extends Migration
             $table->string('division');
             $table->foreignId('id_user')->nullable();
             $table->foreign('id_user')->on('users')->references('id');
+            $table->integer('campeonatos_primera')->nullable();
+            $table->integer('campeonatos_segunda')->nullable();
+            $table->integer('campeonatos_copa')->nullable();
+            $table->integer('campeonatos_champions')->nullable();
+            $table->integer('campeonatos_europa')->nullable();
+            $table->integer('campeonatos_menores')->nullable();
             $table->timestamps();
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_unicode_ci';
         });
     }
 

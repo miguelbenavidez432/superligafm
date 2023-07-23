@@ -23,7 +23,7 @@ class StoreTeamRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'division' => 'required|string',
+            'division' => 'required|string|nullable',
         ];
     }
 }

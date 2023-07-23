@@ -163,8 +163,9 @@ export default function Plantel() {
                     {bestPlayersCA !== null && (
                         <p>Promedio de CA de los mejores 16 jugadores: <strong>{bestPlayersCA}</strong></p>
                     )}
-                    <p>strCantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
+                    <p>Cantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
                     <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong> </p>
+                    <p>Presupuesto: <strong>{user.profits}</strong></p>
                 </div>
             </div >
         </>

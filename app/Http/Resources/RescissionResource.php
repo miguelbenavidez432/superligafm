@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class RescissionResource extends JsonResource
 {
+    public static $wrap = false;
     /**
      * Transform the resource into an array.
      *
@@ -25,6 +26,7 @@ class RescissionResource extends JsonResource
             'total_value' => $this->total_value,
             'other_players' => $this->other_players,
             'confirmed' => $this->confirmed,
+            'created_at' => $this->created_at,
         ];
     }
 }

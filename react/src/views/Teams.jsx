@@ -19,6 +19,8 @@ export default function Teams() {
 
     const cargarJugadores = () => {
         getPlayers()
+        getTeam()
+        getUsers();
     }
 
     const getTeam = async () => {
@@ -26,6 +28,7 @@ export default function Teams() {
         await axiosClient.get('/teams')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
+                console.log(data)
                 setTeam(teamFilter)
             })
             .catch(() => {
@@ -87,6 +90,7 @@ export default function Teams() {
                                 team.map(t => {
                                     const userName = users.find(u => u.id === t.id_user);
                                     const userNameToShow = userName ? userName.name : '';
+                                    console.log(userName)
                                     return (
                                         <tr key={t.id}>
                                             <td>{t.name}</td>

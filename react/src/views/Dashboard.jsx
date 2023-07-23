@@ -11,16 +11,27 @@ export default function Dashboard() {
     const [team, setTeam] = useState([]);
     const [transfer, setTransfer] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState([]);
     const { user } = useStateContext();
 
     useEffect(() => {
         getTeam()
         getTransfers()
+        getUsers()
     }, [])
 
     const cargarJugadores = () => {
         getTransfers()
     }
+
+    const getUsers = () => {
+        axiosClient.get('/users')
+            .then(({ data }) => {
+                setUsers(data.data);
+            })
+            .catch(() => {
+            });
+    };
 
     const getTeam = () => {
         setLoading(true)
@@ -39,10 +50,7 @@ export default function Dashboard() {
         axiosClient.get('/traspasos')
             .then(({ data }) => {
                 setLoading(false)
-                console.log(data)
-                const transfersFiltered = data.data.filter((t) => t.buy_by === user.id || t.sold_by === user.id)
-                console.log(transfersFiltered)
-                setTransfer(transfersFiltered)
+                setTransfer(data.data)
             })
             .catch(() => {
                 setLoading(false)
@@ -60,21 +68,11 @@ export default function Dashboard() {
                 <table>
                     <thead>
                         <tr>
+                            <th>N°</th>
                             <th>JUGADORES TRANSFERIDOS</th>
                             <th>EQUIPOS ORIGEN/DESTINO</th>
-                            <th>CA</th>
-                            <th>PA</th>
-                            <th>NACIONALIDAD</th>
-                            <th>VALOR</th>
-                            <th>ESTADO</th>
-                            {/* <th>GOLES</th>
-                            <th>ASISTENCIAS</th>
-                            <th>AMARILLAS</th>
-                            <th>ROJA</th>
-                            <th>ROJA DIRECTA</th>
-                            <th>LESIONES LEVES</th>
-                            <th>LESIONES GRAVES</th>
-                            <th>MVP</th> */}
+                            <th>REALIZADA POR</th>
+                            <th>HORA</th>
                             <th>ACCIONES</th>
                         </tr>
                     </thead>
@@ -92,26 +90,20 @@ export default function Dashboard() {
                             {
                                 transfer && transfer.map(p => {
                                     const teamName = team.find(t => t.id === p.id_team_from);
+                                    const secondTeamName = team.find(t => t.id === p.id_team_to);
                                     const teamNameToShow = teamName ? teamName.name : '';
+                                    const showSecondTeamName = secondTeamName ? secondTeamName.name : ''
+                                    const userCreated = users.find(u => u.id === p.created_by)
+                                    const shoeUserName = userCreated ? userCreated.name : ''
                                     return (
                                         <tr key={p.id}>
+                                            <td>{p.id}</td>
                                             <td>{p.transferred_players}</td>
-                                            <td>{teamNameToShow}</td>
-                                            <td>{p.ca}</td>
-                                            <td>{p.pa}</td>
-                                            <td>{p.nation}</td>
-                                            <td>{p.value}</td>
-                                            <td>{p.status}</td>
-                                            {/* <td>{p.goal}</td>
-                                    <td>{p.assistance}</td>
-                                    <td>{p.yellow_card}</td>
-                                   <td>{p.double_yellow_card}</td>
-                                    <td>{p.red_card}</td>
-                                   <td>{p.injured}</td>
-                                    <td>{p.heavy_injured}</td>
-                                   <td>{p.mvp}</td> */}
+                                            <td>{teamNameToShow + ' - ' + showSecondTeamName}</td>
+                                            <td>{shoeUserName}</td>
+                                            <td>{p.created_at}</td>
                                             <td>
-                                                <Link className="btn-edit" to={`/traspasos/${p.id}`}>Editar estado</Link>
+                                                {/* <Link className="btn-edit" to={`/traspasos/${p.id}`}>Editar estado</Link> */}
                                             </td>
                                         </tr>
                                     )

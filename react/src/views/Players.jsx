@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react"
@@ -11,24 +12,42 @@ export default function Players() {
     const [loading, setLoading] = useState(false);
     const { user, setNotification } = useStateContext();
     const [team, setTeam] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [searchName, setSearchName] = useState('');
 
     useEffect(() => {
         getPlayers()
         getTeam()
-    }, [])
+    }, [currentPage])
 
     const getPlayers = () => {
         setLoading(true)
-        axiosClient.get('/players')
+        axiosClient.get(`/players?page=${currentPage}&name=${searchName}`)
             .then(({ data }) => {
                 setLoading(false)
                 console.log(data)
                 setPlayers(data.data)
+                setTotalPages(data.meta.last_page);
             })
             .catch(() => {
                 setLoading(false)
             })
     }
+
+    const getPlayersName = async (searchName) => {
+        setLoading(true);
+        await axiosClient.get(`/playername?name=${searchName}`)
+            .then(({ data }) => {
+                setLoading(false);
+                console.log(data);
+                setPlayers(data.data);
+            })
+            .catch(() => {
+                setLoading(false);
+            });
+    };
+
 
     const getTeam = () => {
         setLoading(true)
@@ -56,33 +75,52 @@ export default function Players() {
             })
     }
 
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage((prevPage) => prevPage - 1);
+    };
+
+
+    const handleSearchChange = (e) => {
+        setSearchName(e.target.value);
+    };
+
+    const handleSearchSubmit = () => {
+        setCurrentPage(1);
+        getPlayersName(searchName);
+    };
+
     return (
         <div>
             <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>Jugadores</h1>
+                <h1><strong> Jugadores</strong></h1>
                 <Link to='/players/new' className="btn-add">Agregar nuevo jugador</Link>
+            </div>
+            <br />
+            <div>
+                <input
+                    type="text"
+                    value={searchName}
+                    onChange={handleSearchChange}
+                    placeholder="Buscar por nombre"
+                />
+                <button className="btn-add" onClick={handleSearchSubmit}>Buscar</button>
             </div>
             <div className="card animated fadeInDown">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>NOMBRE</th>
                             <th>EDAD</th>
                             <th>CA</th>
                             <th>PA</th>
-                            <th>NACIONALIDAD</th>
                             <th>EQUIPO</th>
                             <th>VALOR</th>
                             <th>ESTADO</th>
-                            {/* <th>GOLES</th>
-                            <th>ASISTENCIAS</th>
-                            <th>AMARILLAS</th>
-                            <th>ROJA</th>
-                            <th>ROJA DIRECTA</th>
-                            <th>LESIONES LEVES</th>
-                            <th>LESIONES GRAVES</th>
-                            <th>MVP</th> */}{
+                            {
                                 user.rol === 'Admin' &&
                                 <th>ACCIONES</th>
                             }
@@ -106,23 +144,14 @@ export default function Players() {
                                     const teamNameToShow = teamName ? teamName.name : '';
                                     return (
                                         <tr key={p.id}>
-                                            <td>{p.id}</td>
                                             <td>{p.name}</td>
                                             <td>{p.age}</td>
                                             <td>{p.ca}</td>
                                             <td>{p.pa}</td>
-                                            <td>{p.nation}</td>
                                             <td>{teamNameToShow}</td>
                                             <td>{p.value}</td>
                                             <td>{p.status}</td>
-                                            {/* <td>{p.goal}</td>
-                                    <td>{p.assistance}</td>
-                                    <td>{p.yellow_card}</td>
-                                    <td>{p.double_yellow_card}</td>
-                                    <td>{p.red_card}</td>
-                                    <td>{p.injured}</td>
-                                    <td>{p.heavy_injured}</td>
-                                    <td>{p.mvp}</td> */}{
+                                            {
                                                 user.rol === 'Admin' &&
                                                 <td>
                                                     <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
@@ -137,6 +166,14 @@ export default function Players() {
                         </tbody>
                     }
                 </table>
+                <div>
+                    {currentPage > 1 && (
+                        <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
+                    )}
+                    {currentPage < totalPages && (
+                        <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
+                    )}
+                </div>
             </div>
         </div>
     )

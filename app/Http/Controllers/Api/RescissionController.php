@@ -7,6 +7,9 @@ use App\Models\Rescission;
 use App\Http\Requests\StoreRescissionRequest;
 use App\Http\Requests\UpdateRescissionRequest;
 use App\Http\Resources\RescissionResource;
+use App\Models\Team;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class RescissionController extends Controller
 {
@@ -57,5 +60,32 @@ class RescissionController extends Controller
     {
         $rescission->delete();
         return response("", 204);
+    }
+
+    public function confirmOffer(Request $request)
+    {
+        // Validar la oferta y obtener los datos necesarios
+        $offer = $request->input('offer');
+        $value = $offer['total_value'];
+        $id_team = $offer['id_team'];
+
+        // Obtener el equipo y el usuario que recibe el dinero
+        $team = Team::findOrFail($id_team);
+        $receiver = User::findOrFail($team->id_user);
+
+        // Obtener el usuario que hizo la oferta
+        $user = User::findOrFail($offer['created_by']);
+
+        // Actualizar el presupuesto del usuario que hizo la oferta
+        $user->profits -= $value;
+        $user->save();
+
+        // Sumar el valor de la oferta al presupuesto del usuario que recibe el dinero
+        $receiver->profits += $value;
+        $receiver->save();
+
+        // Aquí puedes realizar otras acciones, como marcar la oferta como confirmada, enviar notificaciones, etc.
+
+        return response()->json(['message' => 'Oferta confirmada exitosamente']);
     }
 }

@@ -82,10 +82,11 @@ export default function TeamForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if (players.id) {
+        if (team.id) {
             axiosClient.put(`/teams/${team.id}`, team)
                 .then(() => {
                     setNotification('Equipo actualizado satisfactoriamente')
+                    console.log(team)
                     navigate('/teams')
                 })
                 .catch(err => {
@@ -95,10 +96,10 @@ export default function TeamForm() {
                     }
                 })
         } else {
-            axiosClient.post(`/players/`, players)
+            axiosClient.post(`/teams/`, team)
                 .then(() => {
                     setNotification('Equipo creado satisfactoriamente')
-                    navigate('/plantel')
+                    navigate('/teams')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -128,7 +129,7 @@ export default function TeamForm() {
 
                 <form onSubmit={onSubmit}>
                     <input value={team.name} onChange={e => setTeam({ ...team, name: e.target.value })} placeholder="Nombre" type="text" />
-                    <select name="" id="" onClick={e => setTeam({ ...team, id_user: e.target.value })} value={team.id_user}>
+                    <select name="" id="" onClick={e => setTeam({ ...team, id_user: parseInt(e.target.value) })} value={team.id_user}>
                         {
                             users.map((u, index) => {
                                 return (

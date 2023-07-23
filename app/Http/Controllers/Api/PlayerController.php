@@ -18,7 +18,7 @@ class PlayerController extends Controller
     public function index()
     {
         return PlayerResource::collection(
-            Player::query()->orderBy('ca', 'desc')->paginate(500)
+            Player::query()->orderBy('ca', 'desc')->paginate(50)
         );
     }
 
@@ -97,4 +97,13 @@ class PlayerController extends Controller
             'offers' => $offers,
         ]);
     }
+
+    public function searchPlayers(Request $request)
+{
+    $name = $request->query('name');
+
+    $players = Player::query()->where('name', 'LIKE', '%' . $name . '%')->get();
+
+    return PlayerResource::collection($players);
+}
 }

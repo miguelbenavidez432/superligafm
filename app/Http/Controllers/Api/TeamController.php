@@ -16,7 +16,7 @@ class TeamController extends Controller
     public function index()
     {
         return TeamResource::collection(
-            Team::query()->orderBy('name', 'asc')->paginate(100)
+            Team::query()->orderBy('id', 'asc')->paginate(70)
         );
     }
 

@@ -41,6 +41,7 @@ export default function DefaultLayout() {
                         <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
                         <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                         <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
+                        <Link className="mt-4 hover:text-base" to='/subastas'>Subastas</Link>
                         <Link className="mt-4 hover:text-base" to='/users'>Users</Link>
                         <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
                         <Link className="mt-4 hover:text-base" to='/teams'>Equipos</Link>
