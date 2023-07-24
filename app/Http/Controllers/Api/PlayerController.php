@@ -18,7 +18,7 @@ class PlayerController extends Controller
     public function index()
     {
         return PlayerResource::collection(
-            Player::query()->orderBy('ca', 'desc')->paginate(50)
+            Player::query()->orderBy('ca', 'desc')->paginate(2000)
         );
     }
 

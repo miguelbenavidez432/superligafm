@@ -12,6 +12,7 @@ class Team extends Model
     protected $fillable = [
         'name',
         'division',
+        'id_user',
     ];
 
     public function players()
@@ -20,7 +21,7 @@ class Team extends Model
     }
     public function users()
     {
-        return $this->belongsTo(User::class);    
+        return $this->belongsTo(User::class, 'id_user');    
     }
     public function transfers()
     {

@@ -109,6 +109,15 @@ export default function Players() {
                 />
                 <button className="btn-add" onClick={handleSearchSubmit}>Buscar</button>
             </div>
+            <br />
+            <div>
+                    {currentPage > 1 && (
+                        <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
+                    )}
+                    {currentPage < totalPages && (
+                        <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
+                    )}
+                </div>
             <div className="card animated fadeInDown">
                 <table>
                     <thead>
@@ -166,14 +175,7 @@ export default function Players() {
                         </tbody>
                     }
                 </table>
-                <div>
-                    {currentPage > 1 && (
-                        <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
-                    )}
-                    {currentPage < totalPages && (
-                        <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
-                    )}
-                </div>
+                
             </div>
         </div>
     )

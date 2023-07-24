@@ -19,29 +19,38 @@ export default function TeamForm() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
     const [users, setUsers] = useState([]);
+    const [idUser, setIdUser] = useState()
     const [bestPlayersCA, setBestPlayersCA] = useState(null);
 
 
-    if (id) {
-        useEffect(() => {
-            setLoading(true)
-            axiosClient.get(`/teams/${id}`)
+    useEffect(() => {
+        if (id) {
+            setLoading(true);
+            axiosClient
+                .get(`/teams/${id}`)
                 .then(({ data }) => {
-                    console.log(data)
-                    setLoading(false)
-                    setTeam(data)
-                    getPlayers()
-                    getUsers()
+                    console.log(data);
+                    setLoading(false);
+                    setTeam(data);
+                    getPlayers();
+                    getUsers();
                 })
                 .catch(() => {
-                    setLoading(false)
-                })
-        }, [])
-    }
+                    setLoading(false);
+                });
+        } else {
+            // En caso de que sea un equipo nuevo, puedes establecer un objeto vacío para el estado 'team'
+            setTeam({
+                name: '',
+                division: '',
+                id_user: '',
+            });
+        }
+    }, [id]);
 
     useEffect(() => {
         getBestPlayersCA();
-    }, [players]);
+    }, [players, team]);
 
     const getPlayers = () => {
         setLoading(true)
@@ -80,13 +89,22 @@ export default function TeamForm() {
         }
     };
 
+    const handleUserChange = (e) => {
+        const selectedUserId = e.target.value;
+        setTeam((prevTeam) => ({ ...prevTeam, id_user: parseInt(selectedUserId) }));
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         if (team.id) {
+            console.log(team)
+            setTeam({
+                ...team,
+                id_user: parseInt(idUser)
+            })
             axiosClient.put(`/teams/${team.id}`, team)
                 .then(() => {
                     setNotification('Equipo actualizado satisfactoriamente')
-                    console.log(team)
                     navigate('/teams')
                 })
                 .catch(err => {
@@ -129,7 +147,8 @@ export default function TeamForm() {
 
                 <form onSubmit={onSubmit}>
                     <input value={team.name} onChange={e => setTeam({ ...team, name: e.target.value })} placeholder="Nombre" type="text" />
-                    <select name="" id="" onClick={e => setTeam({ ...team, id_user: parseInt(e.target.value) })} value={team.id_user}>
+                    <select onChange={handleUserChange}>
+                        <option value=''></option>
                         {
                             users.map((u, index) => {
                                 return (
@@ -138,14 +157,14 @@ export default function TeamForm() {
                             })
                         }
                     </select>
-                    <input hidden value={team.id_user} onChange={e => setTeam({ ...team, id_user: e.target.value })} placeholder="Equipo" type="text" />
-
                     <span>División</span>
-                    <select name="" id="" onClick={e => setTeam({ ...team, division: e.target.value })} placeholder="Estado">
-                        <option value=''></option>
+                    <select onChange={e => setTeam({ ...team, division: e.target.value })} placeholder="Estado">
+                        <option value=' '></option>
                         <option value="Primera">Primera</option>
                         <option value="Segunda">Segunda</option>
                     </select>
+                    <button className="btn">Guardar cambios</button>
+                    <br />
                     <ul>
                         {players.map(p => (
                             <li key={p.id}><strong>Jugador: </strong> {p.name} - <strong>CA:</strong> {p.ca}</li>
@@ -156,8 +175,6 @@ export default function TeamForm() {
                             <p>Promedio de CA de los mejores 16 jugadores: <strong> {bestPlayersCA} </strong></p>
                         )}
                     </div>
-
-                    <button className="btn">Guardar cambios</button>
                 </form>
             </div>
         </>
