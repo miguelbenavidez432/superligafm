@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/singlebet', PlayerBetController::class);
     Route::apiResource('/clausula_rescision', RescissionController::class);
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
+    Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);

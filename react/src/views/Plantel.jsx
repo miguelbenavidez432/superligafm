@@ -16,6 +16,7 @@ export default function Plantel() {
     const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
     const [playersOver20Count, setPlayersOver20Count] = useState(0);
 
+
     useEffect(() => {
         getTeam()
         getPlayers()
@@ -30,11 +31,12 @@ export default function Plantel() {
     useEffect(() => {
         if (team) {
             getPlayers();
+            filterPlayersByTeam()
         }
     }, [team]);
 
     const cargarJugadores = () => {
-        getPlayers()
+        filterPlayersByTeam()
     }
 
     const countBlockedPlayers = () => {
@@ -65,13 +67,28 @@ export default function Plantel() {
         await axiosClient.get('/players')
             .then(({ data }) => {
                 setLoading(false)
-                const playersFiltered = data.data.filter((p) => p.id_team === team.id)
-                setPlayers(playersFiltered)
+                console.log(data)
+                setPlayers(data.data)
             })
             .catch(() => {
                 setLoading(false)
             })
     }
+
+    const filterPlayersByTeam = async () => {
+        if (team) {
+            try {
+                setLoading(true);
+                const response = await axiosClient.get(`/plantel`, {
+                    params: { id_team: team.id }
+                });
+                setPlayers(response.data.data);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+            }
+        }
+    };
 
     const getBestPlayersCA = () => {
         if (players.length > 0) {

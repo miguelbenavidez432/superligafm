@@ -28,6 +28,7 @@ export default function Players() {
                 setLoading(false)
                 setPlayers(data.data)
                 setTotalPages(data.meta.last_page);
+                console.log(data)
             })
             .catch(() => {
                 setLoading(false)
@@ -109,13 +110,13 @@ export default function Players() {
             </div>
             <br />
             <div>
-                    {currentPage > 1 && (
-                        <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
-                    )}
-                    {currentPage < totalPages && (
-                        <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
-                    )}
-                </div>
+                {currentPage > 1 && (
+                    <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
+                )}&nbsp;&nbsp;
+                {currentPage < totalPages && (
+                    <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
+                )}
+            </div>
             <div className="card animated fadeInDown">
                 <table>
                     <thead>
@@ -173,7 +174,7 @@ export default function Players() {
                         </tbody>
                     }
                 </table>
-                
+
             </div>
         </div>
     )

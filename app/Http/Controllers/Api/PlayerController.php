@@ -99,11 +99,23 @@ class PlayerController extends Controller
     }
 
     public function searchPlayers(Request $request)
-{
-    $name = $request->query('name');
+    {
+        $name = $request->query('name');
 
-    $players = Player::query()->where('name', 'LIKE', '%' . $name . '%')->get();
+        $players = Player::query()->where('name', 'LIKE', '%' . $name . '%')->get();
 
-    return PlayerResource::collection($players);
-}
+        return PlayerResource::collection($players);
+    }
+
+    public function filteredPlayers(Request $request)
+    {
+        $teamId = $request->input('id_team');
+
+        $players = Player::query()
+            ->where('id_team', $teamId)
+            ->orderBy('ca', 'desc')
+            ->get();
+
+        return PlayerResource::collection($players);
+    }
 }
