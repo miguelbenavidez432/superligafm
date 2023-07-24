@@ -19,7 +19,6 @@ export default function Plantel() {
 
     useEffect(() => {
         getTeam()
-        getPlayers()
     }, [])
 
     useEffect(() => {
@@ -30,7 +29,6 @@ export default function Plantel() {
 
     useEffect(() => {
         if (team) {
-            getPlayers();
             filterPlayersByTeam()
         }
     }, [team]);
@@ -160,7 +158,7 @@ export default function Plantel() {
                                     <td>{p.heavy_injured}</td>
                                    <td>{p.mvp}</td> */}
                                         <td>
-                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
+                                            <Link hidden className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                         </td>
                                     </tr>
                                 ))

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
+import Players from "./Players";
 
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
@@ -55,7 +56,7 @@ export default function PlayerForm() {
     const onSubmit = (e) => {
         e.preventDefault();
         if (players.status == 'liberado') {
-            setPlayers({ ...players, id_team: 62 });
+            setPlayers({ ...players, id_team: 61 });
         }
         if (players.id) {
             axiosClient.put(`/players/${players.id}`, players)

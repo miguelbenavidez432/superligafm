@@ -10,6 +10,7 @@ export default function Teams() {
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([])
+    
 
     useEffect(() => {
         getTeam();
@@ -22,6 +23,8 @@ export default function Teams() {
         getTeam()
         getUsers();
     }
+
+    
 
     const getTeam = async () => {
         setLoading(true)

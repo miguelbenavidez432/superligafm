@@ -10,11 +10,13 @@ export default function Users() {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const {setNotification} = useStateContext();
+    const { setNotification } = useStateContext();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         getUsers();
-    }, [])
+    }, [currentPage])
 
     const onDelete = (u) => {
         if (!window.confirm('Estás seguro que quieres borrar este usuario??')) {
@@ -34,16 +36,34 @@ export default function Users() {
             .then(({ data }) => {
                 setLoading(false)
                 setUsers(data.data)
+                setTotalPages(data.meta.last_page);
             })
             .catch(() => {
                 setLoading(false)
-            })}
+            })
+    }
+
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage((prevPage) => prevPage - 1);
+    };
 
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <h1>USUARIOS</h1>
                 <Link to='/users/new' className="btn-add">Nuevo Usuario</Link>
+            </div>
+            <div>
+                {currentPage > 1 && (
+                    <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
+                )}&nbsp;&nbsp;
+                {currentPage < totalPages && (
+                    <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
+                )}
             </div>
             <div className="card animated fadeInDown">
                 <table>

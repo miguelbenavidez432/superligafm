@@ -21,6 +21,8 @@ export default function TeamForm() {
     const [users, setUsers] = useState([]);
     const [idUser, setIdUser] = useState()
     const [bestPlayersCA, setBestPlayersCA] = useState(null);
+    const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
+    const [playersOver20Count, setPlayersOver20Count] = useState(0);
 
 
     useEffect(() => {
@@ -33,6 +35,8 @@ export default function TeamForm() {
                     setTeam(data);
                     getPlayers();
                     getUsers();
+                    countBlockedPlayers();
+                    countPlayersOver20();
                 })
                 .catch(() => {
                     setLoading(false);
@@ -63,6 +67,14 @@ export default function TeamForm() {
             })
     }
 
+    useEffect(() => {
+        if (team) {
+            filterPlayersByTeam()
+            countBlockedPlayers();
+            countPlayersOver20();
+        }
+    }, [team]);
+
     const getUsers = () => {
         setLoading(true)
         axiosClient.get('/users')
@@ -83,6 +95,16 @@ export default function TeamForm() {
                 bestPlayers.reduce((sum, player) => sum + player.ca, 0) / bestPlayers.length;
             setBestPlayersCA(averageCA);
         }
+    };
+
+    const countPlayersOver20 = () => {
+        const playersOver20 = players.filter((player) => player.age > 20);
+        setPlayersOver20Count(playersOver20.length);
+    };
+
+    const countBlockedPlayers = () => {
+        const blockedPlayers = players.filter((player) => player.status === "bloqueado");
+        setBlockedPlayersCount(blockedPlayers.length);
     };
 
     const handleUserChange = (e) => {
@@ -123,6 +145,21 @@ export default function TeamForm() {
         }
     }
 
+    const filterPlayersByTeam = async () => {
+        if (team) {
+            try {
+                setLoading(true);
+                const response = await axiosClient.get(`/plantel`, {
+                    params: { id_team: team.id }
+                });
+                setPlayers(response.data.data);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+            }
+        }
+    };
+
     return (
         <>
             {team.id && <h1>ACTUALIZAR A: {team.name}</h1>}
@@ -162,13 +199,20 @@ export default function TeamForm() {
                     <br />
                     <ul>
                         {players.map(p => (
-                            <li key={p.id}><strong>Jugador: </strong> {p.name} - <strong>CA:</strong> {p.ca}</li>
+                            <li key={p.id}><strong>Jugador:
+                            </strong> {p.name} -
+                                <strong>CA:</strong> {p.ca} -
+                                <strong>Edad:</strong> {p.age} -
+                                <strong>Estado: </strong> {p.status}
+                            </li>
                         ))}
                     </ul>
                     <div>
                         {bestPlayersCA !== null && (
                             <p>Promedio de CA de los mejores 16 jugadores: <strong> {bestPlayersCA} </strong></p>
                         )}
+                        <p>Cantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
+                        <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong> </p>
                     </div>
                 </form>
             </div>
