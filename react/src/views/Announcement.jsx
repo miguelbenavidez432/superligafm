@@ -56,9 +56,7 @@ export default function Announcement() {
 
     const handleIdEquipoChange = (event) => {
         const equipoId = event.target.value;
-        setSelectedEquipo(equipoId);
-        const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
-       
+        setSelectedEquipo(equipoId);       
     };
 
     const handleInputChange = (event) => {
@@ -130,7 +128,6 @@ export default function Announcement() {
             });
     }
 
-
     return (
         <>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
@@ -150,7 +147,7 @@ export default function Announcement() {
                     })
                 }
             </select>
-            <input value={selectedEquipo} placeholder="Equipo" type="text" />
+            <input hidden value={selectedEquipo} placeholder="Equipo" type="text" />
 
             {selectedEquipo &&
                 (

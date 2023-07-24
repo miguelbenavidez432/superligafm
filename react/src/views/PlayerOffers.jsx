@@ -85,7 +85,7 @@ const PlayerOffers = () => {
     const handleConfirmOffer = async (offerId) => {
         const oferta = offers.find(o => o.id === offerId)
         const teamId = teams.find(t => t.id === oferta.id_team)
-        
+
         if (teamId) {
             const getUser = users.find(u => u.id === teamId.id_user)
             const getUserCreated = users.find(u => u.id === oferta.created_by)
@@ -150,8 +150,10 @@ const PlayerOffers = () => {
                                 <span>Usuario: {userNameToShow}</span>
                                 <br />
                                 <span>Valor total: {oferta.total_value}</span>
-                                <br />
-                                <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
+                                <br />{
+                                    user.rol === 'Admin' || user.rol === 'Organizador' &&
+                                    <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
+                                }
                             </li>
                         )
                     })
