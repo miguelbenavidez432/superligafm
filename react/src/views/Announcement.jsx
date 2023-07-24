@@ -31,8 +31,6 @@ export default function Announcement() {
     }, [])
 
     useEffect(() => {
-        console.log(playerToBlock);
-        console.log(playerTransfered);
     }, [playerToBlock, playerTransfered]);
 
     const getTeam = () => {
@@ -60,7 +58,7 @@ export default function Announcement() {
         const equipoId = event.target.value;
         setSelectedEquipo(equipoId);
         const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
-        console.log(jugadoresEquipo);
+       
     };
 
     const handleInputChange = (event) => {
@@ -93,8 +91,6 @@ export default function Announcement() {
             status: 'restringido'
         };
         setPlayerToBlock([...playerToBlock, datosJugadorEquipo]);
-        console.log(playerTransfered);
-        console.log(playerToBlock);
     }
 
     const onSubmit = (e) => {
@@ -102,7 +98,6 @@ export default function Announcement() {
 
         axiosClient.post('/transfer', { data: playerToBlock })
             .then((response) => {
-                console.log(response.data);
             })
             .catch(error => {
                 const response = error.response;
@@ -115,7 +110,6 @@ export default function Announcement() {
             other_players: JSON.stringify(playerTransfered.other_players)
         })
             .then((response) => {
-                console.log(response.data);
                 setNotification('Ejecución de claúsula enviada')
                 setPlayerTransfered({
                     id_player: '',

@@ -53,7 +53,6 @@ export default function Plantel() {
             .then(({ data }) => {
                 setLoading(false)
                 const teamFilter = data.data.find((t) => t.id_user === user.id)
-                console.log(teamFilter)
                 setTeam(teamFilter)
             })
             .catch(() => {
@@ -67,7 +66,6 @@ export default function Plantel() {
             .then(({ data }) => {
                 setLoading(false)
                 const playersFiltered = data.data.filter((p) => p.id_team === team.id)
-                console.log(playersFiltered)
                 setPlayers(playersFiltered)
             })
             .catch(() => {

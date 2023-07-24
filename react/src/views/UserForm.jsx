@@ -29,7 +29,6 @@ export default function UserForm() {
             setLoading(true)
             axiosClient.get(`/users/${id}`)
                 .then(({ data }) => {
-                    console.log(data)
                     setLoading(false)
                     setUser(data)
                 })

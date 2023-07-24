@@ -72,7 +72,6 @@ const AuctionConfirmation = () => {
     const getUsers = () => {
         axiosClient.get('/users')
             .then(({ data }) => {
-                console.log(data)
                 setUsers(data.data)
             })
             .catch(() => {
@@ -96,7 +95,6 @@ const AuctionConfirmation = () => {
     const onSubmit = () => {
         const filteredTeam = leagueTeams.find(t => t.id === secondTeam)
         const userFiltered = users.find(u => u.id === filteredTeam.id_user)
-        console.log(userFiltered)
         setUserProfit({
             ...userProfit,
             id: userFiltered.id,

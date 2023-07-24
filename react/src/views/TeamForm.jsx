@@ -29,7 +29,6 @@ export default function TeamForm() {
             axiosClient
                 .get(`/teams/${id}`)
                 .then(({ data }) => {
-                    console.log(data);
                     setLoading(false);
                     setTeam(data);
                     getPlayers();
@@ -39,7 +38,6 @@ export default function TeamForm() {
                     setLoading(false);
                 });
         } else {
-            // En caso de que sea un equipo nuevo, puedes establecer un objeto vacío para el estado 'team'
             setTeam({
                 name: '',
                 division: '',
@@ -58,7 +56,6 @@ export default function TeamForm() {
             .then(({ data }) => {
                 setLoading(false)
                 const playersFiltered = data.data.filter((p) => p.id_team === parseInt(id))
-                console.log(playersFiltered)
                 setPlayers(playersFiltered)
             })
             .catch(() => {
@@ -71,7 +68,6 @@ export default function TeamForm() {
         axiosClient.get('/users')
             .then(({ data }) => {
                 setLoading(false)
-                console.log(data)
                 setUsers(data.data)
             })
             .catch(() => {
@@ -97,7 +93,6 @@ export default function TeamForm() {
     const onSubmit = (e) => {
         e.preventDefault();
         if (team.id) {
-            console.log(team)
             setTeam({
                 ...team,
                 id_user: parseInt(idUser)

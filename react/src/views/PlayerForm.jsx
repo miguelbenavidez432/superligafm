@@ -30,7 +30,6 @@ export default function PlayerForm() {
             setLoading(true)
             axiosClient.get(`/players/${id}`)
                 .then(({ data }) => {
-                    console.log(data)
                     setLoading(false)
                     setPlayers(data)
                     getTeam()
@@ -57,7 +56,6 @@ export default function PlayerForm() {
         e.preventDefault();
         if (players.status == 'liberado') {
             setPlayers({ ...players, id_team: 62 });
-            console.log(players)
         }
         if (players.id) {
             axiosClient.put(`/players/${players.id}`, players)

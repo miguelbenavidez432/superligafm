@@ -44,7 +44,6 @@ export default function TransferForm() {
         axiosClient.get('/teams')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
-                console.log(teamFilter)
                 setTeams(teamFilter)
             })
             .catch(() => {
@@ -76,7 +75,6 @@ export default function TransferForm() {
         const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
         setSelectedJugador('');
 
-        console.log(jugadoresEquipo);
     };
 
     const handleEquipoChange = (event) => {
@@ -86,7 +84,6 @@ export default function TransferForm() {
         const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
         setSelectedJugador('');
         
-        console.log(jugadoresEquipo);
     };
 
     const handleJugadorChange = (event) => {
@@ -119,7 +116,6 @@ export default function TransferForm() {
         })
         setDatosActualizados([...datosActualizados, datosJugadorEquipo]);
 
-        console.log(datosActualizados);
     };
 
     const sendInfo = (e) => {
@@ -127,8 +123,6 @@ export default function TransferForm() {
 
         axiosClient.post('/transfer', { data: datosActualizados })
             .then((response) => {
-                console.log(response.data);
-
             })
             .catch(error => {
                 const response = error.response;
@@ -141,7 +135,6 @@ export default function TransferForm() {
         })
         axiosClient.post('/traspasos', transfer)
             .then((response) => {
-                console.log(response.data);
                 setNotification('Transferencia realizada correctamente')
                 navigate('/transfer')
                 setDatosActualizados([])

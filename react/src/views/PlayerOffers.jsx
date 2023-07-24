@@ -42,7 +42,6 @@ const PlayerOffers = () => {
     useEffect(() => {
         axiosClient.get(`/clausulas/${id}`)
             .then(({ data }) => {
-                console.log(data);
                 setPlayer(data.player); 
                 setOffers(data.offers); 
                 checkOffersAvailability(data.offers);
@@ -52,8 +51,6 @@ const PlayerOffers = () => {
             });
         getUsers();
         getTeam();
-        console.log("userProfit actualizado:", userProfit);
-        console.log("userProfit actualizado:", userCost)
     }, [id, userProfit, userCost]);
 
     const getUsers = () => {
@@ -87,9 +84,8 @@ const PlayerOffers = () => {
 
     const handleConfirmOffer = async (offerId) => {
         const oferta = offers.find(o => o.id === offerId)
-        console.log(oferta)
-
         const teamId = teams.find(t => t.id === oferta.id_team)
+        
         if (teamId) {
             const getUser = users.find(u => u.id === teamId.id_user)
             const getUserCreated = users.find(u => u.id === oferta.created_by)

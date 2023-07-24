@@ -12,7 +12,6 @@ const OffersList = () => {
     useEffect(() => {
         axiosClient.get("/clausula_rescision")
             .then(({ data }) => {
-                console.log(data)
                 setOffers(data.data);
             })
             .catch((error) => {
@@ -26,7 +25,6 @@ const OffersList = () => {
         axiosClient.get('/users')
             .then(({ data }) => {
                 setLoading(false);
-                console.log(data);
                 setUsers(data.data);
             })
             .catch(() => {

@@ -26,7 +26,6 @@ export default function Players() {
         axiosClient.get(`/players?page=${currentPage}&name=${searchName}`)
             .then(({ data }) => {
                 setLoading(false)
-                console.log(data)
                 setPlayers(data.data)
                 setTotalPages(data.meta.last_page);
             })
@@ -40,7 +39,6 @@ export default function Players() {
         await axiosClient.get(`/playername?name=${searchName}`)
             .then(({ data }) => {
                 setLoading(false);
-                console.log(data);
                 setPlayers(data.data);
             })
             .catch(() => {
