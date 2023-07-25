@@ -58,4 +58,6 @@ class TeamController extends Controller
         $team->delete();
         return response("", 204);
     }
+
+    
 }

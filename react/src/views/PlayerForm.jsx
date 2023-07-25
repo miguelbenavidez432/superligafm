@@ -109,7 +109,7 @@ export default function PlayerForm() {
                 {!loading && user.rol === 'Admin' || user.rol === 'Organizador' ?
                     <form onSubmit={onSubmit}>
                         <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
-                        <select name="" id="" onChange={e => setPlayers({ ...players, id_team: e.target.value })}>
+                        <select name="" id="" onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}>
                             {
                                 team.map((t, index) => {
                                     return (

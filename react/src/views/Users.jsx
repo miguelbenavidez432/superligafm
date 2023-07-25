@@ -99,7 +99,7 @@ export default function Users() {
                                         <th>{u.profits}</th>
                                         <th>{u.created_at}</th>
                                         {
-                                            user.rol ===  'Admin' &&
+                                            user.rol ===  'Admin' || user.id === u.id &&
                                             <th>
                                             <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>
                                             &nbsp;

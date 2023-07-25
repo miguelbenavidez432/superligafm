@@ -13,6 +13,7 @@ const AuctionConfirmation = () => {
     const [leagueTeams, setLeagueTeams] = useState([]);
     const [otherTeams, setOtherTeams] = useState([]);
     const [selectedPlayer, setSelectedPlayer] = useState({
+        id: '',
         name: '',
         id_team: '',
         status: '',
@@ -36,7 +37,7 @@ const AuctionConfirmation = () => {
         getTeam()
         getPlayers()
         getUsers()
-    }, [selectedTeam])
+    }, [selectedTeam, userProfit])
 
     useEffect(() => {
         if (otherTeams) {
@@ -44,7 +45,6 @@ const AuctionConfirmation = () => {
         }
     }, [otherTeams]);
 
-    
 
     const getTeam = () => {
         axiosClient.get('/teams')
@@ -82,41 +82,58 @@ const AuctionConfirmation = () => {
         const playerSelected = players.find(p => p.id === parseInt(e.target.value))
         setSelectedPlayer({
             ...selectedPlayer,
+            id: playerSelected.id,
             name: playerSelected.name,
             status: 'bloqueado',
             ca: playerSelected.ca,
             pa: playerSelected.pa,
             age: playerSelected.age,
-            value: playerSelected.value
+            value: playerSelected.value,
+            id_team: parseInt(secondTeam)
         })
 
-    }
-    
+        const filteredTeam = leagueTeams.find(t => t.id === parseInt(secondTeam))
+        const userFiltered = users.find(u => u.id === parseInt(filteredTeam.id_user))
+        console.log(userFiltered)
 
-    const onSubmit = () => {
-        const filteredTeam = leagueTeams.find(t => t.id === secondTeam)
-        const userFiltered = users.find(u => u.id === filteredTeam.id_user)
-        setUserProfit({
+        const updatedUserFiltered = {
             ...userProfit,
             id: userFiltered.id,
             name: userFiltered.name,
             rol: userFiltered.rol,
             email: userFiltered.email,
-            profits: userFiltered.profits + selectedPlayer.value
-        })
-        setSelectedPlayer({
+            profits: userFiltered.profits - selectedPlayer.value
+        }
+
+        setUserProfit(updatedUserFiltered)
+
+    }
+
+    const onSubmit = async () => {
+
+
+        const updatedSelectedPlayer = {
             ...selectedPlayer,
             id_team: parseInt(secondTeam)
-        })
-        axiosClient.put(`/users/${userFiltered.id}`, userProfit);
-        axiosClient.put(`/players/${selectedPlayer.id}`, selectedPlayer)
-            .then(() => {
-                setNotification('Subasta actualizada')
-                navigate('/plantel')
-            });
+        }
 
-
-
+        try {
+            setSelectedPlayer(updatedSelectedPlayer)
+            console.log(userProfit)
+            console.log(selectedPlayer)
+            await axiosClient.put(`/users/${userProfit.id}`, userProfit);
+            await axiosClient.put(`/players/${selectedPlayer.id}`, selectedPlayer)
+                .then(() => {
+                    setNotification('Subasta actualizada')
+                    navigate('/plantel')
+                });
+        } catch (error) {
+            setNotification("Error al confirmar la oferta:", error);
+            const response = error.response;
+            if (response && response.status === 422) {
+                console.log(response.data.errors);
+            }
+        }
     }
 
     return (
@@ -146,7 +163,7 @@ const AuctionConfirmation = () => {
                     ))}
             </select>
 
-            <input type="number" value={selectedPlayer.value} onChange={e => setSelectedPlayer((prevSelectedPlayer)=>({...prevSelectedPlayer, value: e.target.value}))} />
+            <input type="number" value={selectedPlayer.value} onChange={e => setSelectedPlayer((prevSelectedPlayer) => ({ ...prevSelectedPlayer, value: e.target.value }))} />
 
             <button type="submit" onClick={onSubmit} className="btn-add" > Confirmar Subasta</button>
 

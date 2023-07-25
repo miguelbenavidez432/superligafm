@@ -8,7 +8,7 @@ import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
 
 export default function UserForm() {
-    const [user, setUser] = useState({
+    const [users, setUsers] = useState({
         id: null,
         name: '',
         email: '',
@@ -20,7 +20,7 @@ export default function UserForm() {
     });
     const { id } = useParams();
     const navigate = useNavigate();
-    const { setNotification } = useStateContext();
+    const { user, setNotification } = useStateContext();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
 
@@ -30,7 +30,7 @@ export default function UserForm() {
             axiosClient.get(`/users/${id}`)
                 .then(({ data }) => {
                     setLoading(false)
-                    setUser(data)
+                    setUsers(data)
                 })
                 .catch(() => {
                     setLoading(false)
@@ -40,8 +40,8 @@ export default function UserForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if (user.id) {
-            axiosClient.put(`/users/${user.id}`, user)
+        if (users.id) {
+            axiosClient.put(`/users/${users.id}`, users)
                 .then(() => {
                     setNotification('Usuario actualizado satisfactoriamente')
                     navigate('/users')
@@ -68,8 +68,8 @@ export default function UserForm() {
     }
     return (
         <>
-            {user.id && <h1>ACTUALIZAR USUARIO: {user.name}</h1>}
-            {!user.id && <h1>NUEVO USUARIO</h1>}
+            {users.id && <h1>ACTUALIZAR USUARIO: {users.name}</h1>}
+            {!users.id && <h1>NUEVO USUARIO</h1>}
 
             <div className="card animated fadeInDown">
                 {loading &&
@@ -84,21 +84,32 @@ export default function UserForm() {
                 }
                 {!loading &&
                     <form onSubmit={onSubmit}>
-                        <input value={user.name} onChange={e => setUser({ ...user, name: e.target.value })} placeholder="Nombre" />
-                        <input value={user.email} onChange={e => setUser({ ...user, email: e.target.value })} placeholder="Email" type="email" />
-                        <select name="" id="" onClick={e => setUser({ ...user, rol: e.target.value })}>
-                            <option >{user.rol}</option>
-                            <option value="visitante">Otro</option>
-                            <option value="Manager Primera">Manager Primera</option>
-                            <option value="Manager Segunda">Manager Segunda</option>
-                            <option value="En lista de espera">Lista de espera</option>
-                        </select>
-                        <input hidden value={user.rol} onChange={e => setUser({ ...user, rol: e.target.value })} placeholder="Email" />
-                        <input value={user.profits} onChange={e => setUser({ ...user, profits: e.target.value })} placeholder="Ganancias" />
-                        <input value={user.costs} onChange={e => setUser({ ...user, costs: e.target.value })} placeholder="Gastos" />
-                        <input onChange={e => setUser({ ...user, password: e.target.value })} placeholder="Password" type="password" autoComplete="off"/>
-                        <input onChange={e => setUser({ ...user, password_confirmation: e.target.value })} placeholder="Confirmar password" type="password" />
-                        <button className="btn">Guardar cambios</button>
+                        {user.rol === 'Admin' ?
+                            (<>
+                                <input value={users.name} onChange={e => setUsers({ ...users, name: e.target.value })} placeholder="Nombre" />
+                                <input value={users.email} onChange={e => setUsers({ ...users, email: e.target.value })} placeholder="Email" type="email" />
+                                <select name="" id="" onClick={e => setUsers({ ...users, rol: e.target.value })}>
+                                    <option >{users.rol}</option>
+                                    <option value="visitante">Otro</option>
+                                    <option value="Manager Primera">Manager Primera</option>
+                                    <option value="Manager Segunda">Manager Segunda</option>
+                                    <option value="En lista de espera">Lista de espera</option>
+                                </select>
+                                <input hidden value={users.rol} onChange={e => setUsers({ ...users, rol: e.target.value })} placeholder="Email" />
+                                <input value={users.profits} onChange={e => setUsers({ ...users, profits: e.target.value })} placeholder="Ganancias" />
+                                <input value={users.costs} onChange={e => setUsers({ ...users, costs: e.target.value })} placeholder="Gastos" />
+                                <input onChange={e => setUsers({ ...users, password: e.target.value })} placeholder="Password" type="password" autoComplete="off" />
+                                <input onChange={e => setUsers({ ...users, password_confirmation: e.target.value })} placeholder="Confirmar password" type="password" />
+                                <button className="btn">Guardar cambios</button>
+                            </>
+                            )
+                            : <>
+                                <input onChange={e => setUsers({ ...users, password: e.target.value })} placeholder="Password" type="password" autoComplete="off" />
+                                <input onChange={e => setUsers({ ...users, password_confirmation: e.target.value })} placeholder="Confirmar password" type="password" />
+                                <button className="btn">Guardar cambios</button>
+                            </>
+                        }
+
                     </form>
                 }
             </div>

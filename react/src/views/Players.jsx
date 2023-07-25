@@ -157,7 +157,7 @@ export default function Players() {
                                             <td>{p.pa}</td>
                                             <td>{teamNameToShow}</td>
                                             <td>{p.value}</td>
-                                            <td>{p.status}</td>
+                                            <td>{p.status === 'restringido' ? '' : p.status}</td>
                                             {
                                                 user.rol === 'Admin' &&
                                                 <td>
