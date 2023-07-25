@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ export default function Announcement() {
     const [selectedEquipo, setSelectedEquipo] = useState()
     const [playerToBlock, setPlayerToBlock] = useState([])
     const [errors, setErrors] = useState(null);
+    const [teamPlayers, setTeamPlayers] = useState([])
     const [playerTransfered, setPlayerTransfered] = useState({
         id_player: '',
         name: '',
@@ -27,11 +29,19 @@ export default function Announcement() {
 
     useEffect(() => {
         getTeam()
-        getPlayers()
+        filterPlayersByTeam()
+        filterPlayersByUser()
     }, [])
 
     useEffect(() => {
     }, [playerToBlock, playerTransfered]);
+
+    useEffect(() => {
+        if (selectedEquipo) {
+            filterPlayersByTeam()
+            filterPlayersByUser()
+        }
+    }, [selectedEquipo]);
 
     const getTeam = () => {
         axiosClient.get('/teams')
@@ -45,18 +55,18 @@ export default function Announcement() {
             })
     }
 
-    const getPlayers = () => {
-        axiosClient.get('/players')
-            .then(({ data }) => {
-                setPlayers(data.data)
-            })
-            .catch(() => {
-            })
-    }
+    // const getPlayers = () => {
+    //     axiosClient.get('/players')
+    //         .then(({ data }) => {
+    //             setPlayers(data.data)
+    //         })
+    //         .catch(() => {
+    //         })
+    // }
 
     const handleIdEquipoChange = (event) => {
         const equipoId = event.target.value;
-        setSelectedEquipo(equipoId);       
+        setSelectedEquipo(equipoId);
     };
 
     const handleInputChange = (event) => {
@@ -90,6 +100,30 @@ export default function Announcement() {
         };
         setPlayerToBlock([...playerToBlock, datosJugadorEquipo]);
     }
+
+    const filterPlayersByTeam = async () => {
+        if (team) {
+            try {
+                const response = await axiosClient.get(`/plantel`, {
+                    params: { id_team: parseInt(selectedEquipo) }
+                });
+                setPlayers(response.data.data);
+            } catch (error) {
+            }
+        }
+    };
+
+    const filterPlayersByUser = async () => {
+        if (user && filteredTeam.length > 0) {
+            try {
+                const response = await axiosClient.get(`/plantel`, {
+                    params: { id_team: parseInt(filteredTeam[0].id) }
+                });
+                setTeamPlayers(response.data.data);
+            } catch (error) {
+            }
+        }
+    };
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -197,8 +231,7 @@ export default function Announcement() {
                             <select
                                 onChange={handlerPlayerAdd}>
                                 <option value=""> Selecciona un jugador a ofrecer</option>
-                                {players
-                                    .filter(jugador => jugador.id_team === filteredTeam[0].id)
+                                {teamPlayers
                                     .map(p => (
                                         <option value={p.id}
                                             key={p.id}>{p.name}</option>

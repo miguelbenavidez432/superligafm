@@ -91,6 +91,7 @@ const AuctionConfirmation = () => {
         })
 
     }
+    
 
     const onSubmit = () => {
         const filteredTeam = leagueTeams.find(t => t.id === secondTeam)

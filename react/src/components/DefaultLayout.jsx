@@ -37,46 +37,46 @@ export default function DefaultLayout() {
             <aside className="text-white">
                 {
                     user.rol === 'Admin' || user.rol === 'Organizador' ?
-                    <div className="flex flex-col  text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
-                        <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
-                        <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
-                        <Link className="mt-4 hover:text-base" to='/subastas'>Subastas</Link>
-                        <Link className="mt-4 hover:text-base" to='/users'>Users</Link>
-                        <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
-                        <Link className="mt-4 hover:text-base" to='/teams'>Equipos</Link>
-                        <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
-                        <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
-                        <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
-                        <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
-                        <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
-                    </div>
-                    :
-                    user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ? 
-                    <div className="flex flex-col text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
-                        <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
-                        <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
-                        <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
-                        <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
-                        <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
-                        <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
-                        <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
-                        <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
-                    </div>
-                    :user.rol === 'En lista de espera' || user.rol === 'Visitante' &&
-                    <div className="flex flex-col text-white">
-                        <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
-                        <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
-                        <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
-                        <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
-                    </div>
+                        <div className="flex flex-col  text-white">
+                            <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                            <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
+                            <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
+                            <Link className="mt-4 hover:text-base" to='/subastas'>Subastas</Link>
+                            <Link className="mt-4 hover:text-base" to='/users'>Users</Link>
+                            <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
+                            <Link className="mt-4 hover:text-base" to='/teams'>Equipos</Link>
+                            <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
+                            <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
+                            <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
+                            <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
+                            <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
+                        </div>
+                        :
+                        user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ?
+                            <div className="flex flex-col text-white">
+                                <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                                <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
+                                <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
+                                <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
+                                <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
+                                <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
+                                <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
+                                <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
+                                <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
+                            </div>
+                            : user.rol === 'En lista de espera' || user.rol === 'Visitante' &&
+                            <div className="flex flex-col text-white">
+                                <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                                <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
+                                <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
+                                <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
+                            </div>
                 }
             </aside>
             <div className="content">
                 <header className="lg:flex lg:items-bottom lg:justify-between">
                     <div>
-                        Header
+                        <a href="http://mpago.la/2NzBSxx" className="btn-edit">Aportar a la Superliga FM</a>
                     </div>
                     <div className="flex min-h-full flex-3 flex-row justify-center px-3 py-8 lg:px-8">
                         <span className="mx-4 text-justify my-3"> {user.name}</span>

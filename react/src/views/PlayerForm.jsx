@@ -39,7 +39,12 @@ export default function PlayerForm() {
                     setLoading(false)
                 })
         }, [])
+    }else{
+        useEffect(() => {
+            getTeam()
+        },[])
     }
+
 
     const getTeam = () => {
         setLoading(true)
@@ -114,7 +119,7 @@ export default function PlayerForm() {
                             }
                         </select>
                         <span>Estado</span>
-                        <select name="" id="" onChange={e => e.target.value === 'liberado'? setPlayers({ ...players, status: e.target.value, id_team: 62 }) : setPlayers({ ...players, status: e.target.value})} placeholder="Estado">
+                        <select name="" id="" onChange={e => e.target.value === 'liberado' ? setPlayers({ ...players, status: e.target.value, id_team: 61 }) : setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
                             <option value=''></option>
                             <option value="liberado">Liberado</option>
                             <option value="bloqueado">Bloqueado</option>

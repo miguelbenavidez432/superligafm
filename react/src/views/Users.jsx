@@ -10,7 +10,7 @@ export default function Users() {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { setNotification } = useStateContext();
+    const { user, setNotification } = useStateContext();
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -98,11 +98,13 @@ export default function Users() {
                                         <th>{u.rol}</th>
                                         <th>{u.profits}</th>
                                         <th>{u.created_at}</th>
-                                        <th>
+                                        {
+                                            user.rol ===  'Admin' &&
+                                            <th>
                                             <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>
                                             &nbsp;
                                             <button onClick={e => onDelete(u)} className="btn-delete">Borrar</button>
-                                        </th>
+                                        </th>}
                                     </tr>
                                 ))}
                         </tbody>

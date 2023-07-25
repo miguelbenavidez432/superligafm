@@ -83,7 +83,7 @@ const OffersList = () => {
                                         <th >{oferta.name}</th>
                                         <th>{isOfferAvailable ? oferta.value : '??'}</th>
                                         <th>{isOfferAvailable ? oferta.other_players : '??'}</th>
-                                        <th>?</th>
+                                        <th>{isOfferAvailable ? oferta.total_value : '??'}</th>
                                         <th>{userNameToShow}</th>
                                         <th>{formattedDate}</th>
                                         <th className="mt-1">

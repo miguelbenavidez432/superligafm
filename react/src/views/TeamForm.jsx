@@ -35,8 +35,7 @@ export default function TeamForm() {
                     setTeam(data);
                     getPlayers();
                     getUsers();
-                    countBlockedPlayers();
-                    countPlayersOver20();
+                    filterPlayersByTeam()
                 })
                 .catch(() => {
                     setLoading(false);

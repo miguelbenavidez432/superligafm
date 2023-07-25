@@ -60,19 +60,6 @@ export default function Plantel() {
             })
     }
 
-    const getPlayers = async () => {
-        setLoading(true)
-        await axiosClient.get('/players')
-            .then(({ data }) => {
-                setLoading(false)
-                console.log(data)
-                setPlayers(data.data)
-            })
-            .catch(() => {
-                setLoading(false)
-            })
-    }
-
     const filterPlayersByTeam = async () => {
         if (team) {
             try {
