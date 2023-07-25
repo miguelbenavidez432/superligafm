@@ -137,7 +137,7 @@ const AuctionConfirmation = () => {
     }
 
     return (
-        <div>
+        <div className="card animated fadeInDown">
             <label htmlFor="equipo">Seleccionar equipo:</label>
             <select id="equipo" onChange={e => setSelectedTeam(parseInt(e.target.value))}>
                 <option value="">Seleccione un equipo del jugador</option>

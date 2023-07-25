@@ -8,6 +8,7 @@ const OffersList = () => {
     const [offers, setOffers] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [teams, setTeams] = useState([])
 
     useEffect(() => {
         axiosClient.get("/clausula_rescision")
@@ -18,7 +19,20 @@ const OffersList = () => {
             });
 
         getUsers();
+        getTeam()
     }, []);
+
+    const getTeam = async () => {
+        setLoading(true)
+        await axiosClient.get('/teams')
+            .then(({ data }) => {
+                const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
+                setTeams(teamFilter)
+            })
+            .catch(() => {
+                setLoading(false)
+            })
+    }
 
     const getUsers = () => {
         setLoading(true);
@@ -63,6 +77,7 @@ const OffersList = () => {
                     <thead>
                         <tr>
                             <th>Jugador</th>
+                            <th>Equipo</th>
                             <th>Valor</th>
                             <th>Valor extra</th>
                             <th>Valor Total</th>
@@ -76,11 +91,14 @@ const OffersList = () => {
                             {offers.map((oferta) => {
                                 const userName = users.find(u => u.id === oferta.created_by);
                                 const isOfferAvailable = checkOffersAvailability(oferta.created_at);
+                                const teamName = teams.find(t => t.id === oferta.id_team)
                                 const userNameToShow = userName ? userName.name : "Usuario no encontrado";
+                                const teamNameToShow = teamName ? teamName.name : " ";
                                 const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
                                 return (
                                     <tr key={oferta.id}>
                                         <th >{oferta.name}</th>
+                                        <th >{teamNameToShow}</th>
                                         <th>{isOfferAvailable ? oferta.value : '??'}</th>
                                         <th>{isOfferAvailable ? oferta.other_players : '??'}</th>
                                         <th>{isOfferAvailable ? oferta.total_value : '??'}</th>

@@ -19,7 +19,7 @@ class RescissionController extends Controller
     public function index()
     {
         return RescissionResource::collection(
-            Rescission::query()->orderBy('created_at', 'asc')->paginate(50)
+            Rescission::query()->orderBy('created_at', 'asc')->paginate(500)
         );
     }
 

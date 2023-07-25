@@ -99,12 +99,22 @@ export default function Users() {
                                         <th>{u.profits}</th>
                                         <th>{u.created_at}</th>
                                         {
-                                            user.rol ===  'Admin' || user.id === u.id &&
-                                            <th>
-                                            <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>
-                                            &nbsp;
-                                            <button onClick={e => onDelete(u)} className="btn-delete">Borrar</button>
-                                        </th>}
+                                            user.rol === 'Admin' ?
+                                                (<>
+                                                    <th>
+                                                        <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>
+                                                        &nbsp;
+                                                        <button onClick={e => onDelete(u)} className="btn-delete">Borrar</button>
+                                                    </th>
+                                                </>
+                                                ) :
+                                                user.id === u.id  &&
+                                                <th>
+                                                    <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>
+                                                    &nbsp;
+                                                    <button onClick={e => onDelete(u)} className="btn-delete">Borrar</button>
+                                                </th>
+                                        }
                                     </tr>
                                 ))}
                         </tbody>

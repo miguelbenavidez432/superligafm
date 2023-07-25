@@ -31,7 +31,7 @@ export default function Announcement() {
         getTeam()
         filterPlayersByTeam()
         filterPlayersByUser()
-    }, [])
+    }, [selectedEquipo])
 
     useEffect(() => {
     }, [playerToBlock, playerTransfered]);
@@ -55,15 +55,6 @@ export default function Announcement() {
             })
     }
 
-    // const getPlayers = () => {
-    //     axiosClient.get('/players')
-    //         .then(({ data }) => {
-    //             setPlayers(data.data)
-    //         })
-    //         .catch(() => {
-    //         })
-    // }
-
     const handleIdEquipoChange = (event) => {
         const equipoId = event.target.value;
         setSelectedEquipo(equipoId);
@@ -80,7 +71,7 @@ export default function Announcement() {
 
     const handlerPlayerAdd = (e) => {
         const newIdPlayer = parseInt(e.target.value);
-        const playerData = players.find(p => p.id === newIdPlayer)
+        const playerData = teamPlayers.find(p => p.id === newIdPlayer)
         setPlayerTransfered({
             ...playerTransfered,
             other_players: [...playerTransfered.other_players, playerData.name],
@@ -164,95 +155,97 @@ export default function Announcement() {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <div>Ejecución de clausula de rescición</div>
+            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }} >
+                <div><strong>Ejecución de clausula de rescición</strong></div>
             </div>
             <br />
-            <select id="equipo"
-                value={team.id}
-                onChange={handleIdEquipoChange}
-                onClick={e => setPlayerTransfered({ ...playerTransfered, id_team: parseInt(e.target.value) })}>
-                <option value=""></option>
-                {
-                    team.map((t, index) => {
-                        return (
-                            <option value={t.id} key={index}>{t.name}</option>
-                        )
-                    })
-                }
-            </select>
-            <input hidden value={selectedEquipo} placeholder="Equipo" type="text" />
+            <div className="card animated fadeInDown">
+                <select id="equipo"
+                    value={team.id}
+                    onChange={handleIdEquipoChange}
+                    onClick={e => setPlayerTransfered({ ...playerTransfered, id_team: parseInt(e.target.value) })}>
+                    <option value=""></option>
+                    {
+                        team.map((t, index) => {
+                            return (
+                                <option value={t.id} key={index}>{t.name}</option>
+                            )
+                        })
+                    }
+                </select>
+                <input hidden value={selectedEquipo} placeholder="Equipo" type="text" />
 
-            {selectedEquipo &&
-                (
-                    <form action="" onSubmit={onSubmit}>
-                        <div>
-                            <br />
-                            <label htmlFor="jugador">Seleccionar jugador:</label>
-                            <select
-                                onChange={e => {
-                                    const selectedPlayerId = parseInt(e.target.value);
-                                    const selectedPlayer = players.find(
-                                        jugador => jugador.id === selectedPlayerId
-                                    );
-                                    setPlayerTransfered({
-                                        ...playerTransfered,
-                                        id_player: parseInt(selectedPlayer.id),
-                                        name: selectedPlayer.name,
-                                        value: selectedPlayer.value
-                                    });
-                                    setInputValue(selectedPlayer.value)
-                                }}>
-                                <option value="">Seleccione un jugador</option>
-                                {players
-                                    .filter(jugador =>
-                                        jugador.id_team.toString() === selectedEquipo &&
-                                        jugador.status !== 'bloqueado' &&
-                                        jugador.status !== 'restringido')
-                                    .map(jugador => (
-                                        <option key={jugador.id}
-                                            value={jugador.id}
-                                        >{jugador.name}</option>
-                                    ))}
-                            </select>
-                            <input
-                                type="range"
-                                min={inputValue}
-                                max={inputValue * 1.75}
-                                step="any"
-                                onChange={handleInputChange}
-                                value={playerTransfered.value}
-                            />
-                            <br />
-                            {playerTransfered.value}
-                            <br />
-                            <span><strong>Determinar primero el valor a pagar en dinero y luego los jugadores a agregar
-                                En caso de no hacerlo asì puede ocurrir un error que los OBLIGUE a  pagar más como multa por los obedecer esta indicación</strong></span>
-                            <select
-                                onChange={handlerPlayerAdd}>
-                                <option value=""> Selecciona un jugador a ofrecer</option>
-                                {teamPlayers
-                                    .map(p => (
-                                        <option value={p.id}
-                                            key={p.id}>{p.name}</option>
-                                    ))}
-                            </select>
-                        </div>
+                {selectedEquipo &&
+                    (
+                        <form action="" onSubmit={onSubmit}>
+                            <div>
+                                <br />
+                                <label htmlFor="jugador">Seleccionar jugador:</label>
+                                <select
+                                    onChange={e => {
+                                        const selectedPlayerId = parseInt(e.target.value);
+                                        const selectedPlayer = players.find(
+                                            jugador => jugador.id === selectedPlayerId
+                                        );
+                                        setPlayerTransfered({
+                                            ...playerTransfered,
+                                            id_player: parseInt(selectedPlayer.id),
+                                            name: selectedPlayer.name,
+                                            value: selectedPlayer.value
+                                        });
+                                        setInputValue(selectedPlayer.value)
+                                    }}>
+                                    <option value="">Seleccione un jugador</option>
+                                    {players
+                                        .filter(jugador =>
+                                            jugador.id_team.toString() === selectedEquipo &&
+                                            jugador.status !== 'bloqueado' &&
+                                            jugador.status !== 'restringido')
+                                        .map(jugador => (
+                                            <option key={jugador.id}
+                                                value={jugador.id}
+                                            >{jugador.name}</option>
+                                        ))}
+                                </select>
+                                <input
+                                    type="range"
+                                    min={inputValue}
+                                    max={inputValue * 1.75}
+                                    step="any"
+                                    onChange={handleInputChange}
+                                    value={playerTransfered.value}
+                                />
+                                <br />
+                                {playerTransfered.value}
+                                <br />
+                                <span><strong>Determinar primero el valor a pagar en dinero y luego los jugadores a agregar
+                                    En caso de no hacerlo asì puede ocurrir un error que los OBLIGUE a  pagar más como multa por los obedecer esta indicación</strong></span>
+                                <select
+                                    onChange={handlerPlayerAdd}>
+                                    <option value=""> Selecciona un jugador a ofrecer</option>
+                                    {teamPlayers
+                                        .map(p => (
+                                            <option value={p.id}
+                                                key={p.id}>{p.name}</option>
+                                        ))}
+                                </select>
+                            </div>
 
-                        <br />
-                        <button type="submit" className="btn-add">Confirmar ejecución de claúsula</button>
-                        <br />
-                    </form>
-                )}
+                            <br />
+                            <button type="submit" className="btn-add">Confirmar ejecución de claúsula</button>
+                            <br />
+                        </form>
+                    )}
 
-            <br />
-            <span>Oferta a realizar por {playerTransfered.name}</span>
-            <br />
-            <span>Valor extra: {playerTransfered.extra_value}</span>
-            <br />
-            <span>Jugadores extra: {playerTransfered.other_players + ' '} </span>
-            <br />
-            <span>Oferta a realizar por un total de: {playerTransfered.total_value}</span>
+                <br />
+                <span>Oferta a realizar por {playerTransfered.name}</span>
+                <br />
+                <span>Valor extra: {playerTransfered.extra_value}</span>
+                <br />
+                <span>Jugadores extra: {playerTransfered.other_players + ' '} </span>
+                <br />
+                <span>Oferta a realizar por un total de: {playerTransfered.total_value}</span>
+            </div>
 
         </>
     )
