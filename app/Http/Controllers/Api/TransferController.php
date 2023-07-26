@@ -17,7 +17,7 @@ class TransferController extends Controller
     public function index()
     {
         return TransferResource::collection(
-            Transfer::query()->orderBy('created_at', 'asc')->paginate(50)
+            Transfer::query()->orderBy('created_at', 'asc')->paginate(150)
         );
     }
 

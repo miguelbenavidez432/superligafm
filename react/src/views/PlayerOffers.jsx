@@ -102,7 +102,7 @@ const PlayerOffers = () => {
                 name: getUser.name,
                 rol: getUser.rol,
                 email: getUser.email,
-                profits: getUser.profits + oferta.total_value,
+                profits: getUser.profits + oferta.value,
             };
 
             const updatedUserCost = {
@@ -111,7 +111,7 @@ const PlayerOffers = () => {
                 name: getUserCreated.name,
                 rol: getUserCreated.rol,
                 email: getUserCreated.email,
-                profits: getUserCreated.profits + oferta.total_value,
+                profits: getUserCreated.profits - oferta.value,
             };
 
             try {

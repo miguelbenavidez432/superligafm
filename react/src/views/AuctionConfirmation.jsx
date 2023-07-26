@@ -32,6 +32,7 @@ const AuctionConfirmation = () => {
         email: '',
         profits: 0
     });
+    
 
     useEffect(() => {
         getTeam()
@@ -88,14 +89,15 @@ const AuctionConfirmation = () => {
             ca: playerSelected.ca,
             pa: playerSelected.pa,
             age: playerSelected.age,
-            value: playerSelected.value,
+            value: parseInt(playerSelected.value),
             id_team: parseInt(secondTeam)
         })
 
         const filteredTeam = leagueTeams.find(t => t.id === parseInt(secondTeam))
         const userFiltered = users.find(u => u.id === parseInt(filteredTeam.id_user))
         console.log(userFiltered)
-
+        console.log(playerSelected)
+        
         const updatedUserFiltered = {
             ...userProfit,
             id: userFiltered.id,
@@ -104,19 +106,16 @@ const AuctionConfirmation = () => {
             email: userFiltered.email,
             profits: userFiltered.profits - selectedPlayer.value
         }
-
+        
         setUserProfit(updatedUserFiltered)
 
     }
 
     const onSubmit = async () => {
-
-
         const updatedSelectedPlayer = {
             ...selectedPlayer,
             id_team: parseInt(secondTeam)
         }
-
         try {
             setSelectedPlayer(updatedSelectedPlayer)
             console.log(userProfit)
