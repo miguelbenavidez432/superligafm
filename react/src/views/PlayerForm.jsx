@@ -11,7 +11,7 @@ import Players from "./Players";
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
         name: '',
-        id_team: '',
+        id_team: 62,
         status: '',
         value: '',
         ca: '',
@@ -60,26 +60,27 @@ export default function PlayerForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if (players.status == 'liberado') {
+        if (players.status === 'liberado') {
             setPlayers({ ...players, id_team: 61 });
         }
         if (players.id) {
             axiosClient.put(`/players/${players.id}`, players)
-                .then(() => {
-                    setNotification('Jugador actualizado satisfactoriamente')
-                    navigate('/plantel' || '/players')
-                })
-                .catch(err => {
-                    const response = err.response;
-                    if (response && response.status === 422) {
-                        setErrors(response.data.errors)
-                    }
-                })
+            .then(() => {
+                setNotification('Jugador actualizado satisfactoriamente')
+                navigate('/plantel' || '/players')
+            })
+            .catch(err => {
+                const response = err.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors)
+                }
+            })
         } else {
+            console.log(players)
             axiosClient.post(`/players/`, players)
-                .then(() => {
-                    setNotification('Players creado satisfactoriamente')
-                    navigate('/plantel')
+            .then(() => {
+                setNotification('Players creado satisfactoriamente')
+                navigate('/plantel')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -109,7 +110,7 @@ export default function PlayerForm() {
                 {!loading && user.rol === 'Admin' || user.rol === 'Organizador' ?
                     <form onSubmit={onSubmit}>
                         <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
-                        <select name="" id="" onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}>
+                        <select onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}>
                             {
                                 team.map((t, index) => {
                                     return (
@@ -125,10 +126,10 @@ export default function PlayerForm() {
                             <option value="bloqueado">Bloqueado</option>
                             <option value="registrado">Registrado</option>
                         </select>
-                        <input value={players.age} onChange={e => setPlayers({ ...players, age: e.target.value })} placeholder="Edad" type="text" />
-                        <input value={players.ca} onChange={e => setPlayers({ ...players, ca: e.target.value })} placeholder="CA" type="text" />
-                        <input value={players.pa} onChange={e => setPlayers({ ...players, pa: e.target.value })} placeholder="PA" type="text" />
-                        <input value={players.value} onChange={e => setPlayers({ ...players, value: e.target.value })} placeholder="Valor" type="text" />
+                        <input value={players.age} onChange={e => setPlayers({ ...players, age: parseInt(e.target.value) })} placeholder="Edad" type="text" />
+                        <input value={players.ca} onChange={e => setPlayers({ ...players, ca: parseInt(e.target.value) })} placeholder="CA" type="text" />
+                        <input value={players.pa} onChange={e => setPlayers({ ...players, pa: parseInt(e.target.value) })} placeholder="PA" type="text" />
+                        <input value={players.value} onChange={e => setPlayers({ ...players, value: parseInt(e.target.value) })} placeholder="Valor" type="text" />
                         <button className="btn">Guardar cambios</button>
                     </form>
                     : user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' || team.find(t => t.id_user === user.id) ?

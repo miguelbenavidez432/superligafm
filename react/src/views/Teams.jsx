@@ -24,8 +24,6 @@ export default function Teams() {
         getUsers();
     }
 
-    
-
     const getTeam = async () => {
         setLoading(true)
         await axiosClient.get('/teams')
@@ -49,6 +47,7 @@ export default function Teams() {
                 setLoading(false)
             })
     }
+    
     const getUsers = () => {
         setLoading(true)
         axiosClient.get('/users')

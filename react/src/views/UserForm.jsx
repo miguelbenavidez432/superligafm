@@ -96,8 +96,10 @@ export default function UserForm() {
                                     <option value="En lista de espera">Lista de espera</option>
                                 </select>
                                 <input hidden value={users.rol} onChange={e => setUsers({ ...users, rol: e.target.value })} placeholder="Email" />
-                                <input value={users.profits} onChange={e => setUsers({ ...users, profits: e.target.value })} placeholder="Ganancias" />
-                                <input value={users.costs} onChange={e => setUsers({ ...users, costs: e.target.value })} placeholder="Gastos" />
+                                <span><strong>Presupuesto</strong></span>
+                                <input value={users.profits} onChange={e => setUsers({ ...users, profits: parseInt(e.target.value) })} placeholder="Ganancias" />
+                                <span><strong>Agregar / Quitar presupuesto</strong></span>
+                                <input onChange={e => setUsers({ ...users, profits: parseInt(users.profits) + parseInt(e.target.value) })} type="number" placeholder="Modificar presupuesto" />
                                 <input onChange={e => setUsers({ ...users, password: e.target.value })} placeholder="Password" type="password" autoComplete="off" />
                                 <input onChange={e => setUsers({ ...users, password_confirmation: e.target.value })} placeholder="Confirmar password" type="password" />
                                 <button className="btn">Guardar cambios</button>
