@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
-import Players from "./Players";
 
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
@@ -76,7 +75,6 @@ export default function PlayerForm() {
                 }
             })
         } else {
-            console.log(players)
             axiosClient.post(`/players/`, players)
             .then(() => {
                 setNotification('Players creado satisfactoriamente')

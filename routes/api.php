@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\RescissionController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
-use App\Models\Rescission;
+use App\Http\Resources\PlayerBetResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,11 +36,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
     Route::apiResource('/traspasos', TransferController::class);
-    Route::apiResource('/bet', BetController::class);
+    Route::apiResource('/bets', BetController::class);
     Route::apiResource('/singlebet', PlayerBetController::class);
     Route::apiResource('/clausula_rescision', RescissionController::class);
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
+    Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
+    Route::post('/apuesta/usuario', [BetController::class, 'attach']);
+    Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
+    Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
+    Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);

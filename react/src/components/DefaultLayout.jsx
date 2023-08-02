@@ -49,8 +49,11 @@ export default function DefaultLayout() {
                             <Link className="mt-4 hover:text-base" to='/transfer'>Transferencia</Link>
                             <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
                             <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
+                            <Link className="mt-4 hover:text-base" to='/apuestas/usuarios'>Confirmar apuestas ganadas</Link>
                             <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
-                            <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
+                            <Link className="mt-4 hover:text-base" to='/apuestas'>Apuestas</Link>
+                            <Link className="mt-4 hover:text-base" to='/apuestas/new'>Crear apuestas</Link>
+                            
                         </div>
                         :
                         user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ?
@@ -64,7 +67,7 @@ export default function DefaultLayout() {
                                 <Link className="mt-4 hover:text-base" to='/clausula_rescision'>Claúsula de rescisión</Link>
                                 <Link className="mt-4 hover:text-base" to='/reglamento'>Reglamento</Link>
                                 <Link className="mt-4 hover:text-base" to='/about'>Nosotros</Link>
-                                <Link className="mt-4 hover:text-base" to='/prode'>Prode</Link>
+                                <Link className="mt-4 hover:text-base" to='/apuestas'>Apuestas</Link>
                             </div>
                             : user.rol === 'En lista de espera' || user.rol === 'Visitante' &&
                             <div className="flex flex-col text-white">

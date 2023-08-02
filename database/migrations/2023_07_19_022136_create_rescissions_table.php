@@ -24,7 +24,7 @@ return new class extends Migration
             $table->json('other_players')->nullable();
             $table->integer('extra_value')->default(0);
             $table->integer('total_value');
-            $table->boolean('confirmed')->default(false);
+            $table->boolean('confirmed')->default(0);
             $table->timestamps();
         });
     }

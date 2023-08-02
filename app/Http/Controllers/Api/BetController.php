@@ -7,6 +7,9 @@ use App\Models\Bet;
 use App\Http\Requests\StoreBetRequest;
 use App\Http\Requests\UpdateBetRequest;
 use App\Http\Resources\BetResource;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BetController extends Controller
 {
@@ -16,7 +19,7 @@ class BetController extends Controller
     public function index()
     {
         return BetResource::collection(
-            Bet::query()->orderBy('created_at', 'desc')->paginate(50)
+            Bet::query()->orderBy('created_at', 'desc')->paginate(15)
         );
     }
 
@@ -55,5 +58,60 @@ class BetController extends Controller
     {
         $bet->delete();
         return response('', 204);
+    }
+
+    public function attach(Request $request)
+    {
+
+        $validatedData = $request->validate([
+            'id_bet' => 'required|exists:bets,id',
+            'id_user' => 'required|exists:users,id',
+            'selected_option' => 'required',
+            'amount' => 'required|integer',
+        ]);
+
+        $user = User::find($validatedData['id_user']);
+        $bet = Bet::find($validatedData['id_bet']);
+
+        $amountToBet = $validatedData['amount'];
+        if ($user->profits < $amountToBet) {
+            return response()->json(['message' => 'No tienes suficiente presupuesto para esta apuesta'], 400);
+        }
+
+        $bet->users()->attach($validatedData['id_user'], [
+            'selected_option' => $validatedData['selected_option'],
+            'amount' => $amountToBet,
+        ]);
+        
+        $user->profits -= $amountToBet;
+        $user->save();
+
+        $data = [
+            'message' => 'Apuesta agregada correctamente',
+            'bet' => $bet,
+        ];
+        return response()->json($data);
+    }
+
+    public function updateBetUserConfirmed(Request $request, $betId, $userId)
+    {
+        $bet = Bet::findOrFail($betId);
+        $user = User::findOrFail($userId);
+
+        $bet->users()->updateExistingPivot($userId, ['confirmed' => 'si']);
+
+        // $amount = $user->pivot->amount;
+        // $selectionOption = $user->pivot->selected_option;
+        // $user->profits += $amount * $selectionOption;
+        // $user->save();
+
+        return response()->json(['message' => 'Registro actualizado y presupuesto acreditado correctamente']);
+    }
+
+    public function getAllBetUserRows()
+    {
+        $betUserRows = DB::table('bet_user')->get();
+
+        return response()->json(['data' => $betUserRows]);
     }
 }

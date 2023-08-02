@@ -25,7 +25,7 @@ return new class extends Migration
             $table->foreign('buy_by')->on('users')->references('id');
             $table->foreignId('sold_by')->nullable();
             $table->foreign('sold_by')->on('users')->references('id');
-            $table->boolean('confirmed')->default(false);
+            $table->boolean('confirmed')->default(0);
             $table->foreignId('confirmed_by')->nullable();
             $table->foreign('confirmed_by')->on('users')->references('id');
             $table->timestamps();

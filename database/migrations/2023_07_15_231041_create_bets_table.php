@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('over');
             $table->foreignId('created_by');
             $table->foreign('created_by')->on('users')->references('id');
+            $table->string('active')->default('on');
             $table->timestamps();
         });
     }
