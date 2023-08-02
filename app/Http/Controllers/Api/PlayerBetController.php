@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\PlayerBet;
 use App\Http\Requests\StorePlayerBetRequest;
 use App\Http\Requests\UpdatePlayerBetRequest;
-use App\Http\Resources\PlayerResource;
+use App\Http\Resources\PlayerBetResource;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class PlayerBetController extends Controller
 {
@@ -15,8 +17,8 @@ class PlayerBetController extends Controller
      */
     public function index()
     {
-        return PlayerResource::collection(
-            PlayerBet::query()->orderBy('created_at', 'desc')->paginate(50)
+        return PlayerBetResource::collection(
+            PlayerBet::query()->orderBy('created_at', 'desc')->paginate(15)
         );
     }
 
@@ -26,8 +28,9 @@ class PlayerBetController extends Controller
     public function store(StorePlayerBetRequest $request)
     {
         $data = $request->validated();
+        $data['created_by'] = auth()->user()->id;
         $playerBet = PlayerBet::create($data);
-        return response(new PlayerResource($playerBet), 201);
+        return response(new PlayerBetResource($playerBet), 201);
     }
 
     /**
@@ -35,7 +38,7 @@ class PlayerBetController extends Controller
      */
     public function show(PlayerBet $playerBet)
     {
-        return new PlayerResource($playerBet);
+        return new PlayerBetResource($playerBet);
     }
 
     /**
@@ -45,7 +48,7 @@ class PlayerBetController extends Controller
     {
         $data = $request->validated();
         $playerBet->update($data);
-        return new PlayerResource($playerBet);
+        return new PlayerBetResource($playerBet);
     }
 
     /**
@@ -55,5 +58,38 @@ class PlayerBetController extends Controller
     {
         $playerBet->delete();
         return response('', 204);
+    }
+
+    public function attach(Request $request)
+    {
+
+        $validatedData = $request->validate([
+            'id_playerbet' => 'required|exists:bets,id',
+            'id_user' => 'required|exists:users,id',
+            'selected_option' => 'required',
+            'amount' => 'required|integer',
+        ]);
+
+        $user = User::find($validatedData['id_user']);
+        $bet = PlayerBet::find($validatedData['id_playerbet']);
+
+        $amountToBet = $validatedData['amount'];
+        if ($user->profits < $amountToBet) {
+            return response()->json(['message' => 'No tienes suficiente presupuesto para esta apuesta'], 400);
+        }
+
+        $bet->users()->attach($validatedData['id_user'], [
+            'selected_option' => $validatedData['selected_option'],
+            'amount' => $amountToBet,
+        ]);
+        
+        $user->profits -= $amountToBet;
+        $user->save();
+
+        $data = [
+            'message' => 'Apuesta agregada correctamente',
+            'bet' => $bet,
+        ];
+        return response()->json($data);
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useStateContext } from "../context/ContextProvider"
@@ -8,8 +9,9 @@ export default function Bets() {
 
     const { user, setNotification } = useStateContext();
     const [loading, setLoading] = useState(false);
-    const [bets, setBets] = useState({});
-    const [ sendBet, setSendBet] = useState({
+    const [bets, setBets] = useState([]);
+    const [singleBets, setSingleBets] = useState([])
+    const [sendBet, setSendBet] = useState({
         id_bet: '',
         id_user: ''
     });
@@ -21,6 +23,7 @@ export default function Bets() {
         axiosClient.get('/bets')
             .then(({ data }) => {
                 setLoading(true);
+                console.log(data)
                 setBets(data.data)
                 setTotalPages(data.meta.last_page);
                 setSendBet({
@@ -31,8 +34,14 @@ export default function Bets() {
             .catch(() => {
                 setLoading(false)
             })
-            axiosClient.get('')
-    }, [sendBet, user])
+        axiosClient.get('/singlebet')
+            .then(({ data }) => {
+                setLoading(true);
+                console.log(data)
+                setSingleBets(data.data)
+                setTotalPages(data.meta.last_page);
+            })
+    }, [])
 
     const handleNextPage = () => {
         setCurrentPage((prevPage) => prevPage + 1);
@@ -50,20 +59,20 @@ export default function Bets() {
         })
         try {
             await axiosClient.put('/apuesta/usuario', sendBet)
-            .then(()=> {
-                setNotification('Apuesta agregada correctamente');
-                setSendBet({
-                    id_bet: ''
+                .then(() => {
+                    setNotification('Apuesta agregada correctamente');
+                    setSendBet({
+                        id_bet: ''
+                    })
                 })
-            })
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
-                const response = error.response;
-                if (response && response.status === 422) {
-                    setErrors(response.data.errors);
-                }
+            const response = error.response;
+            if (response && response.status === 422) {
+                setErrors(response.data.errors);
+            }
         }
-    }   
+    }
 
 
     return (
@@ -94,7 +103,7 @@ export default function Bets() {
                             <th>Apostar</th>
                         </tr>
                     </thead>
-                    {loading &&
+                    {!loading &&
                         <tbody>
                             <tr>
                                 <td colSpan="9" className="text-center">
@@ -103,7 +112,7 @@ export default function Bets() {
                             </tr>
                         </tbody>
                     }
-                    {!loading &&
+                    {loading &&
                         <tbody>
                             {
                                 bets.map(b => (
@@ -119,12 +128,59 @@ export default function Bets() {
                                             user ?
                                                 (<>
                                                     <th>
-                                                        <button className="btn-add" onClick={() => onSubmit(parseInt(b.id))}>Apostar</button>
+                                                        <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
                                                     </th>
                                                 </>
                                                 ) :
                                                 <th>
-                                                    
+
+                                                </th>
+                                        }
+                                    </tr>
+                                ))}
+                        </tbody>
+                    }
+                </table>
+                <br />
+                <br />
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jugador</th>
+                            <th>Descripción</th>
+                            <th>Cuota goles</th>
+                            <th>Cuota tarjetas</th>
+                            <th>Apostar</th>
+                        </tr>
+                    </thead>
+                    {!loading &&
+                        <tbody>
+                            <tr>
+                                <td colSpan="9" className="text-center">
+                                    CARGANDO...
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    {loading &&
+                        <tbody>
+                            {
+                                singleBets.map(b => (
+                                    <tr key={b.id}>
+                                        <th>{b.name}</th>
+                                        <th>{b.description}</th>
+                                        <th>{b.goal_odd}</th>
+                                        <th>{b.card_odd}</th>
+                                        {
+                                            user ?
+                                                (<>
+                                                    <th>
+                                                    <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+                                                    </th>
+                                                </>
+                                                ) :
+                                                <th>
+
                                                 </th>
                                         }
                                     </tr>

@@ -45,7 +45,6 @@ const PlayerOffers = () => {
                 setPlayer(data.player); 
                 setOffers(data.offers); 
                 checkOffersAvailability(data.offers);
-
             })
             .catch((error) => {
             });

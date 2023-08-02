@@ -16,11 +16,12 @@ class PlayerBetResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'name'=>$this->type,
+            'name'=>$this->name,
             'description'=>$this->description,
             'goal_odd'=>$this->goal_odd,
             'card_odd'=>$this->card_odd,
             'created_by'=>$this->created_by,
+            'created_at' => $this->created_at
         ];
     }
 }

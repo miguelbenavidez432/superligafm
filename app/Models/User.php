@@ -19,6 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'password',
@@ -56,13 +57,15 @@ class User extends Authenticatable
     public function bets()
     {
         return $this->belongsToMany(Bet::class, 'bet_user', 'id_bet', 'id_user')
-            ->withPivot(['amount', 'selected_option', 'confirmed'])
+            ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])
             ->withTimestamps();;
     }
 
     public function playerBets()
     {
-        return $this->belongsToMany(PlayerBet::class, 'playerbet_user');
+        return $this->belongsToMany(PlayerBet::class, 'playerbet_user', 'id_user', 'id_player_bets')
+            ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])
+            ->withTimestamps();
     }
 
     public function transfers()

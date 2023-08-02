@@ -29,6 +29,7 @@ class StoreBetRequest extends FormRequest
             'draw_odd' => 'required',
             'under' => 'required',
             'over' => 'required',
+            'created_by' => 'required|integer'
         ];
     }
 }

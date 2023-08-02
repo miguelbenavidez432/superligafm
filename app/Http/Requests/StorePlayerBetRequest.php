@@ -26,6 +26,7 @@ class StorePlayerBetRequest extends FormRequest
             'description' => 'required|string',
             'goal_odd' => 'required',
             'card_odd' => 'required',
+            'created_by' => 'integer'
         ];
     }
 }

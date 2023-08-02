@@ -20,6 +20,9 @@ return new class extends Migration
             $table->foreignId('id_player_bets');
             $table->foreign('id_player_bets')->references('id')->on('player_bets');
 
+            $table->integer('amount')->default(0);
+            $table->decimal('selected_option')->nullable();
+
             $table->string('confirmed')->default('no');
             
             $table->timestamps();

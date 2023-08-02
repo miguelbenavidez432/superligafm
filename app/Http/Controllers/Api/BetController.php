@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateBetRequest;
 use App\Http\Resources\BetResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BetController extends Controller
 {
@@ -90,5 +91,27 @@ class BetController extends Controller
             'bet' => $bet,
         ];
         return response()->json($data);
+    }
+
+    public function updateBetUserConfirmed(Request $request, $betId, $userId)
+    {
+        $bet = Bet::findOrFail($betId);
+        $user = User::findOrFail($userId);
+
+        $bet->users()->updateExistingPivot($userId, ['confirmed' => 'si']);
+
+        // $amount = $user->pivot->amount;
+        // $selectionOption = $user->pivot->selected_option;
+        // $user->profits += $amount * $selectionOption;
+        // $user->save();
+
+        return response()->json(['message' => 'Registro actualizado y presupuesto acreditado correctamente']);
+    }
+
+    public function getAllBetUserRows()
+    {
+        $betUserRows = DB::table('bet_user')->get();
+
+        return response()->json(['data' => $betUserRows]);
     }
 }

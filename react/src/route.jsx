@@ -20,6 +20,10 @@ import TeamForm from './views/TeamForm';
 import OffersList from './views/OffersList';
 import PlayerOffers from './views/PlayerOffers';
 import AuctionConfirmation from './views/AuctionConfirmation';
+import Bets from './views/Bets';
+import CreateBets from './views/CreateBets';
+import ConfirmBets from './views/ConfirmBets';
+import BetsConfirmation from './views/BetsConfirmation';
 
 const router = createBrowserRouter ([
     {
@@ -101,6 +105,22 @@ const router = createBrowserRouter ([
             {
                 path: '/subastas',
                 element: <AuctionConfirmation/>
+            },
+            {
+                path: '/apuestas',
+                element: <Bets/>
+            },
+            {
+                path: '/apuestas/new',
+                element: <CreateBets/>
+            },
+            {
+                path: '/apuestas/:id',
+                element: <ConfirmBets/>
+            },
+            {
+                path: '/apuestas/usuarios',
+                element: <BetsConfirmation/>
             },
         ]
     },
