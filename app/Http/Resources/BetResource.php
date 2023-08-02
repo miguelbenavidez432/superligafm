@@ -24,6 +24,7 @@ class BetResource extends JsonResource
             'under' => $this->under,
             'over' => $this->over,
             'created_by' => $this->created_by,
+            'created_at' => $this->created_at
         ];
     }
 }

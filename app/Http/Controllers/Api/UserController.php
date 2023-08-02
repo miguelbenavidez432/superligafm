@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
-use Illuminate\Auth\Events\Validated;
 
 class UserController extends Controller
 {
@@ -62,4 +61,6 @@ class UserController extends Controller
         $user->delete();
         return response("", 204);
     }
+
+    
 }

@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\RescissionController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
-use App\Models\Rescission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,12 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
     Route::apiResource('/traspasos', TransferController::class);
-    Route::apiResource('/bet', BetController::class);
+    Route::apiResource('/bets', BetController::class);
     Route::apiResource('/singlebet', PlayerBetController::class);
     Route::apiResource('/clausula_rescision', RescissionController::class);
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
 });
 
+Route::post('/apuesta/usuario', [BetController::class, 'attach']);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

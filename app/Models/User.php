@@ -55,16 +55,18 @@ class User extends Authenticatable
 
     public function bets()
     {
-        return $this->hasMany(Bet::class);
+        return $this->belongsToMany(Bet::class, 'bet_user', 'id_bet', 'id_user')
+            ->withPivot(['amount', 'selected_option', 'confirmed'])
+            ->withTimestamps();;
     }
-    
+
     public function playerBets()
     {
-        return $this->hasMany(PlayerBet::class);
+        return $this->belongsToMany(PlayerBet::class, 'playerbet_user');
     }
 
     public function transfers()
     {
-        return $this->hasMany(Transfer::class);
+        return $this->belongsToMany(Transfer::class);
     }
 }

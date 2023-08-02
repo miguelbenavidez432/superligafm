@@ -19,10 +19,13 @@ class Bet extends Model
         'draw_odd',
         'under',
         'over',
+        'created_at'
     ];
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'bet_user', 'id_bet', 'id_user')
+            ->withPivot(['amount', 'selected_option', 'confirmed'])
+            ->withTimestamps();;
     }
 }
