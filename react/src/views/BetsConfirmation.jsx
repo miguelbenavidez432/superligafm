@@ -64,14 +64,16 @@ export default function BetsConfirmation() {
             name: userData.name,
             rol: userData.rol,
             email: userData.email,
-            profits: updateUserData.profits + parseInt(updateProfits)
+            profits: userData.profits + parseInt(updateProfits)
         }
         
         setUpdateUserData(userDataUpdated)
         console.log(userDataUpdated)
         try {
-            await axiosClient.put(`/apuesta/usuario/${betId}/${userId}`);
-            await axiosClient.put(`/users/${userId}`, updateUserData)
+            await Promise.all([
+                axiosClient.put(`/apuesta/usuario/${betId}/${userId}`),
+                axiosClient.put(`/users/${userId}`, userDataUpdated),
+              ]);
             setNotification('Apuesta confirmada correctamente');
         } catch (error) {
             setNotification("Error al confirmar la apuesta:", error);
@@ -85,17 +87,16 @@ export default function BetsConfirmation() {
                     const bet = bets.find(bet => bet.id === b.id_bet)
                     return (
                         <>
-                            <span key={b.betId}>{username.name}</span> /
-                            <span>{bet.match}</span> /
-                            <span>{b.amount}</span> /
-                            <span>{parseFloat(b.selected_option)}</span> /
+                            <div key={b.betId}><strong>Usuario que apostó:</strong> {username.name} / 
+                            <strong> Apuesta por:</strong> {bet.match}</div> 
+                            <div><strong>Monto apostado: </strong>{b.amount} / 
+                            <strong>Cuota de: </strong> {parseFloat(b.selected_option)}</div> 
                             <button className="btn-add" 
                             onClick={() => onSubmit(parseInt(b.id_bet), 
                             parseInt(b.id_user),
                             parseFloat(b.selected_option), 
                             parseInt(b.amount))}>Confirmar</button>
                             <br />
-                            194514103
                         </>
 
                     )

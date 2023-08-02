@@ -301,27 +301,27 @@ export default function Rules() {
                     </thead>
                     <tbody>
                         <tr>
-                            <th>1 - Inter (1) &#8211; Liverpool (2)</th>
+                            <th>1 - Liverpool (1) &#8211; Manchester City (2)</th>
                             <th>Acceder a la final por el campeonato o ser campeón</th>
                         </tr>
                         <tr>
-                            <th>2) Napoli (3) &#8211; Atlético de Madrid (4)</th>
+                            <th>2 - Real Madird (3) &#8211; Arsenal (4)</th>
                             <th>Acceder a las Semifinales por el campeonato</th>
                         </tr>
                         <tr>
-                            <th>3 - Manchester City (5) &#8211; Milan (6)</th>
+                            <th>3 - Chelsea (5) &#8211; Bayern Munich (6)</th>
                             <th>Finalizar entre las posiciones 5 / 6</th>
                         </tr>
                         <tr>
-                            <th>4 - Bayern Munich (7) &#8211; Real Sociedad (8)</th>
+                            <th>4 - Manchester Utd (7) &#8211; Inter (8)</th>
                             <th>Finalizarentr e las posiciones 7 / 8</th>
                         </tr>
                         <tr>
-                            <th>5 - Barcelona (9) &#8211; PSG (10) </th>
+                            <th>5 - Juventus (9) &#8211; Milan (10) </th>
                             <th>Finalizar en las posiciones 9 / 10</th>
                         </tr>
                         <tr>
-                            <th> 6 - Villarreal (11) &#8211; Man. Utd (12) &#8211; Juventus (13) &#8211; Roma (14)</th>
+                            <th> 6 - Napoli (11) &#8211; PSG (12) &#8211; Atlético de Madrid (13) &#8211; Barcelona (14)</th>
                             <th>Evitar el descenso (No ingresar a playout o descenso directo)</th>
                         </tr>
                     </tbody>
@@ -353,27 +353,27 @@ export default function Rules() {
                     </thead>
                     <tbody>
                         <tr>
-                            <th>1 - Inter (1) &#8211; Liverpool (2)</th>
+                            <th>1 - Tottenham (1) &#8211; Betis (2)</th>
                             <th>Acceder a la final por el campeonato o ser campeón</th>
                         </tr>
                         <tr>
-                            <th>2) Napoli (3) &#8211; Atlético de Madrid (4)</th>
+                            <th>2 - Villarreal (3) &#8211; Porto FC (4)</th>
                             <th>Acceder a las Semifinales por el campeonato</th>
                         </tr>
                         <tr>
-                            <th>3 - Manchester City (5) &#8211; Milan (6)</th>
+                            <th>3 - Sporting Club (5) &#8211; RB Leipzig (6)</th>
                             <th>Finalizar entre las posiciones 5 / 6</th>
                         </tr>
                         <tr>
-                            <th>4 - Bayern Munich (7) &#8211; Real Sociedad (8)</th>
+                            <th>4 - Newcastle (7) &#8211; Real Sociedad (8)</th>
                             <th>Finalizarentr e las posiciones 7 / 8</th>
                         </tr>
                         <tr>
-                            <th>5 - Barcelona (9) &#8211; PSG (10) </th>
+                            <th>5 - Roma (9) &#8211; Dortmund (10) </th>
                             <th>Finalizar en las posiciones 9 / 10</th>
                         </tr>
                         <tr>
-                            <th> 6 - Villarreal (11) &#8211; Man. Utd (12) &#8211; Juventus (13) &#8211; Roma (14)</th>
+                            <th> 6 - Lazio (11) &#8211; Atalanta (12) &#8211; Benfica (13) &#8211; West Ham (14)</th>
                             <th>Evitar el descenso (No ingresar a playout o descenso directo)</th>
                         </tr>
                     </tbody>
