@@ -22,13 +22,7 @@ class UpdateBetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'match' => 'required|string',
-            'description' => 'required|string',
-            'home_odd' => 'required',
-            'away_odd' => 'required',
-            'draw_odd' => 'required',
-            'under' => 'required',
-            'over' => 'required',
+            'active' => 'required|string',
         ];
     }
 }

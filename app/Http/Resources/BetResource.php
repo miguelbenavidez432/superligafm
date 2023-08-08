@@ -23,6 +23,7 @@ class BetResource extends JsonResource
             'draw_odd' => $this->draw_odd,
             'under' => $this->under,
             'over' => $this->over,
+            'active' => $this->active,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at
         ];

@@ -52,18 +52,14 @@ export default function Bets() {
     };
 
 
-    const onSubmit = async (betId) => {
-        setSendBet({
-            ...sendBet,
-            id_bet: parseInt(betId)
-        })
+    const onClick = async (betId) => {
+        const id = parseInt(betId)
+        const betUpdated = {active: 'off'}
         try {
-            await axiosClient.put('/apuesta/usuario', sendBet)
+            await axiosClient.put(`/bets/${id}`, betUpdated)
                 .then(() => {
-                    setNotification('Apuesta agregada correctamente');
-                    setSendBet({
-                        id_bet: ''
-                    })
+                    console.log()
+                    setNotification('Apuesta eliminada correctamente');
                 })
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
@@ -98,8 +94,8 @@ export default function Bets() {
                             <th>Cuota Local</th>
                             <th>Cuota Visitante</th>
                             <th>Cuota empate</th>
-                            <th>Over</th>
                             <th>Under</th>
+                            <th>Over</th>
                             <th>Apostar</th>
                         </tr>
                     </thead>
@@ -115,29 +111,34 @@ export default function Bets() {
                     {loading &&
                         <tbody>
                             {
-                                bets.map(b => (
-                                    <tr key={b.id}>
-                                        <th>{b.match}</th>
-                                        <th>{b.description}</th>
-                                        <th>{b.home_odd}</th>
-                                        <th>{b.away_odd}</th>
-                                        <th>{b.draw_odd}</th>
-                                        <th>{b.under}</th>
-                                        <th>{b.over}</th>
-                                        {
-                                            user ?
-                                                (<>
+                                bets.filter(b => b.active === 'on')
+                                    .map(b => (
+                                        <tr key={b.id}>
+                                            <th>{b.match}</th>
+                                            <th>{b.description}</th>
+                                            <th>{b.home_odd}</th>
+                                            <th>{b.away_odd}</th>
+                                            <th>{b.draw_odd}</th>
+                                            <th>{b.under}</th>
+                                            <th>{b.over}</th>
+                                            {
+                                                user ?
+                                                    (<>
+                                                        <th>
+                                                            <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+                                                            {
+                                                                user.rol === 'Admin' &&
+                                                                <button className="btn-edit" onClick={() => onClick(b.id)}>Desactivar</button>
+                                                            }
+                                                        </th>
+                                                    </>
+                                                    ) :
                                                     <th>
-                                                        <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
-                                                    </th>
-                                                </>
-                                                ) :
-                                                <th>
 
-                                                </th>
-                                        }
-                                    </tr>
-                                ))}
+                                                    </th>
+                                            }
+                                        </tr>
+                                    ))}
                         </tbody>
                     }
                 </table>
@@ -175,7 +176,8 @@ export default function Bets() {
                                             user ?
                                                 (<>
                                                     <th>
-                                                    <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+                                                        <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+
                                                     </th>
                                                 </>
                                                 ) :

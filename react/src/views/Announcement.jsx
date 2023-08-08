@@ -215,11 +215,11 @@ export default function Announcement() {
                                     onChange={handleInputChange}
                                     value={playerTransfered.value}
                                 />
+                                <strong>Valor pagado para ejecutar la claúsula de rescisión:</strong> {playerTransfered.value}
                                 <br />
-                                {playerTransfered.value}
                                 <br />
-                                <span><strong>Determinar primero el valor a pagar en dinero y luego los jugadores a agregar
-                                    En caso de no hacerlo asì puede ocurrir un error que los OBLIGUE a  pagar más como multa por los obedecer esta indicación</strong></span>
+                                {/* <span><strong>Determinar primero el valor a pagar en dinero y luego los jugadores a agregar
+                                    En caso de no hacerlo asì puede ocurrir un error que los OBLIGUE a  pagar más como multa por los obedecer esta indicación</strong></span> */}
                                 <select
                                     onChange={handlerPlayerAdd}>
                                     <option value=""> Selecciona un jugador a ofrecer</option>

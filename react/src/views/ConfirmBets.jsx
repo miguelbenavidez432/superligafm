@@ -111,7 +111,7 @@ export default function ConfirmBets() {
                     step="any"
                     onChange={e => setProfits(parseInt(e.target.value))}
                 />
-                <span>{profits}</span>
+                <span><strong>Cantidad a apostar: </strong>{profits}</span>
                 <br />
                 <br />
                 <button className="btn-add" onClick={onSubmit}>Confirmar apuesta</button>
@@ -126,7 +126,7 @@ export default function ConfirmBets() {
             <hr />
             <br />
             <br />
-            <div>
+            {/* <div>
                 <h1>{singleBet.name ? <p>Apuesta por {singleBet.name}</p> : <p>Apuesta no encontrada</p>}</h1>
                 <select name="" id="">
                     <option value="">Selecciona UN tipo de apuesta</option>
@@ -144,7 +144,7 @@ export default function ConfirmBets() {
                 <br />
                 <br />
                 <button className="btn-add" onClick={handleOnSubmit}>Confirmar apuesta</button>
-            </div>
+            </div> */}
         </>
     )
 }

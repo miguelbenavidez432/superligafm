@@ -18,7 +18,8 @@ class Bet extends Model
         'draw_odd',
         'under',
         'over',
-        'created_at'
+        'created_at',
+        'active',
     ];
 
     public function users()

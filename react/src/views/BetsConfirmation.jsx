@@ -8,7 +8,6 @@ export default function BetsConfirmation() {
     const [betMatch, setBetMatch] = useState([])
     const { user, setNotification } = useStateContext()
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [bets, setBets] = useState([]);
     const [updateUserData, setUpdateUserData] = useState({
         id: '',
@@ -16,7 +15,7 @@ export default function BetsConfirmation() {
         rol: '',
         email: '',
         profits: 0
-    }) 
+    })
 
     useEffect(() => {
         Promise.all([axiosClient.get('/bet_user'), getUsers(), getBets()])
@@ -32,31 +31,25 @@ export default function BetsConfirmation() {
     const getBets = () => {
         return axiosClient.get('/bets')
             .then(({ data }) => {
-                setLoading(true);
                 setBets(data.data);
-                setLoading(false);
             })
             .catch(() => {
-                setLoading(false);
             });
     };
 
     const getUsers = () => {
         return axiosClient.get('/users')
             .then(({ data }) => {
-                setLoading(true);
                 setUsers(data.data);
-                setLoading(false);
             })
             .catch(() => {
-                setLoading(false);
             });
     };
 
     const onSubmit = async (betId, userId, selected_option, amount) => {
 
         const updateProfits = selected_option * amount;
-        const userData = users.find(u=>u.id===userId)
+        const userData = users.find(u => u.id === userId)
 
         const userDataUpdated = {
             ...updateUserData,
@@ -66,14 +59,14 @@ export default function BetsConfirmation() {
             email: userData.email,
             profits: userData.profits + parseInt(updateProfits)
         }
-        
+
         setUpdateUserData(userDataUpdated)
         console.log(userDataUpdated)
         try {
             await Promise.all([
                 axiosClient.put(`/apuesta/usuario/${betId}/${userId}`),
                 axiosClient.put(`/users/${userId}`, userDataUpdated),
-              ]);
+            ]);
             setNotification('Apuesta confirmada correctamente');
         } catch (error) {
             setNotification("Error al confirmar la apuesta:", error);
@@ -82,21 +75,28 @@ export default function BetsConfirmation() {
     return (
         <>
             <div>
-                {betMatch.map(b => {
+                {betMatch.filter((b) => b.confirmed === 'no')
+                .map(b => {
                     const username = users.find(u => u.id === b.id_user)
                     const bet = bets.find(bet => bet.id === b.id_bet)
                     return (
                         <>
-                            <div key={b.betId}><strong>Usuario que apostó:</strong> {username.name} / 
-                            <strong> Apuesta por:</strong> {bet.match}</div> 
-                            <div><strong>Monto apostado: </strong>{b.amount} / 
-                            <strong>Cuota de: </strong> {parseFloat(b.selected_option)}</div> 
-                            <button className="btn-add" 
-                            onClick={() => onSubmit(parseInt(b.id_bet), 
-                            parseInt(b.id_user),
-                            parseFloat(b.selected_option), 
-                            parseInt(b.amount))}>Confirmar</button>
-                            <br />
+                            {bet ?
+                                <>
+                                    <div key={b.betId}><strong>Usuario que apostó:</strong> {username.name} /
+                                        <strong> Apuesta por:</strong> {bet.match}</div>
+                                    <div><strong>Monto apostado: </strong>{b.amount} /
+                                        <strong>Cuota de: </strong> {parseFloat(b.selected_option)}</div>
+                                    <button className="btn-add"
+                                        onClick={() => onSubmit(parseInt(b.id_bet),
+                                            parseInt(b.id_user),
+                                            parseFloat(b.selected_option),
+                                            parseInt(b.amount))}>Confirmar</button>
+                                    <br />
+                                </>
+                                :
+                                <p>No hay apuestas por confirmar</p>
+                            }
                         </>
 
                     )
