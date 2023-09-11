@@ -112,7 +112,6 @@ export default function Users() {
                                                 <th>
                                                     <Link to={'/users/' + u.id} className="btn-edit">Editar</Link>
                                                     &nbsp;
-                                                    <button onClick={e => onDelete(u)} className="btn-delete">Borrar</button>
                                                 </th>
                                         }
                                     </tr>

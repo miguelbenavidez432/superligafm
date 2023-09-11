@@ -15,46 +15,36 @@ export default function Bets() {
         id_bet: '',
         id_user: ''
     });
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [currentPageSingleBets, setCurrentPageSingleBets] = useState(1);
+    const [totalPagesSingleBets, setTotalPagesSingleBets] = useState(1);
+    const [currentPageBets, setCurrentPageBets] = useState(1);
+    const [totalPagesBets, setTotalPagesBets] = useState(1);
     const [errors, setErrors] = useState(null);
 
     useEffect(() => {
-        axiosClient.get('/bets')
+        axiosClient.get(`/bets?page=${currentPageBets}`)
             .then(({ data }) => {
                 setLoading(true);
-                console.log(data)
-                setBets(data.data)
-                setTotalPages(data.meta.last_page);
-                setSendBet({
-                    ...sendBet,
-                    id_user: user.id
-                })
+                setBets(data.data);
+                setTotalPagesBets(data.meta.last_page);
+                // ...rest of the code...
             })
             .catch(() => {
-                setLoading(false)
-            })
-        axiosClient.get('/singlebet')
+                setLoading(false);
+            });
+
+        axiosClient.get(`/singlebet?page=${currentPageSingleBets}`)
             .then(({ data }) => {
                 setLoading(true);
-                console.log(data)
-                setSingleBets(data.data)
-                setTotalPages(data.meta.last_page);
-            })
-    }, [])
-
-    const handleNextPage = () => {
-        setCurrentPage((prevPage) => prevPage + 1);
-    };
-
-    const handlePrevPage = () => {
-        setCurrentPage((prevPage) => prevPage - 1);
-    };
-
+                setSingleBets(data.data);
+                setTotalPagesSingleBets(data.meta.last_page);
+                // ...rest of the code...
+            });
+    }, [currentPageBets, currentPageSingleBets]);
 
     const onClick = async (betId) => {
         const id = parseInt(betId)
-        const betUpdated = {active: 'off'}
+        const betUpdated = { active: 'off' }
         try {
             await axiosClient.put(`/bets/${id}`, betUpdated)
                 .then(() => {
@@ -70,7 +60,6 @@ export default function Bets() {
         }
     }
 
-
     return (
         <>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
@@ -78,11 +67,11 @@ export default function Bets() {
 
             </div>
             <div>
-                {currentPage > 1 && (
-                    <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
+                {currentPageBets > 1 && (
+                    <button className="btn-add" onClick={() => setCurrentPageBets(prevPage => prevPage - 1)}>Página anterior</button>
                 )}&nbsp;&nbsp;&nbsp;&nbsp;
-                {currentPage < totalPages && (
-                    <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
+                {currentPageBets < totalPagesBets && (
+                    <button className='btn-add' onClick={() => setCurrentPageBets(prevPage => prevPage + 1)}>Página siguiente</button>
                 )}
             </div>
             <div className="card animated fadeInDown">
@@ -126,6 +115,7 @@ export default function Bets() {
                                                     (<>
                                                         <th>
                                                             <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+                                                            &nbsp;
                                                             {
                                                                 user.rol === 'Admin' &&
                                                                 <button className="btn-edit" onClick={() => onClick(b.id)}>Desactivar</button>

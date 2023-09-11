@@ -76,31 +76,32 @@ export default function BetsConfirmation() {
         <>
             <div>
                 {betMatch.filter((b) => b.confirmed === 'no')
-                .map(b => {
-                    const username = users.find(u => u.id === b.id_user)
-                    const bet = bets.find(bet => bet.id === b.id_bet)
-                    return (
-                        <>
-                            {bet ?
-                                <>
-                                    <div key={b.betId}><strong>Usuario que apostó:</strong> {username.name} /
-                                        <strong> Apuesta por:</strong> {bet.match}</div>
-                                    <div><strong>Monto apostado: </strong>{b.amount} /
-                                        <strong>Cuota de: </strong> {parseFloat(b.selected_option)}</div>
-                                    <button className="btn-add"
-                                        onClick={() => onSubmit(parseInt(b.id_bet),
-                                            parseInt(b.id_user),
-                                            parseFloat(b.selected_option),
-                                            parseInt(b.amount))}>Confirmar</button>
-                                    <br />
-                                </>
-                                :
-                                <p>No hay apuestas por confirmar</p>
-                            }
-                        </>
+                    .map(b => {
+                        const username = users.find(u => u.id === b.id_user)
+                        const bet = bets.find(bet => bet.id === b.id_bet)
+                        return (
+                            <>
+                                {bet ?
+                                    <>
+                                        <div key={b.betId}><strong>Usuario que apostó:</strong> {username.name} /
+                                            <strong> Apuesta por:</strong> {bet.match}</div>
+                                        <div><strong>Monto apostado: </strong> {b.amount} /
+                                            <strong> Cuota de: </strong> {parseFloat(b.selected_option)}
+                                            <strong> Realizada el: </strong> {b.created_at}</div>
+                                        <button className="btn-add"
+                                            onClick={() => onSubmit(parseInt(b.id_bet),
+                                                parseInt(b.id_user),
+                                                parseFloat(b.selected_option),
+                                                parseInt(b.amount))}>Confirmar</button>
+                                        <br />
+                                    </>
+                                    :
+                                    <p>No hay apuestas por confirmar</p>
+                                }
+                            </>
 
-                    )
-                })}
+                        )
+                    })}
             </div>
         </>
     )
