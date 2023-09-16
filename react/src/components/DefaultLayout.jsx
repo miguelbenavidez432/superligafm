@@ -40,6 +40,7 @@ export default function DefaultLayout() {
                     user.rol === 'Admin' || user.rol === 'Organizador' ?
                         <div className="flex flex-col  text-white">
                             <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                            <Link className="mt-4 hover:text-base" to='/misofertas'>Mis ofertas</Link>
                             <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                             <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                             <Link className="mt-4 hover:text-base" to='/subastas'>Subastas</Link>
@@ -59,6 +60,7 @@ export default function DefaultLayout() {
                         user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ?
                             <div className="flex flex-col text-white">
                                 <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                                <Link className="mt-4 hover:text-base" to='/misofertas'>Mis ofertas</Link>
                                 <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                                 <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                                 <Link className="mt-4 hover:text-base" to='/users'>Users</Link>

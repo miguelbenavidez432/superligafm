@@ -24,6 +24,7 @@ import Bets from './views/Bets';
 import CreateBets from './views/CreateBets';
 import ConfirmBets from './views/ConfirmBets';
 import BetsConfirmation from './views/BetsConfirmation';
+import OffersMade from './views/OffersMade';
 
 const router = createBrowserRouter ([
     {
@@ -121,6 +122,11 @@ const router = createBrowserRouter ([
             {
                 path: '/apuestas/usuarios',
                 element: <BetsConfirmation/>
+            },
+            {
+                path: '/misofertas',
+                element: <OffersMade/>
+                
             },
         ]
     },

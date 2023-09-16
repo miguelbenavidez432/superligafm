@@ -27,7 +27,6 @@ export default function Bets() {
                 setLoading(true);
                 setBets(data.data);
                 setTotalPagesBets(data.meta.last_page);
-                // ...rest of the code...
             })
             .catch(() => {
                 setLoading(false);
