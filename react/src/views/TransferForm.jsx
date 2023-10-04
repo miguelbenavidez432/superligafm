@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function TransferForm() {
 
-    const [users, setUsers] = useState([])
     const [players, setPlayers] = useState([]);
     const [teams, setTeams] = useState([])
     const [selectedEquipo, setSelectedEquipo] = useState('');
@@ -50,15 +49,6 @@ export default function TransferForm() {
             })
     }
 
-    const getUsers = () => {
-        axiosClient.get('/users')
-            .then(({ data }) => {
-                setUsers(data.data);
-            })
-            .catch(() => {
-            });
-    };
-
     const getPlayers = () => {
         axiosClient.get('/players')
             .then(({ data }) => {
@@ -71,19 +61,13 @@ export default function TransferForm() {
     const handleIdEquipoChange = (event) => {
         const equipoId = event.target.value;
         setSecondTeam(equipoId);
-
-        const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
         setSelectedJugador('');
-
     };
 
     const handleEquipoChange = (event) => {
         const equipoId = event.target.value;
         setSelectedEquipo(equipoId);
-
-        const jugadoresEquipo = players.filter(jugador => jugador.id_team == equipoId);
         setSelectedJugador('');
-        
     };
 
     const handleJugadorChange = (event) => {
@@ -157,7 +141,7 @@ export default function TransferForm() {
         <>
             <div>
                 <label htmlFor="equipo">Seleccionar equipo:</label>
-                <select id="equipo" value={selectedEquipo} onChange={handleEquipoChange}>
+                <select id="equipo" value={selectedEquipo} onClick={handleEquipoChange}>
                     <option value="">Seleccione un equipo</option>
                     {
                         teams.map(equipo => (
@@ -186,12 +170,9 @@ export default function TransferForm() {
                                         <option key={jugador.id} value={jugador.id}>{jugador.name}</option>
                                     ))}
                             </select>
-
-
                         </div>
 
                     )}
-
                 <h3>Datos actualizados:</h3>
                 <ul>
                     {datosActualizados.map(dato => (

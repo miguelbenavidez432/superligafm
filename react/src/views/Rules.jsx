@@ -16,26 +16,26 @@ export default function Rules() {
                     <li>2- Manchester Utd</li>
                     <li>3- Chelsea</li>
                     <li>5- Liverpool</li>
-                    <li>4- Napoli</li>
+                    <li>4- RB Leipzig</li>
                     <li>6- Arsenal</li>
                     <li>7- Barcelona</li>
                     <li>8- Atlético de Madrid</li>
-                    <li>9- Real Madrid</li>
+                    <li>9- Tottenham</li>
                     <li>10- Bayern Munich</li>
-                    <li>11- Juventus</li>
+                    <li>11- Benfica</li>
                     <li>12- Inter</li>
                     <li>13- Milan</li>
                     <li>14- PSG</li>
                 </ul>
                 <p><strong>Los equipos de la Segunda son:</strong></p>
                 <ul>
-                    <li>1- RB Leipzig</li>
+                    <li>1- Napoli </li>
                     <li>2- Dortmund</li>
                     <li>3- Atalanta</li>
                     <li>4- Lazio</li>
-                    <li>5- Tottenham</li>
+                    <li>5- Real Madrid</li>
                     <li>6- Roma</li>
-                    <li>7- Benfica</li>
+                    <li>7- Juventus</li>
                     <li>8- Porto</li>
                     <li>9- Villarreal</li>
                     <li>10- Betis</li>
@@ -44,55 +44,45 @@ export default function Rules() {
                     <li>13- Newcastle</li>
                     <li>14- West Ham</li>
                 </ul>
-                    <h3 ><b>Elección de equipos</b></h3>
-                    <p>1.1- La selección de equipos para los usuarios será aleatoria en la primera temporada y cada vez que se reinicie la partida.
-                        Finalizada cada una de las temporadas los usuarios podrán mantener su equipo o elegir otro equipo de Primera División
-                        (los que jueguen en esa categoría) o Segunda (los que jueguen esa división) según el orden de ubicación luego de finalizar la temporada.
-                        Aquellos usuarios que descendieron no podrán elegir el mismo equipo con el que perdieron la categoría.
-                        Si por algún motivo un usuario no se presenta a disputar dos partidos en la temporada
-                        (no coordinación y/o no presentación) perderán el derecho de mantener el equipo en caso de superar objetivos.
-                        En caso de pedir más de 4 postergaciones también perderá el derecho de mantener equipo
-                        (se analizará cada caso de postergación en forma particular).
-                        1.2- Antes de comenzar la elección, aquellos usuarios que lograron ganar alguna de las competiciones que disputaron,
-                        tendrán la posibilidad de elegir permanecer en el equipo que lo hicieron, como así también los equipos que ascendieron
-                        (siempre y cuando cumplan con la condición del punto 1.1 de elección de equipos) .
-                        En caso de que no quieran permanecer, elegirán según el orden que les corresponda por ubicación en tabla.
-                        Los manager de los equipos que superaron el objetivo de la temporada impuesto por la organización tendrán la posibilidad de permanecer
-                        en el equipo (La permanencia en el equipo debe ser confirmada).
+                <h3 ><b>Elección de equipos</b></h3>
+                <p>1.1- La selección de equipos para los usuarios será aleatoria en la primera temporada y cada vez que se reinicie la partida.
+                    Finalizada cada una de las temporadas los usuarios podrán mantener su equipo o elegir otro equipo de Primera División
+                    (los que jueguen en esa categoría) o Segunda (los que jueguen esa división) según el orden de ubicación luego de finalizar la temporada.
+                    Aquellos usuarios que descendieron no podrán elegir el mismo equipo con el que perdieron la categoría.
+                    Si por algún motivo un usuario no se presenta a disputar dos partidos en la temporada
+                    (no coordinación y/o no presentación) perderán el derecho de mantener el equipo en caso de superar objetivos.
+                    En caso de pedir más de 4 postergaciones también perderá el derecho de mantener equipo
+                    (se analizará cada caso de postergación en forma particular).
+                    1.2- Antes de comenzar la elección, aquellos usuarios que lograron ganar alguna de las competiciones que disputaron,
+                    tendrán la posibilidad de elegir permanecer en el equipo que lo hicieron, como así también los equipos que ascendieron
+                    (siempre y cuando cumplan con la condición del punto 1.1 de elección de equipos) .
+                    En caso de que no quieran permanecer, elegirán según el orden que les corresponda por ubicación en tabla.
+                    Los manager de los equipos que superaron el objetivo de la temporada impuesto por la organización tendrán la posibilidad de permanecer
+                    en el equipo (La permanencia en el equipo debe ser confirmada).
 
-                        1.3 - Para mantener el equipo, los manager de los descendidos de la temporada anterior deberán mínimamente terminar entre los 6 mejores
-                        de la temporada en su nueva división.
+                    1.3 - Para mantener el equipo, los manager de los descendidos de la temporada anterior deberán mínimamente terminar entre los 6 mejores
+                    de la temporada en su nueva división.
 
-                        Los jugadores que abandonen cada equipo de la liga volverán al club que estuvieron en la última temporada.
-                        Es decir, si avanzando la partida Manchester Utd vende a Cristiano Ronaldo (por efecto de la simulación de la partida),
-                        se lo volverá a colocar en el equipo inglés. Después de finalizado el mercado de pases y antes de iniciar la temporada
-                        los manager de Primera División deberán presentar una lista de 18 jugadores. Los jugadores que no estén en esa lista y
-                        sean mayores de 20 años quedarán libres para la próxima temporada o en el equipo de reserva sin jugar según decida cada usuario.</p>
-                    <h2 ><b>FORMATO DE LA LIGA</b></h2>
+                    Los jugadores que abandonen cada equipo de la liga volverán al club que estuvieron en la última temporada.
+                    Es decir, si avanzando la partida Manchester Utd vende a Cristiano Ronaldo (por efecto de la simulación de la partida),
+                    se lo volverá a colocar en el equipo inglés. Después de finalizado el mercado de pases y antes de iniciar la temporada
+                    los manager de Primera División deberán presentar una lista de 18 jugadores. Los jugadores que no estén en esa lista y
+                    sean mayores de 20 años quedarán libres para la próxima temporada o en el equipo de reserva sin jugar según decida cada usuario.</p>
+                <h2 ><b>FORMATO DE LA LIGA</b></h2>
                 <h4><strong>Primera División</strong></h4>
-                <p>Se jugará con el sistema todos contra todos, una sola rueda y en cancha neutral.
-                    Al finalizar la temporada, si el equipo que finaliza en la primera posición tiene 6 o más puntos de ventaja sobre el segundo,
-                    los equipos que finalicen en las posiciones 7 y 8 se enfrentarán en el Play-in para determinar el rival del segundo mejor posicionado.
-                    Será a partido único con ventaja en caso de empate para el mejor ubicado (7° posición).
-                    Si el equipo que finaliza en la primera posición tiene 5 o menos puntos de ventaja sobre el segundo,
-                    los equipos que finalicen en las posiciones 8 y 9 se enfrentarán en el Play-in para determinar el rival del mejor posicionado.
-                    Será a partido único con ventaja en caso de empate para el mejor ubicado (8° posición).
-                    El equipo que finalice en la primera posición se asegurará un lugar en semifinales si la diferencia de puntos respecto al segundo de la tabla
-                    es de 6 puntos o más. Si clasifica directo a semifinales, los equipos ubicados entre las posiciones 2 y 6 jugarán la primera llave de playoff.
-                    A estos equipos se les sumará el ganador del duelo entre los equipos que se encuentren entre las posiciones 7 y 8 (play-in).
-                    Será a partido único, en cancha neutral y con ventaja para los equipos mejor ubicados en la tabla de posiciones
-                    (en caso de empate, avanzarán a la siguiente ronda). Se enfrentarán 2° vs 7°, 3° vs 6° y 4° vs 5°.
-                    Los ganadores pasarán a semifinales y se enfrentarán entre sí a partido único, cancha neutral con prórroga y penales.
-                    El 1° de la tabla de posiciones se enfrentará al peor ubicado en esa tabla de los clasificados a semifinales.
-                    Los ganadores de los cruces pasarán a la final que será a partido único, en cancha neutral con prórroga y penales.
-                    El ganador será el campeón de la Primera División. Si el primero de la tabla de posiciones no clasifica a semifinales,
-                    los cruces de primera ronda de eliminación serán: 1° vs El ganador del duelo entre los equipos ubicados en las posiciones
-                    8 y 9, 2° vs 7°, 3° vs 6° y 4° vs 5°. Los enfrentamientos será a partido único y en caso de empate en los 90 minutos,
-                    el equipo mejor ubicado en la tabla de posiciones avanzará a semifinales. Los ganadores pasarán a la siguiente fase y
-                    se enfrentarán entre sí a partido único, cancha neutral con prórroga y penales. Para definir los cruces de semifinales
-                    se tendrá en cuenta la ubicación en la tabla de posiciones y el mejor ubicado de los clasificados se enfrentará al peor ubicado.
-                    Los ganadores de los cruces pasarán a la final que será a partido único, en cancha neutral con prórroga y penales.
-                    El ganador será el campeón de la Primera División.</p>
+                <p>Se jugará con el sistema todos contra todos, una sola rueda y en cancha neutral, contabilizando 13 partidos por equipo. Si el equipo que finaliza
+                    en la primera posición tiene 5 o menos puntos de ventaja sobre el segundo, los equipos que finalicen en las posiciones
+                    8 y 9 se enfrentarán en el Play-in para acceder a los playoffs. Será a partido único con ventaja en caso de empate
+                    para el mejor ubicado (8° posición). Al finalizar la temporada, si el equipo que finaliza en la primera posición
+                    tiene 6 o más puntos de ventaja sobre el segundo clasificará de manera directa a semifinales, accediendo los equipos
+                    que finalicen en las posiciones 7 y 8 al play-in para clasificar playoffs.Será a partido único con ventaja en caso
+                    de empate para el mejor ubicado (7° posición).
+                    Los cruces de Cuartos de Final se realizarán mediante elección directa del manager, eligiendo en primer lugar
+                    quien se ubique 1° en la tabla, pudiendo elegir cualquier rival, y así sucesivamente en la tabla. El que sea mejor
+                    ubicado en la tabla del cruce tendrá ventaja deportiva, clasificando a la siguiente ronda en caso de empate al final
+                    de los 90 minutos. En semifinales el mejor ubicado en la tabla de posiciones se enfrentará al peor ubicado en esa tabla
+                    de los clasificados a semifinales. En esta instancia y en la final por el título los partidos serán con prorroga y penales
+                    en caso de empate. Todos los partidos de las fases eliminatorias se realizarán en cancha neutral.</p>
                 <p>El último equipo en la tabla de posiciones descenderá directamente. En caso de haber dos o más equipos en la última posición,
                     se definirá la ubicación en encuentros de desempate. De persistir la igualdad, se tendrán en cuenta los partidos disputados
                     entre sí para definir. Los equipos que se encuentren entre las posiciones 10 y 13 jugarán un playout para definir el último descendido.
@@ -114,10 +104,18 @@ export default function Rules() {
                     <li> 14° Equipo en descenso directo.</li></ul>
                 <br />
                 <h4><strong>Segunda División</strong></h4>
-                <p>Serán 14 equipos, que jugarán todos contra todos en un mismo grupo, jugando cada equipo 13 fechas. El equipo que acabe en 1era posición será campeón y ascenderá directamente a la Primera División. Los equipos que se coloquen del 2° al 9° lugar accederán a los playoffs, mientras que quienes queden del 10° al 14° lugar quedarán eliminados de la temporada. Los cuartos de final tendrán ventaja deportiva para los equipos ubicados de la 2° a la 5° posición. Los cruces serán 2° vs 9°, 3° vs 8°, 4° vs 7° y 5° vs 6°. Las semifinales se disputarán a partido único, con prórroga y penales en caso de empate, los ganadores clasificarán a la final por el Segundo Ascenso, que también se disputará con el mismo formato. El ganador ascenderá a la Primera División, mientras que el perdedor jugará Promoción contra un equipo de Primera División.
+                <p>Serán 14 equipos, que jugarán todos contra todos en un mismo grupo, jugando cada equipo 13 fechas.
+                    El equipo que acabe en 1era posición será campeón y ascenderá directamente a la Primera División.
+                    Los equipos que se coloquen del 2° al 9° lugar accederán a los playoffs, mientras que quienes queden del 10° al 14°
+                    lugar quedarán eliminados de la temporada. Los cuartos de final tendrán ventaja deportiva para los equipos ubicados
+                    de la 2° a la 5° posición. Los cruces serán 2° vs 9°, 3° vs 8°, 4° vs 7° y 5° vs 6°. Las semifinales se disputarán a
+                    partido único, con prórroga y penales en caso de empate, los ganadores clasificarán a la final por el Segundo Ascenso,
+                    que también se disputará con el mismo formato. El ganador ascenderá a la Primera División, mientras que el perdedor
+                    jugará Promoción contra un equipo de Primera División.
 
                     <p> Las posiciones finales serán determinadas de la siguiente manera:
-                        1° Campeón – 2° Segundo ascendido – 3° Equipo que juega la Promoción – 4° Equipo perdedor el encuentro definitorio que determinará el clasificado a la promoción - 5° al 14° determinado por tabla.</p>
+                        1° Campeón – 2° Segundo ascendido – 3° Equipo que juega la Promoción – 4° Equipo perdedor el encuentro definitorio que
+                        determinará el clasificado a la promoción - 5° al 14° determinado por tabla.</p>
                 </p>
 
                 <p><strong>Promoción:</strong>&nbsp;La jugarán el equipo de Primera División ganador en la última ronda del play out y el perdedor de la final por el segundo ascenso de la Segunda División. Será un solo partido. En caso de empate, el equipo de Primera conservará su lugar en la división.
@@ -139,22 +137,21 @@ export default function Rules() {
                     si en este último el resultado es un empate.</p>
                 <h4 ><strong>Champions League y Europa League</strong></h4>
 
-                <p>Aprovechando las licencias del FM 23, se jugarán dos copas que se sumarán a la Copa FM
-                    Champions League: La clasificación se realizará tomando en cuenta la última temporada jugada. La jugarán 16 equipos, que serán:
-                    - Campeón de Copa FM de la temporada anterior
-                    - Campéon defensor de Champions League
-                    - Campeón de Europa League de la temporada anterior
-                    - Los 13 equipos de Primera División - exceptuando al descendido directo de la temporada anterior -
+                <p>Champions League: La jugarán 16 equipos, que serán:
+                    Campeón de Copa FM de la temporada anterior
+                    Campéon defensor de Champions League
+                    Campeón de Europa League de la temporada anterior
+                    Los 14 equipos de Primera División de la presente temporada
                     En caso de que se repita alguno de los equipos clasificados el cupo pasará a los equipos de Segunda División,
-                    siendo el orden de prioridad: Campeón de 2da, Subcampeon de 2da y equipo que juega promoción.
+                    siendo el orden de prioridad: Subcampeon de 2da - equipo que juega promoción - Orden por tabla
                     Los equipos se repartirán en 4 grupos de 4 equipos, donde cada uno jugará 3 partidos.
-                    Accederán a la segunda fase los 2 primeros de cada grupo.A partir de allí se juega a eliminación directa,
+                    Accederán a la segunda fase los 2 primeros de cada grupo. A partir de allí se juega a eliminación directa,
                     a partido único con prorroga y penales en caso de empate.
 
                     <strong>Europa League:</strong> La clasificación se realizará tomando en cuenta la última temporada jugada.
                     La jugarán los 12 equipos que no clasifiquen a la CL + los terceros de los grupos de CL de la presente temporada.
                     Será a formato de eliminación directa, a partido único con prórroga y penales en caso de empate.</p >
-                
+
 
                 <h4 class="wp-block-heading" id="segunda-division"><strong>Supercopa FM</strong></h4>
 
@@ -214,12 +211,12 @@ export default function Rules() {
                 <p>Para mostrar intención de jugar, cada usuario deberá dar aviso de su disponibilidad en el canal de discord que se usará para tal fin
                     (mensaje directo o privado) a los organizadores como así también a su rival.
                     No se tomarán como intento de coordinación mensajes donde no se haya especificado un día y horario para jugar el partido.</p>
-                <p><em><strong>Los partidos se disputarán en el FM 2023 utilizando las partidas que la organización entregará 
-                    previo al inicio de la temporada </strong></em>. Cada usuario que sea local en el calendario determinado por la partida 
-                    (teniendo en cuenta la primera ronda únicamente) se encargará de descargar la partida, cargarla para que se dispute 
-                    el encuentro y subir las capturas necesarias. El partido se disputará con velocidad media o más y modo extendido o mayor 
+                <p><em><strong>Los partidos se disputarán en el FM 2023 utilizando las partidas que la organización entregará
+                    previo al inicio de la temporada </strong></em>. Cada usuario que sea local en el calendario determinado por la partida
+                    (teniendo en cuenta la primera ronda únicamente) se encargará de descargar la partida, cargarla para que se dispute
+                    el encuentro y subir las capturas necesarias. El partido se disputará con velocidad media o más y modo extendido o mayor
                     (Exhaustivo o completo) dependiendo de lo que acuerden los rivales. La reducción de la velocidad durante el partido sin previo
-                     aviso, puede ser motivo de sanción.
+                    aviso, puede ser motivo de sanción.
                     Para cada encuentro, los manager tendrán cómo máximo un plazo de una hora de extendición para presentarse a jugar
                     en el horario pactado previamente.</p>
                 <p><strong>En caso de sufrir desconexión</strong>&nbsp;durante el encuentro se procederá de la siguiente manera:
@@ -288,8 +285,8 @@ export default function Rules() {
                 <h2 class="wp-block-heading" id="presupuesto"><strong>Presupuesto</strong></h2>
                 <h4 class="wp-block-heading" id="para-primera-division"><strong>Para Primera División:</strong></h4>
                 <p>Los equipos tendrán un objetivo mínimo de temporada el cual debe cumplirse para recibir el dinero.
-                    Los equipos estarán divididos en grupos y el premio o sanción en su presupuesto para fichajes será de +/- 5.000.000
-                    (Cinco millones de euros) por cada escalón que superen o caigan.
+                    Los equipos estarán divididos en grupos y el premio o sanción en su presupuesto para fichajes será de +/- 10.000.000
+                    (Diez millones de euros) por cada escalón que superen o caigan.
                     Para la temporada inicial será determinado por promedio de los mejores 16 CA de cada plantel.</p>
                 <p>Objetivos 43° temporada</p>
                 <table>
@@ -301,27 +298,27 @@ export default function Rules() {
                     </thead>
                     <tbody>
                         <tr>
-                            <th>1 - Liverpool (1) &#8211; Manchester City (2)</th>
+                            <th>1 - Chelsea (1) &#8211; Arsenal (2)</th>
                             <th>Acceder a la final por el campeonato o ser campeón</th>
                         </tr>
                         <tr>
-                            <th>2 - Real Madird (3) &#8211; Arsenal (4)</th>
+                            <th>2 - Barcelona (3) &#8211; Manchester Utd (4)</th>
                             <th>Acceder a las Semifinales por el campeonato</th>
                         </tr>
                         <tr>
-                            <th>3 - Chelsea (5) &#8211; Bayern Munich (6)</th>
+                            <th>3 - Liverpool (5) &#8211; Manchester City (6)</th>
                             <th>Finalizar entre las posiciones 5 / 6</th>
                         </tr>
                         <tr>
-                            <th>4 - Manchester Utd (7) &#8211; Inter (8)</th>
+                            <th>4 - Atlético de Madrid (7) &#8211; Milan (8)</th>
                             <th>Finalizarentr e las posiciones 7 / 8</th>
                         </tr>
                         <tr>
-                            <th>5 - Juventus (9) &#8211; Milan (10) </th>
+                            <th>5 - Bayern Munich (9) &#8211; Tottenham (10) </th>
                             <th>Finalizar en las posiciones 9 / 10</th>
                         </tr>
                         <tr>
-                            <th> 6 - Napoli (11) &#8211; PSG (12) &#8211; Atlético de Madrid (13) &#8211; Barcelona (14)</th>
+                            <th> 6 - Inter (11) &#8211; RB Leipzig (12) &#8211; Benfica (13) &#8211; PSG (14)</th>
                             <th>Evitar el descenso (No ingresar a playout o descenso directo)</th>
                         </tr>
                     </tbody>
@@ -353,27 +350,27 @@ export default function Rules() {
                     </thead>
                     <tbody>
                         <tr>
-                            <th>1 - Tottenham (1) &#8211; Betis (2)</th>
+                            <th>1 - Porto (1) &#8211; Juventus (2)</th>
                             <th>Acceder a la final por el campeonato o ser campeón</th>
                         </tr>
                         <tr>
-                            <th>2 - Villarreal (3) &#8211; Porto FC (4)</th>
+                            <th>2 - Betis (3) &#8211; Real Madrid (4)</th>
                             <th>Acceder a las Semifinales por el campeonato</th>
                         </tr>
                         <tr>
-                            <th>3 - Sporting Club (5) &#8211; RB Leipzig (6)</th>
+                            <th>3 - Atalanta (5) &#8211; Napoli (6)</th>
                             <th>Finalizar entre las posiciones 5 / 6</th>
                         </tr>
                         <tr>
-                            <th>4 - Newcastle (7) &#8211; Real Sociedad (8)</th>
+                            <th>4 - Villarreal (7) &#8211; Roma (8)</th>
                             <th>Finalizarentr e las posiciones 7 / 8</th>
                         </tr>
                         <tr>
-                            <th>5 - Roma (9) &#8211; Dortmund (10) </th>
+                            <th>5 - Newcastle (9) &#8211; Sporting Lisboa  (10) </th>
                             <th>Finalizar en las posiciones 9 / 10</th>
                         </tr>
                         <tr>
-                            <th> 6 - Lazio (11) &#8211; Atalanta (12) &#8211; Benfica (13) &#8211; West Ham (14)</th>
+                            <th> 6 - Lazio (11) &#8211; West Hamd (12) &#8211; Real Sociedad (13) &#8211; Dortmund (14)</th>
                             <th>Evitar el descenso (No ingresar a playout o descenso directo)</th>
                         </tr>
                     </tbody>
@@ -414,9 +411,9 @@ export default function Rules() {
                     <li>Por participar en Primera Ronda: 10.000.000 €</li>
                     <li>Por avanzar a Octavos: 10.000.000 €</li>
                     <li>Por avanzar a Cuartos: 10.000.000 €</li>
-                    <li>Por avanzar a Semifinal: 10.000.000 €</li>
-                    <li>Por avanzar a la Final: 15.000.000 €</li>
-                    <li>Por ganar la Copa: 20.000.000 € + Bloqueo extra de un jugador previo al mercado</li>
+                    <li>Por avanzar a Semifinal: 15.000.000 €</li>
+                    <li>Por avanzar a la Final: 20.000.000 €</li>
+                    <li>Por ganar la Copa: 30.000.000 € + Bloqueo extra de un jugador previo al mercado</li>
                     <p><em>En el caso de los equipos que participan directamente desde octavos,
                         reciben el premio por participar en Primera Ronda si quedan eliminados.</em></p>
                 </ul>
@@ -437,7 +434,10 @@ export default function Rules() {
                     <li>Por avanzar a Semifinal: 10.000.000 €</li>
                     <li>Por avanzar a la Final: 10.000.000 €</li>
                     <li>Por ganar la Copa: 15.000.000 € + Fichajes extra de equipos que no participan en la liga
-                        (Debe pagar el coste)</li>
+                        (Debe pagar el coste)
+                        En caso de que el ganador sea un equipo de 2da división tendrá un bloqueo extra en reemplazo del fichaje extra.
+                        Esto será exceptuado en caso de que el mismo equipo sea campeón en
+                        a - la Copa FM o b - ascienda a la Primera División, en esa situación mantendría el fichaje extra (pagando el coste).</li>
                 </ul>
 
                 <p><strong>Premio al goleador de la liga</strong></p>
@@ -466,7 +466,7 @@ export default function Rules() {
 
                     1 - Mercado solo por intercambio: Se podrán realizar traspasos de jugadores entre los managers de la superliga
                     pero sin superar los dos jugadores como máximo(1x1, 1x2 o 2x2)</p >
-                
+
 
                 <p>2-Draft/Subastas</p >
                 <p>A - Primer draft (Se realiza por orden de CA, del más bajo al más alto).
@@ -588,27 +588,27 @@ export default function Rules() {
                         Al finalizar el mercado, los usuarios podrán liberar jugadores no inscriptos en la lista de buena fe.
                         Recibirán un monto de dinero igual al 30% del valor del jugador, siempre y cuando este
                         no haya sido transferido (comprado) en ese mismo mercado de pases.
-                        
+
                         <strong>Fair Play Financiero</strong></p>
 
                     <p>Finalizado el mercado de pases, los equipos deberán tener saldo positivo en sus presupuestos.
 
-                        En caso de que el mismo sea negativo se le descontarán 3 puntos al final de la temporada si el monto
-                        es menor a 5 millones. Por cada 5 millones restantes el equipo sufrirá una quita de 1 punto adicional
+                        En caso de que el mismo sea negativo se le descontarán 3 puntos al final de la temporada si el monto es 
+                        menor a 5 millones. Por cada 5 millones restantes el equipo sufrirá una quita de 1 punto adicional 
                         hasta un máximo de 8 puntos totales.
 
                         Además tendrán sanciones para el mercaso siguiente.
-                        En caso de un saldo negativo menor a 10 millones - Tendrán 2 intercambios por usuario + 1 CDR
+                        En caso de un saldo negativo menor a 10 millones - Tendrán 2 intercambios por usuario + 1 CDR 
                         para ejecutar por usuario. Podrán elegir si realizar 1 solo intercambio y ejecutar 2 clasulas.
 
-                        En caso de un saldo negativo mayor a 10 millones - Tendrán 1 intercambio por usuario + 1 CDR
-                        para ejecutar por usuario. Podrán elegir si realizar 2 intercambios y no ejecutar clausulas,
+                        En caso de un saldo negativo mayor a 10 millones - Tendrán 1 intercambio por usuario + 1 CDR 
+                        para ejecutar por usuario. Podrán elegir si realizar 2 intercambios y no ejecutar clausulas, 
                         o ejecutar 2 clasulas y no realizar intercambio.
 
                         Además solo podrán incorporar un jugador de fuera de la liga (Draft, Subasta o Draft Extra)
 
-                        Si al finalizar ese mercado persiste el saldo negativo no podrá incorporar jugadores en el mercado
-                        siguiente y recibirá el descuento de 6 puntos
+                        Si al finalizar ese mercado persiste el saldo negativo no podrá incorporar jugadores en el 
+                        mercado siguiente y recibirá el descuento de 6 puntos
                     </p>
 
                     <p><strong>Ingreso de nuevos participantes</strong></p>
@@ -677,7 +677,7 @@ export default function Rules() {
                             ver correctamente a todos los jugadores que participaron del partido.</p>
                     </div></div>
                     <p><strong><mark ><span>
-                            <span>Reglas:</span></span></mark></strong> </p>
+                        <span>Reglas:</span></span></mark></strong> </p>
 
                     <ul>
                         <li>Habrá 1 ganador por fecha tanto en Primera, como Segunda. </li>
@@ -711,75 +711,89 @@ export default function Rules() {
                             2 - Promedio goles/asistencias.
                             3 - Posición final del equipo.</li>
                     </ul>
-                    
-                        <p><strong><mark><span>XI ideal:</span></mark></strong></p>
-                        <ul>
-                            <li>La táctica para armar el XI ideal, será la más utilizada por el DT ganador del premio.</li>
-                            <li>Regla de desempate para c/posición:
-                                1 - Partidos jugados.
-                                2 - Cantidad de veces MVP de su propio equipo.
-                                3 - Posicion final del equipo.</li>
-                        </ul>
-                        <p><strong><mark>
-                            <span>Premios:</span></mark></strong></p>
-                        <ul>
 
-                            <li>MVP de la fecha ambas divisiones: 10 M por fecha (es decir, 10 M para cada división).</li>
-                            <li>MVP de la temporada ambas divisiones: 25 M para cada división</li>
-                            <li>Jugadores que integren el IX ideal de ambas divisiones: 5 M para cada división,
-                                por cada jugador (incluye DT).</li>
-                        </ul>
-                        <h2 class="wp-block-heading" id="premios"><strong>SUPERLIGA TV</strong></h2>
+                    <p><strong><mark><span>XI ideal:</span></mark></strong></p>
+                    <ul>
+                        <li>La táctica para armar el XI ideal, será la más utilizada por el DT ganador del premio.</li>
+                        <li>Regla de desempate para c/posición:
+                            1 - Partidos jugados.
+                            2 - Cantidad de veces MVP de su propio equipo.
+                            3 - Posicion final del equipo.</li>
+                    </ul>
+                    <p><strong><mark>
+                        <span>Premios:</span></mark></strong></p>
+                    <ul>
 
-                        <p>Debido al cierre de nuevos derechos de television,
-                            van a tener la oportunidad de tener mas ingresos para pagar las CdR sus mercados.
+                        <li>MVP de la fecha ambas divisiones: 10 M por fecha (es decir, 10 M para cada división).</li>
+                        <li>MVP de la temporada ambas divisiones: 25 M para cada división</li>
+                        <li>Jugadores que integren el IX ideal de ambas divisiones: 5 M para cada división,
+                            por cada jugador (incluye DT).</li>
+                    </ul>
+                    <h2 class="wp-block-heading" id="premios"><strong>SUPERLIGA TV</strong></h2>
 
-                            Empezando proximamente, vamos a tener programas en vivo cada Domingo y Martes.
-                            Los managers de cada equipo que participe va a tener un premio economico de los derechos televisivos.</p>
-                        Los premios seran los siguientes:
-                        <ul></ul>
-                        <h1>
-                            Partidos de liga:
-                        </h1>
-                        <ul>
-                            <li>Fase regular - 5M </li>
-                            <li>playoffs/playout: 10M </li>
-                            <li>Final: 15M </li>
-                        </ul>
-                        <h1>
-                            Copa FM:
-                        </h1>
-                        <ul>
-                            <li>Final: 20M </li>
-                            <li>Semis: 15M</li>
-                            <li>Fases previas: 10M</li>
-                        </ul >
-                        <h1>
-                            Champions:
-                        </h1>
-                        <ul>
-                            <li>Grupos: 10M</li>
-                            <li>Knockout: 20M</li>
-                            <li>Final: 30M</li>
-                        </ul>
-                        Europa league: la mitad de champions.
+                    <p>Debido al cierre de nuevos derechos de television,
+                        van a tener la oportunidad de tener mas ingresos para pagar las CdR sus mercados.
+
+                        Empezando proximamente, vamos a tener programas en vivo cada Domingo y Martes.
+                        Los managers de cada equipo que participe va a tener un premio economico de los derechos televisivos.</p>
+                    Los premios seran los siguientes:
+                    <ul></ul>
+                    <h1>
+                        Partidos de liga:
+                    </h1>
+                    <ul>
+                        <li>Fase regular - 5M </li>
+                        <li>playoffs/playout: 15M </li>
+                        <li>Final: 30M </li>
+                    </ul>
+                    <h1>
+                        Copa FM:
+                    </h1>
+                    <ul>
+                        <li>Final: 20M </li>
+                        <li>Semis: 15M</li>
+                        <li>Fases previas: 10M</li>
+                    </ul >
+                    <h1>
+                        Champions:
+                    </h1>
+                    <ul>
+                        <li>Grupos: 5M</li>
+                        <li>Knockout: 10M</li>
+                        <li>Final: 20M</li>
+                    </ul>
+                    Europa league: la mitad de champions.
 
                     Premio al MVP del partido: 5M
 
-                    En caso de bajarse ya una vez confirmada la participación de ambos managers en el partido, se le sancionara a ambos equipos el monto cuyo iban a ganar en caso de transmitirse el partido.</p >
+                    En caso de bajarse ya una vez confirmada la participación de ambos managers en el partido,
+                    se le sancionara a ambos equipos el monto cuyo iban a ganar en caso de transmitirse el partido.</p >
 
                 <p class="has-text-align-center"><strong><span class="uppercase"><mark><span>Sanciones por uso de bugs:</span></mark></span></strong></p>
 
-                <p>En el Football Manager existen ciertos bugs que afectan el desarrollo normal del juego.
-                    Hacer uso de estos bugs
-                    (Repetir roles de los MCD/MEC/MPC/DLC, jugar con 3 MPC y sin delanteros en la formación,
-                    jugar sin DLC con MPC, alterar saques desde la banda en largo, modificar corners en ataque, entre otros)
-                    será penalizado dando por perdido el partido a quien lo aplique.
-                    El usuario que se viera afectado por algún bug, deberá guardar el partido una vez finalizado y
-                    enviarlo a la organización para que este sea analizado y se tome una decisión sobre el mismo.
-                    De todas formas, el encuentro debe estar finalizado para que sea válido.
-                    En el caso de repetición de roles, para que el pedido sea válido deben haber
-                    pasado más de 10 minutos con esa condición o haber marcado un gol, lo que ocurra primero.</p >
+                <p>SANCIONES POR USO DE BUGS:
+
+                    En el Football Manager existen ciertos bugs que afectan el desarrollo normal del juego.
+                    Hacer uso de estos bugs (Repetir roles de los MCD/MEC/MPC/DLC, jugar con 3 MPC y sin delanteros en la formación,
+                    jugar sin DLC con MPC, alterar saques de banda en ataque, modificar corners en ataque, entre otros)
+                    será penalizado dando por perdido el partido a quien lo aplique. En modificación de pelota parada
+                    (saques de banda y corners, ambos en ataque) solo serán válidos en caso de que se marque un gol de aquella manera.
+
+                    Existen cambios que realiza automáticamente el ME (Match Engine del FM) causadas por modificar el pateador en ataque,
+                    colocar 5 centrales -entre otros-, que generán desajustes en la pelota parada que NO significan que la misma haya
+                    sido modificada. En este caso, los organizadores evaluaran el caso y darán resolución al mismo.
+                    El usuario que se viera afectado por algún bug, deberá guardar el partido una vez finalizado y enviarlo a la
+                    organización para que este sea analizado y se tome una decisión sobre el mismo. De todas formas, el encuentro
+                    debe estar finalizado para que sea válido. En el caso de repetición de roles, para que el pedido sea válido
+                    deben haber pasado más de 10 minutos con esa condición o haber marcado un gol, lo que ocurra primero.</p >
+
+                <h3>OTRAS SANCIONES</h3>
+                <p>La organización podrá sancionar a aquellos managers que arreglen el resultado de un partido o tengan intenciones de hacerlo,
+                    tomando en cuenta la acumulación de antecedentes al respecto. La organización tomará la decisión de revisar
+                    un partido en caso de que lo consideren sospechoso, tomando los medidas que crean correctas. Para asegurar la transparencia,
+                    los manager estarán obligados a subir los archivos de los partidos (.pkm) junto a los resultados en los canales
+                    correspondientes (en caso de dudas, preguntar a alguno de los responsables). En caso de no subirse el archivo del partido,
+                    habrá sanción para el responsable (el encargado de subir las capturas).</p>
             </form>
         </>
     )

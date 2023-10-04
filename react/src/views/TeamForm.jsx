@@ -23,6 +23,8 @@ export default function TeamForm() {
     const [bestPlayersCA, setBestPlayersCA] = useState(null);
     const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
     const [playersOver20Count, setPlayersOver20Count] = useState(0);
+    const [filterPlayersOver20ByRegister, setFilterPlayersOver20ByRegister] = useState(0);
+    const [filterPlayersByRegister, setFilterPlayersByRegister] = useState(0);
 
 
     useEffect(() => {
@@ -105,6 +107,16 @@ export default function TeamForm() {
         const blockedPlayers = players.filter((player) => player.status === "bloqueado");
         setBlockedPlayersCount(blockedPlayers.length);
     };
+
+    const countRegisterAndOver20 = () => {
+        const filterPlayers = players.filter(p => p.status === 'registrado' && p.age > 20);
+        setFilterPlayersOver20ByRegister(filterPlayers.length);
+    }
+
+    const countRegistered = () => {
+        const filterPlayers = players.filter(p => p.status === 'registrado');
+        setFilterPlayersByRegister(filterPlayers.length);
+    }
 
     const handleUserChange = (e) => {
         const selectedUserId = e.target.value;
@@ -212,6 +224,8 @@ export default function TeamForm() {
                         )}
                         <p>Cantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
                         <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong> </p>
+                        <p>Cantidad de mayores registrados mayores: <strong>{filterPlayersOver20ByRegister}</strong></p>
+                        <p>Cantidad de registrados: <strong>{filterPlayersByRegister}</strong></p>
                     </div>
                 </form>
             </div>

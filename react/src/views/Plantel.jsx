@@ -15,6 +15,8 @@ export default function Plantel() {
     const [bestPlayersCA, setBestPlayersCA] = useState(null);
     const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
     const [playersOver20Count, setPlayersOver20Count] = useState(0);
+    const [filterPlayersOver20ByRegister, setFilterPlayersOver20ByRegister] = useState(0);
+    const [filterPlayersByRegister, setFilterPlayersByRegister] = useState(0);
 
 
     useEffect(() => {
@@ -25,6 +27,8 @@ export default function Plantel() {
         getBestPlayersCA();
         countBlockedPlayers();
         countPlayersOver20();
+        countRegisterAndOver20();
+        countRegistered();
     }, [players]);
 
     useEffect(() => {
@@ -46,6 +50,16 @@ export default function Plantel() {
         const playersOver20 = players.filter((player) => player.age > 20);
         setPlayersOver20Count(playersOver20.length);
     };
+
+    const countRegisterAndOver20 = () => {
+        const filterPlayers = players.filter(p => p.status === 'registrado' && p.age > 20);
+        setFilterPlayersOver20ByRegister(filterPlayers.length);
+    }
+
+    const countRegistered = () => {
+        const filterPlayers = players.filter(p => p.status === 'registrado');
+        setFilterPlayersByRegister(filterPlayers.length);
+    }
 
     const getTeam = async () => {
         setLoading(true)
@@ -145,7 +159,7 @@ export default function Plantel() {
                                     <td>{p.heavy_injured}</td>
                                    <td>{p.mvp}</td> */}
                                         <td>
-                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
+                                            <Link hidden className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                         </td>
                                     </tr>
                                 ))
@@ -165,6 +179,8 @@ export default function Plantel() {
                     )}
                     <p>Cantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
                     <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong> </p>
+                    <p>Cantidad de mayores registrados mayores: <strong>{filterPlayersOver20ByRegister}</strong></p>
+                    <p>Cantidad de registrados: <strong>{filterPlayersByRegister}</strong></p>
                     <p>Presupuesto: <strong>{user.profits}</strong></p>
                 </div>
             </div >

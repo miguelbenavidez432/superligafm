@@ -56,7 +56,6 @@ class PlayerController extends Controller
                 'pa' => $dato['pa'],
                 'value' => $dato['value'],
                 'status' => $dato['status'],
-                // Agrega más columnas según tus necesidades
             ];
         }
 

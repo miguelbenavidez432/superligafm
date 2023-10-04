@@ -11,7 +11,6 @@ import Players from './views/Players';
 import PlayerForm from './views/PlayerForm';
 import TransferForm from './views/TransferForm';
 import About from './components/About';
-import Rules from './components/Rules';
 import Prode from './views/Prode';
 import Plantel from './views/Plantel';
 import Announcement from './views/Announcement';
@@ -25,6 +24,9 @@ import CreateBets from './views/CreateBets';
 import ConfirmBets from './views/ConfirmBets';
 import BetsConfirmation from './views/BetsConfirmation';
 import OffersMade from './views/OffersMade';
+import Rules from './views/Rules';
+import FixtureFirstDivision from './views/FixtureFirstDivision';
+import FixtureSecondDivision from './views/FixtureSecondDivision';
 
 const router = createBrowserRouter ([
     {
@@ -126,7 +128,14 @@ const router = createBrowserRouter ([
             {
                 path: '/misofertas',
                 element: <OffersMade/>
-                
+            },
+            {
+                path: '/fixture_primera',
+                element: <FixtureFirstDivision/>
+            },
+            {
+                path: '/fixture_segunda',
+                element: <FixtureSecondDivision/>
             },
         ]
     },
