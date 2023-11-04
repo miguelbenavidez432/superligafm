@@ -27,7 +27,6 @@ class UpdateUserRequest extends FormRequest
             'email' => 'required|email|unique:users,email,'.$this->id,
             'rol' => 'required|nullable',
             'profits' => 'integer',
-            'costs' => 'integer|nullable',
             'password' => [
                 'confirmed',
                 Password::min(8),

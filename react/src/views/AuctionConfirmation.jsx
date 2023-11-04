@@ -104,22 +104,22 @@ const AuctionConfirmation = () => {
             name: userFiltered.name,
             rol: userFiltered.rol,
             email: userFiltered.email,
-            profits: userFiltered.profits - selectedPlayer.value
+            profits: userFiltered.profits - playerSelected.value
         }
         
         setUserProfit(updatedUserFiltered)
-
+        console.log(userProfit)
     }
-
+    
     const onSubmit = async () => {
         const updatedSelectedPlayer = {
             ...selectedPlayer,
             id_team: parseInt(secondTeam)
         }
+        console.log(userProfit)
+        console.log(selectedPlayer)
         try {
             setSelectedPlayer(updatedSelectedPlayer)
-            console.log(userProfit)
-            console.log(selectedPlayer)
             await axiosClient.put(`/users/${userProfit.id}`, userProfit);
             await axiosClient.put(`/players/${selectedPlayer.id}`, selectedPlayer)
                 .then(() => {
