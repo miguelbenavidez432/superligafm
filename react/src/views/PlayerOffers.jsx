@@ -148,6 +148,8 @@ const PlayerOffers = () => {
                                 <br />
                                 <span>Usuario: {userNameToShow}</span>
                                 <br />
+                                <span>Usuario: {oferta.other_players}</span>
+                                <br />
                                 <span>Valor total: {oferta.total_value}</span>
                                 <br />{
                                     user.rol === 'Admin' || user.rol === 'Organizador' ?
