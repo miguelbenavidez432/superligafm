@@ -42,8 +42,8 @@ const PlayerOffers = () => {
     useEffect(() => {
         axiosClient.get(`/clausulas/${id}`)
             .then(({ data }) => {
-                setPlayer(data.player); 
-                setOffers(data.offers); 
+                setPlayer(data.player);
+                setOffers(data.offers);
                 checkOffersAvailability(data.offers);
             })
             .catch((error) => {
@@ -117,7 +117,7 @@ const PlayerOffers = () => {
                 setUserProfit(updatedUserProfit);
                 setUserCost(updatedUserCost);
                 setPlayer(updatedPlayer)
-                
+
                 await axiosClient.put(`/users/${getUser.id}`, updatedUserProfit);
                 await axiosClient.put(`/users/${getUserCreated.id}`, updatedUserCost);
                 await axiosClient.put(`/players/${oferta.id_player}`, updatedPlayer);
@@ -148,14 +148,14 @@ const PlayerOffers = () => {
                                 <br />
                                 <span>Usuario: {userNameToShow}</span>
                                 <br />
-                                <span>Usuario: {oferta.other_players}</span>
+                                <span>Jugadores extras: {oferta.other_players}</span>
                                 <br />
                                 <span>Valor total: {oferta.total_value}</span>
                                 <br />{
                                     user.rol === 'Admin' || user.rol === 'Organizador' ?
-                                    <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
-                                    :
-                                    ''
+                                        <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
+                                        :
+                                        ''
                                 }
                             </li>
                         )

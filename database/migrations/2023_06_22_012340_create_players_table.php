@@ -31,7 +31,6 @@ return new class extends Migration
             $table->integer('injured')->nullable()->default(0);
             $table->integer('heavy_injured')->nullable()->default(0);
             $table->integer('mvp')->nullable()->default(0);
-            $table->softDeletes();
             $table->timestamps();
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_unicode_ci';
