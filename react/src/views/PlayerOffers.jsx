@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../axios";
 import moment from "moment";
 import { useStateContext } from "../context/ContextProvider";
+import { format } from 'date-fns';
 
 const PlayerOffers = () => {
     const { id } = useParams();
@@ -73,7 +74,7 @@ const PlayerOffers = () => {
     const checkOffersAvailability = (playerOffers) => {
         if (playerOffers && playerOffers.length > 0) {
             const firstOfferDate = moment(playerOffers[0].created_at);
-            const expirationDate = firstOfferDate.add(6, 'hours');
+            const expirationDate = firstOfferDate.add(8, 'hours');
             const currentDate = moment();
             if (currentDate.isAfter(expirationDate)) {
                 setIsAvailable(true);
@@ -138,9 +139,12 @@ const PlayerOffers = () => {
         <div>
             {isAvailable ? (<ul>
                 {Array.isArray(offers) && offers.length > 0 ? (
-                    offers.map((oferta) => {
+                    offers
+                    .map((oferta) => {
                         const userName = users.find(u => u.id === oferta.created_by);
                         const userNameToShow = userName ? userName.name : "Usuario no encontrado";
+                        const fecha = new Date(oferta.created_at);
+                        const fechaFormateada = format(fecha, 'dd/MM/yy HH:mm:ss');
                         return (
                             <li key={oferta.id}>
                                 <br />
@@ -151,6 +155,10 @@ const PlayerOffers = () => {
                                 <span>Jugadores extras: {oferta.other_players}</span>
                                 <br />
                                 <span>Valor total: {oferta.total_value}</span>
+                                <br />
+                                <span>Valor: {oferta.value}</span>
+                                <br />
+                                <span>Horario: {fechaFormateada}</span>
                                 <br />{
                                     user.rol === 'Admin' || user.rol === 'Organizador' ?
                                         <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>

@@ -123,6 +123,7 @@ export default function PlayerForm() {
                             <option value="liberado">Liberado</option>
                             <option value="bloqueado">Bloqueado</option>
                             <option value="registrado">Registrado</option>
+                            <option value="">Sin modificar</option>
                         </select>
                         <input value={players.age} onChange={e => setPlayers({ ...players, age: parseInt(e.target.value) })} placeholder="Edad" type="text" />
                         <input value={players.ca} onChange={e => setPlayers({ ...players, ca: parseInt(e.target.value) })} placeholder="CA" type="text" />

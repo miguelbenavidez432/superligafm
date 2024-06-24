@@ -159,7 +159,7 @@ export default function Plantel() {
                                     <td>{p.heavy_injured}</td>
                                    <td>{p.mvp}</td> */}
                                         <td>
-                                            <Link hidden className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
+                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                         </td>
                                     </tr>
                                 ))

@@ -210,7 +210,7 @@ export default function Announcement() {
                                 <input
                                     type="range"
                                     min={inputValue}
-                                    max={inputValue * 1.75}
+                                    max={inputValue * 2}
                                     step="any"
                                     onChange={handleInputChange}
                                     value={playerTransfered.value}
@@ -218,7 +218,7 @@ export default function Announcement() {
                                 <strong>Valor pagado para ejecutar la claúsula de rescisión:</strong> {playerTransfered.value}
                                 <br />
                                 <br />
-                                <span><strong>Determinar primero el valor a pagar en dinero y luego los jugadores a agregar
+                                {/* <span><strong>Determinar primero el valor a pagar en dinero y luego los jugadores a agregar
                                     En caso de no hacerlo asì puede ocurrir un error que los OBLIGUE a  pagar más como multa por los obedecer esta indicación</strong></span>
                                 <select
                                     onChange={handlerPlayerAdd}>
@@ -228,7 +228,7 @@ export default function Announcement() {
                                             <option value={p.id}
                                                 key={p.id}>{p.name}</option>
                                         ))}
-                                </select>
+                                </select> */}
                             </div>
 
                             <br />

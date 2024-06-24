@@ -19,6 +19,7 @@ export default function TransferForm() {
         id_team_from: '',
         id_team_to: '',
         budget: 0,
+        status: '',
         created_by: '',
         buy_by: '',
         sold_by: '',
@@ -84,7 +85,7 @@ export default function TransferForm() {
             ca: jugadorSeleccionado.ca,
             pa: jugadorSeleccionado.pa,
             value: jugadorSeleccionado.value,
-            status: ''
+            status: 'bloqueado'
         };
 
         setPlayersToSend([...playersToSend, jugadorSeleccionado.name])
