@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
 
@@ -11,9 +13,14 @@ class AuctionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->has("all") && $request->query("all") == true) {
+            return AuctionResource::collection(Auction::query()->orderBy("created_at", "desc")->get());
+        } else {
+            return AuctionResource::collection(Auction::query()->orderBy("created_at", "desc")->paginate(50));
+        }
+        ;
     }
 
     /**
@@ -21,7 +28,10 @@ class AuctionController extends Controller
      */
     public function store(StoreAuctionRequest $request)
     {
-        //
+        $data = $request->validated();
+        $auction = Auction::create($data);
+
+        return response(new AuctionResource($auction, 201));
     }
 
     /**
@@ -29,7 +39,7 @@ class AuctionController extends Controller
      */
     public function show(Auction $auction)
     {
-        //
+        return new AuctionResource($auction);
     }
 
     /**
@@ -37,7 +47,9 @@ class AuctionController extends Controller
      */
     public function update(UpdateAuctionRequest $request, Auction $auction)
     {
-        //
+        $data = $request->validated();
+        $auction->update($data);
+        return new AuctionResource($auction);
     }
 
     /**
@@ -45,6 +57,7 @@ class AuctionController extends Controller
      */
     public function destroy(Auction $auction)
     {
-        //
+        $auction->delete();
+        return response("", 204);
     }
 }

@@ -5,10 +5,11 @@ use App\Http\Controllers\Api\BetController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\RescissionController;
+use App\Http\Controllers\Api\SeasonController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Resources\PlayerBetResource;
+use App\Http\Controllers\Api\AuctionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,7 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/traspasos', TransferController::class);
     Route::apiResource('/bets', BetController::class);
     Route::apiResource('/singlebet', PlayerBetController::class);
-    Route::apiResource('/clausula_rescision', RescissionController::class);
+    Route::apiResource('/season', SeasonController::class);
+    Route::apiResource('/auctions', AuctionController::class);
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
