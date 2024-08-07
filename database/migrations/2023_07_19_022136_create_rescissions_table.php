@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('extra_value')->default(0);
             $table->integer('total_value');
             $table->string('confirmed')->default('no');
-            $table->string('active')->default('no');
+            $table->string('active')->default('yes');
             $table->timestamps();
         });
     }

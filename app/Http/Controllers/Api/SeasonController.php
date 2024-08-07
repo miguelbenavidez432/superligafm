@@ -7,7 +7,6 @@ use App\Http\Resources\SeasonResource;
 use App\Models\Season;
 use App\Http\Requests\StoreSeasonRequest;
 use App\Http\Requests\UpdateSeasonRequest;
-use Illuminate\Http\Request;
 
 class SeasonController extends Controller
 {
