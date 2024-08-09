@@ -61,24 +61,49 @@ class TransferController extends Controller
     }
 
     public function transfer(Request $request)
-    {
-        $datosActualizados = $request->input('data');
+{
+    $datosActualizados = $request->input('data');
 
-        $upsertData = [];
-        foreach ($datosActualizados as $dato) {
-            $upsertData[] = [
-                'transferred_players' => $dato['transferred_players'],
-                'id_team_from' => $dato['id_team_from'],
-                'id_team_to' => $dato['id_team_to'],
-                'costs' => $dato['costs'],
-                'created_by' => $dato['created_by'],
-                'buy_by' => $dato['buy_by'],
-                'sold_by' => $dato['sold_by'],
-            ];
+    $upsertData = [];
+    $buyUser = null;
+    $sellUser = null;
+    $transferValue = 0;
+
+    foreach ($datosActualizados as $dato) {
+        // Obtener los IDs de los usuarios (managers)
+        $buyUser = User::find($dato['buy_by']);
+        $sellUser = User::find($dato['sold_by']);
+
+        // Obtener el valor de la transferencia
+        $transferValue = $dato['costs'];
+
+        // Actualizar el presupuesto del comprador
+        if ($buyUser) {
+            $buyUser->profits -= $transferValue;
+            $buyUser->save();
         }
 
-        Transfer::upsert($upsertData, 'id', ['transferred players']);
+        // Actualizar el presupuesto del vendedor
+        if ($sellUser) {
+            $sellUser->profits += $transferValue;
+            $sellUser->save();
+        }
 
-        return response()->json(['message' => 'Datos actualizados correctamente']);
+        // Crear el array para upsert
+        $upsertData[] = [
+            'transferred_players' => $dato['transferred_players'],
+            'id_team_from' => $dato['id_team_from'],
+            'id_team_to' => $dato['id_team_to'],
+            'budget' => $transferValue,
+            'created_by' => $dato['created_by'],
+            'buy_by' => $dato['buy_by'],
+            'sold_by' => $dato['sold_by'],
+        ];
     }
+
+    // Realizar el upsert en la tabla de Transferencias
+    Transfer::upsert($upsertData, 'id', ['transferred_players']);
+
+    return response()->json(['message' => 'Datos actualizados correctamente']);
+}
 }
