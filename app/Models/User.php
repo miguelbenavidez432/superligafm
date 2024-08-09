@@ -26,8 +26,6 @@ class User extends Authenticatable
         'rol',
         'profits',
         'costs',
-        'active',
-        'id_team',
     ];
 
     /**

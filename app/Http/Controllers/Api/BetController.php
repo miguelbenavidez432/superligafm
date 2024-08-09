@@ -62,7 +62,6 @@ class BetController extends Controller
 
     public function attach(Request $request)
     {
-
         $validatedData = $request->validate([
             'id_bet' => 'required|exists:bets,id',
             'id_user' => 'required|exists:users,id',
@@ -82,7 +81,7 @@ class BetController extends Controller
             'selected_option' => $validatedData['selected_option'],
             'amount' => $amountToBet,
         ]);
-        
+
         $user->profits -= $amountToBet;
         $user->save();
 

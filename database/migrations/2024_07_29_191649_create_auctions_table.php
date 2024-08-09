@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rescissions', function (Blueprint $table) {
+        Schema::create('auctions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_player')->nullable();
+            $table->foreignId('id_player');
             $table->foreign('id_player')->on('players')->references('id');
-            $table->string('name');
             $table->foreignId('id_team')->nullable();
             $table->foreign('id_team')->on('teams')->references('id');
             $table->foreignId('created_by');
             $table->foreign('created_by')->on('users')->references('id');
-            $table->integer('value');
-            $table->json('other_players')->nullable();
-            $table->integer('extra_value')->default(0);
-            $table->integer('total_value');
+            $table->foreignId('auctioned_by');
+            $table->foreign('auctioned_by')->on('users')->references('id');
+            $table->integer('amount');
             $table->string('confirmed')->default('no');
-            $table->string('active')->default('yes');
+            $table->string('active')->default('no');
             $table->timestamps();
         });
     }
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rescissions');
+        Schema::dropIfExists('auctions');
     }
 };
