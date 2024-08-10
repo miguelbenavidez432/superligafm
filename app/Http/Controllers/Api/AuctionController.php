@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
-use App\Models\Player;
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
@@ -18,6 +16,7 @@ class AuctionController extends Controller
     public function index(Request $request)
     {
         if ($request->has("all") && $request->query("all") == true) {
+
             return AuctionResource::collection(Auction::with(['user', 'player', 'team'])->orderBy("created_at", "desc")->get());
         } else {
             return AuctionResource::collection(Auction::with(['user', 'player', 'team'])->orderBy("created_at", "desc")->paginate(50));
@@ -61,6 +60,7 @@ class AuctionController extends Controller
     {
         $auction->delete();
         return response("", 204);
+
     }
 
     public function addAuctions(StoreAuctionRequest $request)

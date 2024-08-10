@@ -142,7 +142,7 @@ export default function TransferForm() {
         <>
             <div>
                 <label htmlFor="equipo">Seleccionar equipo:</label>
-                <select id="equipo" value={selectedEquipo} onClick={handleEquipoChange}>
+                <select id="equipo" value={selectedEquipo} onChange={handleEquipoChange}>
                     <option value="">Seleccione un equipo</option>
                     {
                         teams.map(equipo => (
