@@ -38,6 +38,9 @@ export default function TeamForm() {
                     getPlayers();
                     getUsers();
                     filterPlayersByTeam()
+                    getBestPlayersCA()
+                    countRegisterAndOver20()
+                    countRegistered()
                 })
                 .catch(() => {
                     setLoading(false);
@@ -208,16 +211,41 @@ export default function TeamForm() {
                     </select>
                     <button className="btn">Guardar cambios</button>
                     <br />
-                    <ul>
-                        {players.map(p => (
-                            <li key={p.id}><strong>Jugador:
-                            </strong> {p.name} -
-                                <strong>CA:</strong> {p.ca} -
-                                <strong>Edad:</strong> {p.age} -
-                                <strong>Estado: </strong> {p.status}
-                            </li>
-                        ))}
-                    </ul>
+                    <table>
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE</th>
+                                    <th>CA</th>
+                                    <th>EDAD</th>
+                                    <th>ESTADO</th>
+                                    {/* <th>GOLES</th>
+                                    <th>ASISTENCIAS</th>
+                                    <th>AMARILLAS</th>
+                                    <th>ROJA</th>
+                                    <th>ROJA DIRECTA</th>
+                                    <th>LESIONES LEVES</th>
+                                    <th>LESIONES GRAVES</th>
+                                    <th>MVP</th> */}
+                                </tr>
+                            </thead>
+
+                            
+
+                    {players.map(p => (
+                        <tbody key={p.id}>
+
+                                <tr key={p.id}>
+                                    <td>{p.name}</td>
+                                    <td>{p.ca}</td>
+                                    <td>{p.age}</td>
+                                    <td>{p.status}</td>
+
+                                </tr>
+
+                            </tbody>
+
+                        
+                    ))}</table>
                     <div>
                         {bestPlayersCA !== null && (
                             <p>Promedio de CA de los mejores 16 jugadores: <strong> {bestPlayersCA} </strong></p>
@@ -226,6 +254,7 @@ export default function TeamForm() {
                         <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong> </p>
                         <p>Cantidad de mayores registrados mayores: <strong>{filterPlayersOver20ByRegister}</strong></p>
                         <p>Cantidad de registrados: <strong>{filterPlayersByRegister}</strong></p>
+
                     </div>
                 </form>
             </div>

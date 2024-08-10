@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\TeamResource;
 
 class PlayerResource extends JsonResource
 {
@@ -22,7 +23,7 @@ class PlayerResource extends JsonResource
             'ca'=>$this->ca,
             'pa'=>$this->pa,
             'nation'=>$this->nation,
-            'id_team' =>$this->id_team,
+            'id_team' => $this->id_team,
             'value'=>$this->value,
             'status'=>$this->status,
             'goal'=>$this->goal,
