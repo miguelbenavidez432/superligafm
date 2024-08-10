@@ -40,9 +40,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/teams', TeamController::class);
     Route::apiResource('/traspasos', TransferController::class);
     Route::apiResource('/bets', BetController::class);
+
+    Route::apiResource('/clausula_rescision', RescissionController::class);
     Route::apiResource('/singlebet', PlayerBetController::class);
+
+
     Route::apiResource('/season', SeasonController::class);
     Route::apiResource('/auctions', AuctionController::class);
+
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
