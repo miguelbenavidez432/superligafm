@@ -88,7 +88,6 @@ const OffersList = () => {
                     {!loading &&
                         <tbody>
                             {offers
-                            .filter(oferta => oferta.confirmed === 'no' && oferta.active === 'yes')
                             .map((oferta) => {
                                 const userName = users.find(u => u.id === oferta.created_by);
                                 const isOfferAvailable = checkOffersAvailability(oferta.created_at);
