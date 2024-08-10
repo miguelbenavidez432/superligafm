@@ -14,7 +14,7 @@ class Auction extends Model
         'id_player',
         'id_team',
         'created_by',
-        'auctioned',
+        'auctioned_by',
         'amount',
         'confirmed',
         'active'
@@ -23,5 +23,15 @@ class Auction extends Model
     public function player()
     {
         return $this->belongsTo(Player::class, 'id_player');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'id_team');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'auctioned_by');
     }
 }

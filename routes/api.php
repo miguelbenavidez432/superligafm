@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuctionController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+
     Route::apiResource('/players', PlayerController::class);
     Route::post('/transfer', [PlayerController::class, 'transfer']);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
@@ -48,7 +50,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
     Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
+
 });
+
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

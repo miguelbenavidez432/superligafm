@@ -4,6 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\TeamResource;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\PlayerResource;
 
 class AuctionResource extends JsonResource
 {
@@ -16,10 +19,10 @@ class AuctionResource extends JsonResource
     {
         return[
             'id' => $this->id,
-            'id_player' => PlayerResource::collection($this->id_player),
-            'id_team' => TeamResource::collection($this->id_team),
-            'created_by' => UserResource::collection($this->created_by),
-            'auctioned_by' => UserResource::collection($this->auctioned_by),
+            'id_player' => new PlayerResource($this->whenLoaded('player')),
+            'id_team' => new TeamResource($this->whenLoaded('team')),
+            'created_by' => new UserResource($this->whenLoaded('user')),
+            'auctioned_by' => new UserResource($this->whenLoaded('user')),
             'amount' => $this->amount,
             'confirmed' => $this->confirmed,
             'active' => $this->active,

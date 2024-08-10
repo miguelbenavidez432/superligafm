@@ -116,8 +116,6 @@ const AuctionConfirmation = () => {
             ...selectedPlayer,
             id_team: parseInt(secondTeam)
         }
-        console.log(userProfit)
-        console.log(selectedPlayer)
         try {
             setSelectedPlayer(updatedSelectedPlayer)
             await axiosClient.put(`/users/${userProfit.id}`, userProfit);

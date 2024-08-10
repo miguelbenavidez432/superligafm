@@ -29,7 +29,7 @@ return new class extends Migration
             $table->integer('title_super_cup')->nullable();
             $table->integer('cdr')->nullable();
             $table->string('image_patch')->nullable();
-            $table->foreignId('updated_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users')->nullable();
             $table->timestamps();
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_unicode_ci';
