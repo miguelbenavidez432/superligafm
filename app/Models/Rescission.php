@@ -10,6 +10,7 @@ class Rescission extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'id_player',
         'id_team',
