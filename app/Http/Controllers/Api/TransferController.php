@@ -7,6 +7,7 @@ use App\Models\Transfer;
 use App\Http\Requests\StoreTransferRequest;
 use App\Http\Requests\UpdateTransferRequest;
 use App\Http\Resources\TransferResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TransferController extends Controller
@@ -65,19 +66,44 @@ class TransferController extends Controller
         $datosActualizados = $request->input('data');
 
         $upsertData = [];
+        $buyUser = null;
+        $sellUser = null;
+        $transferValue = 0;
+
         foreach ($datosActualizados as $dato) {
+            // Obtener los IDs de los usuarios (managers)
+            $buyUser = User::find($dato['buy_by']);
+            $sellUser = User::find($dato['sold_by']);
+
+            // Obtener el valor de la transferencia
+            $transferValue = $dato['costs'];
+
+            // Actualizar el presupuesto del comprador
+            if ($buyUser) {
+                $buyUser->profits -= $transferValue;
+                $buyUser->save();
+            }
+
+            // Actualizar el presupuesto del vendedor
+            if ($sellUser) {
+                $sellUser->profits += $transferValue;
+                $sellUser->save();
+            }
+
+            // Crear el array para upsert
             $upsertData[] = [
                 'transferred_players' => $dato['transferred_players'],
                 'id_team_from' => $dato['id_team_from'],
                 'id_team_to' => $dato['id_team_to'],
-                'costs' => $dato['costs'],
+                'budget' => $transferValue,
                 'created_by' => $dato['created_by'],
                 'buy_by' => $dato['buy_by'],
                 'sold_by' => $dato['sold_by'],
             ];
         }
 
-        Transfer::upsert($upsertData, 'id', ['transferred players']);
+        // Realizar el upsert en la tabla de Transferencias
+        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }
