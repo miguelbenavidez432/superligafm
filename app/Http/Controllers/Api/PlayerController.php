@@ -112,6 +112,8 @@ class PlayerController extends Controller
     {
         $teamId = $request->input('id_team');
 
+        var_dump($request);
+
         $players = Player::query()
             ->where('id_team', $teamId)
             ->orderBy('ca', 'desc')

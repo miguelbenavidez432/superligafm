@@ -1,13 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useStateContext } from "../context/ContextProvider"
+import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
 import { Link } from "react-router-dom";
 
 export default function Plantel() {
-
     const [team, setTeam] = useState(null);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -18,28 +14,29 @@ export default function Plantel() {
     const [filterPlayersOver20ByRegister, setFilterPlayersOver20ByRegister] = useState(0);
     const [filterPlayersByRegister, setFilterPlayersByRegister] = useState(0);
 
+    useEffect(() => {
+        getTeam();
+    }, []);
 
     useEffect(() => {
-        getTeam()
-    }, [])
-
-    useEffect(() => {
-        getBestPlayersCA();
-        countBlockedPlayers();
-        countPlayersOver20();
-        countRegisterAndOver20();
-        countRegistered();
+        if (players.length > 0) {
+            getBestPlayersCA();
+            countBlockedPlayers();
+            countPlayersOver20();
+            countRegisterAndOver20();
+            countRegistered();
+        }
     }, [players]);
 
     useEffect(() => {
         if (team) {
-            filterPlayersByTeam()
+            filterPlayersByTeam();
         }
     }, [team]);
 
     const cargarJugadores = () => {
-        filterPlayersByTeam()
-    }
+        filterPlayersByTeam();
+    };
 
     const countBlockedPlayers = () => {
         const blockedPlayers = players.filter((player) => player.status === "bloqueado");
@@ -54,36 +51,45 @@ export default function Plantel() {
     const countRegisterAndOver20 = () => {
         const filterPlayers = players.filter(p => p.status === 'registrado' && p.age > 20);
         setFilterPlayersOver20ByRegister(filterPlayers.length);
-    }
+    };
 
     const countRegistered = () => {
         const filterPlayers = players.filter(p => p.status === 'registrado');
         setFilterPlayersByRegister(filterPlayers.length);
-    }
+    };
 
     const getTeam = async () => {
-        setLoading(true)
-        await axiosClient.get('/teams')
-            .then(({ data }) => {
-                setLoading(false)
-                const teamFilter = data.data.find((t) => t.id_user === user.id)
-                setTeam(teamFilter)
-            })
-            .catch(() => {
-                setLoading(false)
-            })
-    }
+        setLoading(true);
+        try {
+            const response = await axiosClient.get('/teams');
+            setLoading(false);
+            const allTeams = response.data.data;
+            const filteredTeam = allTeams.find(team => {
+                return team.id_user && team.id_user.id === user.id;
+            });
+
+            console.log('Equipo filtrado:', filteredTeam);
+            setTeam(filteredTeam);
+        } catch {
+            setLoading(false);
+        }
+    };
 
     const filterPlayersByTeam = async () => {
         if (team) {
             try {
                 setLoading(true);
-                const response = await axiosClient.get(`/plantel`, {
-                    params: { id_team: team.id }
+                const response = await axiosClient.get('/plantel');
+                const allPlayers = response.data.data;
+                console.log(allPlayers)
+                const filteredPlayers = allPlayers.filter(p => {
+                    return p.id_team && p.id_team.id === team.id
                 });
-                setPlayers(response.data.data);
+                console.log(filteredPlayers)
+                setPlayers(filteredPlayers);
                 setLoading(false);
             } catch (error) {
+                console.error("Error fetching players:", error);
                 setLoading(false);
             }
         }
@@ -96,13 +102,11 @@ export default function Plantel() {
             const averageCA =
                 bestPlayers.reduce((sum, player) => sum + player.ca, 0) / bestPlayers.length;
             setBestPlayersCA(averageCA);
-
         }
     };
 
     return (
         <>
-
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div>Plantel</div>
                 <button className="btn-add" onClick={cargarJugadores}>Cargar plantel</button>
@@ -118,21 +122,13 @@ export default function Plantel() {
                             <th>NACIONALIDAD</th>
                             <th>VALOR</th>
                             <th>ESTADO</th>
-                            {/* <th>GOLES</th>
-                            <th>ASISTENCIAS</th>
-                            <th>AMARILLAS</th>
-                            <th>ROJA</th>
-                            <th>ROJA DIRECTA</th>
-                            <th>LESIONES LEVES</th>
-                            <th>LESIONES GRAVES</th>
-                            <th>MVP</th> */}
                             <th>ACCIONES</th>
                         </tr>
                     </thead>
                     {loading &&
                         <tbody>
                             <tr>
-                                <td colSpan="10" className="text-center">
+                                <td colSpan="8" className="text-center">
                                     CARGANDO...
                                 </td>
                             </tr>
@@ -141,7 +137,7 @@ export default function Plantel() {
                     {!loading &&
                         <tbody>
                             {
-                                team ? players && players.map(p => (
+                                team ? players.length > 0 ? players.map(p => (
                                     <tr key={p.id}>
                                         <td>{p.name}</td>
                                         <td>{p.age}</td>
@@ -150,23 +146,21 @@ export default function Plantel() {
                                         <td>{p.nation}</td>
                                         <td>{p.value}</td>
                                         <td>{p.status}</td>
-                                        {/* <td>{p.goal}</td>
-                                    <td>{p.assistance}</td>
-                                    <td>{p.yellow_card}</td>
-                                   <td>{p.double_yellow_card}</td>
-                                    <td>{p.red_card}</td>
-                                   <td>{p.injured}</td>
-                                    <td>{p.heavy_injured}</td>
-                                   <td>{p.mvp}</td> */}
                                         <td>
                                             <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                         </td>
                                     </tr>
-                                ))
+                                )) : (
+                                    <tr>
+                                        <td colSpan="8" className="text-center">
+                                            <strong>No hay jugadores para mostrar.</strong>
+                                        </td>
+                                    </tr>
+                                )
                                     :
                                     <tr>
-                                        <td colSpan="10" className="text-center">
-                                            <strong>  No tienes equipo asignado. Prueba presionando el botón Cargar plantel </strong>
+                                        <td colSpan="8" className="text-center">
+                                            <strong>No tienes equipo asignado. Prueba presionando el botón Cargar plantel</strong>
                                         </td>
                                     </tr>
                             }
@@ -178,12 +172,12 @@ export default function Plantel() {
                         <p>Promedio de CA de los mejores 16 jugadores: <strong>{bestPlayersCA}</strong></p>
                     )}
                     <p>Cantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
-                    <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong> </p>
+                    <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong></p>
                     <p>Cantidad de mayores registrados mayores: <strong>{filterPlayersOver20ByRegister}</strong></p>
                     <p>Cantidad de registrados: <strong>{filterPlayersByRegister}</strong></p>
                     <p>Presupuesto: <strong>{user.profits}</strong></p>
                 </div>
-            </div >
+            </div>
         </>
-    )
+    );
 }

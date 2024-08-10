@@ -7,6 +7,7 @@ use App\Models\Team;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
 use App\Http\Resources\TeamResource;
+use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
@@ -28,7 +29,7 @@ class TeamController extends Controller
         $data = $request->validated();
         $team = Team::create($data);
 
-        return response (new TeamResource($team, 201));
+        return response(new TeamResource($team, 201));
 
     }
 
@@ -57,6 +58,15 @@ class TeamController extends Controller
     {
         $team->delete();
         return response("", 204);
+    }
+
+    public function filteredTeam(Request $request)
+    {
+        $userId = auth()->user()->id;
+
+        $teams = Team::where('id_user->id', $userId)->get();
+
+        return TeamResource::collection($teams);
     }
 
 

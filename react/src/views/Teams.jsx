@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
-import { useStateContext } from "../context/ContextProvider";
 import { Link } from "react-router-dom";
 
 export default function Teams() {
@@ -9,19 +8,16 @@ export default function Teams() {
     const [team, setTeam] = useState([]);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [users, setUsers] = useState([])
-    
+
 
     useEffect(() => {
         getTeam();
         getPlayers();
-        getUsers();
     }, [])
 
     const cargarJugadores = () => {
         getPlayers()
         getTeam()
-        getUsers();
     }
 
     const getTeam = async () => {
@@ -42,18 +38,6 @@ export default function Teams() {
             .then(({ data }) => {
                 setLoading(false)
                 setPlayers(data.data)
-            })
-            .catch(() => {
-                setLoading(false)
-            })
-    }
-    
-    const getUsers = () => {
-        setLoading(true)
-        axiosClient.get('/users')
-            .then(({ data }) => {
-                setLoading(false)
-                setUsers(data.data)
             })
             .catch(() => {
                 setLoading(false)
@@ -89,13 +73,12 @@ export default function Teams() {
                         <tbody>
                             {
                                 team.map(t => {
-                                    const userName = users.find(u => u.id === t.id_user);
-                                    const userNameToShow = userName ? userName.name : '';
+
                                     return (
                                         <tr key={t.id}>
                                             <td>{t.name}</td>
                                             <td>{t.division}</td>
-                                            <td>{userNameToShow}</td>
+                                            <td>{t.id_user ? t.id_user.name : ''}</td>
                                             <td>
                                                 <Link className="btn-edit" to={`/teams/${t.id}`}>Editar equipo</Link>
                                             </td>

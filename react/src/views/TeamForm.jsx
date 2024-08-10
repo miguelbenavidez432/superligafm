@@ -128,11 +128,8 @@ export default function TeamForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        console.log('Team state before submission:', team);
         if (team.id) {
-            setTeam({
-                ...team,
-                id_user: parseInt(idUser)
-            })
             axiosClient.put(`/teams/${team.id}`, team)
                 .then(() => {
                     setNotification('Equipo actualizado satisfactoriamente')
@@ -229,7 +226,7 @@ export default function TeamForm() {
                                 </tr>
                             </thead>
 
-                            
+
 
                     {players.map(p => (
                         <tbody key={p.id}>
@@ -244,7 +241,7 @@ export default function TeamForm() {
 
                             </tbody>
 
-                        
+
                     ))}</table>
                     <div>
                         {bestPlayersCA !== null && (

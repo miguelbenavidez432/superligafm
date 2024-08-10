@@ -45,6 +45,7 @@ Route::apiResource('/season', SeasonController::class);
 Route::apiResource('/auctions', ControllersAuctionController::class);
 Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
 Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
+Route::get('/manager', [TeamController::class,'filteredTeam']);
 Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
 Route::post('/apuesta/usuario', [BetController::class, 'attach']);
 Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
