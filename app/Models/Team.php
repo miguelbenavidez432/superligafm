@@ -19,9 +19,9 @@ class Team extends Model
     {
         return $this->hasMany(Player::class);
     }
-    public function users()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'id_user');    
+        return $this->belongsTo(User::class, 'id_user');
     }
     public function transfers()
     {

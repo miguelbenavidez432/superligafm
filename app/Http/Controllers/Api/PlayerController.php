@@ -8,6 +8,8 @@ use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Rescission;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
@@ -18,7 +20,7 @@ class PlayerController extends Controller
     public function index()
     {
         return PlayerResource::collection(
-            Player::query()->orderBy('ca', 'desc')->paginate(2000)
+            Player::with('team')->orderBy('ca', 'desc')->paginate(2000)
         );
     }
 
@@ -116,5 +118,20 @@ class PlayerController extends Controller
             ->get();
 
         return PlayerResource::collection($players);
+    }
+
+    public function block(Request $request)
+    {
+        $id_team = $request->input('id_team');
+
+        $team = Team::findOrFail($id_team);
+
+        $id_user = $team->id_user;
+
+        $user = User::findOrFall($id_user);
+
+        $player = Player::query()->where('id', $request->input('id'))->get();
+
+        //hacer un match
     }
 }

@@ -17,7 +17,7 @@ class PlayerBet extends Model
         'created_by'
     ];
 
-    public function users()
+    public function user()
     {
         return $this->belongsToMany(User::class, 'playerbet_user', 'id_user', 'id_player_bets')
             ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])

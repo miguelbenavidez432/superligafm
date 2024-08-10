@@ -16,7 +16,7 @@ class TeamController extends Controller
     public function index()
     {
         return TeamResource::collection(
-            Team::query()->orderBy('id', 'asc')->paginate(400)
+            Team::with('user')->orderBy('id', 'asc')->paginate(400)
         );
     }
 
@@ -37,7 +37,7 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
-        return new TeamResource($team);
+        return new TeamResource($team->load('user'));
     }
 
     /**
@@ -59,5 +59,5 @@ class TeamController extends Controller
         return response("", 204);
     }
 
-    
+
 }
