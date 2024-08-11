@@ -73,7 +73,7 @@ export default function Dashboard() {
                             <th>EQUIPOS ORIGEN/DESTINO</th>
                             <th>REALIZADA POR</th>
                             <th>HORA</th>
-                            <th>ACCIONES</th>
+                            <th>VALOR</th>
                         </tr>
                     </thead>
                     {loading &&
@@ -103,7 +103,7 @@ export default function Dashboard() {
                                             <td>{shoeUserName}</td>
                                             <td>{p.created_at}</td>
                                             <td>
-                                                {/* <Link className="btn-edit" to={`/traspasos/${p.id}`}>Editar estado</Link> */}
+                                                {p.budget}
                                             </td>
                                         </tr>
                                     )

@@ -48,7 +48,7 @@ const OffersList = () => {
     const checkOffersAvailability = (created_at) => {
         if (created_at) {
           const offerCreatedAt = moment(created_at);
-          const expirationDate = offerCreatedAt.add(4, 'hours');
+          const expirationDate = offerCreatedAt.add(2, 'hours');
           const currentDate = moment();
           return currentDate.isAfter(expirationDate);
         }
@@ -88,7 +88,7 @@ const OffersList = () => {
                     {!loading &&
                         <tbody>
                             {offers
-                            .filter(oferta => oferta.confirmed === 'no' && oferta.active === 'yes')
+                            .filter(oferta => oferta.confirmed === 0)
                             .map((oferta) => {
                                 const userName = users.find(u => u.id === oferta.created_by);
                                 const isOfferAvailable = checkOffersAvailability(oferta.created_at);
