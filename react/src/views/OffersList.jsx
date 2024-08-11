@@ -48,7 +48,7 @@ const OffersList = () => {
     const checkOffersAvailability = (created_at) => {
         if (created_at) {
           const offerCreatedAt = moment(created_at);
-          const expirationDate = offerCreatedAt.add(4, 'hours');
+          const expirationDate = offerCreatedAt.add(2, 'hours');
           const currentDate = moment();
           return currentDate.isAfter(expirationDate);
         }
