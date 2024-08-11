@@ -21,7 +21,7 @@ class TeamResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'division' => $this->division,
-            'id_user' => new UserResource($this->whenLoaded('user')),
+            'id_user' => $this->is_user,
             'title_first_division' => $this->title_first_division,
             'title_second_division' => $this->title_second_division,
             'title_third_division' => $this->title_third_division,

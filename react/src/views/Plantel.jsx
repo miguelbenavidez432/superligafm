@@ -64,9 +64,7 @@ export default function Plantel() {
             const response = await axiosClient.get('/teams');
             setLoading(false);
             const allTeams = response.data.data;
-            const filteredTeam = allTeams.find(team => {
-                return team.id_user && team.id_user.id === user.id;
-            });
+            const filteredTeam = allTeams.find(team => team.id_user === user.id);
 
             console.log('Equipo filtrado:', filteredTeam);
             setTeam(filteredTeam);
@@ -81,11 +79,7 @@ export default function Plantel() {
                 setLoading(true);
                 const response = await axiosClient.get('/plantel');
                 const allPlayers = response.data.data;
-                console.log(allPlayers)
-                const filteredPlayers = allPlayers.filter(p => {
-                    return p.id_team && p.id_team.id === team.id
-                });
-                console.log(filteredPlayers)
+                const filteredPlayers = allPlayers.filter(p =>  p.id_team === team.id);
                 setPlayers(filteredPlayers);
                 setLoading(false);
             } catch (error) {
