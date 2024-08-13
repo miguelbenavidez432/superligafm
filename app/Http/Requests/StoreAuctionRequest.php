@@ -11,7 +11,7 @@ class StoreAuctionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class StoreAuctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_player' => 'required|string',
+            'id_player' => 'required|integer',
             'id_team' => 'required|integer',
             'created_by' => 'required|integer',
             'amount' => 'required|integer',

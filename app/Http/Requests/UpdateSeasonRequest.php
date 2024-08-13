@@ -11,7 +11,7 @@ class UpdateSeasonRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,7 @@ class UpdateSeasonRequest extends FormRequest
     {
         return [
             'active' => 'required|string|nullable',
+            'end' => 'date',
         ];
     }
 }

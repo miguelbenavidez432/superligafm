@@ -7,17 +7,22 @@ use App\Models\Team;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
 use App\Http\Resources\TeamResource;
+use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return TeamResource::collection(
-            Team::with('user')->orderBy('id', 'asc')->paginate(400)
-        );
+        if ($request->has("all") && $request->query("all") == true) {
+
+            return TeamResource::collection(Team::with(['user'])->orderBy("id", "desc")->get());
+        } else {
+            return TeamResource::collection(Team::with(['user'])->orderBy("id", "desc")->paginate(200));
+        }
+        ;
     }
 
     /**
@@ -28,7 +33,7 @@ class TeamController extends Controller
         $data = $request->validated();
         $team = Team::create($data);
 
-        return response (new TeamResource($team, 201));
+        return response (new TeamResource($team->load('user')), 201);
 
     }
 
@@ -47,7 +52,7 @@ class TeamController extends Controller
     {
         $data = $request->validated();
         $team->update($data);
-        return new TeamResource($team);
+        return new TeamResource($team->load('user'));
     }
 
     /**

@@ -30,6 +30,28 @@ class AuctionController extends Controller
     public function store(StoreAuctionRequest $request)
     {
         $data = $request->validated();
+
+        $previousAuction = Auction::where('id_player', $data['id_player'])
+            ->orderBy('amount', 'desc')
+            ->first();
+
+        if ($previousAuction) {
+            if ($data['amount'] < $previousAuction->amount + 1000000) {
+                return response()->json(['message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.']);
+            }
+
+            // Notificar a los usuarios que hicieron ofertas anteriores
+            $previousBidders = Auction::where('id_player', $data['id_player'])->get();
+            foreach ($previousBidders as $bidder) {
+                $user = $bidder->user;
+            }
+        } else {
+            $player = Player::find($data['id_player']);
+            if ($data['amount'] < $player->value) {
+                return response()->json(['message' => 'La oferta inicial debe ser al menos igual al valor del jugador.']);
+            }
+        }
+
         $auction = Auction::create($data);
 
         return response(new AuctionResource($auction, 201));
@@ -63,28 +85,33 @@ class AuctionController extends Controller
 
     }
 
-    public function addAuctions(StoreAuctionRequest $request)
+    public function addAuction(StoreAuctionRequest $request)
     {
         $data = $request->validated();
 
-        $auctions = Auction::where('id_player', $data['id_player'])->get();
+        $previousAuction = Auction::where('id_player', $data['id_player'])
+            ->orderBy('amount', 'desc')
+            ->first();
 
-        $amount = 0 ;
+        if ($previousAuction) {
+            if ($data['amount'] < $previousAuction->amount + 1000000) {
+                return response()->json(['message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.']);
+            }
 
-        foreach($auctions as $auction){
-            if($auction['amount'] >= $amount){
-                $amount = $auction['$amount'];
+            // Notificar a los usuarios que hicieron ofertas anteriores
+            $previousBidders = Auction::where('id_player', $data['id_player'])->get();
+            foreach ($previousBidders as $bidder) {
+                $user = $bidder->user;
+            }
+        } else {
+            $player = Player::find($data['id_player']);
+            if ($data['amount'] < $player->value) {
+                return response()->json(['message' => 'La oferta inicial debe ser al menos igual al valor del jugador.']);
             }
         }
 
-        if($amount >= $data['amount']){
-            return response()->json(['message' => 'La subasta no supera el valor mínimo']);
-        }
-        else{
+        $auction = Auction::create($data);
 
-            $this->store($data);
-            return response()->json(['message' => 'Subasta agregada correctamente']);
-        }
-
+        return response(new AuctionResource($auction, 201));
     }
 }

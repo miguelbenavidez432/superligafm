@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import { useStateContext } from "../context/ContextProvider"
 import axiosClient from "../axios";
-import { Link } from "react-router-dom";
 
 export default function Dashboard() {
 
@@ -12,7 +11,6 @@ export default function Dashboard() {
     const [transfer, setTransfer] = useState([]);
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
-    const { user } = useStateContext();
 
     useEffect(() => {
         getTeam()

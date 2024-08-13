@@ -62,32 +62,47 @@ export default function Plantel() {
     }
 
     const getTeam = async () => {
-        setLoading(true)
-        await axiosClient.get('/teams')
-            .then(({ data }) => {
-                setLoading(false)
-                const teamFilter = data.data.find((t) => t.id_user === user.id)
-                setTeam(teamFilter)
-            })
-            .catch(() => {
-                setLoading(false)
-            })
-    }
+        setLoading(true);
+        try {
+            const response = await axiosClient.get('/teams');
+            setLoading(false);
+            const allTeams = response.data.data; // Asegúrate de acceder a la propiedad correcta
+
+            // Verifica la estructura de `allTeams` y `user.id`
+            console.log('allTeams:', allTeams);
+            console.log('user.id:', user.id);
+
+            // Filtrar el equipo que coincide con el usuario actual
+            const filteredTeam = allTeams.find(team => {
+                console.log('Checking team:', team);
+                console.log('Comparing with user.id:', user.id);
+                return team.id_user && team.id_user.id === user.id; // Asegúrate de que `team.id_user` existe
+            });
+
+            console.log('filteredTeam:', filteredTeam);
+            setTeam(filteredTeam);
+        } catch (error) {
+            console.error('Error fetching teams:', error);
+            setLoading(false);
+        }
+    };
+
 
     const filterPlayersByTeam = async () => {
         if (team) {
             try {
                 setLoading(true);
-                const response = await axiosClient.get(`/plantel`, {
-                    params: { id_team: team.id }
-                });
-                setPlayers(response.data.data);
+                const response = await axiosClient.get('/plantel');
+                const filteredPlayers = response.data.data.filter(player => player.id_team.id === team.id);
+                setPlayers(filteredPlayers);
                 setLoading(false);
             } catch (error) {
+                console.error('Error al obtener jugadores:', error);
                 setLoading(false);
             }
         }
     };
+
 
     const getBestPlayersCA = () => {
         if (players.length > 0) {

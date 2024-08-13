@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Rescission;
 use App\Models\Team;
+use App\Models\Transfer;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -49,19 +50,32 @@ class PlayerController extends Controller
 
         $upsertData = [];
         foreach ($datosActualizados as $dato) {
+            $buyUser = User::find($dato['buy_by']);
+            $sellUser = User::find($dato['sold_by']);
+            $transferValue = $dato['budget'];
+
+            if ($buyUser) {
+                $buyUser->profits -= $transferValue;
+                $buyUser->save();
+            }
+
+            if ($sellUser) {
+                $sellUser->profits += $transferValue;
+                $sellUser->save();
+            }
+
             $upsertData[] = [
-                'id' => $dato['id'],
-                'id_team' => $dato['id_team'],
-                'name' => $dato['name'],
-                'age' => $dato['age'],
-                'ca' => $dato['ca'],
-                'pa' => $dato['pa'],
-                'value' => $dato['value'],
-                'status' => $dato['status'],
+                'transferred_players' => $dato['transferred_players'],
+                'id_team_from' => $dato['id_team_from'],
+                'id_team_to' => $dato['id_team_to'],
+                'budget' => $transferValue,
+                'created_by' => $dato['created_by'],
+                'buy_by' => $dato['buy_by'],
+                'sold_by' => $dato['sold_by'],
             ];
         }
 
-        Player::upsert($upsertData, 'id', ['id_team', 'status']);
+        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }

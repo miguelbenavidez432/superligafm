@@ -11,7 +11,7 @@ class UpdateAuctionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,6 +24,7 @@ class UpdateAuctionRequest extends FormRequest
         return [
             'confirmed' => 'required|string|nullable',
             'active' => 'required|string|nullable',
+            'auctioned_by' => 'required|integer',
         ];
     }
 }
