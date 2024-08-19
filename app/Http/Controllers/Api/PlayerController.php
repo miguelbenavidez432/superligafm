@@ -18,11 +18,13 @@ class PlayerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return PlayerResource::collection(
-            Player::with('team')->orderBy('ca', 'desc')->paginate(2000)
-        );
+        if ($request->query('all') == 'true') {
+            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->get());
+        } else {
+            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(100));
+        }
     }
 
     /**

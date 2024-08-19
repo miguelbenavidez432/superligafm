@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
+use App\Models\Player;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
@@ -13,9 +14,10 @@ class AuctionController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
-        if ($request->has("all") && $request->query("all") == true) {
+        if ($request->query("all") == true) {
 
             return AuctionResource::collection(Auction::with(['user', 'player', 'team'])->orderBy("created_at", "desc")->get());
         } else {
@@ -102,6 +104,7 @@ class AuctionController extends Controller
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
+                //armar la logica para la notificación
             }
         } else {
             $player = Player::find($data['id_player']);
@@ -114,4 +117,5 @@ class AuctionController extends Controller
 
         return response(new AuctionResource($auction, 201));
     }
+
 }

@@ -17,11 +17,14 @@ class RescissionResource extends JsonResource
     {
         return[
             'id' => $this->id,
+            //'id_player' => new PlayerResource($this->whenLoaded('player')),
             'id_player' =>$this->id_player,
             'name' => $this->name,
+            //'id_team' => new TeamResource($this->whenLoaded('team')),
             'id_team' => $this->id_team,
             'value' => $this->value,
             'extra_value' => $this->extra_value,
+            //'created_by' => new UserResource($this->whenLoaded('user')),
             'created_by' => $this->created_by,
             'total_value' => $this->total_value,
             'other_players' => $this->other_players,

@@ -16,8 +16,7 @@ class TeamController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has("all") && $request->query("all") == true) {
-
+        if ($request->query("all") == true) {
             return TeamResource::collection(Team::with(['user'])->orderBy("id", "desc")->get());
         } else {
             return TeamResource::collection(Team::with(['user'])->orderBy("id", "desc")->paginate(200));
@@ -33,7 +32,7 @@ class TeamController extends Controller
         $data = $request->validated();
         $team = Team::create($data);
 
-        return response (new TeamResource($team->load('user')), 201);
+        return response(new TeamResource($team->load('user')), 201);
 
     }
 

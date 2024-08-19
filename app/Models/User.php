@@ -70,4 +70,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Transfer::class);
     }
+
+    public function auctions()
+    {
+        return $this->belongsToMany(Auction::class, 'user_auctions')
+                    ->withPivot('player_id', 'bid_amount', 'is_last_bid')
+                    ->withTimestamps();
+    }
 }

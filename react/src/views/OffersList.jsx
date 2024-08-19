@@ -47,15 +47,15 @@ const OffersList = () => {
 
     const checkOffersAvailability = (created_at) => {
         if (created_at) {
-          const offerCreatedAt = moment(created_at);
-          const expirationDate = offerCreatedAt.add(2, 'hours');
-          const currentDate = moment();
-          return currentDate.isAfter(expirationDate);
+            const offerCreatedAt = moment(created_at);
+            const expirationDate = offerCreatedAt.add(2, 'hours');
+            const currentDate = moment();
+            return currentDate.isAfter(expirationDate);
         }
         return false;
-      };
+    };
 
-      const shouldDisplayValue = (createdAt) => {
+    const shouldDisplayValue = (createdAt) => {
         const offerDate = new Date(createdAt);
         const currentDate = new Date();
 

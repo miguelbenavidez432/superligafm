@@ -18,6 +18,15 @@ class RescissionController extends Controller
      */
     public function index()
     {
+        /**
+         * if ($request->query("all") == true) {
+         *    return RescissionResource::collection(Team::with(['user', 'team', 'player'])->orderBy("id", "desc")->get());
+         *} else {
+         *   return RescissionResource::collection(Team::with(['user', 'team', 'player'])->orderBy("id", "desc")->paginate(200));
+         *}
+         *;
+
+         */
         return RescissionResource::collection(
             Rescission::query()->orderBy('created_at', 'desc')->paginate(100)
         );

@@ -24,7 +24,7 @@ export default function BetsConfirmation() {
                 console.log(betUserData.data.data);
             })
             .catch((error) => {
-                console.error("Error al obtener las filas de la tabla intermedia:", error);
+                console.error("Error al obtener las filas de la tabla:", error);
             });
     }, []);
 
