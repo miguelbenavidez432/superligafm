@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
 use App\Models\Player;
+use DB;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
@@ -116,6 +117,27 @@ class AuctionController extends Controller
         $auction = Auction::create($data);
 
         return response(new AuctionResource($auction, 201));
+    }
+
+    public function filteredAuctions($playerId)
+    {
+        $auctions = Auction::where('player_id', $playerId)
+            ->with(['player', 'user', 'team'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($auctions, 200);
+    }
+
+    public function getLastAuctions()
+    {
+        $lastAuctions = Auction::select('player_id', DB::raw('MAX(id) as lastAuctionID'))
+            ->groupBy('id_player')
+            ->with(['player', 'user', 'team'])
+            ->get()
+            ->map(function (Auction $auction) {
+                return Auction::with(['player', 'team', 'user'])->find($auction->lastAuctionID);
+            });
+        return response()->json($lastAuctions, 200);
     }
 
 }

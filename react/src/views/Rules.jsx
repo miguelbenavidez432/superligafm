@@ -4,28 +4,65 @@ export default function Rules() {
     return (
         <>
             <form >
-                <h1>REGLAMENTO TEMPORADA 49</h1>
+                <h1>REGLAMENTO TEMPORADA 51</h1>
 
                 <p className="whitespace-normal">
 
 
-                    Se dividirán los equipos en 2 categorías. Primera División formada por 14 equipos y Segunda División formada por 14 equipos. Estos serán dados por la organización teniendo como parámetro el CA del equipo.<br />
-
+                    Se dividirán los equipos en 2 categorías.
+                    <strong>Primera División </strong>formada por 14 equipos y
+                    <strong>Segunda División </strong>formada por 14 equipos.
+                    Estos serán dados por la organización teniendo como parámetro el CA del equipo.<br />
                     Elección de equipos:
-                    - La selección de equipos para los usuarios será aleatoria en la primera temporada y cada vez que se reinicie la partida. Finalizada cada una de las temporadas los usuarios podrán mantener su equipo o elegir otro equipo de Primera División (los que jueguen en esa categoría) o Segunda (los que jueguen esa división) según el orden de ubicación luego de finalizar la temporada. Aquellos usuarios que descendieron no podrán elegir el mismo equipo con el que perdieron la categoría. Si por algún motivo un usuario no se presenta a disputar dos partidos en la temporada (no coordinación y/o no presentación) perderán el derecho de mantener el equipo en caso de superar objetivos. En caso de pedir más de 4 postergaciones también perderá el derecho de mantener equipo (se analizará cada caso de postergación en forma particular).<br />
-                    -Antes de comenzar la elección, aquellos usuarios que lograron ganar alguna de las competiciones que disputaron, tendrán la posibilidad de elegir permanecer en el equipo que lo hicieron, como así también los equipos que ascendieron (siempre y cuando cumplan con la condición del punto anterior de elección de equipos) . En caso de que no quieran permanecer, elegirán según el orden que les corresponda por ubicación en tabla. Los manager de los equipos que superaron el objetivo de la temporada impuesto por la organización tendrán la posibilidad de permanecer en el equipo (La permanencia en el equipo debe ser confirmada).<br />
-                    -Para mantener el equipo, los managers de los descendidos de la temporada anterior deberán mínimamente terminar entre los 6 mejores de la temporada en su nueva división. -Los jugadores que abandonen cada equipo de la liga volverán al club que estuvieron en la última temporada. Es decir, si avanzando la partida Manchester Utd vende a Cristiano Ronaldo (por efecto de la simulación de la partida), se lo volverá a colocar en el equipo inglés. Después de finalizado el mercado de pases y antes de iniciar la temporada los manager de Primera División deberán presentar una lista de 18 jugadores. Los jugadores que no estén en esa lista y sean mayores de 20 años quedarán libres para la próxima temporada o en el equipo de reserva sin jugar según decida cada usuario.<br />
+                    - La selección de equipos para los usuarios será aleatoria en la primera temporada y cada vez que se reinicie la partida.
+                    Finalizada cada una de las temporadas los usuarios podrán mantener su equipo o elegir otro equipo de Primera División
+                    (los que jueguen en esa categoría) o Segunda (los que jueguen esa división) según el orden de ubicación luego de finalizar la temporada.
+                    Aquellos usuarios que descendieron no podrán elegir el mismo equipo con el que perdieron la categoría.
+                    Si por algún motivo un usuario no se presenta a disputar dos partidos en la temporada (no coordinación y/o no presentación)
+                    perderán el derecho de mantener el equipo en caso de superar objetivos.
+                    En caso de pedir más de 4 postergaciones también perderá el derecho de mantener equipo
+                    (se analizará cada caso de postergación en forma particular).<br />
+                    -Antes de comenzar la elección, aquellos usuarios que lograron ganar alguna de las competiciones que disputaron,
+                    tendrán la posibilidad de elegir permanecer en el equipo que lo hicieron, como así también los equipos que ascendieron
+                    (siempre y cuando cumplan con la condición del punto anterior de elección de equipos) .
+                    En caso de que no quieran permanecer, elegirán según el orden que les corresponda por ubicación en tabla.
+                    Los manager de los equipos que superaron el objetivo de la temporada impuesto por la organización
+                    tendrán la posibilidad de permanecer en el equipo (La permanencia en el equipo debe ser confirmada).<br />
+                    -Para mantener el equipo, los managers de los descendidos de la temporada anterior deberán mínimamente
+                    terminar entre los 6 mejores de la temporada en su nueva división.
+                    -Los jugadores que abandonen cada equipo de la liga volverán al club que estuvieron en la última temporada.
+                    Es decir, si avanzando la partida Manchester Utd vende a Cristiano Ronaldo (por efecto de la simulación de la partida),
+                    se lo volverá a colocar en el equipo inglés. Después de finalizado el mercado de pases y antes de iniciar la temporada
+                    los manager de Primera División deberán presentar una lista de 18 jugadores.
+                    Los jugadores que no estén en esa lista y sean mayores de 20 años quedarán libres para la próxima temporada o
+                    en el equipo de reserva sin jugar según decida cada usuario.<br />
                     <br />
-                    FORMATO DE LA LIGA<br /><br />
+                    <h1>FORMATO DE LA LIGA</h1><br /><br />
                     Primera División<br /><br />
-                    Se jugará con el sistema todos contra todos, una sola rueda y en cancha neutral, contabilizando 13 partidos por equipo. Si el equipo que finaliza en la primera posición tiene 5 o menos puntos de ventaja sobre el segundo, los equipos que finalicen en las posiciones 8 y 9 se enfrentarán en el Play-in para acceder a los playoffs. Será a partido único con ventaja en caso de empate para el mejor ubicado (8° posición). Al finalizar la temporada, si el equipo que finaliza en la primera posición tiene 6 o más puntos de ventaja sobre el segundo clasificará de manera directa a semifinales, accediendo los equipos que finalicen en las posiciones 7 y 8 al play-in para clasificar a los playoffs.<br /><br />
+                    Se jugará con el sistema todos contra todos, una sola rueda y en cancha neutral, contabilizando 13 partidos por equipo.
+                    Si el equipo que finaliza en la primera posición tiene 5 o menos puntos de ventaja sobre el segundo,
+                    los equipos que finalicen en las posiciones 8 y 9 se enfrentarán en el Play-in para acceder a los playoffs.
+                    Será a partido único con ventaja en caso de empate para el mejor ubicado (8° posición).
+                    Al finalizar la temporada, si el equipo que finaliza en la primera posición tiene 6 o más puntos de ventaja
+                    sobre el segundo clasificará de manera directa a semifinales, accediendo los equipos que finalicen en las posiciones 7 y 8
+                    al play-in para clasificar a los playoffs.<br /><br />
                     Play-in: -Será a partido único con ventaja en caso de empate para el mejor ubicado (7° posición).<br />
-                    Los cruces de Cuartos de Final se realizan mediante elección directa del manager, eligiendo en primer lugar quien se ubique 1° en la tabla, pudiendo elegir cualquier rival de los puestos 5º - 8º, y así sucesivamente en la tabla; es decir, los posicionados 1º-4º, pueden elegir a sus rivales en posiciones 5º-8º.<br />
-                    El que sea mejor ubicado en la tabla del cruce tendrá ventaja deportiva, clasificando a la siguiente ronda en caso de empate al final de los 90 minutos.<br />
-                    En semifinales el mejor ubicado en la tabla de posiciones se enfrentará al peor ubicado en esa tabla de los clasificados a semifinales. En esta instancia y en la final por el título los partidos serán con prórroga y penales en caso de empate. Todos los partidos de las fases eliminatorias se realizan en cancha neutral.<br />
-                    El último equipo en la tabla de posiciones descenderá directamente. En caso de haber dos o más equipos en la última posición, se definirá la ubicación en encuentros de desempate. De persistir la igualdad, se tendrán en cuenta los partidos disputados entre sí para definir. Los equipos que se encuentren entre las posiciones 10 y 13 jugarán un playout para definir el último descendido. Los enfrentamientos serán: 10° vs 13° y 12° vs 11°. Los partidos serán en cancha neutral con prórroga y penales. Los perdedores de los cruces se enfrentarán entre sí, en cancha neutral con prórroga y penales. El ganador jugará una promoción contra un equipo de Segunda División y el perdedor descenderá.<br />
+                    Los cruces de Cuartos de Final se realizan mediante elección directa del manager, eligiendo en primer lugar quien se ubique
+                    1° en la tabla, pudiendo elegir cualquier rival de los puestos 5º - 8º, y así sucesivamente en la tabla;
+                    es decir, los posicionados 1º-4º, pueden elegir a sus rivales en posiciones 5º-8º.<br />
+                    El que sea mejor ubicado en la tabla del cruce tendrá ventaja deportiva, clasificando a la siguiente ronda
+                    en caso de empate al final de los 90 minutos.<br />
+                    En semifinales el mejor ubicado en la tabla de posiciones se enfrentará al peor ubicado en esa tabla de los clasificados a semifinales.
+                    En esta instancia y en la final por el título los partidos serán con prórroga y penales en caso de empate.
+                    Todos los partidos de las fases eliminatorias se realizan en cancha neutral.<br />
+                    El último equipo en la tabla de posiciones descenderá directamente. En caso de haber dos o más equipos en la última posición,
+                    se definirá la ubicación en encuentros de desempate. De persistir la igualdad, se tendrán en cuenta los partidos disputados entre sí para definir.
+                    Los equipos que se encuentren entre las posiciones 10 y 13 jugarán un playout para definir el último descendido.
+                    Los enfrentamientos serán: 10° vs 13° y 12° vs 11°. Los partidos serán en cancha neutral con prórroga y penales.
+                    Los perdedores de los cruces se enfrentarán entre sí, en cancha neutral con prórroga y penales.
+                    El ganador jugará una promoción contra un equipo de Segunda División y el perdedor descenderá.<br />
                     <br /><br />
-                    Las posiciones finales de Primera División se definirán de la siguiente manera:<br /><br />
+                    <h3>Las posiciones finales de Primera División se definirán de la siguiente manera:</h3><br /><br />
 
                     1° Campeón<br />
                     2° Subcampeón<br />

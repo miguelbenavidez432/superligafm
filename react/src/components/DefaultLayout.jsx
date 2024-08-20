@@ -16,7 +16,6 @@ export default function DefaultLayout() {
         return <Navigate to='/login' />
     }
 
-
     const onLogout = (e) => {
         e.preventDefault();
         axiosClient.post('/logout')

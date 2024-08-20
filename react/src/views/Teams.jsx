@@ -12,10 +12,6 @@ export default function Teams() {
         getTeam();
     }, [teams])
 
-    const cargarJugadores = () => {
-        getTeam()
-    }
-
     const getTeam = async () => {
         setLoading(true)
         await axiosClient.get('/teams')
@@ -32,7 +28,6 @@ export default function Teams() {
         <>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div>Equipos</div>
-                <button className="btn-add" onClick={cargarJugadores}>Cargar equipos</button>
             </div>
             <div className="card animated fadeInDown">
                 <table>
