@@ -57,7 +57,6 @@ export default function Dashboard() {
 
     return (
         <>
-
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div>Plantel</div>
                 <button className="btn-add" onClick={cargarJugadores}>Cargar plantel</button>

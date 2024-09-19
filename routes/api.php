@@ -9,8 +9,8 @@ use App\Http\Controllers\Api\SeasonController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\AuctionController;
 
+use App\Http\Controllers\AuctionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

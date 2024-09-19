@@ -40,6 +40,34 @@ class RescissionController extends Controller
         $data = $request->validated();
         $player = Rescission::create($data);
         return response(new RescissionResource($player), 201);
+
+        // // Obtener los datos validados del request
+        // $data = $request->validated();
+
+        // // Obtener el ID del equipo del jugador
+        // $teamId = $data['id_team'];
+
+        // // Verificar cuántos jugadores del equipo han recibido ofertas (basado en la columna cdr)
+        // $team = Team::find($teamId);
+
+        // if ($team->cdr >= 6) {
+        //     // Si ya hay 6 jugadores del equipo con ofertas, no se puede crear otra oferta
+        //     return response()->json(['error' => 'El equipo ya tiene ofertas por 6 jugadores. No se pueden realizar más ofertas.'], 403);
+        // }
+
+        // // Si no ha alcanzado el límite de jugadores con ofertas, crear la oferta
+        // $offer = Rescission::create($data);
+
+        // // Incrementar el contador de jugadores con ofertas en el equipo si es una nueva oferta para el jugador
+        // $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
+
+        // if ($existingOffersForPlayer == 0) {
+        //     // Si no había ofertas anteriores para este jugador, incrementar el contador cdr
+        //     $team->increment('cdr');
+        // }
+
+        // // Devolver la respuesta
+        // return response(new RescissionResource($offer), 201);
     }
 
     /**
@@ -97,4 +125,13 @@ class RescissionController extends Controller
 
         return response()->json(['message' => 'Oferta confirmada exitosamente']);
     }
+
+    public function contar_cdr(Request $request, $id)
+    {
+        $id_team = $request->input('id_team');
+        $team = Team::findOrFail($id);
+
+    }
+
+
 }
