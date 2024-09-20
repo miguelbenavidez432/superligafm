@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\AuctionResource;
-use App\Models\Auction;
-use App\Models\Player;
-use DB;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
+use App\Http\Resources\AuctionResource;
+use App\Models\Auction;
+use Illuminate\Http\Request;
 
 class AuctionController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
-
     public function index(Request $request)
     {
-        if ($request->query("all") == true) {
+        if ($request->query("all") == 'true') {
 
             return AuctionResource::collection(Auction::with(['user', 'player', 'team'])->orderBy("created_at", "desc")->get());
         } else {
@@ -139,5 +138,4 @@ class AuctionController extends Controller
             });
         return response()->json($lastAuctions, 200);
     }
-
 }
