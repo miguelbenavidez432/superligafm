@@ -15,11 +15,13 @@ class TransferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return TransferResource::collection(
-            Transfer::query()->orderBy('created_at', 'asc')->paginate(150)
-        );
+        if ($request->query('all') == 'true') {
+            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer'])->orderBy("created_at", "desc")->get());
+        } else {
+            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer'])->orderBy("created_at", "desc")->paginate(50));
+        }
     }
 
     /**

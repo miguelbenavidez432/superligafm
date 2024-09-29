@@ -25,7 +25,7 @@ class Team extends Model
     }
     public function transfers()
     {
-        return $this->hasMany(Transfer::class);
+        return $this->belongsTo(Transfer::class);
     }
 
     public function auctions()

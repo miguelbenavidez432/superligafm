@@ -129,7 +129,23 @@ const router = createBrowserRouter([
             {
                 path: '/auctions',
                 element: <Auctions />
-            }
+            },
+            {
+                path: '*',
+                element: <NotFound />
+            },
+            {
+                path: '/fixture_primera',
+                element: <FixtureFirstDivision />
+            },
+            {
+                path: '/fixture_segunda',
+                element: <FixtureSecondDivision />
+            },
+            {
+                path: '/reglamento',
+                element: <Rules />
+            },
         ]
     },
     {
@@ -146,22 +162,7 @@ const router = createBrowserRouter([
             },
         ]
     },
-    {
-        path: '*',
-        element: <NotFound />
-    },
-    {
-        path: '/fixture_primera',
-        element: <FixtureFirstDivision />
-    },
-    {
-        path: '/fixture_segunda',
-        element: <FixtureSecondDivision />
-    },
-    {
-        path: '/reglamento',
-        element: <Rules />
-    },
+
 ]);
 
 export default router

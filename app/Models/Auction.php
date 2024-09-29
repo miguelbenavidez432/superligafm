@@ -10,7 +10,6 @@ class Auction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'id_player',
         'id_team',
         'created_by',
@@ -25,12 +24,13 @@ class Auction extends Model
         return $this->belongsTo(Player::class, 'id_player');
     }
 
-    public function team()
+    public function creator()
     {
-        return $this->belongsTo(Team::class, 'id_team');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function user()
+    // Relación con el usuario que hizo la oferta
+    public function auctioneer()
     {
         return $this->belongsTo(User::class, 'auctioned_by');
     }
