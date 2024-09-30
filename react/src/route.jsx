@@ -28,6 +28,9 @@ import Rules from './views/Rules';
 import FixtureFirstDivision from './views/FixtureFirstDivision';
 import FixtureSecondDivision from './views/FixtureSecondDivision';
 import Auctions from './views/Auctions';
+import PlayerAuctions from './views/AuctionsByPlayer';
+import AuctionsList from './views/AuctionsList';
+import TransferList from './views/TransferList';
 
 const router = createBrowserRouter([
     {
@@ -127,7 +130,7 @@ const router = createBrowserRouter([
                 element: <OffersMade />
             },
             {
-                path: '/auctions',
+                path: '/crear_subasta',
                 element: <Auctions />
             },
             {
@@ -145,6 +148,18 @@ const router = createBrowserRouter([
             {
                 path: '/reglamento',
                 element: <Rules />
+            },
+            {
+                path: '/subastas/:id',
+                element: <PlayerAuctions />
+            },
+            {
+                path: '/subastas',
+                element: <AuctionsList />
+            },
+            {
+                path: '/transferencias',
+                element: <TransferList />
             },
         ]
     },

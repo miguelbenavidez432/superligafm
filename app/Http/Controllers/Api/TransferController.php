@@ -18,9 +18,9 @@ class TransferController extends Controller
     public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
-            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer'])->orderBy("created_at", "desc")->get());
+            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->get());
         } else {
-            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer'])->orderBy("created_at", "desc")->paginate(50));
+            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->paginate(50));
         }
     }
 
@@ -65,48 +65,119 @@ class TransferController extends Controller
 
     public function transfer(Request $request)
     {
-        $datosActualizados = $request->input('data');
 
-        $upsertData = [];
-        $buyUser = null;
-        $sellUser = null;
-        $transferValue = 0;
+        // $datosActualizados = $request->all();
 
-        foreach ($datosActualizados as $dato) {
-            // Obtener los IDs de los usuarios (managers)
-            $buyUser = User::find($dato['buy_by']);
-            $sellUser = User::find($dato['sold_by']);
+        // if (!$datosActualizados || !isset($datosActualizados['transferred_players'])) {
+        //     return response()->json(['message' => 'Datos de transferencia no encontrados'], 400);
+        // }
 
-            // Obtener el valor de la transferencia
-            $transferValue = $dato['costs'];
+        // $upsertData = [];
+        // $buyUser = User::find($datosActualizados['buy_by']);
+        // $sellUser = User::find($datosActualizados['sold_by']);
+        // $transferValue = $datosActualizados['budget'];
 
-            // Actualizar el presupuesto del comprador
-            if ($buyUser) {
-                $buyUser->profits -= $transferValue;
-                $buyUser->save();
-            }
+        // if ($buyUser) {
+        //     $buyUser->profits -= $transferValue;
+        //     $buyUser->save();
+        // }
 
-            // Actualizar el presupuesto del vendedor
-            if ($sellUser) {
-                $sellUser->profits += $transferValue;
-                $sellUser->save();
-            }
+        // if ($sellUser) {
+        //     $sellUser->profits += $transferValue;
+        //     $sellUser->save();
+        // }
 
-            // Crear el array para upsert
-            $upsertData[] = [
-                'transferred_players' => $dato['transferred_players'],
-                'id_team_from' => $dato['id_team_from'],
-                'id_team_to' => $dato['id_team_to'],
-                'budget' => $transferValue,
-                'created_by' => $dato['created_by'],
-                'buy_by' => $dato['buy_by'],
-                'sold_by' => $dato['sold_by'],
-            ];
+        // $transferredPlayers = explode(',', $datosActualizados['transferred_players']);
+        // foreach ($transferredPlayers as $player) {
+        //     $upsertData[] = [
+        //         'transferred_players' => $player,
+        //         'id_team_from' => $datosActualizados['id_team_from'],
+        //         'id_team_to' => $datosActualizados['id_team_to'],
+        //         'budget' => $transferValue,
+        //         'created_by' => $datosActualizados['created_by'],
+        //         'buy_by' => $datosActualizados['buy_by'],
+        //         'sold_by' => $datosActualizados['sold_by'],
+        //     ];
+        // }
+
+        // Transfer::upsert($upsertData, 'id', ['transferred_players']);
+
+        // return response()->json(['message' => 'Datos actualizados correctamente']);
+
+        $transferData = $request->input('data');
+        $transfer = new Transfer();
+
+        $transfer->transferred_players = $transferData['transferred_players'];
+        $transfer->id_team_from = $transferData['id_team_from'];
+        $transfer->id_team_to = $transferData['id_team_to'];
+        $transfer->budget = $transferData['budget'];
+        $transfer->created_by = $transferData['created_by'];
+        $transfer->buy_by = $transferData['buy_by'];
+        $transfer->sold_by = $transferData['sold_by'];
+        $transfer->confirmed = 'no';
+        $transfer->save();
+
+        return response()->json(['message' => 'Transferencia creada correctamente, esperando confirmación']);
+    }
+
+    public function confirmTransfer(Request $request, $id)
+    {
+        $transfer = Transfer::find($id);
+
+        if (!$transfer) {
+            return response()->json(['message' => 'Transferencia no encontrada'], 404);
         }
 
-        // Realizar el upsert en la tabla de Transferencias
-        Transfer::upsert($upsertData, 'id', ['transferred_players']);
+        // Verificar si el usuario es el que debe confirmar
+        $user = auth()->user();
+        if ($user->id !== $transfer->buy_by && $user->id !== $transfer->sold_by) {
+            return response()->json(['message' => 'No autorizado para confirmar esta transferencia'], 403);
+        }
 
-        return response()->json(['message' => 'Datos actualizados correctamente']);
+        if ($transfer->created_by === $user->id) {
+            return response()->json(['message' => 'No puedes confirmar tu propia transferencia'], 403);
+        }
+
+        // Realizar los descuentos en el presupuesto
+        $buyUser = User::find($transfer->buy_by);
+        $sellUser = User::find($transfer->sold_by);
+        $transferValue = $transfer->budget;
+
+        if ($buyUser) {
+            $buyUser->profits -= $transferValue;
+            $buyUser->save();
+        }
+
+        if ($sellUser) {
+            $sellUser->profits += $transferValue;
+            $sellUser->save();
+        }
+
+        // Cambiar el estado de la transferencia a 'confirmed'
+        $transfer->status = 'confirmed';
+        $transfer->confirmed_by = $user->id;
+        $transfer->save();
+
+        return response()->json(['message' => 'Transferencia confirmada correctamente']);
     }
+
+    public function getPendingTransfers()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+        dd(auth()->user());
+        $transfers = Transfer::where('confirmed', 'no')
+            ->where(function ($query) use ($user) {
+                $query->where('buy_by', $user->id)
+                    ->orWhere('sold_by', $user->id);
+            })
+            ->where('confirmed_by', null)
+            ->get();
+
+        return response()->json($transfers);
+    }
+
 }

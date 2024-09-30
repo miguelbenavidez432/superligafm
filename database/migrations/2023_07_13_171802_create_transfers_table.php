@@ -28,6 +28,8 @@ return new class extends Migration
             $table->foreignId('confirmed_by')->nullable();
             $table->foreign('confirmed_by')->on('users')->references('id');
             $table->string('confirmed')->default('no');
+            $table->foreignId('id_season')->nullable();
+            $table->foreign('id_season')->on('teams')->references('id');
             $table->timestamps();
         });
     }

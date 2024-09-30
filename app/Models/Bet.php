@@ -28,4 +28,9 @@ class Bet extends Model
             ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])
             ->withTimestamps();;
     }
+
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
+    }
 }

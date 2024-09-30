@@ -3,6 +3,7 @@ import axiosClient from "../axios";
 import { Link } from 'react-router-dom';
 
 export default function AuctionsList() {
+
     const [auctions, setAuctions] = useState([]);
 
     useEffect(() => {

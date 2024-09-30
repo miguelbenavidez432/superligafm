@@ -21,7 +21,8 @@ class PlayerBetResource extends JsonResource
             'goal_odd'=>$this->goal_odd,
             'card_odd'=>$this->card_odd,
             'created_by'=>$this->created_by,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
+            'id_season' => new SeasonResource($this->whenLoaded('season')),
         ];
     }
 }

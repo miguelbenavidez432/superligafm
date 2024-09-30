@@ -24,6 +24,8 @@ return new class extends Migration
             $table->json('other_players')->nullable();
             $table->integer('extra_value')->default(0);
             $table->integer('total_value');
+            $table->foreignId('id_season')->nullable();
+            $table->foreign('id_season')->on('seasons')->references('id');
             $table->string('confirmed')->default('no');
             $table->string('active')->default('yes');
             $table->timestamps();

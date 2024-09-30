@@ -27,6 +27,7 @@ class AuctionResource extends JsonResource
             'confirmed' => $this->confirmed,
             'active' => $this->active,
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
+            'id_season' => new SeasonResource($this->whenLoaded('season')),
         ];
     }
 }

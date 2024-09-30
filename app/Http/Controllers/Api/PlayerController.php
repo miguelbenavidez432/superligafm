@@ -49,25 +49,28 @@ class PlayerController extends Controller
     public function transfer(Request $request)
     {
         $datosActualizados = $request->input('data');
+        $datos = $request->input('transfer');
+
+        var_dump($datos);
 
         $upsertData = [];
-        foreach ($datosActualizados as $dato) {
-            $buyUser = User::find($dato['buy_by']);
-            $sellUser = User::find($dato['sold_by']);
-            $transferValue = $dato['budget'];
+        $buyUser = User::find($datosActualizados['buy_by']);
+        $sellUser = User::find($datosActualizados['sold_by']);
+        $transferValue = $datosActualizados['budget'];
 
-            if ($buyUser) {
-                $buyUser->profits -= $transferValue;
-                $buyUser->save();
-            }
+        if ($buyUser) {
+            $buyUser->profits -= $transferValue;
+            $buyUser->save();
+        }
 
-            if ($sellUser) {
-                $sellUser->profits += $transferValue;
-                $sellUser->save();
-            }
+        if ($sellUser) {
+            $sellUser->profits += $transferValue;
+            $sellUser->save();
+        }
+        foreach ($datos as $dato) {
 
             $upsertData[] = [
-                'transferred_players' => $dato['transferred_players'],
+                'transferred_players' => $dato['name'],
                 'id_team_from' => $dato['id_team_from'],
                 'id_team_to' => $dato['id_team_to'],
                 'budget' => $transferValue,

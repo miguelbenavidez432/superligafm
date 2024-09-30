@@ -20,9 +20,9 @@ class RescissionController extends Controller
     {
         /**
          * if ($request->query("all") == true) {
-         *    return RescissionResource::collection(Team::with(['user', 'team', 'player'])->orderBy("id", "desc")->get());
+         *    return RescissionResource::collection(Team::with(['user', 'team', 'player', 'season'])->orderBy("id", "desc")->get());
          *} else {
-         *   return RescissionResource::collection(Team::with(['user', 'team', 'player'])->orderBy("id", "desc")->paginate(200));
+         *   return RescissionResource::collection(Team::with(['user', 'team', 'player', 'season'])->orderBy("id", "desc")->paginate(200));
          *}
          *;
 

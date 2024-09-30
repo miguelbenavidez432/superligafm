@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\NewAuctionEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
@@ -19,9 +20,9 @@ class AuctionController extends Controller
     {
         if ($request->query("all") == 'true') {
 
-            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team'])->orderBy("created_at", "desc")->get());
+            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("created_at", "desc")->get());
         } else {
-            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team'])->orderBy("created_at", "desc")->paginate(50));
+            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("created_at", "desc")->paginate(50));
         }
         ;
     }
@@ -55,6 +56,8 @@ class AuctionController extends Controller
         }
 
         $auction = Auction::create($data);
+
+        event(new NewAuctionEvent($auction));
 
         return response(new AuctionResource($auction, 201));
     }

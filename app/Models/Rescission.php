@@ -26,4 +26,9 @@ class Rescission extends Model
     {
         return $this->belongsTo(Player::class, 'id_player');
     }
+
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
+    }
 }

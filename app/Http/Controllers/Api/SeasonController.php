@@ -7,6 +7,7 @@ use App\Http\Resources\SeasonResource;
 use App\Models\Season;
 use App\Http\Requests\StoreSeasonRequest;
 use App\Http\Requests\UpdateSeasonRequest;
+use Illuminate\Http\Request;
 
 class SeasonController extends Controller
 {
@@ -15,12 +16,13 @@ class SeasonController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has("all") && $request->query("all") == true) {
-            return SeasonResource::collection(Season::query()->orderBy("name", "desc")->get());
-        } else {
-            return SeasonResource::collection(Season::query()->orderBy("name", "desc")->paginate(50));
-        }
-        ;
+        // if ($request->has("all") && $request->query("all") == true) {
+        //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->get());
+        // } else {
+        //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->paginate(50));
+        // }
+        // ;
+        return SeasonResource::collection(Season::query()->orderBy("id", "ASC")->get());
     }
 
     /**

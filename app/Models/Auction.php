@@ -34,4 +34,9 @@ class Auction extends Model
     {
         return $this->belongsTo(User::class, 'auctioned_by');
     }
+
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
+    }
 }

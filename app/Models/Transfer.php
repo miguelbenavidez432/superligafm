@@ -52,4 +52,8 @@ class Transfer extends Model
     {
         return $this->belongsTo(User::class, 'confirmed_by');
     }
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
+    }
 }
