@@ -62,4 +62,15 @@ class SeasonController extends Controller
         $season->delete();
         return response("", 204);
     }
+
+    public function getSeasonStart()
+    {
+        // Supongamos que la fecha está almacenada en la tabla `seasons`
+        $season = Season::last(); // O el registro correspondiente si tienes múltiples temporadas
+
+        // Devolver la fecha de inicio de la temporada
+        return response()->json([
+            'start_date' => $season->start_date->format('Y-m-d H:i:s') // Fecha en formato "YYYY-MM-DD HH:MM:SS"
+        ]);
+    }
 }

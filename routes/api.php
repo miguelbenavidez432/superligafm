@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::apiResource('/season', SeasonController::class);
+    Route::get('/season/start', [SeasonController::class, 'getSeasonStart']);
     Route::apiResource('/auctions', AuctionController::class);
     Route::get('/auctions/last', [AuctionController::class,'getLastAuctions']);
     Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);

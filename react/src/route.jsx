@@ -31,6 +31,8 @@ import Auctions from './views/Auctions';
 import PlayerAuctions from './views/AuctionsByPlayer';
 import AuctionsList from './views/AuctionsList';
 import TransferList from './views/TransferList';
+import SeasonCountdown from './components/SeasonCountDown';
+import ProtectedComponent from './components/ProtectedComponent';
 
 const router = createBrowserRouter([
     {
@@ -160,6 +162,14 @@ const router = createBrowserRouter([
             {
                 path: '/transferencias',
                 element: <TransferList />
+            },
+            {
+                path: '/season-countdown',
+                element: <SeasonCountdown />
+            },
+            {
+                path: '/protected',
+                element: <ProtectedComponent />
             },
         ]
     },
