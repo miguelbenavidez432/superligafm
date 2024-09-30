@@ -31,9 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-
-});
-
     Route::apiResource('/players', PlayerController::class);
     Route::post('/transfer', [TransferController::class, 'transfer']);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
@@ -59,13 +56,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
     Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
-    Route::get('/trasnferencia-pendiente', [TransferController::class, 'getPendingTransfers']);
+    Route::get('/transferencia_pendiente', [TransferController::class, 'getPendingTransfers']);
+    Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
     });
-
-
+});
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

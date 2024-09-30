@@ -118,7 +118,6 @@ import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
 
 export default function Dashboard() {
-
     const { user, setNotification } = useStateContext();
     const [seasonId, setSeasonId] = useState(null);
     const [transfers, setTransfers] = useState([]);
@@ -129,17 +128,9 @@ export default function Dashboard() {
     const [seasons, setSeasons] = useState([]);
     const [pendingTransfers, setPendingTransfers] = useState([]);
 
-
     useEffect(() => {
-        axiosClient.get('/trasnferencia-pendiente')
-            .then(({ data }) => {
-                setPendingTransfers(data);
-                console.log(pendingTransfers)
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [seasons]);
+        fetchPendingTransfers(); // Llamar a la función para obtener transferencias pendientes
+    }, [seasonId]); // Cambia esta línea a seasonId para que se ejecute cada vez que cambie la temporada
 
     useEffect(() => {
         fetchSeasons();
@@ -148,12 +139,32 @@ export default function Dashboard() {
     const fetchSeasons = () => {
         axiosClient.get('/season')
             .then(({ data }) => {
-
                 setSeasons(data.data);
             })
             .catch(error => console.log(error));
     };
 
+    const fetchPendingTransfers = () => {
+        axiosClient.get('/transferencia_pendiente')
+            .then(({ data }) => {
+                setPendingTransfers(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    const confirmTransfer = (transferId) => {
+        axiosClient.post(`/transferencia_confirmada/${transferId}`)
+            .then(({ data }) => {
+                setNotification(data.message);
+
+                setPendingTransfers(pendingTransfers.filter(transfer => transfer.id !== transferId));
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
 
     return (
         <div className="dashboard">
@@ -199,12 +210,42 @@ export default function Dashboard() {
 
                     <h2>Cláusulas recibidas en el equipo</h2>
                     <ul>
-                        {pendingTransfers.map(clause => (
+                        {receivedClauses.map(clause => (
                             <li key={clause.id}>
                                 {console.log(clause)}
                             </li>
                         ))}
                     </ul>
+
+                    <h2>Transferencias Pendientes</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Jugadores Transferidos</th>
+                                <th>Equipo Desde</th>
+                                <th>Equipo Hasta</th>
+                                <th>Presupuesto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pendingTransfers.map((transfer) => (
+                                <tr key={transfer.id}>
+                                    <td>{transfer.id}</td>
+                                    <td>{transfer.transferred_players}</td>
+                                    <td>{transfer.id_team_from ? transfer.id_team_from.name : ''}</td>
+                                    <td>{transfer.id_team_to ? transfer.id_team_to.name : ''}</td>
+                                    <td>{transfer.budget}</td>
+                                    <td>
+                                        <button className="btn-edit" onClick={() => confirmTransfer(transfer.id)}>
+                                            Confirmar Transferencia
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
                     <h2>Presupuesto gastado</h2>
                     <p>Total: {totalSpent}</p>
@@ -213,4 +254,5 @@ export default function Dashboard() {
         </div>
     );
 }
+
 

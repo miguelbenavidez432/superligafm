@@ -154,7 +154,7 @@ class TransferController extends Controller
         }
 
         // Cambiar el estado de la transferencia a 'confirmed'
-        $transfer->status = 'confirmed';
+        $transfer->confirmed = 'si';
         $transfer->confirmed_by = $user->id;
         $transfer->save();
 
@@ -163,21 +163,22 @@ class TransferController extends Controller
 
     public function getPendingTransfers()
     {
-        $user = auth()->user();
+        $user = auth()->user();  // auth()->user() siempre estará definido si el middleware lo permite
 
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        try {
+            $transfers = Transfer::where('confirmed', 'no')
+                ->where(function ($query) use ($user) {
+                    $query->where('buy_by', $user->id)
+                        ->orWhere('sold_by', $user->id);
+                })
+                ->where('confirmed_by', null)
+                ->get();
+
+            return response()->json($transfers);
+        } catch (\Exception $e) {
+            \Log::error('Error en getPendingTransfers: ' . $e->getMessage());
+            return response()->json(['error' => 'Ocurrió un error'], 500);
         }
-        dd(auth()->user());
-        $transfers = Transfer::where('confirmed', 'no')
-            ->where(function ($query) use ($user) {
-                $query->where('buy_by', $user->id)
-                    ->orWhere('sold_by', $user->id);
-            })
-            ->where('confirmed_by', null)
-            ->get();
-
-        return response()->json($transfers);
     }
 
 }
