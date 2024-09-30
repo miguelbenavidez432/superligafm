@@ -10,7 +10,7 @@ import axiosClient from "../axios";
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
         name: '',
-        id_team: 62,
+        id_team: 61,
         status: '',
         value: '',
         ca: '',
@@ -44,10 +44,9 @@ export default function PlayerForm() {
         },[])
     }
 
-
     const getTeam = () => {
         setLoading(true)
-        axiosClient.get('/teams')
+        axiosClient.get('/teams=?')
             .then(({ data }) => {
                 setLoading(false)
                 setTeam(data.data)
@@ -139,6 +138,7 @@ export default function PlayerForm() {
                                 <option value="liberado">Liberado</option>
                                 <option value="bloqueado">Bloqueado</option>
                                 <option value="registrado">Registrado</option>
+                                <option value="">Sin modificar</option>
                             </select>
                             <button className="btn">Guardar cambios</button>
                         </form>

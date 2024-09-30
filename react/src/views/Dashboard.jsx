@@ -147,7 +147,7 @@ export default function Dashboard() {
     const fetchPendingTransfers = () => {
         axiosClient.get('/transferencia_pendiente')
             .then(({ data }) => {
-                setPendingTransfers(data);
+                setPendingTransfers(data.filter(t => t.id_season == seasons));
             })
             .catch(error => {
                 console.error(error);
@@ -158,7 +158,6 @@ export default function Dashboard() {
         axiosClient.post(`/transferencia_confirmada/${transferId}`)
             .then(({ data }) => {
                 setNotification(data.message);
-
                 setPendingTransfers(pendingTransfers.filter(transfer => transfer.id !== transferId));
             })
             .catch(error => {

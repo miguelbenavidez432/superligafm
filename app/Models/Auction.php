@@ -16,7 +16,8 @@ class Auction extends Model
         'auctioned_by',
         'amount',
         'confirmed',
-        'active'
+        'active',
+        'id_season'
     ];
 
     public function player()

@@ -37,37 +37,37 @@ class RescissionController extends Controller
      */
     public function store(StoreRescissionRequest $request)
     {
-        $data = $request->validated();
-        $player = Rescission::create($data);
-        return response(new RescissionResource($player), 201);
-
-        // // Obtener los datos validados del request
         // $data = $request->validated();
+        // $player = Rescission::create($data);
+        // return response(new RescissionResource($player), 201);
 
-        // // Obtener el ID del equipo del jugador
-        // $teamId = $data['id_team'];
+        // Obtener los datos validados del request
+        $data = $request->validated();
 
-        // // Verificar cuántos jugadores del equipo han recibido ofertas (basado en la columna cdr)
-        // $team = Team::find($teamId);
+        // Obtener el ID del equipo del jugador
+        $teamId = $data['id_team'];
 
-        // if ($team->cdr >= 6) {
-        //     // Si ya hay 6 jugadores del equipo con ofertas, no se puede crear otra oferta
-        //     return response()->json(['error' => 'El equipo ya tiene ofertas por 6 jugadores. No se pueden realizar más ofertas.'], 403);
-        // }
+        // Verificar cuántos jugadores del equipo han recibido ofertas (basado en la columna cdr)
+        $team = Team::find($teamId);
 
-        // // Si no ha alcanzado el límite de jugadores con ofertas, crear la oferta
-        // $offer = Rescission::create($data);
+        if ($team->cdr >= 6) {
+            // Si ya hay 6 jugadores del equipo con ofertas, no se puede crear otra oferta
+            return response()->json(['error' => 'El equipo ya tiene ofertas por 6 jugadores. No se pueden realizar más ofertas.'], 403);
+        }
 
-        // // Incrementar el contador de jugadores con ofertas en el equipo si es una nueva oferta para el jugador
-        // $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
+        // Si no ha alcanzado el límite de jugadores con ofertas, crear la oferta
+        $offer = Rescission::create($data);
 
-        // if ($existingOffersForPlayer == 0) {
-        //     // Si no había ofertas anteriores para este jugador, incrementar el contador cdr
-        //     $team->increment('cdr');
-        // }
+        // Incrementar el contador de jugadores con ofertas en el equipo si es una nueva oferta para el jugador
+        $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
 
-        // // Devolver la respuesta
-        // return response(new RescissionResource($offer), 201);
+        if ($existingOffersForPlayer == 0) {
+            // Si no había ofertas anteriores para este jugador, incrementar el contador cdr
+            $team->increment('cdr');
+        }
+
+        // Devolver la respuesta
+        return response(new RescissionResource($offer), 201);
     }
 
     /**
@@ -101,35 +101,45 @@ class RescissionController extends Controller
 
     public function confirmOffer(Request $request)
     {
-        // Validar la oferta y obtener los datos necesarios
         $offer = $request->input('offer');
         $value = $offer['total_value'];
         $id_team = $offer['id_team'];
 
-        // Obtener el equipo y el usuario que recibe el dinero
-        $team = Team::findOrFail($id_team);
-        $receiver = User::findOrFail($team->id_user);
+        //busco el id de la oferta
+        $id = $offer['id'];
 
-        // Obtener el usuario que hizo la oferta
-        $user = User::findOrFail($offer['created_by']);
+        $offerId = Rescission::findOrFail($id);
 
-        // Actualizar el presupuesto del usuario que hizo la oferta
-        $user->profits -= $value;
-        $user->save();
+        if ($offerId->confirmed === 'no') {
+            $team = Team::findOrFail($id_team);
+            $receiver = User::findOrFail($team->id_user);
 
-        // Sumar el valor de la oferta al presupuesto del usuario que recibe el dinero
-        $receiver->profits += $value;
-        $receiver->save();
+            $user = User::findOrFail($offer['created_by']);
 
-        // Aquí puedes realizar otras acciones, como marcar la oferta como confirmada, enviar notificaciones, etc.
+            $user->profits -= $value;
+            $user->save();
 
-        return response()->json(['message' => 'Oferta confirmada exitosamente']);
+            $receiver->profits += $value;
+            $receiver->save();
+
+            $offerId->confirmed = 'yes';
+            $offerId->save();
+
+            $offerId->active = 'yes';
+            $offerId->save();
+
+            return response()->json(['message' => 'Oferta confirmada exitosamente']);
+        } else {
+            return response()->json(['message' => 'Oferta ya confirmada'], 403);
+        }
+
     }
 
-    public function contar_cdr(Request $request, $id)
+    public function closeOffer(Request $request)
     {
-        $id_team = $request->input('id_team');
-        $team = Team::findOrFail($id);
+        $offer = $request->input('id');
+
+        $offerId = Rescission::findOrFail($offer);
 
     }
 

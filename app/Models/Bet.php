@@ -20,6 +20,7 @@ class Bet extends Model
         'over',
         'created_at',
         'active',
+        'id_season',
     ];
 
     public function users()

@@ -138,7 +138,6 @@ class TransferController extends Controller
             return response()->json(['message' => 'No puedes confirmar tu propia transferencia'], 403);
         }
 
-        // Realizar los descuentos en el presupuesto
         $buyUser = User::find($transfer->buy_by);
         $sellUser = User::find($transfer->sold_by);
         $transferValue = $transfer->budget;
@@ -153,7 +152,6 @@ class TransferController extends Controller
             $sellUser->save();
         }
 
-        // Cambiar el estado de la transferencia a 'confirmed'
         $transfer->confirmed = 'si';
         $transfer->confirmed_by = $user->id;
         $transfer->save();

@@ -20,6 +20,7 @@ class Rescission extends Model
         'created_by',
         'total_value',
         'confirmed',
+        'id_season',
     ];
 
     public function player()

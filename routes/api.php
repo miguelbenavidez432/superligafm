@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
 
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
+    Route::post('/cerrar-oferta', [RescissionController::class, 'closeOffer']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
     Route::post('/apuesta/usuario', [BetController::class, 'attach']);

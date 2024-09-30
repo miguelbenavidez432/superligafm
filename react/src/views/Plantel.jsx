@@ -66,27 +66,17 @@ export default function Plantel() {
         try {
             const response = await axiosClient.get('/teams');
             setLoading(false);
-            const allTeams = response.data.data; // Asegúrate de acceder a la propiedad correcta
+            const allTeams = response.data.data;
 
-            // Verifica la estructura de `allTeams` y `user.id`
-            console.log('allTeams:', allTeams);
-            console.log('user.id:', user.id);
-
-            // Filtrar el equipo que coincide con el usuario actual
             const filteredTeam = allTeams.find(team => {
-                console.log('Checking team:', team);
-                console.log('Comparing with user.id:', user.id);
-                return team.id_user && team.id_user.id === user.id; // Asegúrate de que `team.id_user` existe
+                return team.id_user && team.id_user.id === user.id;
             });
 
-            console.log('filteredTeam:', filteredTeam);
             setTeam(filteredTeam);
         } catch (error) {
-            console.error('Error fetching teams:', error);
             setLoading(false);
         }
     };
-
 
     const filterPlayersByTeam = async () => {
         if (team) {
@@ -102,7 +92,6 @@ export default function Plantel() {
             }
         }
     };
-
 
     const getBestPlayersCA = () => {
         if (players.length > 0) {

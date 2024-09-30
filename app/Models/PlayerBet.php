@@ -14,7 +14,8 @@ class PlayerBet extends Model
         'description',
         'goal_odd',
         'card_odd',
-        'created_by'
+        'created_by',
+        'id_season'
     ];
 
     public function user()

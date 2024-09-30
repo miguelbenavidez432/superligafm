@@ -22,7 +22,10 @@ class UpdateRescissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'confirmed' => 'boolean|required',
+            'id_team' => 'required|integer',
+            'total_value' => 'integer|required',
+            'confirmed' => 'string',
+            'active' => 'string'
         ];
     }
 }

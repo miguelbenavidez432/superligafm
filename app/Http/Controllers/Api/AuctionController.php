@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
+use DB;
 use Illuminate\Http\Request;
 
 class AuctionController extends Controller
