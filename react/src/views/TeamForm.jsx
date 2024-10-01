@@ -7,6 +7,7 @@ import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
 
 export default function TeamForm() {
+
     const [team, setTeam] = useState({
         name: '',
         division: '',
@@ -37,9 +38,6 @@ export default function TeamForm() {
                     setTeam(data);
                     getPlayers();
                     getUsers();
-                    getBestPlayersCA()
-                    countRegisterAndOver20()
-                    countRegistered()
                 })
                 .catch(() => {
                     setLoading(false);
@@ -70,6 +68,9 @@ export default function TeamForm() {
         if (team) {
             countBlockedPlayers();
             countPlayersOver20();
+            getBestPlayersCA();
+            countRegisterAndOver20();
+            countRegistered();
         }
     }, [team]);
 
@@ -191,13 +192,13 @@ export default function TeamForm() {
                     <button className="btn">Guardar cambios</button>
                     <br />
                     <table>
-                            <thead>
-                                <tr>
-                                    <th>NOMBRE</th>
-                                    <th>CA</th>
-                                    <th>EDAD</th>
-                                    <th>ESTADO</th>
-                                    {/* <th>GOLES</th>
+                        <thead>
+                            <tr>
+                                <th>NOMBRE</th>
+                                <th>CA</th>
+                                <th>EDAD</th>
+                                <th>ESTADO</th>
+                                {/* <th>GOLES</th>
                                     <th>ASISTENCIAS</th>
                                     <th>AMARILLAS</th>
                                     <th>ROJA</th>
@@ -205,13 +206,13 @@ export default function TeamForm() {
                                     <th>LESIONES LEVES</th>
                                     <th>LESIONES GRAVES</th>
                                     <th>MVP</th> */}
-                                </tr>
-                            </thead>
+                            </tr>
+                        </thead>
 
 
 
-                    {players.map(p => (
-                        <tbody key={p.id}>
+                        {players.map(p => (
+                            <tbody key={p.id}>
 
                                 <tr key={p.id}>
                                     <td>{p.name}</td>
@@ -224,7 +225,7 @@ export default function TeamForm() {
                             </tbody>
 
 
-                    ))}</table>
+                        ))}</table>
                     <div>
                         {bestPlayersCA !== null && (
                             <p>Promedio de CA de los mejores 16 jugadores: <strong> {bestPlayersCA} </strong></p>

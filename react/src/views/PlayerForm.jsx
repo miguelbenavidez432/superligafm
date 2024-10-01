@@ -110,7 +110,7 @@ export default function PlayerForm() {
                         <select onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}>
                             {
                                 team.map((t, index) => {
-                                    const selected = players.id_team && players.id_team.id == team.id ? 'selected' : '';49267266
+                                    const selected = players.id_team && players.id_team.id === team.id ? 'selected' : '';
                                     return (
                                         <option value={t.id} key={index} selected={selected}>{t.name}</option>
                                     )
@@ -137,7 +137,7 @@ export default function PlayerForm() {
                             <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
                                 <option value=''></option>
                                 <option value="liberado">Liberado</option>
-                                <option value="bloqueado">Bloqueado</option>
+
                                 <option value="registrado">Registrado</option>
                                 <option value="">Sin modificar</option>
                             </select>

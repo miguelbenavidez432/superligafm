@@ -1,46 +1,70 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
+import { useNavigate } from "react-router-dom";
 //import Tempo from "../path/to/formkit_tempo";
 
 const Auctions = () => {
     const { user, setNotification } = useStateContext();
+    const navigate = useNavigate();
     const [players, setPlayers] = useState([]);
+    const [leagueTeams, setLeagueTeams] = useState([]);
+    const [otherTeams, setOtherTeams] = useState([]);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
     const [auctionData, setAuctionData] = useState({
-        player_id: '',
+        id_player: '',
         value: 0,
         created_by: user.id,
         status: 'active',
     });
-    const [loading, setLoading] = useState(false);
     const [auctionEndTime, setAuctionEndTime] = useState(null);  // Para el countdown
+    const [selectedTeam, setSelectedTeam] = useState({});
+    const [teamPlayers, setTeamPlayers] = useState([]);
 
     useEffect(() => {
-        getPlayers();
+        getTeam()
+        getPlayers()
 
-        // Recuperar el tiempo de finalización almacenado en localStorage
         const storedEndTime = localStorage.getItem('auctionEndTime');
         if (storedEndTime) {
             const currentTime = new Date().getTime();
             if (currentTime < storedEndTime) {
                 setAuctionEndTime(storedEndTime);
-                //startCountdown(storedEndTime);
             } else {
-                // Si el tiempo de subasta ha expirado
                 localStorage.removeItem('auctionEndTime');
             }
         }
-    }, []);
+    }, [selectedTeam]);
 
-    const getPlayers = async () => {
-        try {
-            const response = await axiosClient.get('/players');
-            setPlayers(response.data.data);
-        } catch (error) {
-            console.error(error);
+    useEffect(() => {
+        if (otherTeams) {
+            getPlayers();
         }
+    }, [otherTeams]);
+
+    const getTeam = () => {
+        axiosClient.get('/teams?all=true')
+            .then(({ data }) => {
+                const leagueTeamsFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
+                const otherTeamsFilter = data.data.filter((t) => t.division === '')
+                setLeagueTeams(leagueTeamsFilter)
+                setOtherTeams(otherTeamsFilter)
+            })
+            .catch(() => {
+            })
+    };
+
+    const getPlayers = () => {
+        axiosClient.get('/players?all=true')
+            .then(({ data }) => {
+                setPlayers(data.data)
+                const filteredPlayers = data.data.filter(p => p.id_team === selectedTeam)
+                setTeamPlayers(filteredPlayers)
+            })
+            .catch(() => {
+            })
     };
 
     const handlePlayerChange = (e) => {
@@ -49,8 +73,13 @@ const Auctions = () => {
         setSelectedPlayer(player);
         setAuctionData({
             ...auctionData,
-            player_id: player.id,
-            value: player.value
+            id_player: player.id,
+            value: player.value,
+            name: player.name,
+            status: 'bloqueado',
+            ca: player.ca,
+            pa: player.pa,
+            age: player.age,
         });
     };
 
@@ -109,17 +138,26 @@ const Auctions = () => {
     // };
 
     return (
-        <div className="auction-form">
-            <h3>Crear una nueva subasta</h3>
+        <div className="card animated fadeInDown">
             <form onSubmit={handleAuctionSubmit}>
                 <label htmlFor="player">Seleccionar jugador:</label>
-                <select onChange={handlePlayerChange}>
-                    <option value="">Selecciona un jugador</option>
-                    {players.map(player => (
-                        <option key={player.id} value={player.id}>
-                            {player.name}
-                        </option>
-                    ))}
+
+
+                <label htmlFor="equipo">Seleccionar equipo:</label>
+                <select id="equipo" onChange={e => setSelectedTeam(e.target.value)}>
+                    <option value="">Seleccione un equipo del jugador</option>
+                    {
+                        otherTeams.map(equipo => (
+                            <option key={equipo.id} value={equipo.id}>{equipo.name}</option>
+                        ))}
+                </select>
+
+                <select id="equipo" onChange={handlePlayerChange}>
+                    <option value="">Seleccione el jugador subastado</option>
+                    {
+                        teamPlayers.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
                 </select>
 
                 {selectedPlayer && (

@@ -24,7 +24,6 @@ class UpdateTeamRequest extends FormRequest
         return [
                 'name' => 'string',
                 'division' => 'string|nullable',
-                'id_user' => 'required'
         ];
     }
 }

@@ -48,23 +48,21 @@ class PlayerController extends Controller
 
     public function transfer(Request $request)
     {
-        $datosActualizados = $request->input('data');
-        $datos = $request->input('transfer');
+        $datosActualizados = $request->input('data'); //obtengo la info que viene del front
+        $datos = $request->input('transfer'); // Acá recibo la información
 
-        var_dump($datos);
-
-        $upsertData = [];
-        $buyUser = User::find($datosActualizados['buy_by']);
-        $sellUser = User::find($datosActualizados['sold_by']);
-        $transferValue = $datosActualizados['budget'];
+        $upsertData = []; //creo variable que va a reaizar el upsert
+        $buyUser = User::find($datosActualizados['buy_by']); //busco el usuario que compra
+        $sellUser = User::find($datosActualizados['sold_by']); // busco el usuario que vende
+        $transferValue = $datosActualizados['budget']; // obtengo el valor de la transferencia
 
         if ($buyUser) {
-            $buyUser->profits -= $transferValue;
+            $buyUser->profits -= $transferValue; //Descuento el presupuesto al que compra
             $buyUser->save();
         }
 
         if ($sellUser) {
-            $sellUser->profits += $transferValue;
+            $sellUser->profits += $transferValue; //Aumento el presupuesto al que vende
             $sellUser->save();
         }
         foreach ($datos as $dato) {
@@ -80,7 +78,7 @@ class PlayerController extends Controller
             ];
         }
 
-        Transfer::upsert($upsertData, 'id', ['transferred_players']);
+        Transfer::upsert($upsertData, 'id', ['transferred_players']); //actualizo los jugadores que vienen en el array
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }
@@ -109,13 +107,13 @@ class PlayerController extends Controller
 
     public function playerOffers($id)
     {
-        $player = Player::findOrFail($id);
-        $offers = Rescission::where('id_player', $id)->get();
+        $player = Player::findOrFail($id); // busco el jugador
+        $offers = Rescission::where('id_player', $id)->get(); //obtengo todas las ofertas que se le realizaron al jugador
 
         return response()->json([
             'player' => $player,
             'offers' => $offers,
-        ]);
+        ]); // Devuelvo el array con el jugador y las ofertas que le realizaron
     }
 
     public function searchPlayers(Request $request)
@@ -146,7 +144,6 @@ class PlayerController extends Controller
 
         $costo = 0;
 
-        // Determinar el costo según la división y CA
         if ($division == 'Primera') {
             if ($ca >= 180 && $ca <= 200) {
                 $costo = 75000000;
@@ -171,46 +168,40 @@ class PlayerController extends Controller
     public function bloquearJugador(Request $request)
     {
         $usuarioAutenticado = auth()->user(); // Usuario autenticado
-        $jugador = Player::find($request->id); // Obtener el jugador que se quiere bloquear
+        $jugador = Player::find($request->id); //busco el usuario
 
         if (!$jugador) {
             return response()->json(['error' => 'Jugador no encontrado'], 404);
         }
 
-        // Obtener el equipo al que pertenece el jugador
+        // Obtengo el equipo al que pertenece el jugador
         $team = $jugador->team;
 
         if (!$team) {
             return response()->json(['error' => 'El equipo no existe'], 404);
         }
 
-        // Contar cuántos jugadores del equipo ya están bloqueados
+        // Cuento cuántos jugadores del equipo ya están bloqueados
         $jugadoresBloqueadosEnEquipo = $team->players()->where('status', 'bloqueado')->count();
 
-        // Verificar si ya alcanzó el límite de bloqueos (6 por equipo)
+        // Verificó si ya alcanzó el límite de bloqueos de 6
         if ($jugadoresBloqueadosEnEquipo >= 6) {
             return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 6 jugadores'], 400);
         }
 
-        // Obtener el usuario que maneja el equipo (dueño del equipo)
+        // Obtengo el usuario que maneja el equipo
         $usuarioManejador = $team->user;
-        var_dump($jugadoresBloqueadosEnEquipo);
-
 
         if (!$usuarioManejador) {
-            return response()->json(['error' => 'Usuario que maneja el equipo no encontrado'], 404);
+            return response()->json(['error' => 'Manager no encontrado'], 404);
         }
 
-        // Calcular el costo de bloqueo del jugador
-        $costoBloqueo = $this->calcularCostoBloqueo($jugador);
+        $costoBloqueo = $this->calcularCostoBloqueo($jugador);        // Calculo el costo de bloqueo del jugador
 
+        $usuarioManejador->profits -= $costoBloqueo; // Descuento el costo de bloqueo del presupuesto
+        $usuarioManejador->save(); // Guardar los cambios en el presupuesto del manager
 
-        // Descontar el costo de bloqueo del presupuesto (profits)
-        $usuarioManejador->profits -= $costoBloqueo;
-        $usuarioManejador->save(); // Guardar los cambios en el presupuesto
-
-        // Actualizar el estado del jugador a 'bloqueado'
-        $jugador->status = 'bloqueado';
+        $jugador->status = 'bloqueado'; // Actualizar el estado del jugador a 'bloqueado'
         $jugador->save();
 
         return response()->json(['success' => 'Jugador bloqueado', 'costo' => $costoBloqueo]);
