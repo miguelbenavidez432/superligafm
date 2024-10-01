@@ -7,6 +7,7 @@ use App\Http\Resources\SeasonResource;
 use App\Models\Season;
 use App\Http\Requests\StoreSeasonRequest;
 use App\Http\Requests\UpdateSeasonRequest;
+use Illuminate\Http\Request;
 
 class SeasonController extends Controller
 {
@@ -15,12 +16,13 @@ class SeasonController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has("all") && $request->query("all") == true) {
-            return SeasonResource::collection(Season::query()->orderBy("name", "desc")->get());
-        } else {
-            return SeasonResource::collection(Season::query()->orderBy("name", "desc")->paginate(50));
-        }
-        ;
+        // if ($request->has("all") && $request->query("all") == true) {
+        //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->get());
+        // } else {
+        //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->paginate(50));
+        // }
+        // ;
+        return SeasonResource::collection(Season::query()->where('active', 'yes')->orderBy("id", "ASC")->get());
     }
 
     /**
@@ -59,5 +61,16 @@ class SeasonController extends Controller
     {
         $season->delete();
         return response("", 204);
+    }
+
+    public function getSeasonStart()
+    {
+        // Supongamos que la fecha está almacenada en la tabla `seasons`
+        $season = Season::last(); // O el registro correspondiente si tienes múltiples temporadas
+
+        // Devolver la fecha de inicio de la temporada
+        return response()->json([
+            'start_date' => $season->start_date->format('Y-m-d H:i:s') // Fecha en formato "YYYY-MM-DD HH:MM:SS"
+        ]);
     }
 }

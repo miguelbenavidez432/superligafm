@@ -17,7 +17,7 @@ class Team extends Model
 
     public function players()
     {
-        return $this->hasMany(Player::class);
+        return $this->hasMany(Player::class, 'id_team');
     }
     public function user()
     {
@@ -25,6 +25,18 @@ class Team extends Model
     }
     public function transfers()
     {
-        return $this->hasMany(Transfer::class);
+        return $this->belongsTo(Transfer::class);
+    }
+
+    // public function auctions()
+    // {
+    //     return $this->belongsToMany(Auction::class, 'user_auctions')
+    //                 ->withPivot('player_id', 'bid_amount', 'is_last_bid')
+    //                 ->withTimestamps();
+    // }
+
+    public function auctions()
+    {
+        return $this->hasMany(Auction::class, 'id_team'); // 'id_team' es el campo en la tabla 'auctions' que referencia el equipo
     }
 }

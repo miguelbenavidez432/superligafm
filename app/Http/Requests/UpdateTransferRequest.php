@@ -22,8 +22,8 @@ class UpdateTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'confirmed' => 'required|boolean',
-            'confirmed_by' => 'confirmed_by',
+            'confirmed' => 'required|string',
+            'confirmed_by' => 'required ',
         ];
     }
 }

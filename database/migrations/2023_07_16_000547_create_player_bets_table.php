@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('created_by');
             $table->foreign('created_by')->on('users')->references('id');
             $table->string('active')->default('on');
+            $table->foreignId('id_season')->nullable();
+            $table->foreign('id_season')->on('seasons')->references('id');
             $table->timestamps();
         });
     }

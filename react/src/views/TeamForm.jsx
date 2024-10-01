@@ -37,7 +37,6 @@ export default function TeamForm() {
                     setTeam(data);
                     getPlayers();
                     getUsers();
-                    filterPlayersByTeam()
                     getBestPlayersCA()
                     countRegisterAndOver20()
                     countRegistered()
@@ -49,21 +48,17 @@ export default function TeamForm() {
             setTeam({
                 name: '',
                 division: '',
-                id_user: '',
+                user: '',
             });
         }
     }, [id]);
 
-    useEffect(() => {
-        getBestPlayersCA();
-    }, [players, team]);
-
     const getPlayers = () => {
         setLoading(true)
-        axiosClient.get('/players')
+        axiosClient.get('/players?all=true')
             .then(({ data }) => {
                 setLoading(false)
-                const playersFiltered = data.data.filter((p) => p.id_team === parseInt(id))
+                const playersFiltered = data.data.filter((p) => p.id_team ? p.id_team.id === parseInt(id) : '')
                 setPlayers(playersFiltered)
             })
             .catch(() => {
@@ -73,7 +68,6 @@ export default function TeamForm() {
 
     useEffect(() => {
         if (team) {
-            filterPlayersByTeam()
             countBlockedPlayers();
             countPlayersOver20();
         }
@@ -145,7 +139,7 @@ export default function TeamForm() {
                     }
                 })
         } else {
-            axiosClient.post(`/teams/`, team)
+            axiosClient.post(`/teams`, team)
                 .then(() => {
                     setNotification('Equipo creado satisfactoriamente')
                     navigate('/teams')
@@ -158,21 +152,6 @@ export default function TeamForm() {
                 })
         }
     }
-
-    const filterPlayersByTeam = async () => {
-        if (team) {
-            try {
-                setLoading(true);
-                const response = await axiosClient.get(`/plantel`, {
-                    params: { id_team: team.id }
-                });
-                setPlayers(response.data.data);
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-            }
-        }
-    };
 
     return (
         <>
@@ -229,7 +208,7 @@ export default function TeamForm() {
                                 </tr>
                             </thead>
 
-                            
+
 
                     {players.map(p => (
                         <tbody key={p.id}>
@@ -244,7 +223,7 @@ export default function TeamForm() {
 
                             </tbody>
 
-                        
+
                     ))}</table>
                     <div>
                         {bestPlayersCA !== null && (

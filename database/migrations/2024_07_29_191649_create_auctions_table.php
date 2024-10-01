@@ -19,9 +19,11 @@ return new class extends Migration
             $table->foreign('id_team')->on('teams')->references('id');
             $table->foreignId('created_by');
             $table->foreign('created_by')->on('users')->references('id');
-            $table->foreignId('auctioned_by');
+            $table->foreignId('auctioned_by')->nullable();
             $table->foreign('auctioned_by')->on('users')->references('id');
             $table->integer('amount');
+            $table->foreignId('id_season')->nullable();
+            $table->foreign('id_season')->on('seasons')->references('id');
             $table->string('confirmed')->default('no');
             $table->string('active')->default('no');
             $table->timestamps();

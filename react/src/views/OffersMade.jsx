@@ -49,20 +49,10 @@ const OffersMade = () => {
             });
     };
 
-    const checkOffersAvailability = (created_at) => {
-        if (created_at) {
-          const offerCreatedAt = moment(created_at);
-          const expirationDate = offerCreatedAt.add(6, 'hours');
-          const currentDate = moment();
-          return currentDate.isAfter(expirationDate);
-        }
-        return false;
-      };
-
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <h1><strong>CLÁUSULAS DE RESCISIÓN EJECUTADAS</strong></h1>
+                <h1><strong>CLÁUSULAS DE RESCISIÓN REALIZADAS</strong></h1>
                 <Link to={`/clausula_rescision`} className="btn-add">Nueva oferta</Link>
             </div>
             <br />
@@ -93,7 +83,6 @@ const OffersMade = () => {
                         <tbody>
                             {filteredOffers.map((oferta) => {
                                 const userName = users.find(u => u.id === oferta.created_by);
-                                const isOfferAvailable = checkOffersAvailability(oferta.created_at);
                                 const teamName = teams.find(t => t.id === oferta.id_team)
                                 const userNameToShow = userName ? userName.name : "Usuario no encontrado";
                                 const teamNameToShow = teamName ? teamName.name : " ";
@@ -121,6 +110,4 @@ const OffersMade = () => {
         </div>
     );
 };
-
-
 export default OffersMade;

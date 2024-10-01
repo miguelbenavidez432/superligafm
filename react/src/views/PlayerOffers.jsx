@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
@@ -135,39 +136,61 @@ const PlayerOffers = () => {
         }
     };
 
+    const handleCloseOffer = async (offerId) => {
+
+        const updateOffer = {
+            active: 'no'
+        }
+        try {
+
+            await axiosClient.put(`/clausula_rescision/${offerId}`, updateOffer);
+            setNotification("Oferta cerrada satisfactoriamente");
+            navigate("/offers");
+        } catch (error) {
+            setNotification("Error al confirmar la oferta:", error);
+            const response = error.response;
+            if (response && response.status === 422) {
+                setErrors(response.data.errors);
+            }
+        }
+
+
+    };
+
     return (
         <div>
             {isAvailable ? (<ul>
                 {Array.isArray(offers) && offers.length > 0 ? (
                     offers
-                    .map((oferta) => {
-                        const userName = users.find(u => u.id === oferta.created_by);
-                        const userNameToShow = userName ? userName.name : "Usuario no encontrado";
-                        const fecha = new Date(oferta.created_at);
-                        const fechaFormateada = format(fecha, 'dd/MM/yy HH:mm:ss');
-                        return (
-                            <li key={oferta.id}>
-                                <br />
-                                <span>Jugador: {oferta.name}</span>
-                                <br />
-                                <span>Usuario: {userNameToShow}</span>
-                                <br />
-                                <span>Jugadores extras: {oferta.other_players}</span>
-                                <br />
-                                <span>Valor total: {oferta.total_value}</span>
-                                <br />
-                                <span>Valor: {oferta.value}</span>
-                                <br />
-                                <span>Horario: {fechaFormateada}</span>
-                                <br />{
-                                    user.rol === 'Admin' || user.rol === 'Organizador' ?
-                                        <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
-                                        :
-                                        ''
-                                }
-                            </li>
-                        )
-                    })
+                        .map((oferta) => {
+                            const userName = users.find(u => u.id === oferta.created_by);
+                            const userNameToShow = userName ? userName.name : "Usuario no encontrado";
+                            const fecha = new Date(oferta.created_at);
+                            const fechaFormateada = format(fecha, 'dd/MM/yy HH:mm:ss');
+                            return (
+                                <li key={oferta.id}>
+                                    <br />
+                                    <span>Jugador: {oferta.name}</span>
+                                    <br />
+                                    <span>Usuario: {userNameToShow}</span>
+                                    <br />
+                                    <span>Jugadores extras: {oferta.other_players}</span>
+                                    <br />
+                                    <span>Valor total: {oferta.total_value}</span>
+                                    <br />
+                                    <span>Valor: {oferta.value}</span>
+                                    <br />
+                                    <span>Horario: {fechaFormateada}</span>
+                                    <br />{
+                                        user.rol === 'Admin' || user.rol === 'Organizador' ?
+                                            <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button> &&
+                                            <button className="btn-edit" onClick={() => handleCloseOffer(parseInt(oferta.id))}>Cerrar oferta</button>
+                                            :
+                                            ''
+                                    }
+                                </li>
+                            )
+                        })
                 ) : (
                     <li>No hay ofertas disponibles para este jugador en este momento.</li>
                 )}

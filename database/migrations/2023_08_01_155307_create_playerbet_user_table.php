@@ -24,7 +24,10 @@ return new class extends Migration
             $table->decimal('selected_option')->nullable();
 
             $table->string('confirmed')->default('no');
-            
+
+            $table->foreignId('id_season')->nullable();
+            $table->foreign('id_season')->on('seasons')->references('id');
+
             $table->timestamps();
         });
     }

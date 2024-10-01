@@ -37,7 +37,6 @@ export default function Bets() {
                 setLoading(true);
                 setSingleBets(data.data);
                 setTotalPagesSingleBets(data.meta.last_page);
-                // ...rest of the code...
             });
     }, [currentPageBets, currentPageSingleBets]);
 

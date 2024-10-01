@@ -16,7 +16,6 @@ export default function DefaultLayout() {
         return <Navigate to='/login' />
     }
 
-
     const onLogout = (e) => {
         e.preventDefault();
         axiosClient.post('/logout')
@@ -39,13 +38,15 @@ export default function DefaultLayout() {
                 {
                     user.rol === 'Admin' || user.rol === 'Organizador' ?
                         <div className="flex flex-col  text-white">
+                            <Link className="mt-4 hover:text-base" to='/dashboard'>Mi estado</Link>
                             <Link className="mt-4 hover:text-base" to='/fixture_primera'>Fixture Primera</Link>
                             <Link className="mt-4 hover:text-base" to='/fixture_segunda'>Fixture Segunda</Link>
-                            <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                            <Link className="mt-4 hover:text-base" to='/transferencias'>Intercambios</Link>
                             <Link className="mt-4 hover:text-base" to='/misofertas'>Mis ofertas</Link>
                             <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                             <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
-                            <Link className="mt-4 hover:text-base" to='/subastas'>Subastas</Link>
+                            <Link className="mt-4 hover:text-base" to='/subastas'>Lista de Subastas</Link>
+                            <Link className="mt-4 hover:text-base" to='/crear_subasta'>Crear Subasta</Link>
                             <Link className="mt-4 hover:text-base" to='/users'>Users</Link>
                             <Link className="mt-4 hover:text-base" to='/players'>Jugadores</Link>
                             <Link className="mt-4 hover:text-base" to='/teams'>Equipos</Link>
@@ -65,6 +66,8 @@ export default function DefaultLayout() {
                                 <Link className="mt-4 hover:text-base" to='/fixture_segunda'>Fixture Segunda</Link>
                                 <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
                                 <Link className="mt-4 hover:text-base" to='/misofertas'>Mis ofertas</Link>
+                                <Link className="mt-4 hover:text-base" to='/subastas'>Lista de Subastas</Link>
+                                <Link className="mt-4 hover:text-base" to='/crear_subasta'>Crear Subasta</Link>
                                 <Link className="mt-4 hover:text-base" to='/offers'>Ofertas</Link>
                                 <Link className="mt-4 hover:text-base" to='/plantel'>Plantel</Link>
                                 <Link className="mt-4 hover:text-base" to='/users'>Users</Link>

@@ -28,7 +28,7 @@ class PlayerBetController extends Controller
     public function store(StorePlayerBetRequest $request)
     {
         $data = $request->validated();
-        $data['created_by'] = auth()->user()->id;
+        //$data['created_by'] = auth()->user()->id;
         $playerBet = PlayerBet::create($data);
         return response(new PlayerBetResource($playerBet), 201);
     }
@@ -82,7 +82,7 @@ class PlayerBetController extends Controller
             'selected_option' => $validatedData['selected_option'],
             'amount' => $amountToBet,
         ]);
-        
+
         $user->profits -= $amountToBet;
         $user->save();
 

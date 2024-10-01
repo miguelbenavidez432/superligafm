@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Rescission;
 use App\Models\Team;
+use App\Models\Transfer;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -17,11 +18,13 @@ class PlayerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return PlayerResource::collection(
-            Player::with('team')->orderBy('ca', 'desc')->paginate(2000)
-        );
+        if ($request->query('all') == 'true') {
+            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->get());
+        } else {
+            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(100));
+        }
     }
 
     /**
@@ -46,22 +49,38 @@ class PlayerController extends Controller
     public function transfer(Request $request)
     {
         $datosActualizados = $request->input('data');
+        $datos = $request->input('transfer');
+
+        var_dump($datos);
 
         $upsertData = [];
-        foreach ($datosActualizados as $dato) {
+        $buyUser = User::find($datosActualizados['buy_by']);
+        $sellUser = User::find($datosActualizados['sold_by']);
+        $transferValue = $datosActualizados['budget'];
+
+        if ($buyUser) {
+            $buyUser->profits -= $transferValue;
+            $buyUser->save();
+        }
+
+        if ($sellUser) {
+            $sellUser->profits += $transferValue;
+            $sellUser->save();
+        }
+        foreach ($datos as $dato) {
+
             $upsertData[] = [
-                'id' => $dato['id'],
-                'id_team' => $dato['id_team'],
-                'name' => $dato['name'],
-                'age' => $dato['age'],
-                'ca' => $dato['ca'],
-                'pa' => $dato['pa'],
-                'value' => $dato['value'],
-                'status' => $dato['status'],
+                'transferred_players' => $dato['name'],
+                'id_team_from' => $dato['id_team_from'],
+                'id_team_to' => $dato['id_team_to'],
+                'budget' => $transferValue,
+                'created_by' => $dato['created_by'],
+                'buy_by' => $dato['buy_by'],
+                'sold_by' => $dato['sold_by'],
             ];
         }
 
-        Player::upsert($upsertData, 'id', ['id_team', 'status']);
+        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }
@@ -120,18 +139,80 @@ class PlayerController extends Controller
         return PlayerResource::collection($players);
     }
 
-    public function block(Request $request)
+    public function calcularCostoBloqueo(Player $player)
     {
-        $id_team = $request->input('id_team');
+        $ca = $player->ca;
+        $division = $player->team->division;
 
-        $team = Team::findOrFail($id_team);
+        $costo = 0;
 
-        $id_user = $team->id_user;
+        // Determinar el costo según la división y CA
+        if ($division == 'Primera') {
+            if ($ca >= 180 && $ca <= 200) {
+                $costo = 75000000;
+            } elseif ($ca >= 155 && $ca <= 179) {
+                $costo = 50000000;
+            } elseif ($ca < 155) {
+                $costo = 40000000;
+            }
+        } elseif ($division == 'Segunda') {
+            if ($ca >= 180 && $ca <= 200) {
+                $costo = 105000000;
+            } elseif ($ca >= 155 && $ca <= 179) {
+                $costo = 75000000;
+            } elseif ($ca < 155) {
+                $costo = 60000000;
+            }
+        }
 
-        $user = User::findOrFall($id_user);
+        return $costo;
+    }
 
-        $player = Player::query()->where('id', $request->input('id'))->get();
+    public function bloquearJugador(Request $request)
+    {
+        $usuarioAutenticado = auth()->user(); // Usuario autenticado
+        $jugador = Player::find($request->id); // Obtener el jugador que se quiere bloquear
 
-        //hacer un match
+        if (!$jugador) {
+            return response()->json(['error' => 'Jugador no encontrado'], 404);
+        }
+
+        // Obtener el equipo al que pertenece el jugador
+        $team = $jugador->team;
+
+        if (!$team) {
+            return response()->json(['error' => 'El equipo no existe'], 404);
+        }
+
+        // Contar cuántos jugadores del equipo ya están bloqueados
+        $jugadoresBloqueadosEnEquipo = $team->players()->where('status', 'bloqueado')->count();
+
+        // Verificar si ya alcanzó el límite de bloqueos (6 por equipo)
+        if ($jugadoresBloqueadosEnEquipo >= 6) {
+            return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 6 jugadores'], 400);
+        }
+
+        // Obtener el usuario que maneja el equipo (dueño del equipo)
+        $usuarioManejador = $team->user;
+        var_dump($jugadoresBloqueadosEnEquipo);
+
+
+        if (!$usuarioManejador) {
+            return response()->json(['error' => 'Usuario que maneja el equipo no encontrado'], 404);
+        }
+
+        // Calcular el costo de bloqueo del jugador
+        $costoBloqueo = $this->calcularCostoBloqueo($jugador);
+
+
+        // Descontar el costo de bloqueo del presupuesto (profits)
+        $usuarioManejador->profits -= $costoBloqueo;
+        $usuarioManejador->save(); // Guardar los cambios en el presupuesto
+
+        // Actualizar el estado del jugador a 'bloqueado'
+        $jugador->status = 'bloqueado';
+        $jugador->save();
+
+        return response()->json(['success' => 'Jugador bloqueado', 'costo' => $costoBloqueo]);
     }
 }

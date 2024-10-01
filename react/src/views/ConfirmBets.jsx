@@ -114,7 +114,7 @@ export default function ConfirmBets() {
                 <span><strong>Cantidad a apostar: </strong>{profits}</span>
                 <br />
                 <br />
-                <button className="btn-add" onClick={onSubmit}>Confirmar apuesta</button>
+                <button className="btn-add" onClick={handleOnSubmit}>Confirmar apuesta</button>
             </div>
             <br />
             <hr />

@@ -25,7 +25,8 @@ class BetResource extends JsonResource
             'over' => $this->over,
             'active' => $this->active,
             'created_by' => $this->created_by,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
+            'id_season' => new SeasonResource($this->whenLoaded('season')),
         ];
     }
 }

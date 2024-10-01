@@ -56,7 +56,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Bet::class, 'bet_user', 'id_bet', 'id_user')
             ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])
-            ->withTimestamps();;
+            ->withTimestamps();
+        ;
     }
 
     public function playerBets()
@@ -66,8 +67,38 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function transfers()
+    public function createdTransfers()
     {
-        return $this->belongsToMany(Transfer::class);
+        return $this->hasMany(Transfer::class, 'created_by');
+    }
+
+    // Relación con las transferencias donde el usuario es el comprador
+    public function boughtTransfers()
+    {
+        return $this->hasMany(Transfer::class, 'buy_by');
+    }
+
+    // Relación con las transferencias donde el usuario es el vendedor
+    public function soldTransfers()
+    {
+        return $this->hasMany(Transfer::class, 'sold_by');
+    }
+
+    // Relación con las transferencias donde el usuario es el confirmador
+    public function confirmedTransfers()
+    {
+        return $this->hasMany(Transfer::class, 'confirmed_by');
+    }
+
+    public function auctions()
+    {
+        return $this->belongsToMany(Auction::class, 'user_auctions')
+            ->withPivot('player_id', 'bid_amount', 'is_last_bid')
+            ->withTimestamps();
+    }
+
+    public function userAuctions()
+    {
+        return $this->hasMany(UserAuction::class);
     }
 }

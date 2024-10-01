@@ -14,7 +14,8 @@ class PlayerBet extends Model
         'description',
         'goal_odd',
         'card_odd',
-        'created_by'
+        'created_by',
+        'id_season'
     ];
 
     public function user()
@@ -22,5 +23,10 @@ class PlayerBet extends Model
         return $this->belongsToMany(User::class, 'playerbet_user', 'id_user', 'id_player_bets')
             ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])
             ->withTimestamps();
+    }
+
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
     }
 }

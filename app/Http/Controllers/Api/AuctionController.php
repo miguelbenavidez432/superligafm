@@ -1,25 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\AuctionResource;
-use App\Models\Auction;
-use Illuminate\Http\Request;
+use App\Events\NewAuctionEvent;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
+use App\Http\Resources\AuctionResource;
+use App\Models\Auction;
+use App\Models\UserAuction;
+use Auth;
+use DB;
+use Illuminate\Http\Request;
 
 class AuctionController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        if ($request->has("all") && $request->query("all") == true) {
+        if ($request->query("all") == 'true') {
 
-            return AuctionResource::collection(Auction::with(['user', 'player', 'team'])->orderBy("created_at", "desc")->get());
+            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("created_at", "desc")->get());
         } else {
-            return AuctionResource::collection(Auction::with(['user', 'player', 'team'])->orderBy("created_at", "desc")->paginate(50));
+            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("created_at", "desc")->paginate(50));
         }
         ;
     }
@@ -30,7 +36,31 @@ class AuctionController extends Controller
     public function store(StoreAuctionRequest $request)
     {
         $data = $request->validated();
+
+        $previousAuction = Auction::where('id_player', $data['id_player'])
+            ->orderBy('amount', 'desc')
+            ->first();
+
+        if ($previousAuction) {
+            if ($data['amount'] < $previousAuction->amount + 1000000) {
+                return response()->json(['message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.']);
+            }
+
+            // Notificar a los usuarios que hicieron ofertas anteriores
+            $previousBidders = Auction::where('id_player', $data['id_player'])->get();
+            foreach ($previousBidders as $bidder) {
+                $user = $bidder->user;
+            }
+        } else {
+            $player = Player::find($data['id_player']);
+            if ($data['amount'] < $player->value) {
+                return response()->json(['message' => 'La oferta inicial debe ser al menos igual al valor del jugador.']);
+            }
+        }
+
         $auction = Auction::create($data);
+
+        event(new NewAuctionEvent($auction));
 
         return response(new AuctionResource($auction, 201));
     }
@@ -63,28 +93,103 @@ class AuctionController extends Controller
 
     }
 
-    public function addAuctions(StoreAuctionRequest $request)
+    public function addAuction(StoreAuctionRequest $request)
     {
         $data = $request->validated();
 
-        $auctions = Auction::where('id_player', $data['id_player'])->get();
+        $previousAuction = Auction::where('id_player', $data['id_player'])
+            ->orderBy('amount', 'desc')
+            ->first();
 
-        $amount = 0 ;
+        if ($previousAuction) {
+            if ($data['amount'] < $previousAuction->amount + 1000000) {
+                return response()->json(['message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.']);
+            }
 
-        foreach($auctions as $auction){
-            if($auction['amount'] >= $amount){
-                $amount = $auction['$amount'];
+            // Notificar a los usuarios que hicieron ofertas anteriores
+            $previousBidders = Auction::where('id_player', $data['id_player'])->get();
+            foreach ($previousBidders as $bidder) {
+                $user = $bidder->user;
+                //armar la logica para la notificación
+            }
+        } else {
+            $player = Player::find($data['id_player']);
+            if ($data['amount'] < $player->value) {
+                return response()->json(['message' => 'La oferta inicial debe ser al menos igual al valor del jugador.']);
             }
         }
 
-        if($amount >= $data['amount']){
-            return response()->json(['message' => 'La subasta no supera el valor mínimo']);
-        }
-        else{
+        $auction = Auction::create($data);
 
-            $this->store($data);
-            return response()->json(['message' => 'Subasta agregada correctamente']);
+        return response(new AuctionResource($auction, 201));
+    }
+
+    public function filteredAuctions($playerId)
+    {
+        $auctions = Auction::where('player_id', $playerId)
+            ->with(['player', 'user', 'team'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($auctions, 200);
+    }
+
+    public function getLastAuctions()
+    {
+        $lastAuctions = Auction::select('player_id', DB::raw('MAX(id) as lastAuctionID'))
+            ->groupBy('id_player')
+            ->with(['player', 'user', 'team'])
+            ->get()
+            ->map(function (Auction $auction) {
+                return Auction::with(['player', 'team', 'user'])->find($auction->lastAuctionID);
+            });
+        return response()->json($lastAuctions, 200);
+    }
+
+    public function placeBid(Request $request, Auction $auction)
+    {
+        $user = Auth::user();
+        $playerId = $request->input('player_id');
+        $bidAmount = $request->input('bid_amount');
+
+        // Validación 1: Limitar a 2 jugadores mayores de 20 años
+        $countOver20 = UserAuction::where('user_id', $user->id)
+            ->whereHas('player', function ($query) {
+                $query->where('age', '>', 20);
+            })
+            ->count();
+
+        if ($countOver20 >= 2) {
+            return response()->json(['error' => 'Has alcanzado el límite de ofertas por jugadores mayores de 20 años.'], 403);
         }
 
+        // Validación 2: Limitar a 4 jugadores en total
+        $countTotalBids = UserAuction::where('user_id', $user->id)->count();
+
+        if ($countTotalBids >= 4) {
+            return response()->json(['error' => 'Has alcanzado el límite total de ofertas.'], 403);
+        }
+
+        // Validación 3: Evitar que el usuario vuelva a ofertar por el mismo jugador si fue el último en hacerlo
+        $lastBid = UserAuction::where('user_id', $user->id)
+            ->where('player_id', $playerId)
+            ->where('is_last_bid', true)
+            ->first();
+
+        if ($lastBid) {
+            return response()->json(['error' => 'No puedes volver a ofertar por el mismo jugador.'], 403);
+        }
+
+        // Si pasa todas las validaciones, registrar la oferta
+        UserAuction::where('player_id', $playerId)->update(['is_last_bid' => false]);
+
+        UserAuction::create([
+            'user_id' => $user->id,
+            'auction_id' => $auction->id,
+            'player_id' => $playerId,
+            'bid_amount' => $bidAmount,
+            'is_last_bid' => true,
+        ]);
+
+        return response()->json(['success' => 'Oferta registrada exitosamente.']);
     }
 }

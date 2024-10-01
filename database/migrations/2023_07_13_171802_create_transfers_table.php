@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->text('transferred_players');
-            $table->foreignId('id_team_from')->nullable()->default(39);
+            $table->foreignId('id_team_from')->nullable();
             $table->foreign('id_team_from')->on('teams')->references('id');
             $table->foreignId('id_team_to')->nullable();
             $table->foreign('id_team_to')->on('teams')->references('id');
@@ -28,6 +28,8 @@ return new class extends Migration
             $table->foreignId('confirmed_by')->nullable();
             $table->foreign('confirmed_by')->on('users')->references('id');
             $table->string('confirmed')->default('no');
+            $table->foreignId('id_season')->nullable();
+            $table->foreign('id_season')->on('teams')->references('id');
             $table->timestamps();
         });
     }

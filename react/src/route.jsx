@@ -27,136 +27,167 @@ import OffersMade from './views/OffersMade';
 import Rules from './views/Rules';
 import FixtureFirstDivision from './views/FixtureFirstDivision';
 import FixtureSecondDivision from './views/FixtureSecondDivision';
+import Auctions from './views/Auctions';
+import PlayerAuctions from './views/AuctionsByPlayer';
+import AuctionsList from './views/AuctionsList';
+import TransferList from './views/TransferList';
+import SeasonCountdown from './components/SeasonCountDown';
+import ProtectedComponent from './components/ProtectedComponent';
 
-const router = createBrowserRouter ([
+const router = createBrowserRouter([
     {
         path: '/',
-        element: <DefaultLayout/>,
+        element: <DefaultLayout />,
         children: [
             {
                 path: '/',
-                element: <Navigate to='/dashboard'/>
+                element: <Navigate to='/dashboard' />
             },
             {
                 path: '/dashboard',
-                element: <Dashboard/>
+                element: <Dashboard />
             },
             {
                 path: '/users',
-                element: <Users/>
+                element: <Users />
             },
             {
                 path: '/users/new',
-                element: <UserForm key='userCreate'/>
+                element: <UserForm key='userCreate' />
             },
             {
                 path: '/users/:id',
-                element: <UserForm key='userUpdate'/>
+                element: <UserForm key='userUpdate' />
             },
             {
                 path: '/players',
-                element: <Players/>
+                element: <Players />
             },
             {
                 path: '/players/new',
-                element: <PlayerForm key='playerCreate'/>
+                element: <PlayerForm key='playerCreate' />
             },
             {
                 path: '/players/:id',
-                element: <PlayerForm key='playerUpdate'/>
+                element: <PlayerForm key='playerUpdate' />
             },
             {
                 path: '/transfer',
-                element: <TransferForm/>
+                element: <TransferForm />
             },
             {
                 path: '/about',
-                element: <About/>
-            },
-            {
-                path: '/reglamento',
-                element: <Rules/>
+                element: <About />
             },
             {
                 path: '/prode',
-                element: <Prode/>
+                element: <Prode />
             },
             {
-                path: '/plantel', 
-                element: <Plantel/>
+                path: '/plantel',
+                element: <Plantel />
             },
             {
-                path: '/clausula_rescision', 
-                element: <Announcement/>
+                path: '/clausula_rescision',
+                element: <Announcement />
             },
             {
                 path: '/teams',
-                element: <Teams/>
+                element: <Teams />
             },
             {
                 path: '/teams/:id',
-                element: <TeamForm key='playerUpdate'/>
+                element: <TeamForm key='playerUpdate' />
             },
             {
                 path: '/offers',
-                element: <OffersList/>
+                element: <OffersList />
             },
             {
                 path: '/offers/:id',
-                element: <PlayerOffers/>
+                element: <PlayerOffers />
             },
             {
                 path: '/subastas',
-                element: <AuctionConfirmation/>
+                element: <AuctionConfirmation />
             },
             {
                 path: '/apuestas',
-                element: <Bets/>
+                element: <Bets />
             },
             {
                 path: '/apuestas/new',
-                element: <CreateBets/>
+                element: <CreateBets />
             },
             {
                 path: '/apuestas/:id',
-                element: <ConfirmBets/>
+                element: <ConfirmBets />
             },
             {
                 path: '/apuestas/usuarios',
-                element: <BetsConfirmation/>
+                element: <BetsConfirmation />
             },
             {
                 path: '/misofertas',
-                element: <OffersMade/>
+                element: <OffersMade />
+            },
+            {
+                path: '/crear_subasta',
+                element: <Auctions />
+            },
+            {
+                path: '*',
+                element: <NotFound />
             },
             {
                 path: '/fixture_primera',
-                element: <FixtureFirstDivision/>
+                element: <FixtureFirstDivision />
             },
             {
                 path: '/fixture_segunda',
-                element: <FixtureSecondDivision/>
+                element: <FixtureSecondDivision />
+            },
+            {
+                path: '/reglamento',
+                element: <Rules />
+            },
+            {
+                path: '/subastas/:id',
+                element: <PlayerAuctions />
+            },
+            {
+                path: '/subastas',
+                element: <AuctionsList />
+            },
+            {
+                path: '/transferencias',
+                element: <TransferList />
+            },
+            {
+                path: '/season-countdown',
+                element: <SeasonCountdown />
+            },
+            {
+                path: '/protected',
+                element: <ProtectedComponent />
             },
         ]
     },
     {
         path: '/',
-        element: <GuestLayout/>,
+        element: <GuestLayout />,
         children: [
             {
                 path: '/login',
-                element: <Login/>
+                element: <Login />
             },
             {
                 path: '/signup',
-                element: <Signup/>
+                element: <Signup />
             },
         ]
     },
-    {
-        path: '*',
-        element: <NotFound/>
-    },
+
 ]);
 
 export default router

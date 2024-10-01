@@ -69,13 +69,11 @@ export default function Users() {
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
+                            <th>Nombre</th>
                             <th>Email</th>
                             <th>Rol</th>
                             <th>Presupuesto</th>
-                            <th>Create Date</th>
-                            <th>Actions</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     {loading &&
@@ -92,12 +90,10 @@ export default function Users() {
                             {
                                 users.map(u => (
                                     <tr key={u.id}>
-                                        <th>{u.id}</th>
                                         <th>{u.name}</th>
                                         <th>{u.email}</th>
                                         <th>{u.rol}</th>
                                         <th>{u.profits}</th>
-                                        <th>{u.created_at}</th>
                                         {
                                             user.rol === 'Admin' ?
                                                 (<>

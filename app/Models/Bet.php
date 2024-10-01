@@ -20,6 +20,7 @@ class Bet extends Model
         'over',
         'created_at',
         'active',
+        'id_season',
     ];
 
     public function users()
@@ -27,5 +28,10 @@ class Bet extends Model
         return $this->belongsToMany(User::class, 'bet_user', 'id_bet', 'id_user')
             ->withPivot(['amount', 'selected_option', 'confirmed', 'id'])
             ->withTimestamps();;
+    }
+
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
     }
 }

@@ -10,14 +10,14 @@ class Auction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'id_player',
         'id_team',
         'created_by',
         'auctioned_by',
         'amount',
         'confirmed',
-        'active'
+        'active',
+        'id_season'
     ];
 
     public function player()
@@ -25,13 +25,29 @@ class Auction extends Model
         return $this->belongsTo(Player::class, 'id_player');
     }
 
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Relación con el usuario que hizo la oferta
+    public function auctioneer()
+    {
+        return $this->belongsTo(User::class, 'auctioned_by');
+    }
+
+    public function season()
+    {
+        return $this->belongsTo(User::class, 'id_season');
+    }
+
+    public function userAuctions()
+    {
+        return $this->hasMany(UserAuction::class);
+    }
+
     public function team()
     {
         return $this->belongsTo(Team::class, 'id_team');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'auctioned_by');
     }
 }

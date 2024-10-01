@@ -32,7 +32,7 @@ const AuctionConfirmation = () => {
         email: '',
         profits: 0
     });
-    
+
 
     useEffect(() => {
         getTeam()
@@ -97,7 +97,7 @@ const AuctionConfirmation = () => {
         const userFiltered = users.find(u => u.id === parseInt(filteredTeam.id_user))
         console.log(userFiltered)
         console.log(playerSelected)
-        
+
         const updatedUserFiltered = {
             ...userProfit,
             id: userFiltered.id,
@@ -106,11 +106,11 @@ const AuctionConfirmation = () => {
             email: userFiltered.email,
             profits: userFiltered.profits - playerSelected.value
         }
-        
+
         setUserProfit(updatedUserFiltered)
         console.log(userProfit)
     }
-    
+
     const onSubmit = async () => {
         const updatedSelectedPlayer = {
             ...selectedPlayer,
@@ -160,7 +160,7 @@ const AuctionConfirmation = () => {
                     ))}
             </select>
 
-            <input type="number" value={selectedPlayer.value} onChange={e => setSelectedPlayer((prevSelectedPlayer) => ({ ...prevSelectedPlayer, value: e.target.value }))} />
+            <input type="number" value={selectedPlayer.value} onBlur={e => setSelectedPlayer((prevSelectedPlayer) => ({ ...prevSelectedPlayer, value: e.target.value }))} />
 
             <button type="submit" onClick={onSubmit} className="btn-add" > Confirmar Subasta</button>
 
