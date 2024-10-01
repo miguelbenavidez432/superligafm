@@ -119,6 +119,7 @@ import { useStateContext } from "../context/ContextProvider";
 
 export default function Dashboard() {
     const { user, setNotification } = useStateContext();
+    const [team, setTeam] = useState(null);
     const [seasonId, setSeasonId] = useState(null);
     const [transfers, setTransfers] = useState([]);
     const [auctions, setAuctions] = useState([]);
@@ -154,6 +155,26 @@ export default function Dashboard() {
             });
     };
 
+    const getCdr = async () => {
+        const response = await axiosClient.get('/teams?all=true');
+        const allTeams = response.data.data;
+
+        const filteredTeam = allTeams.find(team => {
+            return team.user && team.user.id === user.id;
+        });
+        setTeam(filteredTeam);
+        axiosClient.get("/clausula_rescision")
+            .then(({ data }) => {
+
+                const filteredExecutedClauses = data.filter(cdr => cdr.confirmed = 'no' && cdr.id_season == seasons && cdr.created_by ? cdr.created_by.id == user.id : '')
+                const filteredReceivedClauses = data.filter(cdr => cdr.id_season == seasons && cdr.id_team ? cdr.id_team.id == team.id : '')
+                setExecutedClauses(filteredExecutedClauses);
+                setReceivedClauses(filteredReceivedClauses);
+            })
+            .catch((error) => {
+            });
+    }
+
     const confirmTransfer = (transferId) => {
         axiosClient.post(`/transferencia_confirmada/${transferId}`)
             .then(({ data }) => {
@@ -182,9 +203,9 @@ export default function Dashboard() {
                 <div>
                     <h2>Transferencias</h2>
                     <ul>
-                        {transfers.map(transfer => (
+                        {pendingTransfers.map(transfer => (
                             <li key={transfer.id}>
-                                Jugador: {transfer.player_name}, Valor: {transfer.value}
+                                Jugador: {transfer.name}, Valor: {transfer.value}
                             </li>
                         ))}
                     </ul>
@@ -202,7 +223,7 @@ export default function Dashboard() {
                     <ul>
                         {executedClauses.map(clause => (
                             <li key={clause.id}>
-                                Jugador: {clause.player_name}, Valor total: {clause.total_value}
+                                Jugador: {clause.name}, Valor total: {clause.total_value}
                             </li>
                         ))}
                     </ul>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import axiosClient from "../axios"; // Asegúrate de que tu cliente axios esté configurado
+import axiosClient from "../axios";
 //import Tempo from "@formkit/tempo";
 import { useNavigate } from "react-router-dom";
 
@@ -13,15 +13,14 @@ const SeasonCountdown = () => {
         // Obtener la fecha de inicio de la temporada desde el backend
         const fetchSeasonStartDate = async () => {
             try {
-                const response = await axiosClient.get('/season/start');
-                const seasonStart = new Date(response.data.start_date); // Fecha de inicio de temporada
+                const response = await axiosClient.get('/season');
+                const seasonStart = new Date(response.data.start);
 
                 setStartDate(seasonStart);
                 setLoading(false);
 
-                // Si ya pasó la fecha de inicio, redireccionar o permitir acceso
                 if (new Date() >= seasonStart) {
-                    navigate('/home'); // Cambia esto a la URL permitida después del inicio de temporada
+                    navigate('/dashboard');
                 } else {
                     //startCountdown(seasonStart);
                 }

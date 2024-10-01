@@ -13,7 +13,7 @@ export default function Plantel() {
     const [team, setTeam] = useState(null);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { user } = useStateContext();
+    const { user , setNotification} = useStateContext();
     const [bestPlayersCA, setBestPlayersCA] = useState(null);
     const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
     const [playersOver20Count, setPlayersOver20Count] = useState(0);
@@ -73,7 +73,8 @@ export default function Plantel() {
             });
             setTeam(filteredTeam);
         } catch (error) {
-            console.error('Error al obtener equipo:', error);
+            console.error();
+            setNotification('Error al obtener equipo:', error);
         } finally {
             setLoading(false);
         }

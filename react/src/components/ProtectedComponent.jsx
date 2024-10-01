@@ -9,17 +9,16 @@ const ProtectedComponent = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Obtener la fecha de inicio de la temporada desde el backend
+
         const fetchSeasonStartDate = async () => {
             try {
-                const response = await axiosClient.get('/season/start');
-                const seasonStart = new Date(response.data.start_date); // Fecha de inicio de temporada
+                const response = await axiosClient.get('/season');
+                const seasonStart = new Date(response.data.start);
                 setStartDate(seasonStart);
                 setLoading(false);
 
-                // Si la temporada no ha comenzado, redirige al countdown
                 if (new Date() < seasonStart) {
-                    navigate('/season-countdown'); // Redirigir a la página de countdown
+                    navigate('/season-countdown');
                 }
             } catch (error) {
                 console.error("Error al obtener la fecha de inicio de la temporada:", error);

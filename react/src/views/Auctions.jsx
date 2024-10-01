@@ -20,15 +20,12 @@ const Auctions = () => {
     useEffect(() => {
         getPlayers();
 
-        // Recuperar el tiempo de finalización almacenado en localStorage
         const storedEndTime = localStorage.getItem('auctionEndTime');
         if (storedEndTime) {
             const currentTime = new Date().getTime();
             if (currentTime < storedEndTime) {
                 setAuctionEndTime(storedEndTime);
-                //startCountdown(storedEndTime);
             } else {
-                // Si el tiempo de subasta ha expirado
                 localStorage.removeItem('auctionEndTime');
             }
         }
@@ -36,8 +33,9 @@ const Auctions = () => {
 
     const getPlayers = async () => {
         try {
-            const response = await axiosClient.get('/players');
-            setPlayers(response.data.data);
+            const response = await axiosClient.get('/players?all=true');
+            const filteredPlayers = response.data.data.filter(player => player.id_team ? player.id_team.division !== 'Primera' || player.id_team.division !== 'Segunda' : '');
+            setPlayers(filteredPlayers);
         } catch (error) {
             console.error(error);
         }
@@ -110,7 +108,7 @@ const Auctions = () => {
 
     return (
         <div className="auction-form">
-            <h3>Crear una nueva subasta</h3>
+            <h1>Crear una nueva subasta</h1>
             <form onSubmit={handleAuctionSubmit}>
                 <label htmlFor="player">Seleccionar jugador:</label>
                 <select onChange={handlePlayerChange}>

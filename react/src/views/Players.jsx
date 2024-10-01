@@ -155,7 +155,7 @@ export default function Players() {
                                             <td>{p.age}</td>
                                             <td>{p.ca}</td>
                                             <td>{p.pa}</td>
-                                            <td>{teamNameToShow}</td>
+                                            <td>{p.id_team ? p.id_team.name : ''}</td>
                                             <td>{p.value}</td>
                                             <td>{p.status === 'restringido' ? '' : p.status}</td>
                                             {
