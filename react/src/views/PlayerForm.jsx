@@ -137,7 +137,7 @@ export default function PlayerForm() {
                             <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
                                 <option value=''></option>
                                 <option value="liberado">Liberado</option>
-                                <option value="bloqueado">Bloqueado</option>
+
                                 <option value="registrado">Registrado</option>
                                 <option value="">Sin modificar</option>
                             </select>
