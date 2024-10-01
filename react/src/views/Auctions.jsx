@@ -38,12 +38,6 @@ const Auctions = () => {
         }
     }, [selectedTeam]);
 
-    useEffect(() => {
-        if (otherTeams) {
-            getPlayers();
-        }
-    }, [otherTeams]);
-
     const getTeam = () => {
         axiosClient.get('/teams?all=true')
             .then(({ data }) => {
@@ -60,7 +54,7 @@ const Auctions = () => {
         axiosClient.get('/players?all=true')
             .then(({ data }) => {
                 setPlayers(data.data)
-                const filteredPlayers = data.data.filter(p => p.id_team === selectedTeam)
+                const filteredPlayers = data.data.filter(p => p.id_team && p.id_team.id == selectedTeam )
                 setTeamPlayers(filteredPlayers)
             })
             .catch(() => {
@@ -74,12 +68,10 @@ const Auctions = () => {
         setAuctionData({
             ...auctionData,
             id_player: player.id,
-            value: player.value,
-            name: player.name,
-            status: 'bloqueado',
-            ca: player.ca,
-            pa: player.pa,
-            age: player.age,
+            amount: player.value,
+            id_team: player.id_team ? player.id_team.id : '',
+            auctioned_by: user.id
+
         });
     };
 
@@ -104,7 +96,7 @@ const Auctions = () => {
                 // Reinicia el formulario
                 setAuctionData({
                     player_id: '',
-                    value: 0,
+                    amount: 0,
                     created_by: user.id,
                     status: 'active',
                 });
@@ -140,9 +132,6 @@ const Auctions = () => {
     return (
         <div className="card animated fadeInDown">
             <form onSubmit={handleAuctionSubmit}>
-                <label htmlFor="player">Seleccionar jugador:</label>
-
-
                 <label htmlFor="equipo">Seleccionar equipo:</label>
                 <select id="equipo" onChange={e => setSelectedTeam(e.target.value)}>
                     <option value="">Seleccione un equipo del jugador</option>
@@ -166,13 +155,13 @@ const Auctions = () => {
                         <input
                             type="number"
                             min={selectedPlayer.value}
-                            value={auctionData.value}
-                            onChange={(e) => setAuctionData({ ...auctionData, value: parseInt(e.target.value) })}
+                            value={auctionData.amount}
+                            onChange={(e) => setAuctionData({ ...auctionData, amount: parseInt(e.target.value) })}
                         />
                     </div>
                 )}
 
-                <button type="submit">Crear Subasta</button>
+                <button className="btn-add" type="submit">Crear Subasta</button>
             </form>
 
             {auctionEndTime && (
