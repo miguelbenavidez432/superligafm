@@ -17,7 +17,8 @@ export default function PlayerAuctions() {
     const getAuctionsByPlayer = async () => {
         try {
             const response = await axiosClient.get(`/auctions/player/${playerId}`);
-            setAuctions(response.data.data);
+            setAuctions(response.data);
+            console.log(auctions)
         } catch (error) {
             console.error(error);
         }

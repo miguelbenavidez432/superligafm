@@ -49,7 +49,7 @@ Route::apiResource('/singlebet', PlayerBetController::class);
 Route::apiResource('/season', SeasonController::class);
 Route::get('/season/start', [SeasonController::class, 'getSeasonStart']);
 Route::apiResource('/auctions', AuctionController::class);
-Route::get('/auctions/last', [AuctionController::class,'getLastAuctions']);
+Route::get('/auction/last', [AuctionController::class,'getLastAuctions']);
 Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);
 Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
 

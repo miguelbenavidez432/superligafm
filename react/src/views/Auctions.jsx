@@ -70,14 +70,15 @@ const Auctions = () => {
             id_player: player.id,
             amount: player.value,
             id_team: player.id_team ? player.id_team.id : '',
-            auctioned_by: user.id
+            auctioned_by: user.id,
+            created_by: user.id,
 
         });
     };
 
     const handleAuctionSubmit = (e) => {
         e.preventDefault();
-
+        console.log(auctionData)
         axiosClient.post('/auctions', auctionData)
             .then((response) => {
                 setNotification('Subasta creada exitosamente');

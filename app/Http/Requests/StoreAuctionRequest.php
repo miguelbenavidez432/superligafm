@@ -26,6 +26,8 @@ class StoreAuctionRequest extends FormRequest
             'id_team' => 'required|integer',
             'auctioned_by' => 'required|integer',
             'amount' => 'required|integer',
+            'created_by' => 'required|integer',
+            'id_season' => 'nullable|integer',
         ];
     }
 }
