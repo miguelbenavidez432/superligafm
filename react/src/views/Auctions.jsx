@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
-import Tempo from "@formkit/tempo";
+//import Tempo from "../path/to/formkit_tempo";
 
 const Auctions = () => {
     const { user, setNotification } = useStateContext();
@@ -26,7 +26,7 @@ const Auctions = () => {
             const currentTime = new Date().getTime();
             if (currentTime < storedEndTime) {
                 setAuctionEndTime(storedEndTime);
-                startCountdown(storedEndTime);
+                //startCountdown(storedEndTime);
             } else {
                 // Si el tiempo de subasta ha expirado
                 localStorage.removeItem('auctionEndTime');
@@ -70,7 +70,7 @@ const Auctions = () => {
                 localStorage.setItem('auctionEndTime', endTime);
 
                 // Inicia el countdown usando FormKit Tempo
-                startCountdown(endTime);
+                //startCountdown(endTime);
 
                 // Reinicia el formulario
                 setAuctionData({
@@ -86,27 +86,27 @@ const Auctions = () => {
     };
 
     // Función para iniciar el countdown usando FormKit Tempo
-    const startCountdown = (endTime) => {
-        const countdown = new Tempo({
-            target: new Date(parseInt(endTime)), // Hora de finalización de la subasta
-            interval: 1000,  // Actualiza cada segundo
-            onUpdate: (time) => {
-                const countdownElement = document.getElementById('countdown');
-                if (countdownElement) {
-                    countdownElement.innerHTML = `${time.hours}h ${time.minutes}m ${time.seconds}s`;
-                }
-            },
-            onFinish: () => {
-                const countdownElement = document.getElementById('countdown');
-                if (countdownElement) {
-                    countdownElement.innerHTML = "Subasta finalizada";
-                }
-                // Remover el tiempo de finalización de localStorage cuando termina la subasta
-                localStorage.removeItem('auctionEndTime');
-            }
-        });
-        countdown.start();
-    };
+    // const startCountdown = (endTime) => {
+    //     const countdown = new Tempo({
+    //         target: new Date(parseInt(endTime)), // Hora de finalización de la subasta
+    //         interval: 1000,  // Actualiza cada segundo
+    //         onUpdate: (time) => {
+    //             const countdownElement = document.getElementById('countdown');
+    //             if (countdownElement) {
+    //                 countdownElement.innerHTML = `${time.hours}h ${time.minutes}m ${time.seconds}s`;
+    //             }
+    //         },
+    //         onFinish: () => {
+    //             const countdownElement = document.getElementById('countdown');
+    //             if (countdownElement) {
+    //                 countdownElement.innerHTML = "Subasta finalizada";
+    //             }
+    //             // Remover el tiempo de finalización de localStorage cuando termina la subasta
+    //             localStorage.removeItem('auctionEndTime');
+    //         }
+    //     });
+    //     countdown.start();
+    // };
 
     return (
         <div className="auction-form">

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import axiosClient from "../axios"; // Asegúrate de que tu cliente axios esté configurado
-import Tempo from "@formkit/tempo";
+//import Tempo from "@formkit/tempo";
 import { useNavigate } from "react-router-dom";
 
 const SeasonCountdown = () => {
@@ -23,7 +23,7 @@ const SeasonCountdown = () => {
                 if (new Date() >= seasonStart) {
                     navigate('/home'); // Cambia esto a la URL permitida después del inicio de temporada
                 } else {
-                    startCountdown(seasonStart);
+                    //startCountdown(seasonStart);
                 }
             } catch (error) {
                 console.error("Error al obtener la fecha de inicio de la temporada:", error);
@@ -33,23 +33,23 @@ const SeasonCountdown = () => {
         fetchSeasonStartDate();
     }, [navigate]);
 
-    const startCountdown = (seasonStart) => {
-        const countdownElement = document.getElementById('season-countdown');
+    // const startCountdown = (seasonStart) => {
+    //     const countdownElement = document.getElementById('season-countdown');
 
-        const countdown = new Tempo({
-            target: seasonStart,
-            interval: 1000,
-            onUpdate: (time) => {
-                countdownElement.innerHTML = `${time.days}d ${time.hours}h ${time.minutes}m ${time.seconds}s`;
-            },
-            onFinish: () => {
-                countdownElement.innerHTML = "¡La temporada ha comenzado!";
-                navigate('/home'); // Redirigir al usuario cuando la temporada comience
-            }
-        });
+    //     const countdown = new Tempo({
+    //         target: seasonStart,
+    //         interval: 1000,
+    //         onUpdate: (time) => {
+    //             countdownElement.innerHTML = `${time.days}d ${time.hours}h ${time.minutes}m ${time.seconds}s`;
+    //         },
+    //         onFinish: () => {
+    //             countdownElement.innerHTML = "¡La temporada ha comenzado!";
+    //             navigate('/home'); // Redirigir al usuario cuando la temporada comience
+    //         }
+    //     });
 
-        countdown.start();
-    };
+    //     countdown.start();
+    // };
 
     if (loading) {
         return <div>Cargando...</div>; // O muestra un spinner mientras se obtiene la fecha

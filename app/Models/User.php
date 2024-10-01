@@ -96,4 +96,9 @@ class User extends Authenticatable
             ->withPivot('player_id', 'bid_amount', 'is_last_bid')
             ->withTimestamps();
     }
+
+    public function userAuctions()
+    {
+        return $this->hasMany(UserAuction::class);
+    }
 }

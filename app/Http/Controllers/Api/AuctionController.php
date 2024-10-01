@@ -8,6 +8,8 @@ use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
+use App\Models\UserAuction;
+use Auth;
 use DB;
 use Illuminate\Http\Request;
 
@@ -141,5 +143,53 @@ class AuctionController extends Controller
                 return Auction::with(['player', 'team', 'user'])->find($auction->lastAuctionID);
             });
         return response()->json($lastAuctions, 200);
+    }
+
+    public function placeBid(Request $request, Auction $auction)
+    {
+        $user = Auth::user();
+        $playerId = $request->input('player_id');
+        $bidAmount = $request->input('bid_amount');
+
+        // Validación 1: Limitar a 2 jugadores mayores de 20 años
+        $countOver20 = UserAuction::where('user_id', $user->id)
+            ->whereHas('player', function ($query) {
+                $query->where('age', '>', 20);
+            })
+            ->count();
+
+        if ($countOver20 >= 2) {
+            return response()->json(['error' => 'Has alcanzado el límite de ofertas por jugadores mayores de 20 años.'], 403);
+        }
+
+        // Validación 2: Limitar a 4 jugadores en total
+        $countTotalBids = UserAuction::where('user_id', $user->id)->count();
+
+        if ($countTotalBids >= 4) {
+            return response()->json(['error' => 'Has alcanzado el límite total de ofertas.'], 403);
+        }
+
+        // Validación 3: Evitar que el usuario vuelva a ofertar por el mismo jugador si fue el último en hacerlo
+        $lastBid = UserAuction::where('user_id', $user->id)
+            ->where('player_id', $playerId)
+            ->where('is_last_bid', true)
+            ->first();
+
+        if ($lastBid) {
+            return response()->json(['error' => 'No puedes volver a ofertar por el mismo jugador.'], 403);
+        }
+
+        // Si pasa todas las validaciones, registrar la oferta
+        UserAuction::where('player_id', $playerId)->update(['is_last_bid' => false]);
+
+        UserAuction::create([
+            'user_id' => $user->id,
+            'auction_id' => $auction->id,
+            'player_id' => $playerId,
+            'bid_amount' => $bidAmount,
+            'is_last_bid' => true,
+        ]);
+
+        return response()->json(['success' => 'Oferta registrada exitosamente.']);
     }
 }

@@ -46,7 +46,7 @@ export default function PlayerForm() {
 
     const getTeam = () => {
         setLoading(true)
-        axiosClient.get('/teams=?')
+        axiosClient.get('/teams?all=true')
             .then(({ data }) => {
                 setLoading(false)
                 setTeam(data.data)
@@ -110,8 +110,9 @@ export default function PlayerForm() {
                         <select onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}>
                             {
                                 team.map((t, index) => {
+                                    const selected = players.id_team && players.id_team.id == team.id ? 'selected' : '';49267266
                                     return (
-                                        <option value={t.id} key={index}>{t.name}</option>
+                                        <option value={t.id} key={index} selected={selected}>{t.name}</option>
                                     )
                                 })
                             }

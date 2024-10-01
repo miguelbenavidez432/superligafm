@@ -10,13 +10,14 @@ export default function Teams() {
 
     useEffect(() => {
         getTeam();
-    }, [teams])
+    }, [])
 
     const getTeam = async () => {
-        setLoading(true)
-        await axiosClient.get('/teams')
+        //setLoading(true)
+        await axiosClient.get('/teams?all=true')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
+                console.log(teamFilter)
                 setTeams(teamFilter)
             })
             .catch(() => {
@@ -56,7 +57,7 @@ export default function Teams() {
                                         <tr key={t.id}>
                                             <td>{t.name}</td>
                                             <td>{t.division}</td>
-                                            <td>{t.id_user ? t.id_user.name : 'Equipo sin manager asignado'}</td>
+                                            <td>{t.user ? t.user.name : 'Equipo sin manager asignado'}</td>
                                             <td>
                                                 <Link className="btn-edit" to={`/teams/${t.id}`}>Editar equipo</Link>
                                             </td>

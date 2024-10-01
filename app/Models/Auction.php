@@ -40,4 +40,14 @@ class Auction extends Model
     {
         return $this->belongsTo(User::class, 'id_season');
     }
+
+    public function userAuctions()
+    {
+        return $this->hasMany(UserAuction::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'id_team');
+    }
 }

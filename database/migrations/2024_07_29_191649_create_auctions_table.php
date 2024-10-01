@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('id_team')->on('teams')->references('id');
             $table->foreignId('created_by');
             $table->foreign('created_by')->on('users')->references('id');
-            $table->foreignId('auctioned_by');
+            $table->foreignId('auctioned_by')->nullable();
             $table->foreign('auctioned_by')->on('users')->references('id');
             $table->integer('amount');
             $table->foreignId('id_season')->nullable();
