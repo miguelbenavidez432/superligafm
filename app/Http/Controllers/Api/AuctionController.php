@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
+use App\Models\Player;
 use App\Models\UserAuction;
 use Auth;
 use DB;
@@ -126,8 +127,8 @@ class AuctionController extends Controller
 
     public function filteredAuctions($playerId)
     {
-        $auctions = Auction::where('player_id', $playerId)
-            ->with(['player', 'user', 'team'])
+        $auctions = Auction::where('id_player', $playerId)
+            ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
             ->orderBy('created_at', 'desc')
             ->get();
         return response()->json($auctions, 200);
@@ -135,12 +136,12 @@ class AuctionController extends Controller
 
     public function getLastAuctions()
     {
-        $lastAuctions = Auction::select('player_id', DB::raw('MAX(id) as lastAuctionID'))
+        $lastAuctions = Auction::select('id_player', DB::raw('MAX(id) as lastAuctionID'))
             ->groupBy('id_player')
-            ->with(['player', 'user', 'team'])
+            ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
             ->get()
             ->map(function (Auction $auction) {
-                return Auction::with(['player', 'team', 'user'])->find($auction->lastAuctionID);
+                return Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->find($auction->lastAuctionID);
             });
         return response()->json($lastAuctions, 200);
     }

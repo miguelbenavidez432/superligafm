@@ -12,8 +12,9 @@ export default function AuctionsList() {
 
     const getAuctions = async () => {
         try {
-            const response = await axiosClient.get('/auctions/last');
-            setAuctions(response.data.data);
+            const response = await axiosClient.get('/auction/last');
+            setAuctions(response.data);
+            console.log(auctions)
         } catch (error) {
             console.error(error);
         }
@@ -22,14 +23,18 @@ export default function AuctionsList() {
     return (
         <div className="auction-list">
             <h3>Subastas Activas</h3>
+            <br />
             <ul>
-                {auctions.map(auction => (
+                {auctions ? auctions.map(auction => (
                     <li key={auction.id}>
-                        <Link to={`/auction/${auction.player_id}`}>
-                            {auction.player.name} - Valor inicial: {auction.value}
+                        <label htmlFor="">{auction.player? auction.player.name : ''} - Valor inicial: {auction.amount} </label>
+                        <Link to={`/subastas/${auction.id_player}`} className="btn-edit">
+                            Hacer una nueva oferta
                         </Link>
+                        <br />
+                        <span className="text-white"> - </span>
                     </li>
-                ))}
+                )) : 'No se encontraron subastas'}
             </ul>
         </div>
     );
