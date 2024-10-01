@@ -24,7 +24,7 @@ class StoreAuctionRequest extends FormRequest
         return [
             'id_player' => 'required|integer',
             'id_team' => 'required|integer',
-            'created_by' => 'required|integer',
+            'auctioned_by' => 'required|integer',
             'amount' => 'required|integer',
         ];
     }
