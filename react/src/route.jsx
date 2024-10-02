@@ -73,7 +73,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/transfer',
-                element: <TransferForm />
+                element: (
+                    <ProtectedComponent>
+                        <TransferForm />
+                    </ProtectedComponent>
+                )
             },
             {
                 path: '/about',
@@ -89,7 +93,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/clausula_rescision',
-                element: <Announcement />
+                element: (
+                    <ProtectedComponent>
+                        <Announcement />
+                    </ProtectedComponent>
+                )
             },
             {
                 path: '/teams',
@@ -133,7 +141,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/crear_subasta',
-                element: <Auctions />
+                element: (
+                    <ProtectedComponent>
+                        <Auctions />
+                    </ProtectedComponent>
+                )
             },
             {
                 path: '*',

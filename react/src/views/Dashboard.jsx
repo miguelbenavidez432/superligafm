@@ -131,6 +131,8 @@ export default function Dashboard() {
 
     useEffect(() => {
         fetchPendingTransfers(); // Llamar a la función para obtener transferencias pendientes
+        getCdr();
+        getAuctions();
     }, [seasonId]); // Cambia esta línea a seasonId para que se ejecute cada vez que cambie la temporada
 
     useEffect(() => {
@@ -175,6 +177,16 @@ export default function Dashboard() {
             });
     }
 
+    const getAuctions = async () => {
+        try {
+            const response = await axiosClient.get('/auction/last');
+            setAuctions(response.data);
+            console.log(auctions)
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const confirmTransfer = (transferId) => {
         axiosClient.post(`/transferencia_confirmada/${transferId}`)
             .then(({ data }) => {
@@ -185,6 +197,8 @@ export default function Dashboard() {
                 console.error(error);
             });
     };
+
+
 
     return (
         <div className="dashboard">
@@ -238,6 +252,36 @@ export default function Dashboard() {
                     </ul>
 
                     <h2>Transferencias Pendientes</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Jugadores Transferidos</th>
+                                <th>Equipo Desde</th>
+                                <th>Equipo Hasta</th>
+                                <th>Presupuesto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pendingTransfers.map((transfer) => (
+                                <tr key={transfer.id}>
+                                    <td>{transfer.id}</td>
+                                    <td>{transfer.transferred_players}</td>
+                                    <td>{transfer.id_team_from ? transfer.id_team_from.name : ''}</td>
+                                    <td>{transfer.id_team_to ? transfer.id_team_to.name : ''}</td>
+                                    <td>{transfer.budget}</td>
+                                    <td>
+                                        <button className="btn-edit" onClick={() => confirmTransfer(transfer.id)}>
+                                            Confirmar Transferencia
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <h2>Clausulas ejecutadas</h2>
                     <table>
                         <thead>
                             <tr>
