@@ -65,7 +65,11 @@ class AuctionController extends Controller
 
         //event(new NewAuctionEvent($auction));
 
-        return response(new AuctionResource($auction, 201));
+        //return response(new AuctionResource($auction, 201));
+
+        return response()->json(['message' => 'Success'], 200)
+                 ->header('Content-Type', 'application/json');
+
     }
 
     /**
