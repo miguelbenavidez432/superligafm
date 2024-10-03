@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
@@ -6,8 +7,9 @@ import { useStateContext } from "../context/ContextProvider";
 
 export default function PlayerAuctions() {
 
-    const { playerId } = useParams();
+    const { id } = useParams();
     const { user, setNotification } = useStateContext();
+    const [name, setName] = useState([]);
     const [auctions, setAuctions] = useState([]);
     const [newBid, setNewBid] = useState(0);
 
@@ -17,9 +19,11 @@ export default function PlayerAuctions() {
 
     const getAuctionsByPlayer = async () => {
         try {
-            const response = await axiosClient.get(`/auctions/player/${playerId}`);
+            const response = await axiosClient.get(`/auctions/player/${id}`);
             setAuctions(response.data);
-            console.log(auctions)
+            if (response.data.length > 0) {
+                setName(response.data[0].player.name); // Obtener el nombre del jugador desde la primera subasta
+            }
         } catch (error) {
             console.error(error);
         }
@@ -35,10 +39,12 @@ export default function PlayerAuctions() {
         }
 
         axiosClient.post('/auctions', {
-            player_id: playerId,
+            id_player: id,
             amount: newBid,
             auctioned_by: user.id,
-            id_season: 59
+            id_season: 52,
+            created_by: lastAuction.creator ? lastAuction.creator.id : '',
+            id_team: lastAuction.creator ? lastAuction.creator.id : '',
         }).then(() => {
             setNotification('Oferta enviada correctamente');
             getAuctionsByPlayer();
@@ -49,11 +55,11 @@ export default function PlayerAuctions() {
 
     return (
         <div className="player-auctions">
-            <h3>Subastas del jugador</h3>
+            {name ? `Subastas del jugador: ${name}` : 'Cargando nombre del jugador...'}
             <ul>
                 {auctions.map(auction => (
                     <li key={auction.id}>
-                        {auction.amount} - Creado por: {auction.auctioned_by && auction.auctioned_by.name}
+                        {auction.amount} - Subastado por: {auction.auctioneer && auction.auctioneer.name}
                     </li>
                 ))}
             </ul>

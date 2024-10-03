@@ -28,12 +28,12 @@ const SeasonCountdown = ({ startDate }) => {
     }, [startDate]);
 
     if (timeLeft.days <= 0 && timeLeft.hours <= 0 && timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
-        return <p className="text-green-500 font-bold text-lg">The season has started!</p>;
+        return <p className="text-green-500 font-bold text-lg">El mercado acaba de iniciar!</p>;
     }
 
     return (
         <div className="flex flex-col items-center p-6 bg-gray-900 text-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Countdown to season start:</h2>
+            <h2 className="text-2xl font-bold mb-4">El mercado de pases inicia en:</h2>
             <p className="text-xl">
                 <span className="font-mono text-yellow-400">{timeLeft.days}</span> days,{' '}
                 <span className="font-mono text-yellow-400">{timeLeft.hours}</span> hours,{' '}
