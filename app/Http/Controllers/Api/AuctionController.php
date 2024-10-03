@@ -106,7 +106,7 @@ class AuctionController extends Controller
             if ($data['amount'] < $previousAuction->amount + 1000000) {
                 return response()->json([
                     'message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.'
-                ], 422); // Código de estado 422 para indicar un error de validación
+                ], 422);
             }
 
             // Notificar a los usuarios que hicieron ofertas anteriores
@@ -121,7 +121,7 @@ class AuctionController extends Controller
             if ($data['amount'] < $player->value) {
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
-                ], 422); // Código de estado 422 para indicar un error de validación
+                ], 422);
             }
         }
 

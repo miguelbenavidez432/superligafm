@@ -22,7 +22,7 @@ export default function PlayerAuctions() {
             const response = await axiosClient.get(`/auctions/player/${id}`);
             setAuctions(response.data);
             if (response.data.length > 0) {
-                setName(response.data[0].player.name); // Obtener el nombre del jugador desde la primera subasta
+                setName(response.data[0].player.name);
             }
         } catch (error) {
             console.error(error);
@@ -31,26 +31,33 @@ export default function PlayerAuctions() {
 
     const handleNewBidSubmit = (e) => {
         e.preventDefault();
-
-        const lastAuction = auctions[auctions.length - 1];
-        if (newBid <= (lastAuction.amount + 1000000)) {
+        const lastAuction = auctions[0];
+        if (newBid < (lastAuction.amount + 1000000)) {
             alert('La oferta debe ser mayor que la oferta anterior.');
             return;
         }
 
         axiosClient.post('/auctions', {
-            id_player: id,
+            id_player: parseInt(id),
             amount: newBid,
             auctioned_by: user.id,
             id_season: 52,
             created_by: lastAuction.creator ? lastAuction.creator.id : '',
             id_team: lastAuction.creator ? lastAuction.creator.id : '',
-        }).then(() => {
-            setNotification('Oferta enviada correctamente');
-            getAuctionsByPlayer();
-        }).catch((error) => {
-            console.error(error);
-        });
+        })
+            .then(() => {
+                setNotification('Oferta enviada correctamente');
+                getAuctionsByPlayer();
+            })
+            .catch((error) => {
+
+                if (error.response && error.response.data.message) {
+                    setNotification(error.response.data.message); // Mensaje del backend
+                } else {
+                    setNotification('Error al enviar la oferta');
+                }
+                console.error(error);
+            });
     };
 
     return (
@@ -68,7 +75,7 @@ export default function PlayerAuctions() {
                 <label htmlFor="bid">Nueva oferta:</label>
                 <input
                     type="number"
-                    min={auctions.length ? auctions[auctions.length - 1].amount + 1000000 : 0}
+                    min={auctions.length ? auctions[0].amount + 1000000 : 0}
                     value={newBid}
                     onChange={(e) => setNewBid(parseInt(e.target.value))}
                 />
