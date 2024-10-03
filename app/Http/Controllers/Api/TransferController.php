@@ -128,7 +128,6 @@ class TransferController extends Controller
             return response()->json(['message' => 'Transferencia no encontrada'], 404);
         }
 
-        // Verificar si el usuario es el que debe confirmar
         $user = auth()->user();
         if ($user->id !== $transfer->buy_by && $user->id !== $transfer->sold_by) {
             return response()->json(['message' => 'No autorizado para confirmar esta transferencia'], 403);
