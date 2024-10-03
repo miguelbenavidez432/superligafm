@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 
 export default function PlayerAuctions() {
+
     const { playerId } = useParams();
     const { user, setNotification } = useStateContext();
     const [auctions, setAuctions] = useState([]);

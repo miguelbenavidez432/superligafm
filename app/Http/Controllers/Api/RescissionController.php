@@ -16,7 +16,7 @@ class RescissionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         /**
          * if ($request->query("all") == true) {
@@ -27,9 +27,12 @@ class RescissionController extends Controller
          *;
 
          */
-        return RescissionResource::collection(
-            Rescission::query()->orderBy('created_at', 'desc')->paginate(100)
-        );
+        if ($request->query('all') == 'true') {
+            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "asc")->get());
+        } else {
+            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "asc")->paginate(200));
+        }
+        ;
     }
 
     /**

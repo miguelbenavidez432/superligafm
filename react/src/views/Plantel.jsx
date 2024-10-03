@@ -159,10 +159,10 @@ export default function Plantel() {
                                         <td>{p.value}</td>
                                         <td>{p.status}</td>
                                         <td>
-                                            <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
+                                            {/* <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                             {
                                                 p.status == 'bloqueado' ? '' : <button className="btn-add" onClick={() => handleBlockPlayer(p)}>Bloquear</button>
-                                            }
+                                            } */}
 
                                         </td>
                                     </tr>

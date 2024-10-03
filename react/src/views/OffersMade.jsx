@@ -15,7 +15,7 @@ const OffersMade = () => {
     const filteredOffers = offers.filter(oferta => oferta.created_by === userId);
 
     useEffect(() => {
-        axiosClient.get("/clausula_rescision")
+        axiosClient.get('/clausula_rescision?all=true')
             .then(({ data }) => {
                 setOffers(data.data);
             })
@@ -27,7 +27,7 @@ const OffersMade = () => {
 
     const getTeam = async () => {
         setLoading(true)
-        await axiosClient.get('/teams')
+        await axiosClient.get('/teams?all=true')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
                 setTeams(teamFilter)

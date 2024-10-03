@@ -47,7 +47,7 @@ Route::apiResource('/singlebet', PlayerBetController::class);
 
 
 Route::apiResource('/season', SeasonController::class);
-Route::get('/season/start', [SeasonController::class, 'getSeasonStart']);
+Route::get('/seasons/start', [SeasonController::class, 'getSeasonStart']);
 Route::apiResource('/auctions', AuctionController::class);
 Route::get('/auction/last', [AuctionController::class,'getLastAuctions']);
 Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);

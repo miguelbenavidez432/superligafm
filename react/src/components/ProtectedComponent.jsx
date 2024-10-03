@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosClient from "../axios";
 import SeasonCountdown from './SeasonCountDown';
 
 const ProtectedComponent = ({ children }) => {
@@ -10,9 +10,10 @@ const ProtectedComponent = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('/season')
+        axiosClient.get('/seasons/start')
             .then(response => {
-                const startDate = new Date(response.data.start);
+                console.log(response)
+                const startDate = new Date(response.data.start_date);
                 setSeasonStart(startDate);
 
                 const now = new Date();
