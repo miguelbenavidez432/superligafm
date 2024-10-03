@@ -52,7 +52,7 @@ Route::apiResource('/auctions', AuctionController::class);
 Route::get('/auction/last', [AuctionController::class,'getLastAuctions']);
 Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);
 Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
-Route::apiResource('/add_auctions', AuctionController::class, 'addAuction');
+Route::post('/add_auctions', [AuctionController::class, 'addAuction']);
 
 Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
 Route::post('/cerrar-oferta', [RescissionController::class, 'closeOffer']);
