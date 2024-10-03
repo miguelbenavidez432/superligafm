@@ -33,6 +33,7 @@ import AuctionsList from './views/AuctionsList';
 import TransferList from './views/TransferList';
 import SeasonCountdown from './components/SeasonCountDown';
 import ProtectedComponent from './components/ProtectedComponent';
+import TransferCountDown from './components/TransferCountDown';
 
 const router = createBrowserRouter([
     {
@@ -74,9 +75,9 @@ const router = createBrowserRouter([
             {
                 path: '/transfer',
                 element: (
-                    <ProtectedComponent>
+                    <TransferCountDown>
                         <TransferForm />
-                    </ProtectedComponent>
+                    </TransferCountDown>
                 )
             },
             {
@@ -142,9 +143,9 @@ const router = createBrowserRouter([
             {
                 path: '/crear_subasta',
                 element: (
-                    <ProtectedComponent>
+                    <TransferCountDown>
                         <Auctions />
-                    </ProtectedComponent>
+                    </TransferCountDown>
                 )
             },
             {
