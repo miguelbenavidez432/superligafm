@@ -1,64 +1,45 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import axiosClient from "../axios";
-//import Tempo from "@formkit/tempo";
-import { useNavigate } from "react-router-dom";
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
 
-const SeasonCountdown = () => {
-    const [startDate, setStartDate] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+const SeasonCountdown = ({ startDate }) => {
+    const [timeLeft, setTimeLeft] = useState({});
 
     useEffect(() => {
-        // Obtener la fecha de inicio de la temporada desde el backend
-        const fetchSeasonStartDate = async () => {
-            try {
-                const response = await axiosClient.get('/season');
-                const seasonStart = new Date(response.data.start);
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeDifference = startDate - now;
 
-                setStartDate(seasonStart);
-                setLoading(false);
-
-                if (new Date() >= seasonStart) {
-                    navigate('/dashboard');
-                } else {
-                    //startCountdown(seasonStart);
-                }
-            } catch (error) {
-                console.error("Error al obtener la fecha de inicio de la temporada:", error);
+            if (timeDifference <= 0) {
+                clearInterval(interval);
+            } else {
+                setTimeLeft({
+                    days: Math.floor(timeDifference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((timeDifference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((timeDifference / (1000 * 60)) % 60),
+                    seconds: Math.floor((timeDifference / 1000) % 60),
+                });
             }
-        };
+        }, 1000);
 
-        fetchSeasonStartDate();
-    }, [navigate]);
+        return () => clearInterval(interval);
+    }, [startDate]);
 
-    // const startCountdown = (seasonStart) => {
-    //     const countdownElement = document.getElementById('season-countdown');
-
-    //     const countdown = new Tempo({
-    //         target: seasonStart,
-    //         interval: 1000,
-    //         onUpdate: (time) => {
-    //             countdownElement.innerHTML = `${time.days}d ${time.hours}h ${time.minutes}m ${time.seconds}s`;
-    //         },
-    //         onFinish: () => {
-    //             countdownElement.innerHTML = "¡La temporada ha comenzado!";
-    //             navigate('/home'); // Redirigir al usuario cuando la temporada comience
-    //         }
-    //     });
-
-    //     countdown.start();
-    // };
-
-    if (loading) {
-        return <div>Cargando...</div>; // O muestra un spinner mientras se obtiene la fecha
+    if (timeLeft.days <= 0 && timeLeft.hours <= 0 && timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
+        return <p className="text-green-500 font-bold text-lg">The season has started!</p>;
     }
 
     return (
-        <div>
-            <h3>La temporada aún no ha comenzado</h3>
-            <p>Tiempo restante:</p>
-            <div id="season-countdown"></div>
+        <div className="flex flex-col items-center p-6 bg-gray-900 text-white rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">Countdown to season start:</h2>
+            <p className="text-xl">
+                <span className="font-mono text-yellow-400">{timeLeft.days}</span> days,{' '}
+                <span className="font-mono text-yellow-400">{timeLeft.hours}</span> hours,{' '}
+                <span className="font-mono text-yellow-400">{timeLeft.minutes}</span> minutes,{' '}
+                <span className="font-mono text-yellow-400">{timeLeft.seconds}</span> seconds
+            </p>
         </div>
     );
 };

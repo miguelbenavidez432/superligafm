@@ -11,7 +11,7 @@ const OffersList = () => {
     const [teams, setTeams] = useState([])
 
     useEffect(() => {
-        axiosClient.get("/clausula_rescision")
+        axiosClient.get('/clausula_rescision?all=true')
             .then(({ data }) => {
                 setOffers(data.data);
             })

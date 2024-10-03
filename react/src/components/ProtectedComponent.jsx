@@ -1,42 +1,43 @@
-import { useEffect, useState } from "react";
-import axiosClient from "../axios"; // Asegúrate de que tu cliente axios esté configurado
-import { useNavigate } from "react-router-dom";
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import axiosClient from "../axios";
+import SeasonCountdown from './SeasonCountDown';
 
-const ProtectedComponent = () => {
-    // eslint-disable-next-line no-unused-vars
-    const [startDate, setStartDate] = useState(null);
+const ProtectedComponent = ({ children }) => {
+    const [seasonActive, setSeasonActive] = useState(false);
+    const [seasonStart, setSeasonStart] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
 
     useEffect(() => {
+        axiosClient.get('/seasons/start')
+            .then(response => {
+                console.log(response)
+                const startDate = new Date(response.data.start_date);
+                setSeasonStart(startDate);
 
-        const fetchSeasonStartDate = async () => {
-            try {
-                const response = await axiosClient.get('/season');
-                const seasonStart = new Date(response.data.start);
-                setStartDate(seasonStart);
-                setLoading(false);
-
-                if (new Date() < seasonStart) {
-                    navigate('/season-countdown');
+                const now = new Date();
+                if (now >= startDate) {
+                    setSeasonActive(true);
                 }
-            } catch (error) {
-                console.error("Error al obtener la fecha de inicio de la temporada:", error);
-            }
-        };
-
-        fetchSeasonStartDate();
-    }, [navigate]);
+            })
+            .catch(error => {
+                console.error("Error fetching season data", error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
 
     if (loading) {
-        return <div>Cargando...</div>;
+        return <p>Loading...</p>;
     }
 
-    return (
-        <div>
-            <h3>Este es un contenido protegido</h3>
-        </div>
-    );
+    if (!seasonActive) {
+        return <SeasonCountdown startDate={seasonStart} />;
+    }
+
+    return <>{children}</>;
 };
 
 export default ProtectedComponent;

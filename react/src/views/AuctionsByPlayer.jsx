@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 
 export default function PlayerAuctions() {
+
     const { playerId } = useParams();
     const { user, setNotification } = useStateContext();
     const [auctions, setAuctions] = useState([]);
@@ -28,18 +29,19 @@ export default function PlayerAuctions() {
         e.preventDefault();
 
         const lastAuction = auctions[auctions.length - 1];
-        if (newBid <= lastAuction.value) {
+        if (newBid <= (lastAuction.amount + 1000000)) {
             alert('La oferta debe ser mayor que la oferta anterior.');
             return;
         }
 
         axiosClient.post('/auctions', {
             player_id: playerId,
-            value: newBid,
-            created_by: user.id,
+            amount: newBid,
+            auctioned_by: user.id,
+            id_season: 59
         }).then(() => {
             setNotification('Oferta enviada correctamente');
-            getAuctionsByPlayer(); // Recargar las subastas
+            getAuctionsByPlayer();
         }).catch((error) => {
             console.error(error);
         });
@@ -51,7 +53,7 @@ export default function PlayerAuctions() {
             <ul>
                 {auctions.map(auction => (
                     <li key={auction.id}>
-                        {auction.value} - Creado por: {auction.created_by}
+                        {auction.amount} - Creado por: {auction.auctioned_by && auction.auctioned_by.name}
                     </li>
                 ))}
             </ul>
@@ -60,11 +62,11 @@ export default function PlayerAuctions() {
                 <label htmlFor="bid">Nueva oferta:</label>
                 <input
                     type="number"
-                    min={auctions.length ? auctions[auctions.length - 1].value + 1 : 0}
+                    min={auctions.length ? auctions[auctions.length - 1].amount + 1000000 : 0}
                     value={newBid}
                     onChange={(e) => setNewBid(parseInt(e.target.value))}
                 />
-                <button type="submit">Enviar Oferta</button>
+                <button className="btn-add" type="submit">Enviar Oferta</button>
             </form>
         </div>
     );
