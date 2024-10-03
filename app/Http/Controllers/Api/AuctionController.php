@@ -113,11 +113,10 @@ class AuctionController extends Controller
                 ], 422);
             }
 
-            // Notificar a los usuarios que hicieron ofertas anteriores
+
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
-                //armar la logica para la notificación
             }
         } else {
             $player = Player::find($data['id_player']);

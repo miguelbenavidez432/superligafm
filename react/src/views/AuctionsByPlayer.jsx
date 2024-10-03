@@ -37,7 +37,7 @@ export default function PlayerAuctions() {
             return;
         }
 
-        axiosClient.post('/auctions', {
+        axiosClient.post('/add_auctions', {
             id_player: parseInt(id),
             amount: newBid,
             auctioned_by: user.id,
