@@ -52,7 +52,7 @@ export default function PlayerAuctions() {
             .catch((error) => {
 
                 if (error.response && error.response.data.message) {
-                    setNotification(error.response.data.message); // Mensaje del backend
+                    setNotification(error.response.data.message);
                 } else {
                     setNotification('Error al enviar la oferta');
                 }

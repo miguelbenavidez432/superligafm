@@ -59,9 +59,11 @@ class AuctionController extends Controller
             }
         }
 
+        echo'<pre>';
+        var_dump($data);
         $auction = Auction::create($data);
 
-        event(new NewAuctionEvent($auction));
+        //event(new NewAuctionEvent($auction));
 
         return response(new AuctionResource($auction, 201));
     }

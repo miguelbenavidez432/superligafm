@@ -38,7 +38,7 @@ class Auction extends Model
 
     public function season()
     {
-        return $this->belongsTo(User::class, 'id_season');
+        return $this->belongsTo(Season::class, 'id_season');
     }
 
     public function userAuctions()
