@@ -15,7 +15,6 @@ export default function AuctionsList() {
         try {
             const response = await axiosClient.get('/auction/last');
             setAuctions(response.data);
-            console.log(response.data)
         } catch (error) {
             console.error(error);
         }
@@ -27,11 +26,11 @@ export default function AuctionsList() {
             <br />
             <ul>
                 {auctions ? auctions.map(auction => {
-                    const id_player = auction.player ? auction.player.id : ''; // Asegúrate de acceder a player.id correctamente
+                    const id_player = auction.player ? auction.player.id : '';
                     return (
                         <li key={auction.id}>
                             <label>{auction.player ? auction.player.name : ''} - Valor inicial: {auction.amount} </label>
-                            <Link to={`/subastas/${id_player}`} className="btn-edit"> {/* Cambiado auction.id_player a id_player */}
+                            <Link to={`/subastas/${auction.id_player}`} className="btn-edit">
                                 Hacer una nueva oferta
                             </Link>
                             <br />

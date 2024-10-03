@@ -30,7 +30,7 @@ const ProtectedComponent = ({ children }) => {
     }, []);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <p>Cargando...</p>;
     }
 
     if (!seasonActive) {
