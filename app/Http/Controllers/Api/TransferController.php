@@ -20,7 +20,7 @@ class TransferController extends Controller
         if ($request->query('all') == 'true') {
             return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->get());
         } else {
-            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->paginate(50));
+            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->paginate(250));
         }
     }
 
@@ -116,6 +116,21 @@ class TransferController extends Controller
         $transfer->sold_by = $transferData['sold_by'];
         $transfer->confirmed = 'no';
         $transfer->save();
+
+        $transferredPlayers = explode(',', $transferData['transferred_players']);
+        foreach ($transferredPlayers as $player) {
+            $upsertData[] = [
+                'transferred_players' => $player,
+                'id_team_from' => $transferData['id_team_from'],
+                'id_team_to' => $transferData['id_team_to'],
+                'budget' => $transferData,
+                'created_by' => $transferData['created_by'],
+                'buy_by' => $transferData['buy_by'],
+                'sold_by' => $transferData['sold_by'],
+            ];
+        }
+
+        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Transferencia creada correctamente, esperando confirmación']);
     }
