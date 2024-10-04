@@ -136,6 +136,7 @@ export default function Dashboard() {
         fetchPendingTransfers(); // Llamar a la función para obtener transferencias pendientes
         getCdr();
         getAuctions();
+        getUsers();
     }, [seasonId]); // Cambia esta línea a seasonId para que se ejecute cada vez que cambie la temporada
 
     useEffect(() => {
@@ -241,7 +242,7 @@ export default function Dashboard() {
                     <br />
                     <ul>
                         {auctions
-                            .filter(auction => auction.created_by === user.id) // Filtrar por created_by
+                            .filter(auction => auction.creator && auction.creator.id == user.id)
                             .map(auction => (
                                 <li key={auction.id}>
                                     Jugador: {auction.player?.name || 'Sin jugador'}, Última oferta: {auction.amount || 'Sin oferta'}
