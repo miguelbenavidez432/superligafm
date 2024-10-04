@@ -154,7 +154,6 @@ export default function Dashboard() {
         axiosClient.get('/transferencia_pendiente')
             .then(({ data }) => {
                 setPendingTransfers(data);
-                console.error(data);
             })
             .catch(error => {
                 console.error(error);
@@ -182,11 +181,8 @@ export default function Dashboard() {
         setTeam(filteredTeam);
         axiosClient.get('/clausula_rescision?all=true')
             .then(({ data }) => {
-                console.log(data.data);
                 const filteredExecutedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.created_by === user.id)
                 const filteredReceivedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.id_team && cdr.id_team.id_user === user.id)
-                console.log(filteredExecutedClauses);
-                console.log(filteredReceivedClauses);
                 setExecutedClauses(filteredExecutedClauses);
                 setReceivedClauses(filteredReceivedClauses);
             })
@@ -198,7 +194,6 @@ export default function Dashboard() {
         try {
             const response = await axiosClient.get('/auction/last');
             setAuctions(response.data);
-            console.log(auctions)
         } catch (error) {
             console.error(error);
         }
