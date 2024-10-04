@@ -91,10 +91,7 @@ const Auctions = () => {
                 // Almacenar el tiempo de finalización en localStorage
                 localStorage.setItem('auctionEndTime', endTime);
 
-                // Inicia el countdown usando FormKit Tempo
-                //startCountdown(endTime);
-
-                // Reinicia el formulario
+                console.log(auctionData)
                 setAuctionData({
                     player_id: '',
                     amount: 0,

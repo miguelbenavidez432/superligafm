@@ -31,42 +31,42 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::apiResource('/players', PlayerController::class);
+    Route::post('/transfer', [TransferController::class, 'transfer']);
+    Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
+    Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
+    Route::get('playername', [PlayerController::class, 'searchPlayers']);
+    Route::apiResource('/users', UserController::class);
+    Route::apiResource('/teams', TeamController::class);
+    Route::apiResource('/traspasos', TransferController::class);
+    Route::apiResource('/bets', BetController::class);
+
+    Route::apiResource('/clausula_rescision', RescissionController::class);
+    Route::apiResource('/singlebet', PlayerBetController::class);
+
+
+    Route::apiResource('/season', SeasonController::class);
+    Route::get('/seasons/start', [SeasonController::class, 'getSeasonStart']);
+    Route::apiResource('/auctions', AuctionController::class);
+    Route::get('/auction/last', [AuctionController::class,'getLastAuctions']);
+    Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);
+    Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
+    Route::post('/add_auctions', [AuctionController::class, 'addAuction']);
+
+    Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
+    Route::post('/cerrar-oferta', [RescissionController::class, 'closeOffer']);
+    Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
+    Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
+    Route::post('/apuesta/usuario', [BetController::class, 'attach']);
+    Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
+    Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
+    Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
+    Route::get('/transferencia_pendiente', [TransferController::class, 'getPendingTransfers']);
+    Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
+
+    Route::get('/user/notifications', function () {
+        return auth()->user()->unreadNotifications;
 });
-Route::apiResource('/players', PlayerController::class);
-Route::post('/transfer', [TransferController::class, 'transfer']);
-Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
-Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
-Route::get('playername', [PlayerController::class, 'searchPlayers']);
-Route::apiResource('/users', UserController::class);
-Route::apiResource('/teams', TeamController::class);
-Route::apiResource('/traspasos', TransferController::class);
-Route::apiResource('/bets', BetController::class);
-
-Route::apiResource('/clausula_rescision', RescissionController::class);
-Route::apiResource('/singlebet', PlayerBetController::class);
-
-
-Route::apiResource('/season', SeasonController::class);
-Route::get('/seasons/start', [SeasonController::class, 'getSeasonStart']);
-Route::apiResource('/auctions', AuctionController::class);
-Route::get('/auction/last', [AuctionController::class,'getLastAuctions']);
-Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);
-Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
-Route::post('/add_auctions', [AuctionController::class, 'addAuction']);
-
-Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
-Route::post('/cerrar-oferta', [RescissionController::class, 'closeOffer']);
-Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
-Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
-Route::post('/apuesta/usuario', [BetController::class, 'attach']);
-Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
-Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
-Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
-Route::get('/transferencia_pendiente', [TransferController::class, 'getPendingTransfers']);
-Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
-
-Route::get('/user/notifications', function () {
-    return auth()->user()->unreadNotifications;
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);

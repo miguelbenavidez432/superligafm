@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
@@ -12,6 +13,13 @@ export default function PlayerAuctions() {
     const [name, setName] = useState([]);
     const [auctions, setAuctions] = useState([]);
     const [newBid, setNewBid] = useState(0);
+    const [auctionData, setAuctionData] = useState({
+        id_player: parseInt(id),
+        value: 0,
+        created_by: user.id,
+        status: 'active',
+        auctioned_by: user.id,
+    });
 
     useEffect(() => {
         getAuctionsByPlayer();
@@ -29,45 +37,84 @@ export default function PlayerAuctions() {
         }
     };
 
-    const handleNewBidSubmit = (e) => {
+    const handleNewBidSubmit = async (e) => {
         e.preventDefault();
         const lastAuction = auctions[0];
+
+        // Verifica que lastAuction tenga datos
+        if (!lastAuction) {
+            alert('No hay subastas disponibles para este jugador.');
+            return;
+        }
+
         if (newBid < (lastAuction.amount + 1000000)) {
             alert('La oferta debe ser mayor que la oferta anterior.');
             return;
         }
 
-        // axiosClient.post('/auctions', {
-        //     player_id: playerId,
-        //     value: newBid,
-        //     created_by: user.id,
-        // }).then(() => {
-        //     setNotification('Oferta enviada correctamente');
-        //     getAuctionsByPlayer(); // Recargar las subastas
-        // }).catch((error) => {
-        //     console.error(error);
-        // });
-
-        axiosClient.post('/add_auctions', {
+        // Actualiza auctionData correctamente antes de enviar
+        const updatedAuctionData = {
             id_player: parseInt(id),
+            id_team: lastAuction.id_team,
             amount: newBid,
+            created_by: user.id,
             auctioned_by: user.id,
-            id_season: 52,
-            created_by: lastAuction.creator ? lastAuction.creator.id : '',
-            id_team: lastAuction.creator ? lastAuction.creator.id : '',
-            close: ''
-        })
-            .then(() => {
-                setNotification('Oferta enviada correctamente');
-                getAuctionsByPlayer();
+            status: 'active',
+        };
+
+        try {
+            const response = await axiosClient.post('/auctions', updatedAuctionData);
+            setNotification('Subasta creada exitosamente');
+
+            // Establece el tiempo de finalización de la subasta
+            const auctionCreatedTime = new Date(response.data.created_at).getTime();
+            const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000); // Añadir 12 horas en milisegundos
+            setAuctionEndTime(endTime);
+
+            // Almacenar el tiempo de finalización en localStorage
+            localStorage.setItem('auctionEndTime', endTime);
+
+            // Reinicia el formulario
+            setNewBid(0); // Reinicia el valor de la oferta
+            getAuctionsByPlayer(); // Recargar las subastas
+        } catch (error) {
+            if (error.response && error.response.data.message) {
+                setNotification(error.response.data.message);
+            } else {
+                setNotification('Error al enviar la oferta');
+            }
+            console.error(error);
+        }
+    };
+
+
+    const handleAuctionSubmit = (e) => {
+        e.preventDefault();
+        console.log(auctionData)
+        axiosClient.post('/auctions', auctionData)
+            .then((response) => {
+                setNotification('Subasta creada exitosamente');
+
+                // Establece el tiempo de finalización de la subasta
+                const auctionCreatedTime = new Date(response.data.created_at).getTime();
+                const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000); // Añadir 12 horas en milisegundos
+                setAuctionEndTime(endTime);
+
+                // Almacenar el tiempo de finalización en localStorage
+                localStorage.setItem('auctionEndTime', endTime);
+
+                // Inicia el countdown usando FormKit Tempo
+                //startCountdown(endTime);
+
+                // Reinicia el formulario
+                setAuctionData({
+                    player_id: '',
+                    amount: 0,
+                    created_by: user.id,
+                    status: 'active',
+                });
             })
             .catch((error) => {
-
-                if (error.response && error.response.data.message) {
-                    setNotification(error.response.data.message);
-                } else {
-                    setNotification('Error al enviar la oferta');
-                }
                 console.error(error);
             });
     };

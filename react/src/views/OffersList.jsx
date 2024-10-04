@@ -48,7 +48,7 @@ const OffersList = () => {
     const checkOffersAvailability = (created_at) => {
         if (created_at) {
             const offerCreatedAt = moment(created_at);
-            const expirationDate = offerCreatedAt.add(2, 'hours');
+            const expirationDate = offerCreatedAt.add(4, 'hours');
             const currentDate = moment();
             return currentDate.isAfter(expirationDate);
         }
@@ -64,7 +64,7 @@ const OffersList = () => {
 
         // Comparar la hora actual con las 18:00:00
         const specificTime = new Date(offerDate);
-        specificTime.setHours(4, 0, 0, 0); // 18:00:00 del día de creación de la oferta
+        specificTime.setHours(6, 0, 0, 0); // 18:00:00 del día de creación de la oferta
 
         return !isSameDay || currentDate >= specificTime;
     };

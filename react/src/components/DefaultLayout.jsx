@@ -62,6 +62,7 @@ export default function DefaultLayout() {
                         :
                         user.rol === 'Manager Primera' || user.rol === 'Manager Segunda' ?
                             <div className="flex flex-col text-white">
+                                <Link className="mt-4 hover:text-base" to='/dashboard'>Mi estado</Link>
                                 <Link className="mt-4 hover:text-base" to='/fixture_primera'>Fixture Primera</Link>
                                 <Link className="mt-4 hover:text-base" to='/fixture_segunda'>Fixture Segunda</Link>
                                 <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>

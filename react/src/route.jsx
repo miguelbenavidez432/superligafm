@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import Login from './views/Login';
 import Signup from './views/Signup';
@@ -75,9 +76,7 @@ const router = createBrowserRouter([
             {
                 path: '/transfer',
                 element: (
-                    <TransferCountDown>
-                        <TransferForm />
-                    </TransferCountDown>
+                    <TransferForm />
                 )
             },
             {
@@ -96,7 +95,7 @@ const router = createBrowserRouter([
                 path: '/clausula_rescision',
                 element: (
 
-                        <Announcement />
+                    <Announcement />
 
                 )
             },
@@ -143,9 +142,8 @@ const router = createBrowserRouter([
             {
                 path: '/crear_subasta',
                 element: (
-                    <TransferCountDown>
-                        <Auctions />
-                    </TransferCountDown>
+
+                    <Auctions />
                 )
             },
             {
