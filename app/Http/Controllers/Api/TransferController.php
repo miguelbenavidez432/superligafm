@@ -160,9 +160,12 @@ class TransferController extends Controller
 
     public function getPendingTransfers()
     {
-        $user = auth()->user();  // auth()->user() siempre estará definido si el middleware lo permite
+        $user = auth()->user(); // auth()->user() siempre estará definido si el middleware lo permite
 
         try {
+            // Depurar el usuario
+            \Log::info('Usuario autenticado: ', ['id' => $user->id]);
+
             $transfers = Transfer::where('confirmed', 'no')
                 ->where(function ($query) use ($user) {
                     $query->where('buy_by', $user->id)
@@ -171,10 +174,13 @@ class TransferController extends Controller
                 ->where('confirmed_by', null)
                 ->get();
 
+            // Depurar las transferencias obtenidas
+            \Log::info('Transferencias pendientes: ', ['transfers' => $transfers]);
+
             return response()->json($transfers);
         } catch (\Exception $e) {
             \Log::error('Error en getPendingTransfers: ' . $e->getMessage());
-            return response()->json(['error' => 'Ocurrió un error'], 500);
+            return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
     }
 

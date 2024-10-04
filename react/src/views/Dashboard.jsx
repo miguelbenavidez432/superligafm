@@ -121,6 +121,7 @@ import { Link } from 'react-router-dom';
 export default function Dashboard() {
     const { user, setNotification } = useStateContext();
     const [team, setTeam] = useState(null);
+    const [users, setUsers] = useState(null);
     const [teams, setTeams] = useState(null);
     const [seasonId, setSeasonId] = useState(null);
     const [transfers, setTransfers] = useState([]);
@@ -152,7 +153,18 @@ export default function Dashboard() {
     const fetchPendingTransfers = () => {
         axiosClient.get('/transferencia_pendiente')
             .then(({ data }) => {
-                setPendingTransfers(data.filter(t => t.id_season == seasons));
+                setPendingTransfers(data);
+                console.error(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    const getUsers = () => {
+        axiosClient.get('/users')
+            .then(({ data }) => {
+                setUsers(data.data);
             })
             .catch(error => {
                 console.error(error);
@@ -171,8 +183,8 @@ export default function Dashboard() {
         axiosClient.get('/clausula_rescision?all=true')
             .then(({ data }) => {
                 console.log(data.data);
-                const filteredExecutedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.created_by === user.id && cdr.id_season && cdr.id_season.id == 52)
-                const filteredReceivedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.id_season && cdr.id_season.id == 52 && cdr.id_team && cdr.id_team.id_user === user.id)
+                const filteredExecutedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.created_by === user.id)
+                const filteredReceivedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.id_team && cdr.id_team.id_user === user.id)
                 console.log(filteredExecutedClauses);
                 console.log(filteredReceivedClauses);
                 setExecutedClauses(filteredExecutedClauses);
@@ -224,7 +236,7 @@ export default function Dashboard() {
                     <ul>
                         {pendingTransfers.map(transfer => (
                             <li key={transfer.id}>
-                                Jugador: {transfer.name}, Valor: {transfer.value}
+                                Jugador: {transfer.transferred_players}, Valor: {transfer.budget}
                             </li>
                         ))}
                     </ul>
@@ -233,12 +245,15 @@ export default function Dashboard() {
                     <h2>Subastas</h2>
                     <br />
                     <ul>
-                        {auctions.map(auction => (
-                            <li key={auction.id}>
-                                Jugador: {auction.player ? auction.player.name : ''}, Última oferta: {auction.last_offer}
-                            </li>
-                        ))}
+                        {auctions
+                            .filter(auction => auction.created_by === user.id) // Filtrar por created_by
+                            .map(auction => (
+                                <li key={auction.id}>
+                                    Jugador: {auction.player?.name || 'Sin jugador'}, Última oferta: {auction.amount || 'Sin oferta'}
+                                </li>
+                            ))}
                     </ul>
+
                     <br />
                     <br />
                     <h2>Clausulas ejecutadas</h2>
@@ -263,7 +278,7 @@ export default function Dashboard() {
                                         <td>{teamNameToShow}</td>
                                         <td>{transfer.total_value}</td>
                                         <td>
-                                        <Link className="btn-edit my-1" to={`/offers/${transfer.id_player}`}>Ofertas</Link>
+                                            <Link className="btn-edit my-1" to={`/offers/${transfer.id_player}`}>Ofertas</Link>
                                         </td>
                                     </tr>
                                 )
@@ -275,11 +290,15 @@ export default function Dashboard() {
                     <h2>Cláusulas recibidas en el equipo</h2>
                     <br />
                     <ul>
-                        {receivedClauses.map(clause => (
-                            <li key={clause.id}>
-                                {console.log(clause)}
-                            </li>
-                        ))}
+                        {receivedClauses.map(clause => {
+                            const teamName = teams.find(t => t.id === transfer.id_team)
+                            const teamNameToShow = teamName ? teamName.name : " ";
+                            return (
+                                <li key={clause.id}>
+                                    {console.log(clause)}
+                                </li>
+                            )
+                        })}
                     </ul>
                     <br /><br />
                     <h2>Transferencias Pendientes</h2>
@@ -295,20 +314,26 @@ export default function Dashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {pendingTransfers.map((transfer) => (
-                                <tr key={transfer.id}>
-                                    <td>{transfer.id}</td>
-                                    <td>{transfer.transferred_players}</td>
-                                    <td>{transfer.id_team_from ? transfer.id_team_from.name : ''}</td>
-                                    <td>{transfer.id_team_to ? transfer.id_team_to.name : ''}</td>
-                                    <td>{transfer.budget}</td>
-                                    <td>
-                                        <button className="btn-edit" onClick={() => confirmTransfer(transfer.id)}>
-                                            Confirmar Transferencia
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {pendingTransfers.map((transfer) => {
+                                const teamNameTo = teams.find(t => t.id === transfer.id_team_to)
+                                const teamNameToShow = teamNameTo ? teamNameTo.name : " ";
+                                const teamNamefrom = teams.find(t => t.id === transfer.id_team_from)
+                                const teamNameToShowFrom = teamNamefrom ? teamNamefrom.name : " ";
+                                return (
+                                    <tr key={transfer.id}>
+                                        <td>{transfer.id}</td>
+                                        <td>{transfer.transferred_players}</td>
+                                        <td>{teamNameToShowFrom}</td>
+                                        <td>{teamNameToShow}</td>
+                                        <td>{transfer.budget}</td>
+                                        <td>
+                                            <button className="btn-edit" onClick={() => confirmTransfer(transfer.id)}>
+                                                Confirmar Transferencia
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
 

@@ -70,8 +70,6 @@ export default function TransferList() {
                             <th>EQUIPOS ORIGEN/DESTINO</th>
                             <th>REALIZADA POR</th>
                             <th>HORA</th>
-                            <th>COMPRADO POR:</th>
-                            <th>vENDIDO POR:</th>
                             <th>VALOR</th>
                         </tr>
                     </thead>
