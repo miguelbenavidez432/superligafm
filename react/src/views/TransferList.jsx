@@ -71,6 +71,7 @@ export default function TransferList() {
                             <th>REALIZADA POR</th>
                             <th>HORA</th>
                             <th>VALOR</th>
+                            <th>CONFIRMADA?</th>
                         </tr>
                     </thead>
                     {loading &&
@@ -94,6 +95,7 @@ export default function TransferList() {
                                             <td>{p.created_by.name}</td>
                                             <td>{p.created_at}</td>
                                             <td>{p.budget}</td>
+                                            <td>{p.confirmed}</td>
                                         </tr>
                                     )
                                 })

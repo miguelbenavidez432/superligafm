@@ -18,7 +18,8 @@ class Transfer extends Model
         'confirmed_by',
         'sold_by',
         'buy_by',
-        'id_season'
+        'id_season',
+        'confirmed'
     ];
 
     public function teamFrom()
