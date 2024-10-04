@@ -37,6 +37,17 @@ export default function PlayerAuctions() {
             return;
         }
 
+        // axiosClient.post('/auctions', {
+        //     player_id: playerId,
+        //     value: newBid,
+        //     created_by: user.id,
+        // }).then(() => {
+        //     setNotification('Oferta enviada correctamente');
+        //     getAuctionsByPlayer(); // Recargar las subastas
+        // }).catch((error) => {
+        //     console.error(error);
+        // });
+
         axiosClient.post('/add_auctions', {
             id_player: parseInt(id),
             amount: newBid,
@@ -44,6 +55,7 @@ export default function PlayerAuctions() {
             id_season: 52,
             created_by: lastAuction.creator ? lastAuction.creator.id : '',
             id_team: lastAuction.creator ? lastAuction.creator.id : '',
+            close: ''
         })
             .then(() => {
                 setNotification('Oferta enviada correctamente');

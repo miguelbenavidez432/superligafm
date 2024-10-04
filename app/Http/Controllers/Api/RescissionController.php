@@ -29,13 +29,13 @@ class RescissionController extends Controller
          */
 
         if ($request->query('all') == 'true') {
-            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "asc")->get());
+            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->get());
         } else {
-            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "asc")->paginate(200));
+            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->paginate(200));
         }
         ;
 
-       
+
     }
 
     /**

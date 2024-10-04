@@ -11,6 +11,7 @@ use App\Models\Auction;
 use App\Models\Player;
 use App\Models\UserAuction;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 
@@ -127,6 +128,8 @@ class AuctionController extends Controller
                 ], 422);
             }
         }
+
+        $data['close'] = Carbon::now()->addHours(12);
 
         $auction = Auction::create($data);
 
