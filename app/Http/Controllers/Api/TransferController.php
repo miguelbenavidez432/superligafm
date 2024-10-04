@@ -172,9 +172,9 @@ class TransferController extends Controller
                         ->orWhere('sold_by', $user->id);
                 })
                 ->where('confirmed_by', null)
+                ->where('created_by', '!=', $user->id) // Excluir transferencias creadas por el usuario
                 ->get();
 
-            // Depurar las transferencias obtenidas
             \Log::info('Transferencias pendientes: ', ['transfers' => $transfers]);
 
             return response()->json($transfers);
@@ -183,5 +183,6 @@ class TransferController extends Controller
             return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
     }
+
 
 }
