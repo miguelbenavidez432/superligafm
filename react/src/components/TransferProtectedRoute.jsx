@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import axiosClient from '../axiosClient';
+import axiosClient from '../axios';
 import { Navigate } from 'react-router-dom';
 
 const MarketProtectedRoute = ({ children }) => {
