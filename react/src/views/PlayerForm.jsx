@@ -112,7 +112,7 @@ export default function PlayerForm() {
                                 team.map((t, index) => {
                                     const selected = players.id_team && players.id_team.id === team.id ? 'selected' : '';
                                     return (
-                                        <option value={t.id} key={index} selected={selected}>{t.name}</option>
+                                        <option value={t.id} key={index} >{t.name}</option>
                                     )
                                 })
                             }

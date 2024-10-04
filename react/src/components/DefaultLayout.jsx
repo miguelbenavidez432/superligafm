@@ -65,7 +65,7 @@ export default function DefaultLayout() {
                                 <Link className="mt-4 hover:text-base" to='/dashboard'>Mi estado</Link>
                                 <Link className="mt-4 hover:text-base" to='/fixture_primera'>Fixture Primera</Link>
                                 <Link className="mt-4 hover:text-base" to='/fixture_segunda'>Fixture Segunda</Link>
-                                <Link className="mt-4 hover:text-base" to='/dashboard'>Intercambios</Link>
+                                <Link className="mt-4 hover:text-base" to='/transferencias'>Intercambios</Link>
                                 <Link className="mt-4 hover:text-base" to='/misofertas'>Mis ofertas</Link>
                                 <Link className="mt-4 hover:text-base" to='/subastas'>Lista de Subastas</Link>
                                 <Link className="mt-4 hover:text-base" to='/crear_subasta'>Crear Subasta</Link>
