@@ -34,7 +34,6 @@ import TransferList from './views/TransferList';
 import SeasonCountdown from './components/SeasonCountDown';
 import ProtectedComponent from './components/ProtectedComponent';
 import TransferCountDown from './components/TransferCountDown';
-import TransferProtectedRoute from './components/TransferProtectedRoute';
 
 const router = createBrowserRouter([
     {
@@ -76,9 +75,9 @@ const router = createBrowserRouter([
             {
                 path: '/transfer',
                 element: (
-                    <TransferProtectedRoute>
+                    <TransferCountDown>
                         <TransferForm />
-                    </TransferProtectedRoute>
+                    </TransferCountDown>
                 )
             },
             {
@@ -96,9 +95,9 @@ const router = createBrowserRouter([
             {
                 path: '/clausula_rescision',
                 element: (
-                    <ProtectedComponent>
+
                         <Announcement />
-                    </ProtectedComponent>
+
                 )
             },
             {

@@ -64,73 +64,12 @@ const OffersList = () => {
 
         // Comparar la hora actual con las 18:00:00
         const specificTime = new Date(offerDate);
-        specificTime.setHours(18, 0, 0, 0); // 18:00:00 del día de creación de la oferta
+        specificTime.setHours(4, 0, 0, 0); // 18:00:00 del día de creación de la oferta
 
         return !isSameDay || currentDate >= specificTime;
     };
 
     return (
-        // <div>
-        //     <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-        //         <h1><strong>CLÁUSULAS DE RESCISIÓN EJECUTADAS</strong></h1>
-        //         <Link to={`/clausula_rescision`} className="btn-add">Nueva oferta</Link>
-        //     </div>
-        //     <br />
-        //     {loading &&
-        //         <tbody>
-        //             <tr>
-        //                 <td colSpan="9" className="text-center">
-        //                     CARGANDO...
-        //                 </td>
-        //             </tr>
-        //         </tbody>
-        //     }
-        //     <div className="card animated fadeInDown">
-        //         <table>
-        //             <thead>
-        //                 <tr>
-        //                     <th>Jugador</th>
-        //                     <th>Equipo</th>
-        //                     <th>Valor</th>
-        //                     <th>Valor extra</th>
-        //                     <th>Valor Total</th>
-        //                     <th>Realizado por</th>
-        //                     <th>Horario</th>
-        //                     <th>Actions</th>
-        //                 </tr>
-        //             </thead>
-        //             {!loading &&
-        //                 <tbody>
-        //                     {offers
-        //                     .map((oferta) => {
-        //                         const userName = users.find(u => u.id === oferta.created_by);
-        //                         const isOfferAvailable = checkOffersAvailability(oferta.created_at);
-        //                         const teamName = teams.find(t => t.id === oferta.id_team)
-        //                         const userNameToShow = userName ? userName.name : "Usuario no encontrado";
-        //                         const teamNameToShow = teamName ? teamName.name : " ";
-        //                         const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
-        //                         return (
-        //                             <tr key={oferta.id}>
-        //                                 <th >{oferta.name}</th>
-        //                                 <th >{teamNameToShow}</th>
-        //                                 <th>{isOfferAvailable ? oferta.value : '??'}</th>
-        //                                 <th>{isOfferAvailable ? oferta.other_players : '??'}</th>
-        //                                 <th>{isOfferAvailable ? oferta.total_value : '??'}</th>
-        //                                 <th>{userNameToShow}</th>
-        //                                 <th>{formattedDate}</th>
-        //                                 <th className="mt-1">
-        //                                     <Link className="btn-edit my-1" to={`/offers/${oferta.id_player}`}>Ofertas</Link>
-        //                                     <br />
-        //                                 </th>
-        //                             </tr>
-        //                         )
-        //                     })}
-        //                 </tbody>
-        //             }
-        //         </table>
-        //     </div>
-        // </div>
-
         <div>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <h1><strong>CLÁUSULAS DE RESCISIÓN EJECUTADAS</strong></h1>
@@ -162,26 +101,21 @@ const OffersList = () => {
                     </thead>
                     {!loading &&
                         <tbody>
-                            {offers.map((oferta) => {
+                            {offers
+                            .map((oferta) => {
                                 const userName = users.find(u => u.id === oferta.created_by);
-                                const teamName = teams.find(t => t.id === oferta.id_team);
+                                const isOfferAvailable = checkOffersAvailability(oferta.created_at);
+                                const teamName = teams.find(t => t.id === oferta.id_team)
                                 const userNameToShow = userName ? userName.name : "Usuario no encontrado";
                                 const teamNameToShow = teamName ? teamName.name : " ";
-                                const formattedDate = new Date(oferta.created_at).toLocaleString('es-ES', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit',
-                                });
+                                const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
                                 return (
                                     <tr key={oferta.id}>
-                                        <th>{oferta.name}</th>
-                                        <th>{teamNameToShow}</th>
-                                        <th>{shouldDisplayValue(oferta.created_at) ? oferta.value : '??'}</th>
-                                        <th>{shouldDisplayValue(oferta.created_at) ? oferta.other_players : '??'}</th>
-                                        <th>{shouldDisplayValue(oferta.created_at) ? oferta.total_value : '??'}</th>
+                                        <th >{oferta.name}</th>
+                                        <th >{teamNameToShow}</th>
+                                        <th>{isOfferAvailable ? oferta.value : '??'}</th>
+                                        <th>{isOfferAvailable ? oferta.other_players : '??'}</th>
+                                        <th>{isOfferAvailable ? oferta.total_value : '??'}</th>
                                         <th>{userNameToShow}</th>
                                         <th>{formattedDate}</th>
                                         <th className="mt-1">
@@ -189,13 +123,79 @@ const OffersList = () => {
                                             <br />
                                         </th>
                                     </tr>
-                                );
+                                )
                             })}
                         </tbody>
                     }
                 </table>
             </div>
         </div>
+
+        // <div>
+        //     <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+        //         <h1><strong>CLÁUSULAS DE RESCISIÓN EJECUTADAS</strong></h1>
+        //         <Link to={`/clausula_rescision`} className="btn-add">Nueva oferta</Link>
+        //     </div>
+        //     <br />
+        //     {loading &&
+        //         <tbody>
+        //             <tr>
+        //                 <td colSpan="9" className="text-center">
+        //                     CARGANDO...
+        //                 </td>
+        //             </tr>
+        //         </tbody>
+        //     }
+        //     <div className="card animated fadeInDown">
+        //         <table>
+        //             <thead>
+        //                 <tr>
+        //                     <th>Jugador</th>
+        //                     <th>Equipo</th>
+        //                     <th>Valor</th>
+        //                     <th>Valor extra</th>
+        //                     <th>Valor Total</th>
+        //                     <th>Realizado por</th>
+        //                     <th>Horario</th>
+        //                     <th>Actions</th>
+        //                 </tr>
+        //             </thead>
+        //             {!loading &&
+        //                 <tbody>
+        //                     {offers.map((oferta) => {
+        //                         const userName = users.find(u => u.id === oferta.created_by);
+        //                         const teamName = teams.find(t => t.id === oferta.id_team);
+        //                         const userNameToShow = userName ? userName.name : "Usuario no encontrado";
+        //                         const teamNameToShow = teamName ? teamName.name : " ";
+        //                         const formattedDate = new Date(oferta.created_at).toLocaleString('es-ES', {
+        //                             day: '2-digit',
+        //                             month: '2-digit',
+        //                             year: 'numeric',
+        //                             hour: '2-digit',
+        //                             minute: '2-digit',
+        //                             second: '2-digit',
+        //                         });
+        //                         return (
+        //                             <tr key={oferta.id}>
+        //                                 <th>{oferta.name}</th>
+        //                                 <th>{teamNameToShow}</th>
+        //                                 <th>{shouldDisplayValue(oferta.created_at) ? oferta.value : '??'}</th>
+        //                                 <th>{shouldDisplayValue(oferta.created_at) ? oferta.other_players : '??'}</th>
+        //                                 <th>{shouldDisplayValue(oferta.created_at) ? oferta.total_value : '??'}</th>
+        //                                 <th>{userNameToShow}</th>
+        //                                 <th>{formattedDate}</th>
+        //                                 <th className="mt-1">
+        //                                     <Link className="btn-edit my-1" to={`/offers/${oferta.id_player}`}>Ofertas</Link>
+        //                                     <br />
+        //                                 </th>
+        //                             </tr>
+        //                         );
+        //                     })}
+        //                 </tbody>
+        //             }
+        //         </table>
+        //     </div>
+        // </div>
     );
 };
 

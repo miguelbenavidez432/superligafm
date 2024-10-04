@@ -5,12 +5,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import axiosClient from './axiosClient'; // Asegúrate de importar axiosClient
+import axiosClient from '../axios';
 
 const TransferCountDown = ({ children }) => {
     const [timeLeft, setTimeLeft] = useState({});
     const [marketEndTime, setMarketEndTime] = useState(null);
-    const [marketActive, setMarketActive] = useState(false); // Estado para controlar si el mercado está activo
+    const [marketActive, setMarketActive] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const TransferCountDown = ({ children }) => {
 
                 const now = new Date();
                 if (now >= startDate) {
-                    setMarketActive(true); // Marca el mercado como activo si la fecha actual es después del inicio
+                    setMarketActive(true);
                 }
             })
             .catch(error => {
@@ -43,7 +43,7 @@ const TransferCountDown = ({ children }) => {
 
                 if (timeDifference <= 0) {
                     clearInterval(interval);
-                    setMarketActive(false); // Desactiva el mercado cuando el contador llegue a 0
+                    setMarketActive(false);
                 } else {
                     setTimeLeft({
                         hours: Math.floor((timeDifference / (1000 * 60 * 60)) % 24),
@@ -63,16 +63,14 @@ const TransferCountDown = ({ children }) => {
 
     return (
         <div className="flex flex-col items-center p-6 bg-gray-900 text-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Countdown to market closure:</h2>
+            <h2 className="text-2xl font-bold mb-4">Inicio del mercado en:</h2>
             <p className="text-xl">
                 <span className="font-mono text-yellow-400">{timeLeft.hours}</span> hours,{' '}
                 <span className="font-mono text-yellow-400">{timeLeft.minutes}</span> minutes,{' '}
                 <span className="font-mono text-yellow-400">{timeLeft.seconds}</span> seconds
             </p>
-
-            {/* Renderiza los hijos solo si el mercado está activo */}
             {marketActive ? (
-                children // Renderiza las vistas o componentes hijos si el mercado está activo
+                children
             ) : (
                 <p className="text-red-500 font-bold">El mercado está cerrado, no puedes realizar acciones.</p>
             )}
