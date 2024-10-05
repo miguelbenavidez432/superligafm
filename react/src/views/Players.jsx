@@ -23,7 +23,7 @@ export default function Players() {
 
     const getPlayers = () => {
         setLoading(true)
-        axiosClient.get(`/players?page=${currentPage}&name=${searchName}`)
+        axiosClient.get(`/players?page=${currentPage}`)
             .then(({ data }) => {
                 setLoading(false)
                 setPlayers(data.data)

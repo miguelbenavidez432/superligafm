@@ -87,6 +87,7 @@ export default function Plantel() {
                 const response = await axiosClient.get('/players?all=true');
                 const filteredPlayers = response.data.data.filter(player => player.id_team ? player.id_team.id === team.id : '');
                 setPlayers(filteredPlayers);
+                console.log(filteredPlayers)
             } catch (error) {
                 console.error('Error al obtener jugadores:', error);
             } finally {

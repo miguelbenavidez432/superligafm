@@ -31,7 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::apiResource('/players', PlayerController::class);
     Route::post('/transfer', [TransferController::class, 'transfer']);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
@@ -66,8 +65,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
-});
+    });
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::apiResource('/players', PlayerController::class);
