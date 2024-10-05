@@ -117,21 +117,6 @@ class TransferController extends Controller
         $transfer->confirmed = 'no';
         $transfer->save();
 
-        $transferredPlayers = explode(',', $transferData['transferred_players']);
-        foreach ($transferredPlayers as $player) {
-            $upsertData[] = [
-                'transferred_players' => $player,
-                'id_team_from' => $transferData['id_team_from'],
-                'id_team_to' => $transferData['id_team_to'],
-                'budget' => $transferData,
-                'created_by' => $transferData['created_by'],
-                'buy_by' => $transferData['buy_by'],
-                'sold_by' => $transferData['sold_by'],
-            ];
-        }
-
-        Transfer::upsert($upsertData, 'id', ['transferred_players']);
-
         return response()->json(['message' => 'Transferencia creada correctamente, esperando confirmación']);
     }
 
@@ -169,6 +154,21 @@ class TransferController extends Controller
         $transfer->confirmed = 'si';
         $transfer->confirmed_by = $user->id;
         $transfer->save();
+
+        $transferredPlayers = explode(',', $transfer['transferred_players']);
+        foreach ($transferredPlayers as $player) {
+            $upsertData[] = [
+                'transferred_players' => $player,
+                'id_team_from' => $transfer['id_team_from'],
+                'id_team_to' => $transfer['id_team_to'],
+                'budget' => $transfer,
+                'created_by' => $transfer['created_by'],
+                'buy_by' => $transfer['buy_by'],
+                'sold_by' => $transfer['sold_by'],
+            ];
+        }
+
+        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Transferencia confirmada correctamente']);
     }
