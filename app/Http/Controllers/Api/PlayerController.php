@@ -133,13 +133,29 @@ class PlayerController extends Controller
         $teamId = $request->input('team');
 
         $players = Player::query()
-            ->where('id_team', $teamId) // Asegúrate de usar el campo 'id_team'
-            ->with('team')              // Carga la relación del equipo
+            ->where('id_team', $teamId)
+            ->with('team')
             ->orderBy('ca', 'desc')
             ->get();
 
         return PlayerResource::collection($players);
     }
+
+    // PlayerController.php
+
+    public function filteredStatusPlayers(Request $request)
+    {
+        $status = $request->query('status');  // Aquí capturamos el parámetro 'status' de la URL.
+
+        $players = Player::where('status', $status) // Buscamos jugadores con ese estado.
+            ->with('team') // Cargamos la relación con el equipo.
+            ->orderBy('ca', 'desc')
+            ->get();
+
+        return PlayerResource::collection($players); // Devolvemos los resultados.
+    }
+
+
 
     public function calcularCostoBloqueo(Player $player)
     {

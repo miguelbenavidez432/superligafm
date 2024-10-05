@@ -18,10 +18,6 @@ export default function TransferList() {
         getUsers()
     }, [])
 
-    const cargarJugadores = () => {
-        getTransfers()
-    }
-
     const getUsers = () => {
         axiosClient.get('/users')
             .then(({ data }) => {
@@ -57,10 +53,6 @@ export default function TransferList() {
 
     return (
         <>
-            {/* <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <div>Plantel</div>
-                <button className="btn-add" onClick={cargarJugadores}>Cargar plantel</button>
-            </div> */}
             <div className="card animated fadeInDown">
                 <table>
                     <thead>

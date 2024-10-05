@@ -35,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
     Route::get('playername', [PlayerController::class, 'searchPlayers']);
+    //Route::get('playerstatus', [PlayerController::class, 'filteredStatusPlayers']);
+    Route::get('/playerstatus', [PlayerController::class, 'filteredStatusPlayers']);
+
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
     Route::apiResource('/traspasos', TransferController::class);
@@ -42,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/clausula_rescision', RescissionController::class);
     Route::apiResource('/singlebet', PlayerBetController::class);
+    Route::apiResource('/players', PlayerController::class);
 
 
     Route::apiResource('/season', SeasonController::class);
@@ -71,4 +75,3 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::apiResource('/players', PlayerController::class);
