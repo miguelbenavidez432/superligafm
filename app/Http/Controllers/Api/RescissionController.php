@@ -143,11 +143,28 @@ class RescissionController extends Controller
 
     public function closeOffer(Request $request)
     {
-        $offer = $request->input('id');
+        // Validación del ID que llega en el request
+        $validated = $request->validate([
+            'id' => 'required|exists:rescissions,id',
+        ]);
 
-        $offerId = Rescission::findOrFail($offer);
+        // Buscar la oferta por ID
+        $offer = Rescission::findOrFail($validated['id']);
 
+        // Actualizar el estado de la oferta
+        $offer->active = 'no';
+
+        // Guardar los cambios
+        if ($offer->save()) {
+            return response()->json([
+                'message' => 'La oferta ha sido cerrada satisfactoriamente',
+                'offer' => new RescissionResource($offer),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Hubo un error al cerrar la oferta.',
+            ], 500);
+        }
     }
-
 
 }

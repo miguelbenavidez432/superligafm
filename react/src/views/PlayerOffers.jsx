@@ -84,67 +84,70 @@ const PlayerOffers = () => {
     };
 
     const handleConfirmOffer = async (offerId) => {
-        const oferta = offers.find(o => o.id === offerId)
-        const teamId = teams.find(t => t.id === oferta.id_team)
+        const oferta = offers.find(o => o.id === offerId);
 
-        if (teamId) {
-            const getUser = users.find(u => u.id === teamId.id_user)
-            const getUserCreated = users.find(u => u.id === oferta.created_by)
-            const teamTo = teams.find(t => t.id_user === getUserCreated.id)
-
-            const updatedPlayer = {
-                ...player,
-                id_team: teamTo.id
-            }
-
-            const updatedUserProfit = {
-                ...userProfit,
-                id: getUser.id,
-                name: getUser.name,
-                rol: getUser.rol,
-                email: getUser.email,
-                profits: getUser.profits + oferta.value,
-            };
-
-            const updatedUserCost = {
-                ...userCost,
-                id: getUserCreated.id,
-                name: getUserCreated.name,
-                rol: getUserCreated.rol,
-                email: getUserCreated.email,
-                profits: getUserCreated.profits - oferta.value,
-            };
-
-            try {
-                setUserProfit(updatedUserProfit);
-                setUserCost(updatedUserCost);
-                setPlayer(updatedPlayer)
-
-                await axiosClient.put(`/users/${getUser.id}`, updatedUserProfit);
-                await axiosClient.put(`/users/${getUserCreated.id}`, updatedUserCost);
-                await axiosClient.put(`/players/${oferta.id_player}`, updatedPlayer);
-                setNotification("Oferta confirmada satisfactoriamente");
-                navigate("/offers");
-            } catch (error) {
-                setNotification("Error al confirmar la oferta:", error);
-                const response = error.response;
-                if (response && response.status === 422) {
-                    setErrors(response.data.errors);
-                }
-            }
-
+        if (!oferta) {
+            setNotification("Oferta no encontrada.");
+            return;
         }
-    };
 
-    const handleCloseOffer = async (offerId) => {
+        const teamId = teams.find(t => t.id === oferta.id_team);
 
-        const updateOffer = {
-            active: 'no'
+        if (!teamId) {
+            setNotification("Equipo no encontrado.");
+            return;
         }
+
+        const getUser = users.find(u => teamId.user && u.id === teamId.user.id);
+        if (!getUser) {
+            setNotification("Usuario no encontrado para el equipo.");
+            return;
+        }
+
+        const getUserCreated = users.find(u => u.id === oferta.created_by);
+        if (!getUserCreated) {
+            setNotification("Usuario que creó la oferta no encontrado.");
+            return;
+        }
+
+        const teamTo = teams.find(t => t.user && t.user.id === getUserCreated.id);
+        if (!teamTo) {
+            setNotification("Equipo destino no encontrado.");
+            return;
+        }
+
+        const updatedPlayer = {
+            ...player,
+            id_team: teamTo.id
+        };
+
+        const updatedUserProfit = {
+            ...userProfit,
+            id: getUser.id,
+            name: getUser.name,
+            rol: getUser.rol,
+            email: getUser.email,
+            profits: getUser.profits + oferta.value,
+        };
+
+        const updatedUserCost = {
+            ...userCost,
+            id: getUserCreated.id,
+            name: getUserCreated.name,
+            rol: getUserCreated.rol,
+            email: getUserCreated.email,
+            profits: getUserCreated.profits - oferta.value,
+        };
+
         try {
+            setUserProfit(updatedUserProfit);
+            setUserCost(updatedUserCost);
+            setPlayer(updatedPlayer);
 
-            await axiosClient.put(`/clausula_rescision/${offerId}`, updateOffer);
-            setNotification("Oferta cerrada satisfactoriamente");
+            await axiosClient.put(`/users/${getUser.id}`, updatedUserProfit);
+            await axiosClient.put(`/users/${getUserCreated.id}`, updatedUserCost);
+            await axiosClient.put(`/players/${oferta.id_player}`, updatedPlayer);
+            setNotification("Oferta confirmada satisfactoriamente");
             navigate("/offers");
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
@@ -153,9 +156,38 @@ const PlayerOffers = () => {
                 setErrors(response.data.errors);
             }
         }
-
-
     };
+
+    const handleCloseOffer = async (offerId) => {
+        // Buscar la oferta con el ID proporcionado
+        const oferta = offers.find(o => o.id === offerId);
+
+        if (!oferta) {
+            setNotification("Oferta no encontrada.");
+            return;
+        }
+
+        // Crear el objeto con los campos requeridos por la API
+        const updateOffer = {
+            id: offerId,
+            active: 'no',
+            id_team: oferta.id_team,
+            total_value: oferta.total_value,
+        };
+
+        try {
+            await axiosClient.put(`/cerrar-oferta/${offerId}`, updateOffer);
+            setNotification("Oferta cerrada satisfactoriamente");
+            navigate("/offers");
+        } catch (error) {
+            setNotification("Error al cerrar la oferta:", error);
+            const response = error.response;
+            if (response && response.status === 422) {
+                setErrors(response.data.errors);
+            }
+        }
+    };
+
 
     return (
         <div>
@@ -183,8 +215,10 @@ const PlayerOffers = () => {
                                     <span>Horario: {fechaFormateada}</span>
                                     <br />{
                                         user.rol === 'Admin' || user.rol === 'Organizador' ?
-                                            <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button> &&
-                                            <button className="btn-edit" onClick={() => handleCloseOffer(parseInt(oferta.id))}>Cerrar oferta</button>
+                                            <div>
+                                                <button className="btn-add" onClick={() => handleConfirmOffer(parseInt(oferta.id))}>Confirmar oferta</button>
+                                                <button className="btn-edit" onClick={() => handleCloseOffer(parseInt(oferta.id))}>Cerrar oferta</button>
+                                            </div>
                                             :
                                             ''
                                     }

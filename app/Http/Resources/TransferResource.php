@@ -25,7 +25,6 @@ class TransferResource extends JsonResource
             'sold_by' => new UserResource($this->whenLoaded('seller')), // Relación 'seller'
             'confirmed_by' => new UserResource($this->whenLoaded('confirmer')),
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
-            'id_season' => new SeasonResource($this->whenLoaded('season')),
             'confirmed' => $this->confirmed,
         ];
     }
