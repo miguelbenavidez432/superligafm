@@ -32,16 +32,17 @@ export default function PlayerForm() {
                 .then(({ data }) => {
                     setLoading(false)
                     setPlayers(data)
+                    console.log(data)
                     getTeam()
                 })
                 .catch(() => {
                     setLoading(false)
                 })
         }, [])
-    }else{
+    } else {
         useEffect(() => {
             getTeam()
-        },[])
+        }, [])
     }
 
     const getTeam = () => {
@@ -58,26 +59,27 @@ export default function PlayerForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        console.log(players)
         if (players.status === 'liberado') {
             setPlayers({ ...players, id_team: 61 });
         }
         if (players.id) {
             axiosClient.put(`/players/${players.id}`, players)
-            .then(() => {
-                setNotification('Jugador actualizado satisfactoriamente')
-                navigate('/plantel' || '/players')
-            })
-            .catch(err => {
-                const response = err.response;
-                if (response && response.status === 422) {
-                    setErrors(response.data.errors)
-                }
-            })
+                .then(() => {
+                    setNotification('Jugador actualizado satisfactoriamente')
+                    navigate('/plantel' || '/players')
+                })
+                .catch(err => {
+                    const response = err.response;
+                    if (response && response.status === 422) {
+                        setErrors(response.data.errors)
+                    }
+                })
         } else {
             axiosClient.post(`/players/`, players)
-            .then(() => {
-                setNotification('Players creado satisfactoriamente')
-                navigate('/plantel')
+                .then(() => {
+                    setNotification('Players creado satisfactoriamente')
+                    navigate('/plantel')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -107,16 +109,17 @@ export default function PlayerForm() {
                 {!loading && user.rol === 'Admin' || user.rol === 'Organizador' ?
                     <form onSubmit={onSubmit}>
                         <input value={players.name} onChange={e => setPlayers({ ...players, name: e.target.value })} placeholder="Nombre" type="text" />
-                        <select onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}>
-                            {
-                                team.map((t, index) => {
-                                    const selected = players.id_team && players.id_team.id === team.id ? 'selected' : '';
-                                    return (
-                                        <option value={t.id} key={index} >{t.name}</option>
-                                    )
-                                })
-                            }
+                        <select
+                            value={players.id_team}
+                            onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}
+                        >
+                            {team.map((t, index) => (
+                                <option value={t.id} key={index}>
+                                    {t.name}
+                                </option>
+                            ))}
                         </select>
+
                         <span>Estado</span>
                         <select name="" id="" onChange={e => e.target.value === 'liberado' ? setPlayers({ ...players, status: e.target.value, id_team: 61 }) : setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
                             <option value=''></option>
@@ -137,7 +140,6 @@ export default function PlayerForm() {
                             <select name="" id="" onClick={e => setPlayers({ ...players, status: e.target.value })} placeholder="Estado">
                                 <option value=''></option>
                                 <option value="liberado">Liberado</option>
-
                                 <option value="registrado">Registrado</option>
                                 <option value="">Sin modificar</option>
                             </select>

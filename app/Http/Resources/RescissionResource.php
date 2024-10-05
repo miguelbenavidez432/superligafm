@@ -32,6 +32,7 @@ class RescissionResource extends JsonResource
             'created_at' => $this->created_at,
             //'id_season' => new SeasonResource($this->whenLoaded('season')),
             'id_season' => new SeasonResource($this->whenLoaded('season')),
+            'active' => $this->active,
         ];
     }
 }

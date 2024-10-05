@@ -127,10 +127,11 @@ class PlayerController extends Controller
 
     public function filteredPlayers(Request $request)
     {
-        $teamId = $request->input('id_team');
+        $teamId = $request->input('team');
 
         $players = Player::query()
-            ->where('id_team', $teamId)
+            ->where('id_team', $teamId) // Asegúrate de usar el campo 'id_team'
+            ->with('team')              // Carga la relación del equipo
             ->orderBy('ca', 'desc')
             ->get();
 
