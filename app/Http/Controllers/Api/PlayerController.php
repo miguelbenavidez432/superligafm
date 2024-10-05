@@ -25,6 +25,7 @@ class PlayerController extends Controller
         } else {
             return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(100));
         }
+
     }
 
     /**
@@ -90,9 +91,8 @@ class PlayerController extends Controller
     public function update(UpdatePlayerRequest $request, Player $player)
     {
         $data = $request->validated();
-
         $player->update($data);
-
+        $player->load('team'); // Carga la relación team después de la actualización
         return new PlayerResource($player);
     }
 
@@ -120,7 +120,10 @@ class PlayerController extends Controller
     {
         $name = $request->query('name');
 
-        $players = Player::query()->where('name', 'LIKE', '%' . $name . '%')->get();
+        $players = Player::query()
+            ->where('name', 'LIKE', '%' . $name . '%')
+            ->with('team') // Incluye la relación team
+            ->get();
 
         return PlayerResource::collection($players);
     }
