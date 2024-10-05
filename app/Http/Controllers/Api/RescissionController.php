@@ -131,7 +131,7 @@ class RescissionController extends Controller
             $offerId->confirmed = 'yes';
             $offerId->save();
 
-            $offerId->active = 'yes';
+            $offerId->active = 'no';
             $offerId->save();
 
             return response()->json(['message' => 'Oferta confirmada exitosamente']);
