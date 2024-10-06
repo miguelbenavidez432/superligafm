@@ -89,7 +89,6 @@ export default function Announcement() {
     const handlerPlayerAdd = (e) => {
         const newIdPlayer = parseInt(e.target.value);
         const playerData = teamPlayers.find(p => p.id === newIdPlayer);
-        console.log(playerData.id_team && playerData.id_team.id)
         if (!playerData) return;
 
         setPlayerTransfered((prev) => {
@@ -122,7 +121,6 @@ export default function Announcement() {
         if (selectedEquipo) {
             try {
                 const response = await axiosClient.get(`/players?all=true`);
-                console.log(selectedEquipo)
                 const filteredPlayers = response.data.data.filter(player => player.id_team && player.id_team.id == parseInt(selectedEquipo));
                 setPlayers(filteredPlayers);
             } catch (error) {
@@ -136,7 +134,6 @@ export default function Announcement() {
             try {
                 const response = await axiosClient.get(`/players?all=true`);
                 const filteredPlayers = response.data.data.filter(player => player.id_team ? player.id_team.id == filteredTeam[0].id : '');
-                console.log("jugadores filtados" + filteredPlayers)
                 setTeamPlayers(filteredPlayers);
             } catch (error) {
                 setErrors("Error al filtrar jugadores por usuario.");

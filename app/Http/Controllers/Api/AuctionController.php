@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
 use App\Models\Player;
+use App\Models\User;
 use App\Models\UserAuction;
 use Auth;
 use Carbon\Carbon;
@@ -204,4 +205,34 @@ class AuctionController extends Controller
 
         return response()->json(['success' => 'Oferta registrada exitosamente.']);
     }
+
+    public function confirmAuction(Request $request, $auctionId)
+{
+
+    $auction = Auction::find($auctionId);
+
+    if (!$auction) {
+        return response()->json(['error' => 'Subasta no encontrada.'], 404);
+    }
+
+    $player = Player::find($request->input('id_player'));
+    $winner = User::find($request->input('id_auctioned'));
+
+    if (!$player || !$winner) {
+        return response()->json(['error' => 'Datos del jugador o usuario no válidos.'], 400);
+    }
+
+    $winner->profits -= $auction->amount;
+    $winner->save();
+
+    $player->id_team = $request->input('id_team');
+    $player->save();
+
+    $auction->confirmed = 'yes';
+    $auction->active = 'no';
+    $auction->save();
+
+    return response()->json(['success' => 'Subasta confirmada y jugador transferido.'], 200);
+}
+
 }

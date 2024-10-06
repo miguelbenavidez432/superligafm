@@ -17,7 +17,6 @@ export default function Teams() {
         await axiosClient.get('/teams?all=true')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
-                console.log(teamFilter)
                 setTeams(teamFilter)
             })
             .catch(() => {

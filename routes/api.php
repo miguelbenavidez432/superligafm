@@ -31,22 +31,24 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::post('/transfer', [TransferController::class, 'transfer']);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
     Route::get('playername', [PlayerController::class, 'searchPlayers']);
-    //Route::get('playerstatus', [PlayerController::class, 'filteredStatusPlayers']);
     Route::get('/playerstatus', [PlayerController::class, 'filteredStatusPlayers']);
+    Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
+    Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
 
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
+    Route::post('/transfer', [TransferController::class, 'transfer']);
     Route::apiResource('/traspasos', TransferController::class);
     Route::apiResource('/bets', BetController::class);
 
     Route::apiResource('/clausula_rescision', RescissionController::class);
+    Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
+    Route::put('/cerrar-oferta/{id}', [RescissionController::class, 'closeOffer']);
     Route::apiResource('/singlebet', PlayerBetController::class);
     Route::apiResource('/players', PlayerController::class);
-
 
     Route::apiResource('/season', SeasonController::class);
     Route::get('/seasons/start', [SeasonController::class, 'getSeasonStart']);
@@ -55,13 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);
     Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
     Route::post('/add_auctions', [AuctionController::class, 'addAuction']);
+    Route::post('/auction/confirm/{id}', [AuctionController::class, 'confirmAuction']);
 
-    Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
-    Route::put('/cerrar-oferta/{id}', [RescissionController::class, 'closeOffer']);
-    Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::get('/bet_user', [BetController::class, 'getAllBetUserRows']);
     Route::post('/apuesta/usuario', [BetController::class, 'attach']);
-    Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
     Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
     Route::get('/transferencia_pendiente', [TransferController::class, 'getPendingTransfers']);

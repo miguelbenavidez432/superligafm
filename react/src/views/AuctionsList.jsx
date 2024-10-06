@@ -18,7 +18,7 @@ export default function AuctionsList() {
             hour12: false,
         };
         const date = new Date(dateString);
-        return date.toLocaleString('es-ES', options); // Cambia 'es-ES' al locale que prefieras
+        return date.toLocaleString('es-ES', options);
     };
 
     useEffect(() => {
@@ -40,15 +40,14 @@ export default function AuctionsList() {
             <br />
             <ul>
                 {auctions ? auctions.map(auction => {
-                    const id_player = auction.player ? auction.player.id : '';
                     return (
                         <li key={auction.id}>
                             <label><strong>Jugador :</strong> {auction.player ? auction.player.name : ''} - <strong>Valor inicial:</strong> {auction.amount} - <strong> Hora de inicio:</strong> {formatDate(auction.created_at) + " "} </label>
-                            <Link to={`/subastas/${auction.id_player}`} className="btn-edit">
+                            <Link to={`/subastas/${auction.id_player}`} className="btn-edit mr-2 pb-10">
                                 Hacer una nueva oferta
                             </Link>
                             <br />
-                            <span className="text-white"> - </span>
+                            <br />
                         </li>
                     );
                 }) : 'No se encontraron subastas'}
@@ -56,3 +55,4 @@ export default function AuctionsList() {
         </div>
     );
 }
+
