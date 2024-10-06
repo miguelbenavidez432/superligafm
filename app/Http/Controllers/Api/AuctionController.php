@@ -228,7 +228,6 @@ class AuctionController extends Controller
     $player->id_team = $request->input('id_team');
     $player->save();
 
-
     $auction->confirmed = 'yes';
     $auction->active = 'no';
     $auction->save();
