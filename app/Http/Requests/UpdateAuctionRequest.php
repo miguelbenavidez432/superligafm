@@ -22,8 +22,8 @@ class UpdateAuctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'confirmed' => 'required|string|nullable',
-            'active' => 'required|string|nullable',
+            'confirmed' => 'string|nullable',
+            'active' => 'string|nullable',
         ];
     }
 }
