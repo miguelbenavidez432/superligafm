@@ -147,7 +147,7 @@ const Auctions = () => {
                         <p>Valor inicial de subasta: {selectedPlayer.value}</p>
                         <input
                             type="number"
-                            min={selectedPlayer.value}
+                            min={selectedPlayer.value / 2}
                             value={auctionData.amount}
                             onChange={(e) => setAuctionData({ ...auctionData, amount: parseInt(e.target.value) })}
                         />

@@ -56,7 +56,7 @@ class AuctionController extends Controller
             }
         } else {
             $player = Player::find($data['id_player']);
-            if ($data['amount'] < $player->value) {
+            if ($data['amount'] < ($player->value / 2)) {
                 return response()->json(['message' => 'La oferta inicial debe ser al menos igual al valor del jugador.']);
             }
         }
@@ -123,7 +123,7 @@ class AuctionController extends Controller
         } else {
             $player = Player::find($data['id_player']);
 
-            if ($data['amount'] < $player->value) {
+            if ($data['amount'] < ($player->value / 2)) {
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
