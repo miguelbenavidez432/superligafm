@@ -95,8 +95,6 @@ const AuctionConfirmation = () => {
 
         const filteredTeam = leagueTeams.find(t => t.id === parseInt(secondTeam))
         const userFiltered = users.find(u => u.id === parseInt(filteredTeam.id_user))
-        console.log(userFiltered)
-        console.log(playerSelected)
 
         const updatedUserFiltered = {
             ...userProfit,
@@ -108,7 +106,6 @@ const AuctionConfirmation = () => {
         }
 
         setUserProfit(updatedUserFiltered)
-        console.log(userProfit)
     }
 
     const onSubmit = async () => {

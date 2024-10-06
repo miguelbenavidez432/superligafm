@@ -26,7 +26,6 @@ export default function TransferForm() {
     })
     const { user, setNotification } = useStateContext();
     const navigate = useNavigate();
-    const [errors, setErrors] = useState(null);
 
     useEffect(() => {
         getTeam();
@@ -61,7 +60,6 @@ export default function TransferForm() {
 
     const handleIdEquipoChange = (event) => {
         const equipoId = event.target.value;
-        console.log(equipoId)
         setSecondTeam(equipoId);
         setSelectedJugador('');
     };
@@ -133,7 +131,7 @@ export default function TransferForm() {
         };
 
         axiosClient.post('/transfer', {data: transferData})
-            .then((response) => {
+            .then(() => {
                 setNotification('Transferencia realizada correctamente');
                 navigate('/dashboard');
                 setDatosActualizados([]);
@@ -142,7 +140,7 @@ export default function TransferForm() {
             .catch(error => {
                 const response = error.response;
                 if (response && response.status === 422) {
-                    setErrors(response.data.errors);
+                    setNotification(error.response.data.message);
                 }
             });
     };

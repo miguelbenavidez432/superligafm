@@ -27,7 +27,6 @@ export default function Players() {
             .then(({ data }) => {
                 setLoading(false)
                 setPlayers(data.data)
-                console.log(players)
                 setTotalPages(data.meta.last_page);
             })
             .catch(() => {

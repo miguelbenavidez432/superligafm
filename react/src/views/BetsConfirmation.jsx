@@ -21,7 +21,6 @@ export default function BetsConfirmation() {
         Promise.all([axiosClient.get('/bet_user'), getUsers(), getBets()])
             .then(([betUserData]) => {
                 setBetMatch(betUserData.data.data);
-                console.log(betUserData.data.data);
             })
             .catch((error) => {
                 console.error("Error al obtener las filas de la tabla:", error);

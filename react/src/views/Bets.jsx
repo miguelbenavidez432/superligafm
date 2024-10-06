@@ -46,7 +46,6 @@ export default function Bets() {
         try {
             await axiosClient.put(`/bets/${id}`, betUpdated)
                 .then(() => {
-                    console.log()
                     setNotification('Apuesta eliminada correctamente');
                 })
         } catch (error) {

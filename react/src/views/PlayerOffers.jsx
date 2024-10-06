@@ -159,7 +159,6 @@ const PlayerOffers = () => {
     };
 
     const handleCloseOffer = async (offerId) => {
-        // Buscar la oferta con el ID proporcionado
         const oferta = offers.find(o => o.id === offerId);
 
         if (!oferta) {
@@ -167,7 +166,6 @@ const PlayerOffers = () => {
             return;
         }
 
-        // Crear el objeto con los campos requeridos por la API
         const updateOffer = {
             id: offerId,
             active: 'no',

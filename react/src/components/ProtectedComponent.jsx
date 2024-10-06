@@ -12,7 +12,6 @@ const ProtectedComponent = ({ children }) => {
     useEffect(() => {
         axiosClient.get('/seasons/start')
             .then(response => {
-                console.log(response)
                 const startDate = new Date(response.data.start_date);
                 setSeasonStart(startDate);
 

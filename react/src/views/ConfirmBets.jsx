@@ -25,11 +25,9 @@ export default function ConfirmBets() {
             try {
                 const betResponse = await axiosClient.get(`/bets/${id}`);
                 setBet(betResponse.data.data);
-                console.log(betResponse.data.data);
 
                 const singleBetResponse = await axiosClient.get(`/singlebet/${id}`);
                 setSingleBet(singleBetResponse.data.data);
-                console.log(singleBetResponse.data.data);
 
                 setProfits(user.profits);
             } catch (error) {
@@ -47,7 +45,6 @@ export default function ConfirmBets() {
             amount: profits
         }
         try {
-            console.log(data)
             await axiosClient.post('/apuesta/usuario', data)
                 .then(() => {
                     setNotification('Apuesta agregada correctamente');
@@ -68,13 +65,11 @@ export default function ConfirmBets() {
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
-        console.log(sendData)
         const data ={
             ...sendData,
             amount: profits
         }
         try {
-            console.log(data)
             await axiosClient.post('/apuesta/jugador', data)
                 .then(() => {
                     setNotification('Apuesta agregada correctamente');

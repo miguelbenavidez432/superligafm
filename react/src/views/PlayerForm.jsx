@@ -10,7 +10,7 @@ import axiosClient from "../axios";
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
         name: '',
-        id_team: 61, // Equipo predeterminado
+        id_team: 61,
         status: '',
         value: '',
         ca: '',
@@ -25,24 +25,23 @@ export default function PlayerForm() {
     const [team, setTeam] = useState([]);
     const { user } = useStateContext();
 
-    // Si hay un ID, cargar el jugador y los equipos
+
     useEffect(() => {
         const fetchPlayers = () => {
             setLoading(true);
             axiosClient.get('/players?all=true')
                 .then(({ data }) => {
                     setLoading(false);
-                    // Aquí filtras el jugador por el id de los params
+
                     const filteredPlayer = data.data.find(player => player.id === parseInt(id));
 
                     if (filteredPlayer) {
                         setPlayers(filteredPlayer);
-                        console.log(filteredPlayer); // Muestra el jugador encontrado
                     } else {
                         console.log('Jugador no encontrado');
                     }
 
-                    getTeam(); // Llamas a getTeam después de obtener los datos
+                    getTeam();
                 })
                 .catch(() => {
                     setLoading(false);
@@ -51,9 +50,9 @@ export default function PlayerForm() {
         };
 
         if (id) {
-            fetchPlayers(); // Llamamos a la función que trae todos los jugadores y busca el que tiene el id
+            fetchPlayers();
         } else {
-            getTeam(); // Obtener equipos si no hay un jugador cargado
+            getTeam();
         }
     }, [id]);
 
@@ -72,13 +71,11 @@ export default function PlayerForm() {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        // Si el jugador es liberado, asignarle el equipo predeterminado (id_team 61)
         if (players.status === 'liberado') {
             setPlayers({ ...players, id_team: 61 });
         }
 
         if (players.id) {
-            // Actualizar jugador
             axiosClient.put(`/players/${players.id}`, players)
                 .then(() => {
                     setNotification('Jugador actualizado satisfactoriamente');
@@ -91,7 +88,6 @@ export default function PlayerForm() {
                     }
                 });
         } else {
-            // Crear nuevo jugador
             axiosClient.post(`/players/`, players)
                 .then(() => {
                     setNotification('Jugador creado satisfactoriamente');
