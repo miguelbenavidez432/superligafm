@@ -124,7 +124,6 @@ export default function Dashboard() {
     const [users, setUsers] = useState(null);
     const [teams, setTeams] = useState(null);
     const [seasonId, setSeasonId] = useState(null);
-    const [transfers, setTransfers] = useState([]);
     const [auctions, setAuctions] = useState([]);
     const [executedClauses, setExecutedClauses] = useState([]);
     const [receivedClauses, setReceivedClauses] = useState([]);
@@ -133,11 +132,11 @@ export default function Dashboard() {
     const [pendingTransfers, setPendingTransfers] = useState([]);
 
     useEffect(() => {
-        fetchPendingTransfers(); // Llamar a la función para obtener transferencias pendientes
+        fetchPendingTransfers();
         getCdr();
         getAuctions();
         getUsers();
-    }, [seasonId]); // Cambia esta línea a seasonId para que se ejecute cada vez que cambie la temporada
+    }, [seasonId]);
 
     useEffect(() => {
         fetchSeasons();
@@ -291,7 +290,6 @@ export default function Dashboard() {
                             const teamNameToShow = teamName ? teamName.name : " ";
                             return (
                                 <li key={clause.id}>
-                                    {console.log(clause)}
                                 </li>
                             )
                         })}

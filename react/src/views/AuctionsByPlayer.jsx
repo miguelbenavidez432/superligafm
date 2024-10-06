@@ -114,6 +114,7 @@ export default function PlayerAuctions() {
             if (response.status === 200) {
                 alert('Subasta confirmada y jugador transferido.');
                 getAuctionsByPlayer();
+                navigate('/subastas');
             } else {
                 alert('Error al confirmar la subasta.');
             }
@@ -131,7 +132,6 @@ export default function PlayerAuctions() {
                     const id_auctioner = auction.auctioneer && auction.auctioneer.id
                     const filteredTeam = teams.find(team => team.user && team.user.id == id_auctioner)
                     const id_team = filteredTeam?filteredTeam.id:''
-                    console.log(filteredTeam)
                     return(
                     <li key={auction.id}>
                         <strong>{auction.amount}</strong> - Subastado por: {auction.auctioneer && auction.auctioneer.name} - Hora: {formatDate(auction.created_at)}<strong> </strong><button

@@ -19,7 +19,7 @@ const Auctions = () => {
         created_by: user.id,
         status: 'active',
     });
-    const [auctionEndTime, setAuctionEndTime] = useState(null);  // Para el countdown
+    const [auctionEndTime, setAuctionEndTime] = useState(null);
     const [selectedTeam, setSelectedTeam] = useState({});
     const [teamPlayers, setTeamPlayers] = useState([]);
 
@@ -72,26 +72,21 @@ const Auctions = () => {
             id_team: player.id_team ? player.id_team.id : '',
             auctioned_by: user.id,
             created_by: user.id,
-
         });
     };
 
     const handleAuctionSubmit = (e) => {
         e.preventDefault();
-        console.log(auctionData)
         axiosClient.post('/auctions', auctionData)
             .then((response) => {
                 setNotification('Subasta creada exitosamente');
 
-                // Establece el tiempo de finalización de la subasta
                 const auctionCreatedTime = new Date(response.data.created_at).getTime();
-                const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000); // Añadir 12 horas en milisegundos
+                const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000);
                 setAuctionEndTime(endTime);
 
-                // Almacenar el tiempo de finalización en localStorage
                 localStorage.setItem('auctionEndTime', endTime);
 
-                console.log(auctionData)
                 setAuctionData({
                     player_id: '',
                     amount: 0,

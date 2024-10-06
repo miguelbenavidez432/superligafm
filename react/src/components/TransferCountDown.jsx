@@ -17,8 +17,6 @@ const TransferCountDown = ({ children }) => {
         axiosClient.get('/seasons/start')
             .then(response => {
                 const startDate = new Date(response.data.start_date);
-
-                // Calcula la fecha de finalización añadiendo 4 horas
                 const marketEnd = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
                 setMarketEndTime(marketEnd);
 

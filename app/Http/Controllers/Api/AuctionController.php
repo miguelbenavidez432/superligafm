@@ -26,9 +26,9 @@ class AuctionController extends Controller
     {
         if ($request->query("all") == 'true') {
 
-            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("created_at", "desc")->get());
+            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("id", "desc")->get());
         } else {
-            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("created_at", "desc")->paginate(50));
+            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("id", "desc")->paginate(50));
         }
         ;
     }

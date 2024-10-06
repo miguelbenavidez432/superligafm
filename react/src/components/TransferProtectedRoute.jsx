@@ -12,11 +12,11 @@ const MarketProtectedRoute = ({ children }) => {
         axiosClient.get('/seasons/start')
             .then(response => {
                 const startDate = new Date(response.data.start_date);
-                const marketEnd = new Date(startDate.getTime() + 4 * 60 * 60 * 1000); // Añade 4 horas
+                const marketEnd = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
 
                 const now = new Date();
                 if (now >= startDate && now <= marketEnd) {
-                    setMarketActive(true); // Mercado está activo
+                    setMarketActive(true);
                 }
             })
             .catch(error => {
@@ -28,14 +28,14 @@ const MarketProtectedRoute = ({ children }) => {
     }, []);
 
     if (loading) {
-        return <p>Loading...</p>; // O un spinner de carga
+        return <p>Loading...</p>;
     }
 
     if (!marketActive) {
-        return <Navigate to="/season-countdown" />; // Redirige a una página de cuenta regresiva o mensaje de mercado cerrado
+        return <Navigate to="/season-countdown" />;
     }
 
-    return children; // Si el mercado está activo, muestra los componentes hijos
+    return children;
 };
 
 export default MarketProtectedRoute;

@@ -44,7 +44,6 @@ export default function CreateBets() {
 
     const onSubmit = (e) => {
         e.preventDefault()
-        console.log(bet)
         axiosClient.post('/bets', bet)
             .then(() => {
                 setNotification('Apuesta de partido creada correctamente')
@@ -65,7 +64,6 @@ export default function CreateBets() {
             ...singleBet,
             created_by: user.id,
         };
-        console.log(data)
         axiosClient.post('/singlebet', data)
             .then(() => {
                 setNotification('Apuesta de jugador creada correctamente')
@@ -153,8 +151,8 @@ export default function CreateBets() {
                     placeholder="Colocar cuota con el formato x.xx"
                     onChange={e => setSingleBet({ ...singleBet, card_odd: parseFloat(e.target.value) })} />
                 <br />
-                <button 
-                className="btn-add" 
+                <button
+                className="btn-add"
                 type="submit"
                 onClick={handlerOnSubmit}>Confirmar Apuesta</button>
             </form>
