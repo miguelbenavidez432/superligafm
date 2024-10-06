@@ -9,21 +9,27 @@ import { useStateContext } from "../context/ContextProvider";
 export default function PlayerAuctions() {
 
     const { id } = useParams();
-    const { user, setNotification } = useStateContext();
     const [name, setName] = useState([]);
     const [auctions, setAuctions] = useState([]);
     const [newBid, setNewBid] = useState(0);
-    const [auctionData, setAuctionData] = useState({
-        id_player: parseInt(id),
-        value: 0,
-        created_by: user.id,
-        status: 'active',
-        auctioned_by: user.id,
-    });
+    const [teams, setTeams] = useState([]);
+
 
     useEffect(() => {
         getAuctionsByPlayer();
+        getTeam();
     }, []);
+
+    const getTeam = async () => {
+        await axiosClient.get('/teams?all=true')
+            .then(({ data }) => {
+                const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
+                setTeams(teamFilter)
+            })
+            .catch(() => {
+                setLoading(false)
+            })
+    }
 
     const getAuctionsByPlayer = async () => {
         try {
@@ -41,7 +47,6 @@ export default function PlayerAuctions() {
         e.preventDefault();
         const lastAuction = auctions[0];
 
-        // Verifica que lastAuction tenga datos
         if (!lastAuction) {
             alert('No hay subastas disponibles para este jugador.');
             return;
@@ -52,7 +57,6 @@ export default function PlayerAuctions() {
             return;
         }
 
-        // Actualiza auctionData correctamente antes de enviar
         const updatedAuctionData = {
             id_player: parseInt(id),
             id_team: lastAuction.id_team,
@@ -66,17 +70,14 @@ export default function PlayerAuctions() {
             const response = await axiosClient.post('/auctions', updatedAuctionData);
             setNotification('Subasta creada exitosamente');
 
-            // Establece el tiempo de finalización de la subasta
             const auctionCreatedTime = new Date(response.data.created_at).getTime();
-            const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000); // Añadir 12 horas en milisegundos
+            const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000);
             setAuctionEndTime(endTime);
 
-            // Almacenar el tiempo de finalización en localStorage
             localStorage.setItem('auctionEndTime', endTime);
 
-            // Reinicia el formulario
-            setNewBid(0); // Reinicia el valor de la oferta
-            getAuctionsByPlayer(); // Recargar las subastas
+            setNewBid(0);
+            getAuctionsByPlayer();
         } catch (error) {
             if (error.response && error.response.data.message) {
                 setNotification(error.response.data.message);
@@ -87,47 +88,59 @@ export default function PlayerAuctions() {
         }
     };
 
+    const formatDate = (dateString) => {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        };
+        const date = new Date(dateString);
+        return date.toLocaleString('es-ES', options);
+    };
 
-    const handleAuctionSubmit = (e) => {
-        e.preventDefault();
-        console.log(auctionData)
-        axiosClient.post('/auctions', auctionData)
-            .then((response) => {
-                setNotification('Subasta creada exitosamente');
+    const confirmAuction = async (auctionId, id_player, id_auctioned, id_team) => {
 
-                // Establece el tiempo de finalización de la subasta
-                const auctionCreatedTime = new Date(response.data.created_at).getTime();
-                const endTime = auctionCreatedTime + (12 * 60 * 60 * 1000); // Añadir 12 horas en milisegundos
-                setAuctionEndTime(endTime);
-
-                // Almacenar el tiempo de finalización en localStorage
-                localStorage.setItem('auctionEndTime', endTime);
-
-                // Inicia el countdown usando FormKit Tempo
-                //startCountdown(endTime);
-
-                // Reinicia el formulario
-                setAuctionData({
-                    player_id: '',
-                    amount: 0,
-                    created_by: user.id,
-                    status: 'active',
-                });
-            })
-            .catch((error) => {
-                console.error(error);
+        try {
+            const response = await axiosClient.post(`/auction/confirm/${auctionId}`, {
+                id_team,
+                id_player,
+                id_auctioned,
             });
+
+            if (response.status === 200) {
+                alert('Subasta confirmada y jugador transferido.');
+                getAuctionsByPlayer();
+            } else {
+                alert('Error al confirmar la subasta.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error al confirmar la subasta.');
+        }
     };
 
     return (
         <div className="player-auctions">
             {name ? `Subastas del jugador: ${name}` : 'Cargando nombre del jugador...'}
             <ul>
-                {auctions.map(auction => (
+                {auctions.map(auction => {
+                    const id_auctioner = auction.auctioneer && auction.auctioneer.id
+                    const filteredTeam = teams.find(team => team.user && team.user.id == id_auctioner)
+                    const id_team = filteredTeam?filteredTeam.id:''
+                    console.log(filteredTeam)
+                    return(
                     <li key={auction.id}>
-                        {auction.amount} - Subastado por: {auction.auctioneer && auction.auctioneer.name}
+                        <strong>{auction.amount}</strong> - Subastado por: {auction.auctioneer && auction.auctioneer.name} - Hora: {formatDate(auction.created_at)}<strong> </strong><button
+                            onClick={() => confirmAuction(auction.id, auction.player && auction.player.id, auction.auctioneer && auction.auctioneer.id, id_team)}
+                            className="btn-add mr-2 mb-1">
+                            Confirmar Ganador
+                        </button>
                     </li>
-                ))}
+                )})}
             </ul>
 
             <form onSubmit={handleNewBidSubmit}>

@@ -8,7 +8,6 @@ use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Rescission;
-use App\Models\Team;
 use App\Models\Transfer;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -92,7 +91,7 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
         $player->update($data);
-        $player->load('team'); // Carga la relación team después de la actualización
+        $player->load('team');
         return new PlayerResource($player);
     }
 
@@ -122,7 +121,7 @@ class PlayerController extends Controller
 
         $players = Player::query()
             ->where('name', 'LIKE', '%' . $name . '%')
-            ->with('team') // Incluye la relación team
+            ->with('team')
             ->get();
 
         return PlayerResource::collection($players);
@@ -145,17 +144,15 @@ class PlayerController extends Controller
 
     public function filteredStatusPlayers(Request $request)
     {
-        $status = $request->query('status');  // Aquí capturamos el parámetro 'status' de la URL.
+        $status = $request->query('status');
 
-        $players = Player::where('status', $status) // Buscamos jugadores con ese estado.
-            ->with('team') // Cargamos la relación con el equipo.
+        $players = Player::where('status', $status)
+            ->with('team')
             ->orderBy('ca', 'desc')
             ->get();
 
-        return PlayerResource::collection($players); // Devolvemos los resultados.
+        return PlayerResource::collection($players);
     }
-
-
 
     public function calcularCostoBloqueo(Player $player)
     {
