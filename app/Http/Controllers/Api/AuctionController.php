@@ -149,13 +149,15 @@ class AuctionController extends Controller
     public function getLastAuctions()
     {
         $lastAuctions = Auction::select('id_player', DB::raw('MAX(id) as lastAuctionID'))
-            ->groupBy('id_player')
-            ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
-            ->get()
-            ->map(function (Auction $auction) {
-                return Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->find($auction->lastAuctionID);
-            });
-        return response()->json($lastAuctions, 200);
+        ->groupBy('id_player')
+        ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->map(function (Auction $auction) {
+            return Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->find($auction->lastAuctionID);
+        });
+
+    return response()->json($lastAuctions, 200);
     }
 
     public function placeBid(Request $request, Auction $auction)
