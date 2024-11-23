@@ -172,23 +172,26 @@ export default function Plantel() {
                                         <td>{p.status}</td>
                                         <td>
                                             {
-                                                /*{<Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>*/
-
-                                                p.status == 'bloqueado' ? '' : <button className="btn-add" onClick={() => {
-                                                    if (window.confirm('¿Estás seguro de que deseas bloquear a este jugador?')) {
-                                                        handleBlockPlayer(p);
-                                                    }
-                                                }}>Bloquear</button>
-                                                &&
-                                                <button className="btn-alert" onClick={() => {
-                                                    if (window.confirm('¿Estás seguro de que deseas liberar a este jugador?')) {
-                                                        handleReleasePlayer(p);
-                                                    }
-                                                }}>Bloquear</button>
-                                                /*} */
+                                                 /*{<Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>*/
+                                                p.status === 'bloqueado'
+                                                    ? ''
+                                                    : (
+                                                        <>
+                                                            <button className="btn-add mx-1" onClick={() => {
+                                                                if (window.confirm('¿Estás seguro de que deseas bloquear a este jugador?')) {
+                                                                    handleBlockPlayer(p);
+                                                                }
+                                                            }}>Bloquear</button>
+                                                            <button className="btn-delete mx-1" onClick={() => {
+                                                                if (window.confirm('¿Estás seguro de que deseas liberar a este jugador?')) {
+                                                                    handleReleasePlayer(p);
+                                                                }
+                                                            }}>Liberar</button>
+                                                        </>
+                                                    )
                                             }
-
                                         </td>
+
                                     </tr>
                                 )) :
                                     <tr>

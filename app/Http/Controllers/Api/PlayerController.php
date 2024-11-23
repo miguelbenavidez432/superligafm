@@ -232,7 +232,6 @@ class PlayerController extends Controller
             return response()->json(['error' => 'Jugador no encontrado'], 404);
         }
 
-
         $team = $jugador->team;
 
         if (!$team) {
