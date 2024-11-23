@@ -151,7 +151,7 @@ class AuctionController extends Controller
         $lastAuctions = Auction::select('id_player', DB::raw('MAX(id) as lastAuctionID'))
         ->groupBy('id_player')
         ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
-        ->where('active' , 'no')
+        ->where('active' , 'yes')
         ->orderBy('created_at', 'desc')
         ->get()
         ->map(function (Auction $auction) {
