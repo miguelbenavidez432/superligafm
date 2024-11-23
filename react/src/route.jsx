@@ -35,6 +35,7 @@ import TransferList from './views/TransferList';
 import SeasonCountdown from './components/SeasonCountDown';
 import ProtectedComponent from './components/ProtectedComponent';
 import TransferCountDown from './components/TransferCountDown';
+import DelayedProtectedComponent from './components/DelayedProtectedComponent';
 
 const router = createBrowserRouter([
     {
@@ -76,7 +77,10 @@ const router = createBrowserRouter([
             {
                 path: '/transfer',
                 element: (
-                    <TransferForm />
+                    <DelayedProtectedComponent delay={4} >
+                        <TransferForm />
+                    </DelayedProtectedComponent>
+
                 )
             },
             {
@@ -94,8 +98,9 @@ const router = createBrowserRouter([
             {
                 path: '/clausula_rescision',
                 element: (
-
-                    <Announcement />
+                    <ProtectedComponent>
+                        <Announcement />
+                    </ProtectedComponent>
 
                 )
             },
@@ -142,8 +147,9 @@ const router = createBrowserRouter([
             {
                 path: '/crear_subasta',
                 element: (
-
-                    <Auctions />
+                    <DelayedProtectedComponent delay={4} >
+                        <Auctions />
+                    </DelayedProtectedComponent>
                 )
             },
             {
