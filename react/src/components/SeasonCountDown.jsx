@@ -8,26 +8,30 @@ const SeasonCountdown = ({ startDate }) => {
     const [timeLeft, setTimeLeft] = useState({});
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        const calculateTimeLeft = () => {
             const now = new Date();
             const timeDifference = startDate - now;
 
             if (timeDifference <= 0) {
-                clearInterval(interval);
-            } else {
-                setTimeLeft({
-                    days: Math.floor(timeDifference / (1000 * 60 * 60 * 24)),
-                    hours: Math.floor((timeDifference / (1000 * 60 * 60)) % 24),
-                    minutes: Math.floor((timeDifference / (1000 * 60)) % 60),
-                    seconds: Math.floor((timeDifference / 1000) % 60),
-                });
+                return {};
             }
+
+            return {
+                days: Math.floor(timeDifference / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((timeDifference / (1000 * 60 * 60)) % 24),
+                minutes: Math.floor((timeDifference / (1000 * 60)) % 60),
+                seconds: Math.floor((timeDifference / 1000) % 60),
+            };
+        };
+
+        const interval = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
         }, 1000);
 
         return () => clearInterval(interval);
     }, [startDate]);
 
-    if (timeLeft.days <= 0 && timeLeft.hours <= 0 && timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
+    if (!timeLeft.days && !timeLeft.hours && !timeLeft.minutes && !timeLeft.seconds) {
         return <p className="text-green-500 font-bold text-lg">El mercado acaba de iniciar!</p>;
     }
 

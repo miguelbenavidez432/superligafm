@@ -8,6 +8,7 @@ const ProtectedComponent = ({ children }) => {
     const [seasonActive, setSeasonActive] = useState(false);
     const [seasonStart, setSeasonStart] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         axiosClient.get('/seasons/start')
@@ -22,6 +23,7 @@ const ProtectedComponent = ({ children }) => {
             })
             .catch(error => {
                 console.error("Error fetching season data", error);
+                setError("Error al cargar la información de la temporada");
             })
             .finally(() => {
                 setLoading(false);
@@ -32,6 +34,10 @@ const ProtectedComponent = ({ children }) => {
         return <p>Cargando...</p>;
     }
 
+    if (error) {
+        return <p>{error}</p>;
+    }
+
     if (!seasonActive) {
         return <SeasonCountdown startDate={seasonStart} />;
     }
@@ -40,3 +46,4 @@ const ProtectedComponent = ({ children }) => {
 };
 
 export default ProtectedComponent;
+
