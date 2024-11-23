@@ -206,7 +206,6 @@ class PlayerController extends Controller
             return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 6 jugadores'], 400);
         }
 
-        // Obtengo el usuario que maneja el equipo
         $usuarioManejador = $team->user;
 
         if (!$usuarioManejador) {
@@ -222,5 +221,28 @@ class PlayerController extends Controller
         $jugador->save();
 
         return response()->json(['success' => 'Jugador bloqueado', 'costo' => $costoBloqueo]);
+    }
+
+    public function releasePlayer(Request $request)
+    {
+        $usuarioAutenticado = auth()->user();
+        $jugador = Player::find($request->id);
+
+        if (!$jugador) {
+            return response()->json(['error' => 'Jugador no encontrado'], 404);
+        }
+
+
+        $team = $jugador->team;
+
+        if (!$team) {
+            return response()->json(['error' => 'El equipo no existe'], 404);
+        }
+
+        $jugador->team = 61;
+        $jugador->status = 'liberado';
+        $jugador->save();
+
+        return response()->json(['success' => 'Jugador liberado']);
     }
 }

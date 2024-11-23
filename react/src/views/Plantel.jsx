@@ -13,7 +13,7 @@ export default function Plantel() {
     const [team, setTeam] = useState(null);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { user , setNotification} = useStateContext();
+    const { user, setNotification } = useStateContext();
     const [bestPlayersCA, setBestPlayersCA] = useState(null);
     const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
     const [playersOver20Count, setPlayersOver20Count] = useState(0);
@@ -106,8 +106,21 @@ export default function Plantel() {
     const handleBlockPlayer = async (player) => {
         setLoading(true);
         try {
-            await axiosClient.post(`/bloquear_jugador`, {id: player.id});
-            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "bloqueado" } : p));49267266
+            await axiosClient.post(`/bloquear_jugador`, { id: player.id });
+            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "bloqueado" } : p));
+            countBlockedPlayers();
+        } catch (error) {
+            console.error('Error al bloquear jugador:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleReleasePlayer = async (player) => {
+        setLoading(true);
+        try {
+            await axiosClient.post(`/liberar_jugador`, { id: player.id });
+            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "liberado" } : p));
             countBlockedPlayers();
         } catch (error) {
             console.error('Error al bloquear jugador:', error);
@@ -158,19 +171,31 @@ export default function Plantel() {
                                         <td>{p.value}</td>
                                         <td>{p.status}</td>
                                         <td>
-                                            {/* <Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>
                                             {
-                                                p.status == 'bloqueado' ? '' : <button className="btn-add" onClick={() => handleBlockPlayer(p)}>Bloquear</button>
-                                            } */}
+                                                /*{<Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>*/
+
+                                                p.status == 'bloqueado' ? '' : <button className="btn-add" onClick={() => {
+                                                    if (window.confirm('¿Estás seguro de que deseas bloquear a este jugador?')) {
+                                                        handleBlockPlayer(p);
+                                                    }
+                                                }}>Bloquear</button>
+                                                &&
+                                                <button className="btn-alert" onClick={() => {
+                                                    if (window.confirm('¿Estás seguro de que deseas liberar a este jugador?')) {
+                                                        handleReleasePlayer(p);
+                                                    }
+                                                }}>Bloquear</button>
+                                                /*} */
+                                            }
 
                                         </td>
                                     </tr>
                                 )) :
-                                <tr>
-                                    <td colSpan="8" className="text-center">
-                                        <strong>No tienes equipo asignado. Prueba presionando el botón Cargar plantel</strong>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td colSpan="8" className="text-center">
+                                            <strong>No tienes equipo asignado. Prueba presionando el botón Cargar plantel</strong>
+                                        </td>
+                                    </tr>
                             }
                         </tbody>
                     }

@@ -36,6 +36,7 @@ export default function PlayerForm() {
                     const filteredPlayer = data.data.find(player => player.id === parseInt(id));
 
                     if (filteredPlayer) {
+                        getTeam();
                         setPlayers(filteredPlayer);
                     } else {
                         console.log('Jugador no encontrado');
@@ -51,6 +52,7 @@ export default function PlayerForm() {
 
         if (id) {
             fetchPlayers();
+            getTeam();
         } else {
             getTeam();
         }
@@ -127,7 +129,7 @@ export default function PlayerForm() {
                             type="text"
                         />
                         <select
-                            value={players.id_team}
+                            value={players.id_team.id}
                             onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}
                         >
                             {team.map((t, index) => (
@@ -176,7 +178,66 @@ export default function PlayerForm() {
                     </form>
                 ) : (
                     <div>
-                        <h1>NO PUEDES ACTUALIZAR EL JUGADOR PORQUE NO TIENES UN EQUIPO ASIGNADO</h1>
+                        <form onSubmit={onSubmit}>
+                        <input
+                            value={players.name}
+                            onChange={e => setPlayers({ ...players, name: e.target.value })}
+                            placeholder="Nombre"
+                            type="text"
+                            disabled
+                        />
+                        <select
+                            value={players.id_team.id}
+                            onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}
+                        >
+                            {team.map((t, index) => (
+                                <option value={t.id} key={index}>
+                                    {t.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        <span>Estado</span>
+                        <select
+                            value={players.status}
+                            onChange={e => setPlayers({ ...players, status: e.target.value })}
+                        >
+                            <option value=''></option>
+                            <option value="liberado">Liberado</option>
+                            <option value="registrado">Registrado</option>
+                            <option value="">Sin modificar</option>
+                        </select>
+
+                        <input
+                            value={players.age}
+                            onChange={e => setPlayers({ ...players, age: parseInt(e.target.value) })}
+                            placeholder="Edad"
+                            type="text"
+                            disabled
+                        />
+                        <input
+                            value={players.ca}
+                            onChange={e => setPlayers({ ...players, ca: parseInt(e.target.value) })}
+                            placeholder="CA"
+                            type="text"
+                            disabled
+                        />
+                        <input
+                            value={players.pa}
+                            onChange={e => setPlayers({ ...players, pa: parseInt(e.target.value) })}
+                            placeholder="PA"
+                            type="text"
+                            disabled
+                        />
+                        <input
+                            value={players.value}
+                            onChange={e => setPlayers({ ...players, value: parseInt(e.target.value) })}
+                            placeholder="Valor"
+                            type="text"
+                            disabled
+                        />
+                        <button className="btn">Guardar cambios</button>
+                    </form>
                     </div>
                 )}
             </div>
