@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
+    Route::post('/liberar_jugador', [PlayerController::class, 'releasePlayer']);
     Route::get('playername', [PlayerController::class, 'searchPlayers']);
     Route::get('/playerstatus', [PlayerController::class, 'filteredStatusPlayers']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
