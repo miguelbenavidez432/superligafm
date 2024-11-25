@@ -17,7 +17,7 @@ const Auctions = () => {
         id_player: '',
         value: 0,
         created_by: user.id,
-        status: 'active',
+        active: 'yes',
     });
     const [auctionEndTime, setAuctionEndTime] = useState(null);
     const [selectedTeam, setSelectedTeam] = useState({});

@@ -1,25 +1,34 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import axiosClient from "../axios";
 
 const DelayedProtectedComponent = ({ children, delay }) => {
     const [isActive, setIsActive] = useState(false);
     const [seasonStart, setSeasonStart] = useState(null);
+    const [timeLeft, setTimeLeft] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         axiosClient.get('/seasons/start')
             .then(response => {
-                const startDate = new Date(response.data.start_date);
-                setSeasonStart(startDate);
+                const startDateUTC = new Date(response.data.start_date); // UTC desde la DB
+                setSeasonStart(startDateUTC);
 
-                const now = new Date();
-                const adjustedStartDate = new Date(startDate.getTime() + delay * 60 * 60 * 1000);
+                const adjustedStartDate = new Date(startDateUTC.getTime() + delay * 60 * 60 * 1000);
+                calculateTimeLeft(adjustedStartDate);
 
-                if (now >= adjustedStartDate) {
+                const nowUTC = new Date(new Date().toISOString()); // UTC actual
+                if (nowUTC >= adjustedStartDate) {
                     setIsActive(true);
+                } else {
+                    const interval = setInterval(() => calculateTimeLeft(adjustedStartDate), 1000);
+                    return () => clearInterval(interval);
                 }
             })
             .catch(error => {
@@ -31,20 +40,55 @@ const DelayedProtectedComponent = ({ children, delay }) => {
             });
     }, [delay]);
 
+    const calculateTimeLeft = (adjustedStartDate) => {
+        const now = new Date();
+        const timeDifference = adjustedStartDate - now;
+
+        if (timeDifference <= 0) {
+            setIsActive(true);
+            setTimeLeft({});
+            return;
+        }
+
+        setTimeLeft({
+            days: Math.floor(timeDifference / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((timeDifference / (1000 * 60 * 60)) % 24),
+            minutes: Math.floor((timeDifference / (1000 * 60)) % 60),
+            seconds: Math.floor((timeDifference / 1000) % 60),
+        });
+    };
+
     if (loading) {
-        return <p>Cargando...</p>;
+        return (
+            <div className="flex flex-col items-center p-6 bg-gray-900 text-white rounded-lg shadow-lg">
+                <p className="text-xl font-bold animate-pulse">Cargando...</p>
+            </div>
+        );
     }
 
     if (error) {
-        return <p>{error}</p>;
+        return (
+            <div className="flex flex-col items-center p-6 bg-gray-900 text-white rounded-lg shadow-lg">
+                <p className="text-red-500 font-bold">{error}</p>
+            </div>
+        );
     }
 
     if (!isActive) {
-        return <p>El acceso a este contenido se habilitará a las {new Date(seasonStart.getTime() + delay * 60 * 60 * 1000).toLocaleTimeString()}.</p>;
+        return (
+            <div className="flex flex-col items-center p-6 bg-gray-900 text-white rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">Acceso restringido. El contenido estará disponible en:</h2>
+                <p className="text-xl">
+                    <span className="font-mono text-yellow-400">{timeLeft.days}</span> days,{' '}
+                    <span className="font-mono text-yellow-400">{timeLeft.hours}</span> hours,{' '}
+                    <span className="font-mono text-yellow-400">{timeLeft.minutes}</span> minutes,{' '}
+                    <span className="font-mono text-yellow-400">{timeLeft.seconds}</span> seconds
+                </p>
+            </div>
+        );
     }
 
     return <>{children}</>;
 };
 
 export default DelayedProtectedComponent;
-

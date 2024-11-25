@@ -177,16 +177,16 @@ export default function Plantel() {
                                                     ? ''
                                                     : (
                                                         <>
-                                                            <button className="btn-add mx-1" onClick={() => {
+                                                            {/* <button className="btn-add mx-1" onClick={() => {
                                                                 if (window.confirm('¿Estás seguro de que deseas bloquear a este jugador?')) {
                                                                     handleBlockPlayer(p);
                                                                 }
-                                                            }}>Bloquear</button>
-                                                            <button className="btn-delete mx-1" onClick={() => {
+                                                            }}>Bloquear</button> */}
+                                                            {/* <button className="btn-delete mx-1" onClick={() => {
                                                                 if (window.confirm('¿Estás seguro de que deseas liberar a este jugador?')) {
                                                                     handleReleasePlayer(p);
                                                                 }
-                                                            }}>Liberar</button>
+                                                            }}>Liberar</button> */}
                                                         </>
                                                     )
                                             }
