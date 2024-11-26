@@ -3,8 +3,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
+
 
 export default function PlayerAuctions() {
 
@@ -13,6 +14,7 @@ export default function PlayerAuctions() {
     const [auctions, setAuctions] = useState([]);
     const [newBid, setNewBid] = useState(0);
     const [teams, setTeams] = useState([]);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
