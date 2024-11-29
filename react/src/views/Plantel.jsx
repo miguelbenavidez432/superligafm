@@ -129,6 +129,18 @@ export default function Plantel() {
         }
     };
 
+    const handleListPlayer = async (player) => {
+        setLoading(true);
+        try {
+            await axiosClient.post(`/registrar_jugador`, { id: player.id });
+            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "registrado" } : p));
+        } catch (error) {
+            console.error('Error al registrar jugador:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
@@ -173,7 +185,7 @@ export default function Plantel() {
                                         <td>
                                             {
                                                  /*{<Link className="btn-edit" to={`/players/${p.id}`}>Editar estado</Link>*/
-                                                p.status === 'bloqueado'
+                                                p.status === 'nada'
                                                     ? ''
                                                     : (
                                                         <>
@@ -187,6 +199,11 @@ export default function Plantel() {
                                                                     handleReleasePlayer(p);
                                                                 }
                                                             }}>Liberar</button> */}
+                                                            { <button className="btn-add mx-1" onClick={() => {
+                                                                if (window.confirm('¿Estás seguro de que deseas registrar a este jugador? Una vez registrado no se puede quitar')) {
+                                                                    handleListPlayer(p);
+                                                                }
+                                                            }}>Registrar</button> }
                                                         </>
                                                     )
                                             }
