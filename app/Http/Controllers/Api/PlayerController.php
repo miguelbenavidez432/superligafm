@@ -244,4 +244,26 @@ class PlayerController extends Controller
 
         return response()->json(['success' => 'Jugador liberado']);
     }
+
+    public function listPlayer(Request $request)
+    {
+        $usuarioAutenticado = auth()->user();
+        $jugador = Player::find($request->id);
+
+        if (!$jugador) {
+            return response()->json(['error' => 'Jugador no encontrado'], 404);
+        }
+
+        $team = $jugador->team;
+
+        if (!$team) {
+            return response()->json(['error' => 'El equipo no existe'], 404);
+        }
+
+        //$jugador->team = $jugador->team;
+        $jugador->status = 'registrado';
+        $jugador->save();
+
+        return response()->json(['success' => 'Jugador liberado']);
+    }
 }
