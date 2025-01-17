@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BetController;
+use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\RescissionController;
 use App\Http\Controllers\Api\SeasonController;
 use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\TournamentController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuctionController;
@@ -55,9 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/season', SeasonController::class);
     Route::get('/seasons/start', [SeasonController::class, 'getSeasonStart']);
     Route::apiResource('/auctions', AuctionController::class);
-    Route::get('/auction/last', [AuctionController::class,'getLastAuctions']);
+    Route::get('/auction/last', [AuctionController::class, 'getLastAuctions']);
     Route::post('/auctions/{auction}/bid', [AuctionController::class, 'placeBid']);
-    Route::get('/auctions/player/{playerId}', [AuctionController::class,'filteredAuctions']);
+    Route::get('/auctions/player/{playerId}', [AuctionController::class, 'filteredAuctions']);
     Route::post('/add_auctions', [AuctionController::class, 'addAuction']);
     Route::post('/auction/confirm/{id}', [AuctionController::class, 'confirmAuction']);
 
@@ -67,6 +69,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
     Route::get('/transferencia_pendiente', [TransferController::class, 'getPendingTransfers']);
     Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
+
+    Route::apiResource('tournaments', TournamentController::class);
+    Route::apiResource('matches', GameController::class);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
