@@ -75,7 +75,7 @@ const PlayerOffers = () => {
     const checkOffersAvailability = (playerOffers) => {
         if (playerOffers && playerOffers.length > 0) {
             const firstOfferDate = moment(playerOffers[0].created_at);
-            const expirationDate = firstOfferDate.add(6, 'hours');
+            const expirationDate = firstOfferDate.add(8, 'hours');
             const currentDate = moment();
             if (currentDate.isAfter(expirationDate)) {
                 setIsAvailable(true);
@@ -118,7 +118,8 @@ const PlayerOffers = () => {
 
         const updatedPlayer = {
             ...player,
-            id_team: teamTo.id
+            id_team: teamTo.id,
+            status: 'bloqueado',
         };
 
         const updatedUserProfit = {
@@ -227,7 +228,7 @@ const PlayerOffers = () => {
                     <li>No hay ofertas disponibles para este jugador en este momento.</li>
                 )}
             </ul>) : (
-                <p>Las ofertas estarán disponibles después de 6 horas de la primera oferta.</p>
+                <p>Las ofertas estarán disponibles después de 7 u 8 horas de la primera oferta.</p>
             )}
             <br />
             <Link className="btn-edit" to={`/clausula_rescision`}>Realizar ofertas</Link>

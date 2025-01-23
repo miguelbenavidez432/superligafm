@@ -45,9 +45,9 @@ export default function AuctionsList() {
                     return (
                         <li key={auction.id}>
                             <label><strong>Jugador :</strong> {auction.player ? auction.player.name : ''} - <strong>Valor inicial:</strong> {auction.amount} - <strong> Hora de inicio:</strong> {formatDate(auction.created_at) + " "} </label>
-                            {(user.rol === 'Admin' || user.rol === 'Organizador') && <Link to={`/subastas/${auction.id_player}`} className="btn-edit mr-2 pb-10">
+                            <Link to={`/subastas/${auction.id_player}`} className="btn-edit mr-2 pb-10">
                                 Hacer una nueva oferta
-                            </Link>}
+                            </Link>
                             <br />
                             <br />
                         </li>

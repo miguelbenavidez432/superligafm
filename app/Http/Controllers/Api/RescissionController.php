@@ -34,8 +34,6 @@ class RescissionController extends Controller
             return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->paginate(200));
         }
         ;
-
-
     }
 
     /**
@@ -56,9 +54,9 @@ class RescissionController extends Controller
         // Verificar cuántos jugadores del equipo han recibido ofertas (basado en la columna cdr)
         $team = Team::find($teamId);
 
-        if ($team->cdr >= 6) {
+        if ($team->cdr >= 4) {
             // Si ya hay 6 jugadores del equipo con ofertas, no se puede crear otra oferta
-            return response()->json(['error' => 'El equipo ya tiene ofertas por 6 jugadores. No se pueden realizar más ofertas.'], 403);
+            return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
         }
 
         // Si no ha alcanzado el límite de jugadores con ofertas, crear la oferta
