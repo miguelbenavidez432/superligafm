@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Auctions = () => {
     const { user, setNotification } = useStateContext();
     const navigate = useNavigate();
+    const [errors, setErrors] = useState(null);
     const [players, setPlayers] = useState([]);
     const [leagueTeams, setLeagueTeams] = useState([]);
     const [otherTeams, setOtherTeams] = useState([]);
@@ -54,7 +55,7 @@ const Auctions = () => {
         axiosClient.get('/players?all=true')
             .then(({ data }) => {
                 setPlayers(data.data)
-                const filteredPlayers = data.data.filter(p => p.id_team && p.id_team.id == selectedTeam )
+                const filteredPlayers = data.data.filter(p => p.id_team && p.id_team.id == selectedTeam)
                 setTeamPlayers(filteredPlayers)
             })
             .catch(() => {
@@ -96,7 +97,12 @@ const Auctions = () => {
                 });
             })
             .catch((error) => {
-                console.error(error);
+                const mensaje = error.response.data.error;
+                setNotification("Error al crear la subasta: " + mensaje);
+                const response = error.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
             });
     };
 

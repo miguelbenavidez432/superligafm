@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BetController;
+use App\Http\Controllers\Api\ChatbotController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\PlayerController;
@@ -41,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/playerstatus', [PlayerController::class, 'filteredStatusPlayers']);
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
+    Route::get('/players/filter', [PlayerController::class, 'filter']);
 
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
@@ -72,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tournaments', TournamentController::class);
     Route::apiResource('matches', GameController::class);
+
+    Route::post('/chatbot', [ChatbotController::class, 'handleMessage']);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;

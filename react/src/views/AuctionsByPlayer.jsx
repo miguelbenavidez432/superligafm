@@ -15,6 +15,7 @@ export default function PlayerAuctions() {
     const [newBid, setNewBid] = useState(0);
     const [teams, setTeams] = useState([]);
     const navigate = useNavigate();
+    const { user, setNotification } = useStateContext();
 
 
     useEffect(() => {
@@ -84,7 +85,11 @@ export default function PlayerAuctions() {
             if (error.response && error.response.data.message) {
                 setNotification(error.response.data.message);
             } else {
-                setNotification('Error al enviar la oferta');
+                setNotification("Error al crear la subasta: " + error.response.data.error);
+                const response = error.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
             }
             console.error(error);
         }
@@ -133,16 +138,20 @@ export default function PlayerAuctions() {
                 {auctions.map(auction => {
                     const id_auctioner = auction.auctioneer && auction.auctioneer.id
                     const filteredTeam = teams.find(team => team.user && team.user.id == id_auctioner)
-                    const id_team = filteredTeam?filteredTeam.id:''
-                    return(
-                    <li key={auction.id}>
-                        <strong>{auction.amount}</strong> - Subastado por: {auction.auctioneer && auction.auctioneer.name} - Hora: {formatDate(auction.created_at)}<strong> </strong><button
-                            onClick={() => confirmAuction(auction.id, auction.player && auction.player.id, auction.auctioneer && auction.auctioneer.id, id_team)}
-                            className="btn-add mr-2 mb-1">
-                            Confirmar Ganador
-                        </button>
-                    </li>
-                )})}
+                    const id_team = filteredTeam ? filteredTeam.id : ''
+                    return (
+                        <li key={auction.id}>
+                            <strong>{auction.amount}</strong> - Subastado por: {auction.auctioneer && auction.auctioneer.name} - Hora: {formatDate(auction.created_at)}<strong> </strong>
+                            {user.rol === 'Admin' && (
+                                <button
+                                    onClick={() => confirmAuction(auction.id, auction.player && auction.player.id, auction.auctioneer && auction.auctioneer.id, id_team)}
+                                    className="btn-add mr-2 mb-1">
+                                    Confirmar Ganador
+                                </button>
+                            )}
+                        </li>
+                    )
+                })}
             </ul>
 
             <form onSubmit={handleNewBidSubmit}>

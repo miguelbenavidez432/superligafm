@@ -15,6 +15,10 @@ export default function Players() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchName, setSearchName] = useState('');
+    const [ageRange, setAgeRange] = useState([0, 100]);
+    const [selectedTeam, setSelectedTeam] = useState('');
+    const [sortField, setSortField] = useState('');
+    const [sortOrder, setSortOrder] = useState('asc');
 
     useEffect(() => {
         getPlayers()
@@ -45,7 +49,6 @@ export default function Players() {
                 setLoading(false);
             });
     };
-
 
     const getTeam = () => {
         setLoading(true)
@@ -91,6 +94,46 @@ export default function Players() {
         getPlayersName(searchName);
     };
 
+    const handleAgeRangeChange = (e) => {
+        const { name, value } = e.target;
+        setAgeRange((prevRange) => ({
+            ...prevRange,
+            [name]: value
+        }));
+    };
+
+    const handleTeamChange = (e) => {
+        setSelectedTeam(e.target.value);
+    };
+
+    const handleSortChange = (field) => {
+        const order = sortOrder === 'asc' ? 'desc' : 'asc';
+        setSortField(field);
+        setSortOrder(order);
+    };
+
+    // const filterPlayers = () => {
+    //     setLoading(true);
+    //     axiosClient.get('/players/filter', {
+    //         params: {
+    //             name: searchName,
+    //             min_age: ageRange[0],
+    //             max_age: ageRange[1],
+    //             id_team: selectedTeam,
+    //             no_league: true,
+    //             sort_field: sortField,
+    //             sort_order: sortOrder
+    //         }
+    //     })
+    //     .then(({ data }) => {
+    //         setLoading(false);
+    //         setPlayers(data.data);
+    //     })
+    //     .catch(() => {
+    //         setLoading(false);
+    //     });
+    // };
+
     return (
         <div>
             <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center' }}>
@@ -108,6 +151,38 @@ export default function Players() {
                 <button className="btn-add" onClick={handleSearchSubmit}>Buscar</button>
             </div>
             <br />
+            {/* <div>
+                <label>Edad mínima:</label>
+                <input
+                    type="number"
+                    name="min"
+                    value={ageRange[0]}
+                    onChange={handleAgeRangeChange}
+                />
+                <label>Edad máxima:</label>
+                <input
+                    type="number"
+                    name="max"
+                    value={ageRange[1]}
+                    onChange={handleAgeRangeChange}
+                />
+            </div>
+            <br />
+            <div>
+                <label>Equipo:</label>
+                <select value={selectedTeam} onChange={handleTeamChange}>
+                    <option value="">Todos los equipos</option>
+                    {team.map(t => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                </select>
+            </div>
+            <br />
+            <div>
+                <button className="btn-add" onClick={() => handleSortChange('ca')}>Ordenar por CA</button>
+                <button className="btn-add" onClick={() => handleSortChange('pa')}>Ordenar por PA</button>
+            </div>
+            <br /> */}
             <div>
                 {currentPage > 1 && (
                     <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>

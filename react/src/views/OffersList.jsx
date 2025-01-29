@@ -267,7 +267,9 @@ const OffersList = () => {
         showTime3.setHours(18, 0, 0, 0); // 18:00:00
 
         // Condiciones para mostrar las ofertas
-        if (offerHour >= 18 || offerHour < 1) {
+        if (offerHour >= 18) {
+            return currentDate >= showTime1;
+        } else if (offerHour < 1) {
             return currentDate >= showTime1;
         } else if (offerHour >= 1 && offerHour < 10) {
             return currentDate >= showTime2;
