@@ -36,6 +36,7 @@ import SeasonCountdown from './components/SeasonCountDown';
 import ProtectedComponent from './components/ProtectedComponent';
 import TransferCountDown from './components/TransferCountDown';
 import DelayedProtectedComponent from './components/DelayedProtectedComponent';
+import Chatbot from './views/Chatbot';
 
 const router = createBrowserRouter([
     {
@@ -186,6 +187,10 @@ const router = createBrowserRouter([
             {
                 path: '/protected',
                 element: <ProtectedComponent />
+            },
+            {
+                path: '/chatbot',
+                element: <Chatbot />
             },
         ]
     },
