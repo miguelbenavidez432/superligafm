@@ -43,35 +43,33 @@ class RescissionController extends Controller
      */
     public function store(StoreRescissionRequest $request)
     {
-        $data = $request->validated();
-
-        $offer = Rescission::create($data);
-
-        $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
-        $player = Player::where('id', $data['id_player'])->first();
-        $team = Team::where('id', $data['id_team'])->first();
-
-        // Verificar que el jugador y el equipo existen
-        if (!$player) {
-            return response()->json(['error' => 'Jugador no encontrado'], 404);
-        }
-
-        if (!$team) {
-            return response()->json(['error' => 'Equipo no encontrado'], 404);
-        }
-
-        // Verificar el conteo de ofertas existentes
-        dd($existingOffersForPlayer);
-
-        if ($existingOffersForPlayer == 0) {
-            $team->increment('cdr');
-        }
-
-        $webhookUrl = env('DISCORD_WEBHOOK_URL');
-        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
-
-        // Verificar que el webhook se ejecuta correctamente
         try {
+            $data = $request->validated();
+
+            $offer = Rescission::create($data);
+
+            $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
+            $player = Player::where('id', $data['id_player'])->first();
+            $team = Team::where('id', $data['id_team'])->first();
+
+            // Verificar que el jugador y el equipo existen
+            if (!$player) {
+                return response()->json(['error' => 'Jugador no encontrado'], 404);
+            }
+
+            if (!$team) {
+                return response()->json(['error' => 'Equipo no encontrado'], 404);
+            }
+
+            // Verificar el conteo de ofertas existentes
+            if ($existingOffersForPlayer == 0) {
+                $team->increment('cdr');
+            }
+
+            $webhookUrl = env('DISCORD_WEBHOOK_URL');
+            $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+
+            // Verificar que el webhook se ejecuta correctamente
             WebhookCall::create()
                 ->url($webhookUrl)
                 ->payload([
@@ -79,11 +77,12 @@ class RescissionController extends Controller
                 ])
                 ->useSecret($webhookSecret)
                 ->dispatch();
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al enviar el webhook: ' . $e->getMessage()], 500);
-        }
 
-        return response()->json(['success' => 'Oferta realizada correctamente'], 200);
+            return response()->json(['success' => 'Oferta realizada correctamente'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error en store RescissionController: ' . $e->getMessage());
+            return response()->json(['error' => 'Ocurrió un error en el servidor: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
