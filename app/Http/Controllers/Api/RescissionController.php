@@ -43,11 +43,7 @@ class RescissionController extends Controller
      */
     public function store(StoreRescissionRequest $request)
     {
-        $data = $request->validate([
-            'id_player' => 'required|integer',
-            'id_team' => 'required|integer',
-            // otros campos de validación
-        ]);
+        $data = $request->validated();
 
         $offer = Rescission::create($data);
 
@@ -64,9 +60,6 @@ class RescissionController extends Controller
             return response()->json(['error' => 'Equipo no encontrado'], 404);
         }
 
-        // Verificar el conteo de ofertas existentes
-        dd($existingOffersForPlayer);
-
         if ($existingOffersForPlayer == 0) {
             $team->increment('cdr');
         }
@@ -74,7 +67,6 @@ class RescissionController extends Controller
         $webhookUrl = env('DISCORD_WEBHOOK_URL');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
-        // Verificar que el webhook se ejecuta correctamente
         try {
             WebhookCall::create()
                 ->url($webhookUrl)
