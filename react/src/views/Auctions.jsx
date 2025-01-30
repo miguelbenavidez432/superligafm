@@ -73,7 +73,8 @@ const Auctions = () => {
             id_team: player.id_team ? player.id_team.id : '',
             auctioned_by: user.id,
             created_by: user.id,
-            active: 'yes'
+            active: 'yes',
+            id_season: 54
         });
     };
 

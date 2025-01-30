@@ -71,7 +71,7 @@ class RescissionController extends Controller
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
-                'content' => "La oferta por {$player->name} ha sido confirmada. El jugador pertenece al equipo {$team->name}.\n",
+                'content' => "La oferta por {$player->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();

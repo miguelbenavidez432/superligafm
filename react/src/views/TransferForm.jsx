@@ -23,6 +23,7 @@ export default function TransferForm() {
         created_by: '',
         buy_by: '',
         sold_by: '',
+        id_season: 54,
     })
     const { user, setNotification } = useStateContext();
     const navigate = useNavigate();
@@ -85,7 +86,7 @@ export default function TransferForm() {
             ca: jugadorSeleccionado.ca,
             pa: jugadorSeleccionado.pa,
             value: jugadorSeleccionado.value,
-            status: 'bloqueado'
+            status: 'bloqueado',
         };
 
         setPlayersToSend([...playersToSend, jugadorSeleccionado.name])

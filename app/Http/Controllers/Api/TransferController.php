@@ -20,10 +20,17 @@ class TransferController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])
+            ->orderBy("created_at", "desc");
+
+        if ($request->has('season')) {
+            $query->where('id_season', $request->query('season'));
+        }
+
         if ($request->query('all') == 'true') {
-            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->get());
+            return TransferResource::collection($query->get());
         } else {
-            return TransferResource::collection(Transfer::with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])->orderBy("created_at", "desc")->paginate(250));
+            return TransferResource::collection($query->paginate(250));
         }
     }
 
@@ -106,6 +113,7 @@ class TransferController extends Controller
         $transfer->created_by = $transferData['created_by'];
         $transfer->buy_by = $transferData['buy_by'];
         $transfer->sold_by = $transferData['sold_by'];
+        $transfer->id_season = $transferData['id_season'];
         $transfer->confirmed = 'no';
         $transfer->save();
 
