@@ -236,10 +236,14 @@ class AuctionController extends Controller
 
     public function getLastAuctions()
     {
+        $seasonId = request()->query('id_season');
+
         $lastAuctions = Auction::select('id_player', DB::raw('MAX(id) as lastAuctionID'))
             ->groupBy('id_player')
             ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
-            ->where('id', '>', 1)
+            ->when($seasonId, function ($query, $seasonId) {
+                return $query->where('id_season', $seasonId);
+            })
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function (Auction $auction) {

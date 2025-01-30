@@ -101,12 +101,14 @@
 // }
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
+import { useStateContext } from "../context/ContextProvider";
 
 export default function TransferList() {
     const [transfers, setTransfers] = useState([]);
     const [seasons, setSeasons] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState('');
     const [loading, setLoading] = useState(true);
+    const { setNotification } = useStateContext();
 
     useEffect(() => {
         getTransfers();
@@ -124,10 +126,10 @@ export default function TransferList() {
     const getTransfers = async () => {
         setLoading(true);
         try {
-            const response = await axiosClient.get('/transfers');
-            setTransfers(response.data || []); // Asegúrate de que transfers sea un array
+            const response = await axiosClient.get('/traspasos');
+            setTransfers(response.data.data || []);
         } catch (error) {
-            console.error('Error al obtener transferencias:', error);
+            setNotification('Error al obtener transferencias: ' + error);
         } finally {
             setLoading(false);
         }
@@ -137,9 +139,9 @@ export default function TransferList() {
         setLoading(true);
         try {
             const response = await axiosClient.get('/season');
-            setSeasons(response.data.data || []); // Asegúrate de que seasons sea un array
+            setSeasons(response.data.data || []);
         } catch (error) {
-            console.error('Error al obtener temporadas:', error);
+            setNotification('Error al obtener temporadas: ' + error);
         } finally {
             setLoading(false);
         }
@@ -149,9 +151,9 @@ export default function TransferList() {
         setLoading(true);
         try {
             const response = await axiosClient.get(`/traspasos?season=${seasonId}`);
-            setTransfers(response.data || []); // Asegúrate de que transfers sea un array
+            setTransfers(response.data.data || []);
         } catch (error) {
-            console.error('Error al filtrar transferencias por temporada:', error);
+            setNotification('Error al filtrar transferencias por temporada: ' + error);
         } finally {
             setLoading(false);
         }
@@ -193,19 +195,27 @@ export default function TransferList() {
                     {!loading &&
                         <tbody>
                             {
-                                Array.isArray(transfers) && transfers.map(p => {
-                                    return (
-                                        <tr key={p.id}>
-                                            <td>{p.id}</td>
-                                            <td>{p.transferred_players}</td>
-                                            <td>{p.team_from.name} - {p.team_to.name}</td>
-                                            <td>{p.created_by.name}</td>
-                                            <td>{p.created_at}</td>
-                                            <td>{p.budget}</td>
-                                            <td>{p.confirmed}</td>
-                                        </tr>
-                                    )
-                                })
+                                Array.isArray(transfers) && transfers.length > 0 ? (
+                                    transfers.map(p => {
+                                        return (
+                                            <tr key={p.id}>
+                                                <td>{p.id}</td>
+                                                <td>{p.transferred_players}</td>
+                                                <td>{p.team_from.name} - {p.team_to.name}</td>
+                                                <td>{p.created_by.name}</td>
+                                                <td>{p.created_at}</td>
+                                                <td>{p.budget}</td>
+                                                <td>{p.confirmed}</td>
+                                            </tr>
+                                        )
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan="10" className="text-center">
+                                            No se encontraron transferencias
+                                        </td>
+                                    </tr>
+                                )
                             }
                         </tbody>
                     }
