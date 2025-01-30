@@ -105,7 +105,7 @@ export default function AuctionsList() {
         try {
             const response = await axiosClient.get('/auction/last', {
                 params: {
-                    season: selectedSeason
+                    id_season: selectedSeason
                 }
             });
             setAuctions(response.data);

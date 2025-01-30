@@ -141,7 +141,7 @@ export default function TransferForm() {
             .catch(error => {
                 const response = error.response;
                 if (response && response.status === 422) {
-                    setNotification(error.response.data.message);
+                    setNotification('Error en la Trasnferencia: ' + error.response.data.message);
                 }
             });
     };
