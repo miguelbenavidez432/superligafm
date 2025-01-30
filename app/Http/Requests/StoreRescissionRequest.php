@@ -30,6 +30,7 @@ class StoreRescissionRequest extends FormRequest
             'created_by' => 'integer|required',
             'total_value' => 'integer|required',
             'other_players' => 'nullable',
+            'id_season' => 'required|integer|nullable',
         ];
     }
 }

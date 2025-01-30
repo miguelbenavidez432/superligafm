@@ -83,6 +83,35 @@ class PlayerController extends Controller
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }
 
+    public function filter(Request $request)
+    {
+        $query = Player::query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->has('min_age') && $request->has('max_age')) {
+            $query->whereBetween('age', [$request->input('min_age'), $request->input('max_age')]);
+        }
+
+        if ($request->has('id_team')) {
+            $query->where('id_team', $request->input('id_team'));
+        }
+
+        if ($request->has('no_league')) {
+            $query->whereNull('division')->orWhere('division', '');
+        }
+
+        if ($request->has('sort_field') && $request->has('sort_order')) {
+            $query->orderBy($request->input('sort_field'), $request->input('sort_order'));
+        }
+
+        $players = $query->get();
+
+        return response()->json(['data' => $players]);
+    }
+
     /**
      * Update the specified resource in storage.
      */

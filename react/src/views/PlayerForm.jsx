@@ -37,7 +37,10 @@ export default function PlayerForm() {
 
                     if (filteredPlayer) {
                         getTeam();
-                        setPlayers(filteredPlayer);
+                        setPlayers({
+                            ...filteredPlayer,
+                            id_team: filteredPlayer.id_team.id // Asegúrate de que id_team sea solo el ID
+                        });
                     } else {
                         console.log('Jugador no encontrado');
                     }
@@ -129,7 +132,7 @@ export default function PlayerForm() {
                             type="text"
                         />
                         <select
-                            value={players.id_team.id}
+                            value={players.id_team}
                             onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}
                         >
                             {team.map((t, index) => (
@@ -148,6 +151,7 @@ export default function PlayerForm() {
                             <option value="liberado">Liberado</option>
                             <option value="bloqueado">Bloqueado</option>
                             <option value="registrado">Registrado</option>
+                            <option value="">Sin modificar</option>
                         </select>
 
                         <input
@@ -187,7 +191,7 @@ export default function PlayerForm() {
                             disabled
                         />
                         <select
-                            value={players.id_team.id}
+                            value={players.id_team}
                             onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}
                         >
                             {team.map((t, index) => (

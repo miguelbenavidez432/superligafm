@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Player;
 use App\Models\Rescission;
 use App\Http\Requests\StoreRescissionRequest;
 use App\Http\Requests\UpdateRescissionRequest;
@@ -10,6 +11,7 @@ use App\Http\Resources\RescissionResource;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\WebhookServer\WebhookCall;
 
 class RescissionController extends Controller
 {
@@ -34,8 +36,6 @@ class RescissionController extends Controller
             return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->paginate(200));
         }
         ;
-
-
     }
 
     /**
@@ -43,34 +43,38 @@ class RescissionController extends Controller
      */
     public function store(StoreRescissionRequest $request)
     {
-        // $data = $request->validated();
-        // $player = Rescission::create($data);
-        // return response(new RescissionResource($player), 201);
-
-        // Obtener los datos validados del request
         $data = $request->validated();
 
-        // Obtener el ID del equipo del jugador
         $teamId = $data['id_team'];
 
-        // Verificar cuántos jugadores del equipo han recibido ofertas (basado en la columna cdr)
         $team = Team::find($teamId);
 
-        if ($team->cdr >= 6) {
-            // Si ya hay 6 jugadores del equipo con ofertas, no se puede crear otra oferta
-            return response()->json(['error' => 'El equipo ya tiene ofertas por 6 jugadores. No se pueden realizar más ofertas.'], 403);
+        if ($team->cdr >= 4) {
+            return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
         }
 
-        // Si no ha alcanzado el límite de jugadores con ofertas, crear la oferta
         $offer = Rescission::create($data);
 
-        // Incrementar el contador de jugadores con ofertas en el equipo si es una nueva oferta para el jugador
         $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
+        $player = Player::where('id', $data['id_player'])->get()
+            ->first();
+
+        //var_dump($player);
 
         if ($existingOffersForPlayer == 0) {
-            // Si no había ofertas anteriores para este jugador, incrementar el contador cdr
             $team->increment('cdr');
         }
+
+        $webhookUrl = env('DISCORD_WEBHOOK_URL');
+        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+
+        WebhookCall::create()
+            ->url($webhookUrl)
+            ->payload([
+                'content' => "La oferta por {$player->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
+            ])
+            ->useSecret($webhookSecret)
+            ->dispatch();
 
         // Devolver la respuesta
         return response(new RescissionResource($offer), 201);
@@ -108,10 +112,10 @@ class RescissionController extends Controller
     public function confirmOffer(Request $request)
     {
         $offer = $request->input('offer');
+        $playerData = $request->input('player');
         $value = $offer['total_value'];
         $id_team = $offer['id_team'];
 
-        //busco el id de la oferta
         $id = $offer['id'];
 
         $offerId = Rescission::findOrFail($id);
@@ -119,6 +123,13 @@ class RescissionController extends Controller
         if ($offerId->confirmed === 'no') {
             $team = Team::findOrFail($id_team);
             $receiver = User::findOrFail($team->id_user);
+            $player = Player::findOrFail($playerData['id']);
+            $teamTo = Team::findOrFail($playerData['id_team']);
+
+            $player->update([
+                'id_team' => $playerData['id_team'],
+                'status' => $playerData['status']
+            ]);
 
             $user = User::findOrFail($offer['created_by']);
 
@@ -134,6 +145,18 @@ class RescissionController extends Controller
             $offerId->active = 'no';
             $offerId->save();
 
+            $webhookUrl = env('DISCORD_WEBHOOK_URL');
+            $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+
+            WebhookCall::create()
+            ->url($webhookUrl)
+            ->payload([
+                'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
+                \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name}.\n",
+            ])
+            ->useSecret($webhookSecret)
+            ->dispatch();
+
             return response()->json(['message' => 'Oferta confirmada exitosamente']);
         } else {
             return response()->json(['message' => 'Oferta ya confirmada'], 403);
@@ -143,18 +166,14 @@ class RescissionController extends Controller
 
     public function closeOffer(Request $request)
     {
-        // Validación del ID que llega en el request
         $validated = $request->validate([
             'id' => 'required|exists:rescissions,id',
         ]);
 
-        // Buscar la oferta por ID
         $offer = Rescission::findOrFail($validated['id']);
 
-        // Actualizar el estado de la oferta
         $offer->active = 'no';
 
-        // Guardar los cambios
         if ($offer->save()) {
             return response()->json([
                 'message' => 'La oferta ha sido cerrada satisfactoriamente',

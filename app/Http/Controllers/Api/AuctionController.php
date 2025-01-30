@@ -9,12 +9,14 @@ use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
 use App\Models\Player;
+use App\Models\Team;
 use App\Models\User;
 use App\Models\UserAuction;
 use Auth;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Spatie\WebhookServer\WebhookCall;
 
 class AuctionController extends Controller
 {
@@ -39,36 +41,88 @@ class AuctionController extends Controller
     public function store(StoreAuctionRequest $request)
     {
         $data = $request->validated();
+        $player = Player::find($data['id_player']);
 
         $previousAuction = Auction::where('id_player', $data['id_player'])
             ->orderBy('amount', 'desc')
             ->first();
 
+        $highestAuctions = Auction::select('id_player', DB::raw('MAX(amount) as highestAmount'))
+            ->groupBy('id_player')
+            ->get();
+
+        $leadingUsers = [];
+        foreach ($highestAuctions as $auction) {
+            $highestAuction = Auction::where('id_player', $auction->id_player)
+                ->where('amount', $auction->highestAmount)
+                ->first();
+            if ($highestAuction) {
+                $leadingUsers[] = $highestAuction->auctioned_by;
+            }
+        }
+
+        $leadingUsers = array_unique($leadingUsers);
+
+        foreach ($leadingUsers as $userId) {
+            $userAuctions = Auction::where('auctioned_by', $userId)->get();
+
+            $totalAuctions = $userAuctions->count();
+            $over20Auctions = $userAuctions->filter(function ($auction) {
+                return $auction->player->age > 20;
+            })->count();
+
+            // if ($totalAuctions >= 4 || $over20Auctions >= 2) {
+            //     return response()->json(['error' => 'Has alcanzado el límite de subastas permitidas.'], 403);
+            // }
+
+            // if ($over20Auctions >= 2) {
+            //     return response()->json(['error' => 'Has alcanzado el límite de ofertas por jugadores mayores de 20 años.'], 403);
+            // }
+        }
+
+
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {
-                return response()->json(['message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.']);
+                return response()->json([
+                    'message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.'
+                ], 422);
             }
 
-            // Notificar a los usuarios que hicieron ofertas anteriores
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
             }
         } else {
-            $player = Player::find($data['id_player']);
-            if ($data['amount'] < ($player->value / 2)) {
-                return response()->json(['message' => 'La oferta inicial debe ser al menos igual al valor del jugador.']);
+
+            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+                return response()->json([
+                    'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
+                ], 422);
             }
         }
 
-        $auction = Auction::create($data);
+        $data['close'] = Carbon::now()->addHours(12);
 
-        //event(new NewAuctionEvent($auction));
+        $auction = Auction::create($data);
+        $team = Team::find($data['id_team']);
+        $user = User::find($data['auctioned_by']);
+
+        $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
+        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+
+        WebhookCall::create()
+            ->url($webhookUrl)
+            ->payload([
+                'content' => "La oferta por {$player->name} ha sido realizada por un total de $ {$data['amount']}.
+                \nEl jugador pertenece al equipo {$team->name} y fue realizada por {$user->name}.\n",
+            ])
+            ->useSecret($webhookSecret)
+            ->dispatch();
 
         //return response(new AuctionResource($auction, 201));
 
         return response()->json(['message' => 'Success'], 200)
-                 ->header('Content-Type', 'application/json');
+            ->header('Content-Type', 'application/json');
 
     }
 
@@ -108,6 +162,40 @@ class AuctionController extends Controller
             ->orderBy('amount', 'desc')
             ->first();
 
+        $highestAuctions = Auction::select('id_player', DB::raw('MAX(amount) as highestAmount'))
+            ->groupBy('id_player')
+            ->get();
+
+        $leadingUsers = [];
+        foreach ($highestAuctions as $auction) {
+            $highestAuction = Auction::where('id_player', $auction->id_player)
+                ->where('amount', $auction->highestAmount)
+                ->first();
+            if ($highestAuction) {
+                $leadingUsers[] = $highestAuction->id_auctioned;
+            }
+        }
+
+        $leadingUsers = array_unique($leadingUsers);
+
+        foreach ($leadingUsers as $userId) {
+            $userAuctions = Auction::where('id_auctioned', $userId)->get();
+
+            $totalAuctions = $userAuctions->count();
+            $over20Auctions = $userAuctions->filter(function ($auction) {
+                return $auction->player->age > 20;
+            })->count();
+
+            if ($totalAuctions >= 4 || $over20Auctions >= 2) {
+                return response()->json(['error' => 'Has alcanzado el límite de subastas permitidas.'], 403);
+            }
+
+            if ($over20Auctions >= 2) {
+                return response()->json(['error' => 'Has alcanzado el límite de ofertas por jugadores mayores de 20 años.'], 403);
+            }
+        }
+
+
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {
                 return response()->json([
@@ -123,7 +211,7 @@ class AuctionController extends Controller
         } else {
             $player = Player::find($data['id_player']);
 
-            if ($data['amount'] < ($player->value / 2)) {
+            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -149,16 +237,16 @@ class AuctionController extends Controller
     public function getLastAuctions()
     {
         $lastAuctions = Auction::select('id_player', DB::raw('MAX(id) as lastAuctionID'))
-        ->groupBy('id_player')
-        ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
-        ->where('id' , '>', 56)
-        ->orderBy('created_at', 'desc')
-        ->get()
-        ->map(function (Auction $auction) {
-            return Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->find($auction->lastAuctionID);
-        });
+            ->groupBy('id_player')
+            ->with(['creator', 'auctioneer', 'player', 'team', 'season'])
+            ->where('id', '>', 1)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function (Auction $auction) {
+                return Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->find($auction->lastAuctionID);
+            });
 
-    return response()->json($lastAuctions, 200);
+        return response()->json($lastAuctions, 200);
     }
 
     public function placeBid(Request $request, Auction $auction)
@@ -167,7 +255,6 @@ class AuctionController extends Controller
         $playerId = $request->input('player_id');
         $bidAmount = $request->input('bid_amount');
 
-        // Validación 1: Limitar a 2 jugadores mayores de 20 años
         $countOver20 = UserAuction::where('user_id', $user->id)
             ->whereHas('player', function ($query) {
                 $query->where('age', '>', 20);
@@ -210,32 +297,46 @@ class AuctionController extends Controller
     }
 
     public function confirmAuction(Request $request, $auctionId)
-{
+    {
 
-    $auction = Auction::find($auctionId);
+        $auction = Auction::find($auctionId);
 
-    if (!$auction) {
-        return response()->json(['error' => 'Subasta no encontrada.'], 404);
+        if (!$auction) {
+            return response()->json(['error' => 'Subasta no encontrada.'], 404);
+        }
+
+        $player = Player::find($request->input('id_player'));
+        $winner = User::find($request->input('id_auctioned'));
+
+        if (!$player || !$winner) {
+            return response()->json(['error' => 'Datos del jugador o usuario no válidos.'], 400);
+        }
+
+        $winner->profits -= $auction->amount;
+        $winner->save();
+
+        $player->id_team = $request->input('id_team');
+        $player->save();
+
+        $auction->confirmed = 'yes';
+        $auction->active = 'no';
+        $auction->save();
+
+        $teamTo = Team::find($auction->id_team);
+
+        $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
+        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+
+        WebhookCall::create()
+            ->url($webhookUrl)
+            ->payload([
+                'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
+                \nEl monto de la transferencia es de $ {$auction->amount} y fue pagado por {$winner->name}.\n",
+            ])
+            ->useSecret($webhookSecret)
+            ->dispatch();
+
+        return response()->json(['success' => 'Subasta confirmada y jugador transferido.'], 200);
     }
-
-    $player = Player::find($request->input('id_player'));
-    $winner = User::find($request->input('id_auctioned'));
-
-    if (!$player || !$winner) {
-        return response()->json(['error' => 'Datos del jugador o usuario no válidos.'], 400);
-    }
-
-    $winner->profits -= $auction->amount;
-    $winner->save();
-
-    $player->id_team = $request->input('id_team');
-    $player->save();
-
-    $auction->confirmed = 'yes';
-    $auction->active = 'no';
-    $auction->save();
-
-    return response()->json(['success' => 'Subasta confirmada y jugador transferido.'], 200);
-}
 
 }

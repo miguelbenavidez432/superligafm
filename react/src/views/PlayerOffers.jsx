@@ -7,6 +7,7 @@ import axiosClient from "../axios";
 import moment from "moment";
 import { useStateContext } from "../context/ContextProvider";
 import { format } from 'date-fns';
+import { el } from "date-fns/locale";
 
 const PlayerOffers = () => {
     const { id } = useParams();
@@ -40,6 +41,8 @@ const PlayerOffers = () => {
         email: '',
         profits: 0
     });
+
+    const [data, setData] = useState({});
 
     useEffect(() => {
         axiosClient.get(`/clausulas/${id}`)
@@ -75,7 +78,7 @@ const PlayerOffers = () => {
     const checkOffersAvailability = (playerOffers) => {
         if (playerOffers && playerOffers.length > 0) {
             const firstOfferDate = moment(playerOffers[0].created_at);
-            const expirationDate = firstOfferDate.add(6, 'hours');
+            const expirationDate = firstOfferDate.add(0, 'hours');
             const currentDate = moment();
             if (currentDate.isAfter(expirationDate)) {
                 setIsAvailable(true);
@@ -86,17 +89,7 @@ const PlayerOffers = () => {
     const handleConfirmOffer = async (offerId) => {
         const oferta = offers.find(o => o.id === offerId);
 
-        if (!oferta) {
-            setNotification("Oferta no encontrada.");
-            return;
-        }
-
         const teamId = teams.find(t => t.id === oferta.id_team);
-
-        if (!teamId) {
-            setNotification("Equipo no encontrado.");
-            return;
-        }
 
         const getUser = users.find(u => teamId.user && u.id === teamId.user.id);
         if (!getUser) {
@@ -109,46 +102,51 @@ const PlayerOffers = () => {
             setNotification("Usuario que creó la oferta no encontrado.");
             return;
         }
+        console.log('getUserCreated',getUserCreated);
 
         const teamTo = teams.find(t => t.user && t.user.id === getUserCreated.id);
         if (!teamTo) {
             setNotification("Equipo destino no encontrado.");
             return;
         }
+        console.log('Teamto',teamTo);
 
-        const updatedPlayer = {
-            ...player,
-            id_team: teamTo.id
-        };
+        if (!oferta) {
+            setNotification("Oferta no encontrada.");
+            return;
+        } else if (oferta.confirmed === 'yes') {
+            setNotification("Oferta ya confirmada.");
+            return;
+        } else if (oferta.active === 'no') {
+            setNotification("Oferta cerrada.");
+            return;
+        }
 
-        const updatedUserProfit = {
-            ...userProfit,
-            id: getUser.id,
-            name: getUser.name,
-            rol: getUser.rol,
-            email: getUser.email,
-            profits: getUser.profits + oferta.value,
+        const confirmOfferData = {
+            offer: {
+                id: oferta.id,
+                total_value: oferta.total_value,
+                id_team: oferta.id_team,
+                created_by: oferta.created_by,
+                confirmed: 'yes',
+                active: 'no'
+            },
+            player: {
+                id: id,
+                id_team: teamTo.id,
+                status: 'bloqueado',
+                value: player.value,
+                ca: player.ca,
+                pa: player.pa,
+                age: player.age
+            }
         };
-
-        const updatedUserCost = {
-            ...userCost,
-            id: getUserCreated.id,
-            name: getUserCreated.name,
-            rol: getUserCreated.rol,
-            email: getUserCreated.email,
-            profits: getUserCreated.profits - oferta.value,
-        };
+        console.log(confirmOfferData);
 
         try {
-            setUserProfit(updatedUserProfit);
-            setUserCost(updatedUserCost);
-            setPlayer(updatedPlayer);
-
-            await axiosClient.put(`/users/${getUser.id}`, updatedUserProfit);
-            await axiosClient.put(`/users/${getUserCreated.id}`, updatedUserCost);
-            await axiosClient.put(`/players/${oferta.id_player}`, updatedPlayer);
+            await axiosClient.post('/confirm-offer', confirmOfferData);
             setNotification("Oferta confirmada satisfactoriamente");
-            navigate("/offers");
+            //navigate("/offers");
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
             const response = error.response;
@@ -227,7 +225,7 @@ const PlayerOffers = () => {
                     <li>No hay ofertas disponibles para este jugador en este momento.</li>
                 )}
             </ul>) : (
-                <p>Las ofertas estarán disponibles después de 6 horas de la primera oferta.</p>
+                <p>Las ofertas estarán disponibles después de 7 u 8 horas de la primera oferta.</p>
             )}
             <br />
             <Link className="btn-edit" to={`/clausula_rescision`}>Realizar ofertas</Link>

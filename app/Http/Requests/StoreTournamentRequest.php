@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePlayerRequest extends FormRequest
+class StoreTournamentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,9 @@ class UpdatePlayerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'age' => 'required|integer|max:50',
-            'ca' => 'integer|max:200|required',
-            'pa' => 'integer|max:200|required',
-            'value' => 'integer|required',
-            'status' => 'string|nullable',
-            //'id_team' => 'required|nullable|integer'
+            'name' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
         ];
     }
 }
