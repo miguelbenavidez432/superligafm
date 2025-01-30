@@ -267,7 +267,7 @@ class PlayerController extends Controller
             return response()->json(['error' => 'El equipo no existe'], 404);
         }
 
-        $jugador->team = 61;
+        $jugador->id_team = 61;
         $jugador->status = 'liberado';
         $jugador->save();
 
