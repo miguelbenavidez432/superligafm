@@ -66,10 +66,16 @@ class SeasonController extends Controller
     public function getSeasonStart()
     {
 
-        $season = Season::find( 53);
+        $season = Season::where('active', 'yes')->orderBy('id', 'desc')->first();
 
-        return response()->json([
+        if ($season) {
+            return response()->json([
             'start_date' => $season->start->format('Y-m-d H:i:s')
-        ]);
+            ]);
+        } else {
+            return response()->json([
+            'message' => 'No active season found'
+            ], 404);
+        }
     }
 }

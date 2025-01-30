@@ -182,7 +182,7 @@ export default function DefaultLayout() {
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/plantel'>Plantel</Link>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/subastas'>Lista de Subastas</Link>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/crear_subasta'>Crear Subasta</Link>
-                    {user.role === 'admin' && (
+                    {user.rol === 'Admin' && (
                         <>
                             <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/users'>Users</Link>
                             <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/players'>Jugadores</Link>
