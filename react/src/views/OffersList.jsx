@@ -345,86 +345,91 @@
 // };
 
 // export default OffersList;
-
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axiosClient from "../axios";
 import moment from "moment";
+import { useStateContext } from "../context/ContextProvider";
 
 const OffersList = () => {
     const [offers, setOffers] = useState([]);
-    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [teams, setTeams] = useState([]);
     const [seasons, setSeasons] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState('');
-
-    useEffect(() => {
-        getSeasons();
-        getUsers();
-        getTeam();
-    }, []);
+    const { setNotification } = useStateContext();
 
     useEffect(() => {
         getOffers();
+        getSeasons();
     }, [selectedSeason]);
-
-    const getSeasons = async () => {
-        setLoading(true);
-        await axiosClient.get('/season')
-            .then(({ data }) => {
-                setLoading(false);
-                setSeasons(data.data);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    };
 
     const getOffers = async () => {
         setLoading(true);
-        await axiosClient.get('/clausula_rescision', {
-            params: {
-                season: selectedSeason
-            }
-        })
-            .then(({ data }) => {
-                setLoading(false);
-                setOffers(data.data);
-                console.log(offers);
-            })
-            .catch(() => {
-                setLoading(false);
+        try {
+            const response = await axiosClient.get('/clausula_rescision', {
+                params: {
+                    all: true,
+                    season: selectedSeason
+                }
             });
+            setOffers(response.data.data);
+        } catch (error) {
+            console.error('Error al obtener ofertas:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const getUsers = () => {
+    const getSeasons = async () => {
         setLoading(true);
-        axiosClient.get('/users')
-            .then(({ data }) => {
-                setLoading(false);
-                setUsers(data.data);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    };
-
-    const getTeam = async () => {
-        setLoading(true);
-        await axiosClient.get('/teams?all=true')
-            .then(({ data }) => {
-                const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda');
-                setTeams(teamFilter);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
+        try {
+            const response = await axiosClient.get('/season');
+            setSeasons(response.data.data || []);
+        } catch (error) {
+            console.error('Error al obtener temporadas:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSeasonChange = (e) => {
         setSelectedSeason(e.target.value);
     };
+
+    const shouldHideValues = (createdAt) => {
+        const offerDate = new Date(createdAt);
+        const currentDate = new Date();
+
+        const showTime1 = new Date(offerDate);
+        showTime1.setHours(1, 0, 0, 0);
+
+        const showTime2 = new Date(offerDate);
+        showTime2.setHours(10, 0, 0, 0);
+
+        const showTime3 = new Date(offerDate);
+        showTime3.setHours(18, 0, 0, 0);
+
+        if (offerDate.getHours() >= 18) {
+            return currentDate < showTime1;
+        } else if (offerDate.getHours() < 1) {
+            return currentDate < showTime1;
+        } else if (offerDate.getHours() >= 1 && offerDate.getHours() < 10) {
+            return currentDate < showTime2;
+        } else if (offerDate.getHours() >= 10 && offerDate.getHours() < 18) {
+            return currentDate < showTime3;
+        }
+
+        return false;
+    };
+
+    // Filtrar las ofertas para obtener solo la última oferta de cada jugador
+    const latestOffers = offers.reduce((acc, offer) => {
+        const existingOffer = acc.find(o => o.id_player === offer.id_player);
+        if (!existingOffer || new Date(existingOffer.created_at) < new Date(offer.created_at)) {
+            return acc.filter(o => o.id_player !== offer.id_player).concat(offer);
+        }
+        return acc;
+    }, []);
 
     return (
         <div>
@@ -468,24 +473,21 @@ const OffersList = () => {
                     </thead>
                     {!loading &&
                         <tbody>
-                            {offers.filter(oferta => oferta.confirmed === 'no' && oferta.active === 'yes' && (selectedSeason === '' || oferta.id_season.id === parseInt(selectedSeason)))
+                            {latestOffers.filter(oferta => oferta.confirmed === 'no' && oferta.active === 'yes' && (selectedSeason === '' || oferta.id_season.id === parseInt(selectedSeason)))
                                 .map((oferta) => {
-                                    const userName = users.find(u => u.id === oferta.created_by);
-                                    const teamName = teams.find(t => t.id === oferta.id_team);
-                                    const userNameToShow = userName ? userName.name : "Usuario no encontrado";
-                                    const teamNameToShow = teamName ? teamName.name : " ";
                                     const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
+                                    const hideValues = shouldHideValues(oferta.created_at);
                                     return (
                                         <tr key={oferta.id}>
                                             <th>{oferta.name}</th>
-                                            <th>{teamNameToShow}</th>
-                                            <th>{oferta.value}</th>
-                                            <th>{oferta.other_players}</th>
-                                            <th>{oferta.total_value}</th>
-                                            <th>{userNameToShow}</th>
+                                            <th>{oferta.id_team && oferta.id_team.name}</th>
+                                            <th>{hideValues ? 'Oculto' : oferta.value}</th>
+                                            <th>{hideValues ? 'Oculto' : oferta.other_players}</th>
+                                            <th>{hideValues ? 'Oculto' : oferta.total_value}</th>
+                                            <th>{oferta.created_by && oferta.created_by.name}</th>
                                             <th>{formattedDate}</th>
                                             <th className="mt-1">
-                                                <Link className="btn-edit my-1" to={`/offers/${oferta.id_player}`}>Ofertas</Link>
+                                                <Link className="btn-edit my-1" to={`/offers/${oferta.id_player.id}`}>Ofertas</Link>
                                                 <br />
                                             </th>
                                         </tr>

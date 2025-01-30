@@ -135,13 +135,13 @@ class PlayerController extends Controller
 
     public function playerOffers($id)
     {
-        $player = Player::findOrFail($id); // busco el jugador
-        $offers = Rescission::where('id_player', $id)->get(); //obtengo todas las ofertas que se le realizaron al jugador
+        $player = Player::findOrFail($id);
+        $offers = Rescission::where('id_player', $id)->get();
 
         return response()->json([
             'player' => $player,
             'offers' => $offers,
-        ]); // Devuelvo el array con el jugador y las ofertas que le realizaron
+        ]);
     }
 
     public function searchPlayers(Request $request)

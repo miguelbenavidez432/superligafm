@@ -101,4 +101,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserAuction::class);
     }
+
+    public function rescissions()
+    {
+        return $this->hasMany(Rescission::class, 'created_by');
+    }
 }
