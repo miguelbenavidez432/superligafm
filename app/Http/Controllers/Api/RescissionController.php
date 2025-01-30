@@ -20,21 +20,18 @@ class RescissionController extends Controller
      */
     public function index(Request $request)
     {
-        /**
-         * if ($request->query("all") == true) {
-         *    return RescissionResource::collection(Team::with(['user', 'team', 'player', 'season'])->orderBy("id", "desc")->get());
-         *} else {
-         *   return RescissionResource::collection(Team::with(['user', 'team', 'player', 'season'])->orderBy("id", "desc")->paginate(200));
-         *}
-         *;
 
-         */
-
-        if ($request->query('all') == 'true') {
-            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->get());
+        if ($request->query("all") == 'true') {
+            return RescissionResource::collection(Rescission::with(['player', 'season', 'team', 'user'])->orderBy("id", "desc")->get());
         } else {
-            return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->paginate(200));
+            return RescissionResource::collection(Rescission::with(['player', 'season', 'team', 'user'])->orderBy("id", "desc")->paginate(200));
         }
+
+        // if ($request->query('all') == 'true') {
+        //     return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->get());
+        // } else {
+        //     return RescissionResource::collection(Rescission::with(['season'])->orderBy("id", "desc")->paginate(200));
+        // }
         ;
     }
 
@@ -147,13 +144,13 @@ class RescissionController extends Controller
             $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
             WebhookCall::create()
-            ->url($webhookUrl)
-            ->payload([
-                'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
+                ->url($webhookUrl)
+                ->payload([
+                    'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
                 \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name}.\n",
-            ])
-            ->useSecret($webhookSecret)
-            ->dispatch();
+                ])
+                ->useSecret($webhookSecret)
+                ->dispatch();
 
             return response()->json(['message' => 'Oferta confirmada exitosamente']);
         } else {

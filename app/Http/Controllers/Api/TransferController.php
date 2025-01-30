@@ -202,6 +202,7 @@ class TransferController extends Controller
             foreach ($players as $player) {
                 if ($player->id_team === $transfer->id_team_from) {
                     $player->id_team = $transfer->id_team_to;
+                    $player->status = 'bloqueado';
                     $player->save();
                 }
             }

@@ -33,4 +33,15 @@ class Rescission extends Model
     {
         return $this->belongsTo(Season::class, 'id_season');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'id_team');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
 }
