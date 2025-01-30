@@ -60,6 +60,9 @@ class RescissionController extends Controller
             return response()->json(['error' => 'Equipo no encontrado'], 404);
         }
 
+        // Verificar el conteo de ofertas existentes
+        dd($existingOffersForPlayer);
+
         if ($existingOffersForPlayer == 0) {
             $team->increment('cdr');
         }
@@ -67,6 +70,7 @@ class RescissionController extends Controller
         $webhookUrl = env('DISCORD_WEBHOOK_URL');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
+        // Verificar que el webhook se ejecuta correctamente
         try {
             WebhookCall::create()
                 ->url($webhookUrl)
