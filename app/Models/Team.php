@@ -13,6 +13,7 @@ class Team extends Model
         'name',
         'division',
         'id_user',
+        'cdr',
     ];
 
     public function players()

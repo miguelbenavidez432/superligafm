@@ -57,10 +57,9 @@ class RescissionController extends Controller
 
         $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
         $player = Player::where('id', $data['id_player'])->get()
-            ->first();
+        ->first();
 
-        //var_dump($player);
-
+        var_dump($existingOffersForPlayer);
         if ($existingOffersForPlayer == 0) {
             $team->increment('cdr');
         }
