@@ -63,7 +63,7 @@ export default function Announcement() {
         setPlayerTransfered((prev) => ({
             ...prev,
             value: newValue,
-            total_value: newValue + prev.extra_value // Sumar el valor extra (jugadores adicionales) al valor principal
+            total_value: newValue + prev.extra_value
         }));
     };
 
@@ -167,7 +167,8 @@ export default function Announcement() {
                     other_players: [],
                     extra_value: 0,
                     total_value: 0,
-                    status: 'bloqueado'
+                    status: 'bloqueado',
+                    id_season: 54
                 });
                 setNotification('Ejecución de cláusula enviada');
             })

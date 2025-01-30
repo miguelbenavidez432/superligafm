@@ -78,7 +78,7 @@ const PlayerOffers = () => {
     const checkOffersAvailability = (playerOffers) => {
         if (playerOffers && playerOffers.length > 0) {
             const firstOfferDate = moment(playerOffers[0].created_at);
-            const expirationDate = firstOfferDate.add(0, 'hours');
+            const expirationDate = firstOfferDate.add(9, 'hours');
             const currentDate = moment();
             if (currentDate.isAfter(expirationDate)) {
                 setIsAvailable(true);
