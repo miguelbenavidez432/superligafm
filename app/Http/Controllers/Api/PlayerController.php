@@ -295,4 +295,14 @@ class PlayerController extends Controller
 
         return response()->json(['success' => 'Jugador liberado']);
     }
+
+    public function filterPlayersByTeamDivision(Request $request)
+    {
+        $players = Player::whereHas('team', function ($query) {
+            $query->whereNotIn('division', ['Primera', 'Segunda']);
+        })->orderBy('ca', 'desc')->limit(1000)->get();
+
+        return response()->json($players);
+    }
+
 }

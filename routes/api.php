@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::get('/players/filter', [PlayerController::class, 'filter']);
+    Route::get('/players/filter-by-division', [PlayerController::class, 'filterPlayersByTeamDivision']);
 
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);

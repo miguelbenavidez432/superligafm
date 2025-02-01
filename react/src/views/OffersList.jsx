@@ -400,15 +400,17 @@ const OffersList = () => {
         const offerDate = new Date(createdAt);
         const currentDate = new Date();
 
+        // Definir las horas específicas para mostrar las ofertas
         const showTime1 = new Date(offerDate);
-        showTime1.setHours(1, 0, 0, 0);
+        showTime1.setHours(1, 0, 0, 0); // 01:00:00
 
         const showTime2 = new Date(offerDate);
-        showTime2.setHours(10, 0, 0, 0);
+        showTime2.setHours(10, 0, 0, 0); // 10:00:00
 
         const showTime3 = new Date(offerDate);
-        showTime3.setHours(18, 0, 0, 0);
+        showTime3.setHours(18, 0, 0, 0); // 18:00:00
 
+        // Condiciones para mostrar las ofertas
         if (offerDate.getHours() >= 18) {
             return currentDate < showTime1;
         } else if (offerDate.getHours() < 1) {
