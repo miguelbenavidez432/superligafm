@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react"
-import axiosClient from "../axios";
-import { Link } from "react-router-dom";
-import { useStateContext } from "../context/ContextProvider";
+import React, { useState, useEffect } from 'react';
+import axiosClient from '../axios';
+import { Link } from 'react-router-dom';
+import { useStateContext } from '../context/ContextProvider';
 
 export default function Players() {
-
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
     const { user, setNotification } = useStateContext();
@@ -21,29 +20,17 @@ export default function Players() {
     const [sortOrder, setSortOrder] = useState('asc');
 
     useEffect(() => {
-        getPlayers()
-        getTeam()
-    }, [currentPage])
+        getPlayers();
+        getTeam();
+    }, [currentPage]);
 
     const getPlayers = () => {
-        setLoading(true)
-        axiosClient.get(`/players?page=${currentPage}`)
-            .then(({ data }) => {
-                setLoading(false)
-                setPlayers(data.data)
-                setTotalPages(data.meta.last_page);
-            })
-            .catch(() => {
-                setLoading(false)
-            })
-    }
-
-    const getPlayersName = async (searchName) => {
         setLoading(true);
-        await axiosClient.get(`/playername?name=${searchName}`)
+        axiosClient.get(`/players?page=${currentPage}`)
             .then(({ data }) => {
                 setLoading(false);
                 setPlayers(data.data);
+                setTotalPages(data.meta.last_page);
             })
             .catch(() => {
                 setLoading(false);
@@ -51,30 +38,29 @@ export default function Players() {
     };
 
     const getTeam = () => {
-        setLoading(true)
+        setLoading(true);
         axiosClient.get('/teams')
             .then(({ data }) => {
-                setLoading(false)
-                setTeam(data.data)
+                setLoading(false);
+                setTeam(data.data);
             })
             .catch(() => {
-                setLoading(false)
-            })
-    }
+                setLoading(false);
+            });
+    };
 
-    const onDelete = (p) => {
-        if (!window.confirm('Estas seguro de quitar al jugador?')) {
-            return
-        }
-        axiosClient.delete(`/players/${p.id}`)
-            .then(() => {
-                setNotification('Jugador eliminado satisfactoriamente');
-                getPlayers();
+    const filterPlayersByTeamDivision = () => {
+        setLoading(true);
+        axiosClient.get('/players/filter-by-division')
+            .then(({ data }) => {
+                setLoading(false);
+                setPlayers(data);
             })
             .catch(() => {
-
-            })
-    }
+                setLoading(false);
+                setNotification('Error al filtrar jugadores por equipo');
+            });
+    };
 
     const handleNextPage = () => {
         setCurrentPage((prevPage) => prevPage + 1);
@@ -83,7 +69,6 @@ export default function Players() {
     const handlePrevPage = () => {
         setCurrentPage((prevPage) => prevPage - 1);
     };
-
 
     const handleSearchChange = (e) => {
         setSearchName(e.target.value);
@@ -112,28 +97,6 @@ export default function Players() {
         setSortOrder(order);
     };
 
-    // const filterPlayers = () => {
-    //     setLoading(true);
-    //     axiosClient.get('/players/filter', {
-    //         params: {
-    //             name: searchName,
-    //             min_age: ageRange[0],
-    //             max_age: ageRange[1],
-    //             id_team: selectedTeam,
-    //             no_league: true,
-    //             sort_field: sortField,
-    //             sort_order: sortOrder
-    //         }
-    //     })
-    //     .then(({ data }) => {
-    //         setLoading(false);
-    //         setPlayers(data.data);
-    //     })
-    //     .catch(() => {
-    //         setLoading(false);
-    //     });
-    // };
-
     return (
         <div>
             <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center' }}>
@@ -151,38 +114,10 @@ export default function Players() {
                 <button className="btn-add" onClick={handleSearchSubmit}>Buscar</button>
             </div>
             <br />
-            {/* <div>
-                <label>Edad mínima:</label>
-                <input
-                    type="number"
-                    name="min"
-                    value={ageRange[0]}
-                    onChange={handleAgeRangeChange}
-                />
-                <label>Edad máxima:</label>
-                <input
-                    type="number"
-                    name="max"
-                    value={ageRange[1]}
-                    onChange={handleAgeRangeChange}
-                />
+            <div>
+                <button className="btn-add" onClick={filterPlayersByTeamDivision}>Filtrar por equipos fuera de Primera y Segunda</button>
             </div>
             <br />
-            <div>
-                <label>Equipo:</label>
-                <select value={selectedTeam} onChange={handleTeamChange}>
-                    <option value="">Todos los equipos</option>
-                    {team.map(t => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                </select>
-            </div>
-            <br />
-            <div>
-                <button className="btn-add" onClick={() => handleSortChange('ca')}>Ordenar por CA</button>
-                <button className="btn-add" onClick={() => handleSortChange('pa')}>Ordenar por PA</button>
-            </div>
-            <br /> */}
             <div>
                 {currentPage > 1 && (
                     <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
@@ -230,9 +165,9 @@ export default function Players() {
                                             <td>{p.age}</td>
                                             <td>{p.ca}</td>
                                             <td>{p.pa}</td>
-                                            <td>{p.id_team ? p.id_team.name : ''}</td>
+                                            <td>{teamNameToShow}</td>
                                             <td>{p.value}</td>
-                                            <td>{p.status === 'restringido' ? '' : p.status}</td>
+                                            <td>{p.status}</td>
                                             {
                                                 user.rol === 'Admin' &&
                                                 <td>
@@ -248,8 +183,7 @@ export default function Players() {
                         </tbody>
                     }
                 </table>
-
             </div>
         </div>
-    )
+    );
 }
