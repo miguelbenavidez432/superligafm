@@ -410,9 +410,11 @@ const OffersList = () => {
         const showTime3 = new Date(offerDate);
         showTime3.setHours(18, 0, 0, 0); // 18:00:00
 
-        // Condiciones para mostrar las ofertas
+        // Condiciones para ocultar las ofertas
         if (offerDate.getHours() >= 18) {
-            return currentDate < showTime1;
+            const nextDayShowTime1 = new Date(showTime1);
+            nextDayShowTime1.setDate(nextDayShowTime1.getDate() + 1);
+            return currentDate < nextDayShowTime1;
         } else if (offerDate.getHours() < 1) {
             return currentDate < showTime1;
         } else if (offerDate.getHours() >= 1 && offerDate.getHours() < 10) {

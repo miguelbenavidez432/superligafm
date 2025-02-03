@@ -281,6 +281,41 @@ const PlayerAuctions = () => {
         }
     };
 
+    const formatDate = (dateString) => {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        };
+        const date = new Date(dateString);
+        return date.toLocaleString('es-ES', options);
+    };
+
+    const confirmAuction = async (auctionId, id_player, id_auctioned, id_team) => {
+        try {
+            const response = await axiosClient.post(`/auction/confirm/${auctionId}`, {
+                id_team,
+                id_player,
+                id_auctioned,
+            });
+
+            if (response.status === 200) {
+                alert('Subasta confirmada y jugador transferido.');
+                getAuctionsByPlayer();
+                navigate('/subastas');
+            } else {
+                alert('Error al confirmar la subasta.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error al confirmar la subasta.');
+        }
+    };
+
     return (
         <div className="player-auctions">
             {name ? `Subastas del jugador: ${name}` : 'Cargando nombre del jugador...'}
