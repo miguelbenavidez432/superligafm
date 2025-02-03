@@ -57,7 +57,7 @@ class RescissionController extends Controller
             ->first();
 
         if ($existingOffersForPlayer == 0) {
-            $team->increment('cdr');
+            $team->cdr += 1;
         }
 
         $webhookUrl = env('DISCORD_WEBHOOK_URL');
@@ -146,7 +146,8 @@ class RescissionController extends Controller
             WebhookCall::create()
                 ->url($webhookUrl)
                 ->payload([
-                    'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
+                    'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.
+                    \nEl jugador va a ser transferido al equipo de {$teamTo->name}.
                 \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name}.\n",
                 ])
                 ->useSecret($webhookSecret)

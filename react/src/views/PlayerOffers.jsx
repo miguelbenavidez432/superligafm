@@ -234,11 +234,9 @@
 // };
 
 // export default PlayerOffers;
-
 import React, { useState, useEffect } from 'react';
 import axiosClient from '../axios';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useStateContext } from '../context/ContextProvider';
 import { format } from 'date-fns';
 
@@ -259,6 +257,7 @@ const PlayerOffers = () => {
     const [isAvailable, setIsAvailable] = useState(false);
     const [errors, setErrors] = useState(null);
     const { user, setNotification } = useStateContext();
+    const navigate = useNavigate()
 
     useEffect(() => {
         axiosClient.get(`/clausulas/${id}`)
@@ -296,12 +295,8 @@ const PlayerOffers = () => {
 
     const checkOffersAvailability = (playerOffers) => {
         if (playerOffers && playerOffers.length > 0) {
-            const firstOfferDate = moment(playerOffers[0].created_at);
-            const expirationDate = firstOfferDate.add(9, 'hours');
-            const currentDate = moment();
-            if (currentDate.isAfter(expirationDate)) {
-                setIsAvailable(true);
-            }
+            const firstOfferDate = new Date(playerOffers[0].created_at);
+            setIsAvailable(shouldDisplayOffer(firstOfferDate));
         }
     };
 
@@ -321,7 +316,9 @@ const PlayerOffers = () => {
 
         // Condiciones para mostrar las ofertas
         if (offerDate.getHours() >= 18) {
-            return currentDate >= showTime1;
+            const nextDayShowTime1 = new Date(showTime1);
+            nextDayShowTime1.setDate(nextDayShowTime1.getDate() + 1);
+            return currentDate >= nextDayShowTime1;
         } else if (offerDate.getHours() < 1) {
             return currentDate >= showTime1;
         } else if (offerDate.getHours() >= 1 && offerDate.getHours() < 10) {
@@ -336,7 +333,7 @@ const PlayerOffers = () => {
     const handleConfirmOffer = async (offerId) => {
         const oferta = offers.find(o => o.id === offerId);
 
-        const teamId = teams.find(t => t.id === oferta.id_team.id);
+        const teamId = teams.find(t => t.id === oferta.id_team);
 
         const getUser = users.find(u => teamId.user && u.id === teamId.user.id);
         if (!getUser) {
@@ -390,6 +387,7 @@ const PlayerOffers = () => {
         try {
             await axiosClient.post('/confirm-offer', confirmOfferData);
             setNotification("Oferta confirmada satisfactoriamente");
+            navigate("/offers");
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
             const response = error.response;
@@ -432,7 +430,6 @@ const PlayerOffers = () => {
                 <ul>
                     {Array.isArray(offers) && offers.length > 0 ? (
                         offers
-                            .filter(oferta => shouldDisplayOffer(oferta.created_at))
                             .map((oferta) => {
                                 const userName = users.find(u => u.id === oferta.created_by);
                                 const userNameToShow = userName ? userName.name : "Usuario no encontrado";

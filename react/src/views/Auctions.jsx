@@ -99,10 +99,13 @@ const Auctions = () => {
             })
             .catch((error) => {
                 const mensaje = error.response.data.error;
-                setNotification("Error al crear la subasta: " + mensaje);
+                const mensaje2 = error.response.data.data.message;
+                //console.log(error.response.data.data.message);
+                setNotification("Error al crear la subasta: " + mensaje + " " );
                 const response = error.response;
                 if (response && response.status === 422) {
                     setErrors(response.data.errors);
+                    setNotification("Error al crear la subasta: " + mensaje2);
                 }
             });
     };
