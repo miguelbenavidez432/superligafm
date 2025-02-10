@@ -13,7 +13,7 @@ export default function TournamentForm() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        axiosClient.get('/seasons')
+        axiosClient.get('/season')
             .then(({ data }) => {
                 setSeasons(data);
             })
