@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Exceptions\ErrorException;
@@ -67,6 +68,64 @@ class ChatbotController extends Controller
                 'message' => 'Ocurrió un error al procesar tu solicitud.',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function chat(Request $request)
+    {
+        $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $userId = auth()->id();
+        $sessionId = $userId ? null : session()->getId();
+
+        $conversation = Conversation::where('user_id', $userId)
+            ->orWhere('session_id', $sessionId)
+            ->latest()
+            ->first();
+
+        if (!$conversation) {
+            $conversation = Conversation::create([
+                'user_id' => $userId,
+                'session_id' => $sessionId,
+                'messages' => [],
+            ]);
+        }
+
+        $messages = $conversation->messages ?? [];
+
+        $messages[] = [
+            'role' => 'user',
+            'content' => $request->content,
+        ];
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+                'Content-Type' => 'application/json',
+            ])->post('https://api.openai.com/v1/chat/completions', [
+                        'model' => 'gpt-3.5-turbo',
+                        'messages' => $messages,
+                        'temperature' => 1.0,
+                        'max_tokens' => 2048,
+                    ])->json();
+
+            $botReply = $response['choices'][0]['message']['content'] ?? 'Error processing response';
+
+            $messages[] = [
+                'role' => 'assistant',
+                'content' => $botReply,
+            ];
+
+            $conversation->update(['messages' => $messages]);
+
+            return response()->json([
+                'message' => $botReply,
+                'history' => $messages,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
         }
     }
 }
