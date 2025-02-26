@@ -104,14 +104,20 @@ class ChatbotController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
                 'Content-Type' => 'application/json',
-            ])->post('https://api.openai.com/v1/chat/completions', [
+            ])->withOptions([
+                        'verify' => false,
+                    ])->post('https://api.openai.com/v1/chat/completions', [
                         'model' => 'gpt-3.5-turbo',
                         'messages' => $messages,
                         'temperature' => 1.0,
                         'max_tokens' => 2048,
                     ])->json();
 
-            $botReply = $response['choices'][0]['message']['content'] ?? 'Error processing response';
+            if (isset($response['choices'][0]['message']['content'])) {
+                $botReply = $response['choices'][0]['message']['content'];
+            } else {
+                $botReply = 'Error processing response' . json_encode($response);
+            }
 
             $messages[] = [
                 'role' => 'assistant',
@@ -125,7 +131,10 @@ class ChatbotController extends Controller
                 'history' => $messages,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Something went wrong'], 500);
+            return response()->json([
+                'error' => 'Something went wrong',
+                'details' => $e->getMessage(),
+            ], 500);
         }
     }
 }

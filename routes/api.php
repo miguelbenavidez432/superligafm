@@ -76,8 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('tournaments', TournamentController::class);
     Route::apiResource('matches', GameController::class);
 
-    Route::post('/chatbot', [ChatbotController::class, 'handleMessage']);
-    Route::post('/chat', [ChatbotController::class, 'chat']);
+    Route::post('/chat', [ChatbotController::class, 'handleMessage']);
+    Route::post('/chatbot', [ChatbotController::class, 'chat']);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
