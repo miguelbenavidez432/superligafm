@@ -11,7 +11,7 @@ class StoreStandingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class StoreStandingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'team_id' => 'required|exists:teams,id',
+            'tournament_id' => 'required|exists:tournaments,id',
+            'played' => 'nullable|integer',
+            'won' => 'nullable|integer',
+            'drawn' => 'nullable|integer',
+            'lost' => 'nullable|integer',
+            'goals_for' => 'nullable|integer',
+            'goals_against' => 'nullable|integer',
+            'goals_difference' => 'nullable|integer',
+            'points' => 'required|integer',
         ];
     }
 }

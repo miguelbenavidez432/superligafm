@@ -15,11 +15,11 @@ const Chatbot = () => {
 
         try {
             const response = await axiosClient.post('/chatbot', {
-                model: "gpt-4o-mini",
+                model: "gpt-3.5-turbo",
                 content: input
             });
 
-            const botMessage = { text: response.data, user: 'bot' };
+            const botMessage = { text: response.data.message, user: 'bot' };
             setMessages([...messages, userMessage, botMessage]);
         } catch (error) {
             setError(error.response.data.message);
