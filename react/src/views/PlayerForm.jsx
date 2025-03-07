@@ -32,9 +32,7 @@ export default function PlayerForm() {
             axiosClient.get('/players?all=true')
                 .then(({ data }) => {
                     setLoading(false);
-
                     const filteredPlayer = data.data.find(player => player.id === parseInt(id));
-
                     if (filteredPlayer) {
                         getTeam();
                         setPlayers({
@@ -44,7 +42,6 @@ export default function PlayerForm() {
                     } else {
                         console.log('Jugador no encontrado');
                     }
-
                     getTeam();
                 })
                 .catch(() => {

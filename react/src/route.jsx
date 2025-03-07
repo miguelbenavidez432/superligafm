@@ -34,9 +34,11 @@ import AuctionsList from './views/AuctionsList';
 import TransferList from './views/TransferList';
 import SeasonCountdown from './components/SeasonCountDown';
 import ProtectedComponent from './components/ProtectedComponent';
-import TransferCountDown from './components/TransferCountDown';
 import DelayedProtectedComponent from './components/DelayedProtectedComponent';
 import Chatbot from './views/Chatbot';
+import Matchs from './views/Matchs';
+import Tournament from './views/Tournaments';
+import SingleMatch from './views/SingleMatch';
 
 const router = createBrowserRouter([
     {
@@ -192,6 +194,18 @@ const router = createBrowserRouter([
                 path: '/chatbot',
                 element: <Chatbot />
             },
+            {
+                path: '/partidos',
+                element: <Matchs />
+            },
+            {
+                path: '/partidos/:id',
+                element: <SingleMatch />
+            },
+            {
+                path: '/torneos',
+                element: <Tournament />
+            }
         ]
     },
     {

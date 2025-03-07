@@ -27,7 +27,7 @@ class StoreGameRequest extends FormRequest
             'team_away_id' => 'required|exists:teams,id',
             'score_home' => 'nullable|integer',
             'score_away' => 'nullable|integer',
-            'match_date' => 'required|date',
+            'match_date' => 'date|nullable',
         ];
     }
 }
