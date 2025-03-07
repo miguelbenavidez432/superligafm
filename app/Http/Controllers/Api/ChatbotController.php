@@ -105,13 +105,13 @@ class ChatbotController extends Controller
                 'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
                 'Content-Type' => 'application/json',
             ])->withOptions([
-                        'verify' => false,
-                    ])->post('https://api.openai.com/v1/chat/completions', [
-                        'model' => 'gpt-3.5-turbo',
-                        'messages' => $messages,
-                        'temperature' => 1.0,
-                        'max_tokens' => 2048,
-                    ])->json();
+                'verify' => false,
+            ])->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-3.5-turbo',
+                'messages' => $messages,
+                'temperature' => 1.0,
+                'max_tokens' => 2048,
+            ])->json();
 
             if (isset($response['choices'][0]['message']['content'])) {
                 $botReply = $response['choices'][0]['message']['content'];

@@ -37,6 +37,7 @@ import ProtectedComponent from './components/ProtectedComponent';
 import TransferCountDown from './components/TransferCountDown';
 import DelayedProtectedComponent from './components/DelayedProtectedComponent';
 import Chatbot from './views/Chatbot';
+import ConfirmedOffersList from './views/ConfirmedOffersList';
 
 const router = createBrowserRouter([
     {
@@ -124,6 +125,10 @@ const router = createBrowserRouter([
             //     path: '/subastas',
             //     element: <AuctionConfirmation />
             // },
+            {
+                path: '/ofertas-confirmadas',
+                element: <ConfirmedOffersList />,
+            },
             {
                 path: '/apuestas',
                 element: <Bets />
