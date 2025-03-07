@@ -28,6 +28,7 @@ class UpdateGameRequest extends FormRequest
             'score_home' => 'nullable|integer',
             'score_away' => 'nullable|integer',
             'match_date' => 'sometimes|date',
+            'status' => 'sometimes|in:pending,completed',
         ];
     }
 }

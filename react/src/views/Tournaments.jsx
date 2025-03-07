@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import axiosClient from '../axiosClient';
+import axiosClient from '../axios';
+import { useStateContext } from '../context/ContextProvider';
 
 export default function TournamentForm() {
     const [tournament, setTournament] = useState({
@@ -11,11 +12,12 @@ export default function TournamentForm() {
     });
     const [seasons, setSeasons] = useState([]);
     const [loading, setLoading] = useState(false);
+    const { setNotification } = useStateContext();
 
     useEffect(() => {
         axiosClient.get('/season')
             .then(({ data }) => {
-                setSeasons(data);
+                setSeasons(data.data);
             })
             .catch(() => {
                 setLoading(false);
@@ -27,8 +29,8 @@ export default function TournamentForm() {
         setLoading(true);
         axiosClient.post('/tournaments', tournament)
             .then(() => {
-                setLoading(false);
-                // Redirigir o mostrar notificación
+                //setLoading(false);
+                setNotification('Torneo creado correctamente');
             })
             .catch(() => {
                 setLoading(false);
@@ -42,9 +44,9 @@ export default function TournamentForm() {
             <input value={tournament.end_date} onChange={e => setTournament({ ...tournament, end_date: e.target.value })} placeholder="Fecha de fin" type="date" />
             <select value={tournament.season_id} onChange={e => setTournament({ ...tournament, season_id: e.target.value })}>
                 <option value=''>Seleccionar Temporada</option>
-                {seasons.map(season => (
+                {seasons ? seasons.map(season => (
                     <option key={season.id} value={season.id}>{season.name}</option>
-                ))}
+                )): 'No hay temporadas'}
             </select>
             <button className="btn" type="submit" disabled={loading}>Guardar Torneo</button>
         </form>

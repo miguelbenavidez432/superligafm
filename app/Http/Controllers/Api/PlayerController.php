@@ -24,7 +24,6 @@ class PlayerController extends Controller
         } else {
             return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(100));
         }
-
     }
 
     /**
@@ -42,7 +41,7 @@ class PlayerController extends Controller
      */
     public function show(Player $player)
     {
-        return new PlayerResource($player);
+        return new PlayerResource($player->load('team'));
     }
 
 
