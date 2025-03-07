@@ -40,4 +40,12 @@ class Team extends Model
     {
         return $this->hasMany(Auction::class, 'id_team'); // 'id_team' es el campo en la tabla 'auctions' que referencia el equipo
     }
+    public function gamesHome()
+    {
+        return $this->hasMany(Game::class, 'team_home_id');
+    }
+    public function gamesAway()
+    {
+        return $this->hasMany(Game::class, 'team_away_id');
+    }
 }

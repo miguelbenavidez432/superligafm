@@ -55,7 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
     Route::put('/cerrar-oferta/{id}', [RescissionController::class, 'closeOffer']);
     Route::apiResource('/singlebet', PlayerBetController::class);
-    Route::apiResource('/players', PlayerController::class);
 
     Route::apiResource('/season', SeasonController::class);
     Route::get('/seasons/start', [SeasonController::class, 'getSeasonStart']);
@@ -74,7 +73,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
 
     Route::apiResource('tournaments', TournamentController::class);
-    Route::apiResource('matches', GameController::class);
 
     Route::post('/chat', [ChatbotController::class, 'handleMessage']);
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
@@ -86,3 +84,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::apiResource('/matches', GameController::class);
+Route::apiResource('/players', PlayerController::class);

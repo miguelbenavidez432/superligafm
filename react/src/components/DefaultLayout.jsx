@@ -182,20 +182,22 @@ export default function DefaultLayout() {
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/plantel'>Plantel</Link>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/subastas'>Lista de Subastas</Link>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/crear_subasta'>Crear Subasta</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/transfer'>Transferencia</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/clausula_rescision'>Claúsula de rescisión</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/players'>Jugadores</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/users'>Users</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/teams'>Equipos</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/reglamento'>Reglamento</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/partidos'>Partidos</Link>
                     {user.rol === 'Admin' && (
                         <>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/users'>Users</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/players'>Jugadores</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/teams'>Equipos</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/transfer'>Transferencia</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/clausula_rescision'>Claúsula de rescisión</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/reglamento'>Reglamento</Link>
                             <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas/usuarios'>Confirmar apuestas ganadas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas'>Apuestas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas/new'>Crear apuestas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/torneos'>Cargar Torneo</Link>
                         </>
                     )}
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/about'>Nosotros</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas'>Apuestas</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas/new'>Crear apuestas</Link>
                 </nav>
                 <div className="p-4">
                     <a href="" className="block py-2.5 px-4 bg-red-600 hover:bg-red-700 text-center rounded" onClick={onLogout}>Logout</a>

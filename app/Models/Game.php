@@ -15,12 +15,13 @@ class Game extends Model
         'team_away_id',
         'score_home',
         'score_away',
-        'match_date'
+        'match_date',
+        'status',
     ];
 
     public function tournament()
     {
-        return $this->belongsTo(Tournament::class);
+        return $this->belongsTo(Tournament::class, 'tournament_id');
     }
 
     public function teamHome()

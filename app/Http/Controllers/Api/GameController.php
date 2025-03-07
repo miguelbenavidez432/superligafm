@@ -19,9 +19,9 @@ class GameController extends Controller
     public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
-            return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->orderBy('match_date', 'desc')->get());
+            return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->get());
         } else {
-            return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->orderBy('match_date', 'desc')->paginate(100));
+            return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->paginate(100));
         }
     }
 
@@ -31,6 +31,8 @@ class GameController extends Controller
     public function store(StoreGameRequest $request)
     {
         $data = $request->validated();
+        $date = new \DateTime(now());
+        $data['match_date'] = date('Y-m-d H:i:s', strtotime($date->format('Y-m-d H:i:s')));
         $game = Game::create($data);
         return response(new GameResource($game), 201);
     }
@@ -40,7 +42,7 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        return new GameResource($game);
+        return new GameResource($game->load(['tournament', 'teamHome', 'teamAway']));
     }
 
     /**
