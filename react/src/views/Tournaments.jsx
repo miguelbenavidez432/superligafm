@@ -22,15 +22,21 @@ export default function TournamentForm() {
             .catch(() => {
                 setLoading(false);
             });
-    }, []);
+    }, [tournament]);
 
     const onSubmit = (e) => {
         e.preventDefault();
         setLoading(true);
         axiosClient.post('/tournaments', tournament)
             .then(() => {
-                //setLoading(false);
+                setLoading(false);
                 setNotification('Torneo creado correctamente');
+                setTournament({
+                    name: '',
+                    start_date: '',
+                    end_date: '',
+                    season_id: '',
+                });
             })
             .catch(() => {
                 setLoading(false);

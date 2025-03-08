@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BetController;
 use App\Http\Controllers\Api\ChatbotController;
 use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\MatchStatisticController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\RescissionController;
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::apiResource('/players', PlayerController::class);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
     Route::post('/liberar_jugador', [PlayerController::class, 'releasePlayer']);
@@ -44,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::get('/players/filter', [PlayerController::class, 'filter']);
     Route::get('/players/filter-by-division', [PlayerController::class, 'filterPlayersByTeamDivision']);
+    Route::get('/players-teams', [PlayerController::class, 'getPlayersByTeams']);
 
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);
@@ -73,6 +76,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
 
     Route::apiResource('tournaments', TournamentController::class);
+    Route::apiResource('/matches', GameController::class);
+    Route::apiResource('match-statistics', MatchStatisticController::class);
+    Route::get('/games/{id}', [GameController::class, 'getGameById']);
 
     Route::post('/chat', [ChatbotController::class, 'handleMessage']);
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
@@ -84,5 +90,3 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::apiResource('/matches', GameController::class);
-Route::apiResource('/players', PlayerController::class);
