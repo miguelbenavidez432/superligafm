@@ -42,7 +42,8 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        return new GameResource($game->load(['tournament', 'teamHome', 'teamAway']));
+        $game = $game->load(['tournament', 'teamHome', 'teamAway']);
+        return new GameResource($game);
     }
 
     /**
@@ -51,8 +52,11 @@ class GameController extends Controller
     public function update(UpdateGameRequest $request, Game $game)
     {
         $data = $request->validated();
+        //var_dump($data);
         $game->update($data);
-        return new GameResource($game);
+        return response()->json([
+            'message' => 'El juego se actualizó correctamente',
+        ], 200);
     }
 
     /**
@@ -97,6 +101,17 @@ class GameController extends Controller
         file_put_contents($relativePath, $image);
 
         return $relativePath;
+    }
+
+    public function getGameById($id)
+    {
+        $game = Game::with(['tournament', 'teamHome', 'teamAway'])->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => 'Partido no encontrado'], 404);
+        }
+
+        return new GameResource($game);
     }
 
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +16,7 @@ class Game extends Model
         'score_away',
         'match_date',
         'status',
+        'stage',
     ];
 
     public function tournament()

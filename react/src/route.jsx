@@ -36,9 +36,10 @@ import SeasonCountdown from './components/SeasonCountDown';
 import ProtectedComponent from './components/ProtectedComponent';
 import DelayedProtectedComponent from './components/DelayedProtectedComponent';
 import Chatbot from './views/Chatbot';
+import ConfirmedOffersList from './views/ConfirmedOffersList';
 import Matchs from './views/Matchs';
-import Tournament from './views/Tournaments';
 import SingleMatch from './views/SingleMatch';
+import Tournament from './views/Tournaments';
 
 const router = createBrowserRouter([
     {
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
             //     path: '/subastas',
             //     element: <AuctionConfirmation />
             // },
+            {
+                path: '/ofertas-confirmadas',
+                element: <ConfirmedOffersList />,
+            },
             {
                 path: '/apuestas',
                 element: <Bets />

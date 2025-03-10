@@ -304,4 +304,24 @@ class PlayerController extends Controller
         return response()->json($players);
     }
 
+    public function getPlayersByTeams(Request $request)
+    {
+        $teamIds = $request->query('id_team');
+
+        if (!$teamIds) {
+            return response()->json(['error' => 'No se proporcionaron IDs de equipos'], 400);
+        }
+
+        $teamIdsArray = explode(',', $teamIds);
+
+        $players = Player::whereIn('id_team', $teamIdsArray)
+            ->with('team')
+            ->where('status', 'registrado')
+            ->orderBy('id_team')
+            ->orderBy('ca', 'desc')
+            ->get();
+
+        return PlayerResource::collection($players);
+    }
+
 }
