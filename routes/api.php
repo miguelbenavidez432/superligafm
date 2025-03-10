@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\MatchStatisticController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\PlayerController;
+use App\Http\Controllers\Api\PrizeController;
 use App\Http\Controllers\Api\RescissionController;
 use App\Http\Controllers\Api\SeasonController;
 use App\Http\Controllers\Api\TeamController;
@@ -83,6 +84,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/chat', [ChatbotController::class, 'handleMessage']);
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
+
+    Route::apiResource('prizes', PrizeController::class);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
