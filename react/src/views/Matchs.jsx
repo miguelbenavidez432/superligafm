@@ -13,13 +13,15 @@ export default function Matches() {
     const { setNotification } = useStateContext();
     const [tournaments, setTournaments] = useState([]);
     const [tournamentId, setTournamentId] = useState('');
+    const [stage, setStage] = useState('');
+    const [scoreHome, setScoreHome] = useState('');
+    const [scoreAway, setScoreAway] = useState('');
 
     useEffect(() => {
         axiosClient.get('/matches')
             .then(({ data }) => {
                 const filteredMatches = data.data.filter(match => match.status !== 'completed');
                 setMatches(filteredMatches);
-                //setMatches(data.data);
                 setLoading(false);
                 getTeams();
                 getTournaments();
@@ -32,11 +34,11 @@ export default function Matches() {
     const getTeams = () => {
         axiosClient.get('/teams')
             .then(({ data }) => {
-            const filteredTeams = data.data.filter(team => team.division === 'Primera' || team.division === 'Segunda');
-            setTeams(filteredTeams);
+                const filteredTeams = data.data.filter(team => team.division === 'Primera' || team.division === 'Segunda');
+                setTeams(filteredTeams);
             })
             .catch(() => {
-            setLoading(false);
+                setLoading(false);
             });
     };
 
@@ -55,74 +57,118 @@ export default function Matches() {
         axiosClient.post('/matches', {
             team_home_id: teamHomeId,
             team_away_id: teamAwayId,
-            tournament_id: tournamentId
+            tournament_id: tournamentId,
+            score_home: scoreHome,
+            score_away: scoreAway,
+            stage: stage
         })
-        .then(({ data }) => {
-            setMatches([...matches, data]);
-            setTeamHomeId('');
-            setTeamAwayId('');
-            setNotification('Partido creado correctamente');
-            setCreating(false);
-        })
-        .catch((error) => {
-            setNotification('Error al crear el partido ' + error.response.data.message);
-            setCreating(false);
-        });
+            .then(({ data }) => {
+                setMatches([...matches, data]);
+                setTeamHomeId('');
+                setTeamAwayId('');
+                setStage('');
+                setTournamentId('');
+                setNotification('Partido creado correctamente');
+                setCreating(false);
+            })
+            .catch((error) => {
+                setNotification('Error al crear el partido ' + error.response.data.message);
+                setCreating(false);
+            });
     };
 
     return (
-        <div>
-            <h1>Partidos</h1>
-            {loading && <p>Cargando...</p>}
+        <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-4">Partidos</h1>
+            {loading && <p className="text-gray-500">Cargando...</p>}
             {!loading && (
                 <>
-                    <ul>
+                    <ul className="list-disc pl-5">
                         {matches ? matches.map(match => (
-                            <li key={match.id}>
-                                {match.team_home.name} vs {match.team_away.name} - {<Link className="btn-edit" to={`/partidos/${match.id}`}>Cargar datos</Link>}
+                            <li key={match.id} className="mb-2">
+                                {match.team_home?.name} vs {match.team_away?.name} - <Link className="text-blue-500 hover:underline" to={`/partidos/${match.id}`}>Cargar datos</Link>
                             </li>
                         )) :
-                            <p>No hay partidos disponibles.</p>
+                            <p className="text-gray-500">No hay partidos disponibles.</p>
                         }
                     </ul>
                     <br />
-                    <div>
-                        <h2>Crear un nuevo partido</h2>
-                        <select
-                            value={teamHomeId}
-                            onChange={(e) => setTeamHomeId(e.target.value)}
-                        >
-                            <option value="">Selecciona el equipo local</option>
-                            {teams.map(team => (
-                                <option key={team.id} value={team.id}>
-                                    {team.name}
-                                </option>
-                            ))}
-                        </select>
-                        <select
-                            value={teamAwayId}
-                            onChange={(e) => setTeamAwayId(e.target.value)}
-                        >
-                            <option value="">Selecciona el equipo visitante</option>
-                            {teams.map(team => (
-                                <option key={team.id} value={team.id}>
-                                    {team.name}
-                                </option>
-                            ))}
-                        </select>
-                        <br />
-                        <select
-                            value={tournaments.id}
-                            onChange={(e) => setTournamentId(e.target.value)}
-                        >
-                            <option value="">Selecciona el torneo</option>
-                            {tournaments.map(t => (
-                                <option key={t.id} value={t.id}>
-                                    {t.name}
-                                </option>
-                            ))}
-                        </select>
-                        <button className="btn-add" onClick={handleCreateMatch} disabled={creating}>
+                    <div className="mt-6">
+                        <h2 className="text-xl font-semibold mb-2">Crear un nuevo partido</h2>
+                        <div className="mb-4 flex flex-wrap -mx-2">
+                            <div className="w-full md:w-1/2 px-2 mb-4 md:mb-0">
+                                <select
+                                    className="block w-full p-2 border border-gray-300 rounded"
+                                    value={teamHomeId}
+                                    onChange={(e) => setTeamHomeId(e.target.value)}
+                                >
+                                    <option value="">Selecciona el equipo local</option>
+                                    {teams.map(team => (
+                                        <option key={team.id} value={team.id}>
+                                            {team.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="w-full md:w-1/2 px-2">
+                                <select
+                                    className="block w-full p-2 border border-gray-300 rounded"
+                                    value={teamAwayId}
+                                    onChange={(e) => setTeamAwayId(e.target.value)}
+                                >
+                                    <option value="">Selecciona el equipo visitante</option>
+                                    {teams.map(team => (
+                                        <option key={team.id} value={team.id}>
+                                            {team.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="mb-4 flex flex-wrap -mx-2">
+                            <div className="w-full md:w-1/2 px-2 mb-4 md:mb-0">
+                                <input
+                                    type="number"
+                                    className="block w-full p-2 border border-gray-300 rounded"
+                                    placeholder='Cantidad de goles del local'
+                                    value={scoreHome}
+                                    onChange={(e) => setScoreHome(e.target.value)}
+                                />
+                            </div>
+                            <div className="w-full md:w-1/2 px-2">
+                                <input
+                                    type="number"
+                                    className="block w-full p-2 border border-gray-300 rounded"
+                                    placeholder='Cantidad de goles del visitante'
+                                    value={scoreAway}
+                                    onChange={(e) => setScoreAway(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <select
+                                className="block w-full p-2 border border-gray-300 rounded"
+                                value={tournamentId}
+                                onChange={(e) => setTournamentId(e.target.value)}
+                            >
+                                <option value="">Selecciona el torneo</option>
+                                {tournaments.map(t => (
+                                    <option key={t.id} value={t.id}>
+                                        {t.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <input
+                                type="number"
+                                className="block w-full p-2 border border-gray-300 rounded"
+                                placeholder='Fecha o número de ronda (1,2,3, etc)'
+                                value={stage}
+                                onChange={(e) => setStage(e.target.value)}
+                            />
+                        </div>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={handleCreateMatch} disabled={creating}>
                             {creating ? 'Creando...' : 'Crear Partido'}
                         </button>
                     </div>

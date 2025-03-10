@@ -28,6 +28,8 @@ class StoreGameRequest extends FormRequest
             'score_home' => 'nullable|integer',
             'score_away' => 'nullable|integer',
             'match_date' => 'date|nullable',
+            'status' => 'string|nullable',
+            'stage' => 'string|nullable',
         ];
     }
 }

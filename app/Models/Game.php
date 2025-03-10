@@ -16,6 +16,7 @@ class Game extends Model
         'score_away',
         'match_date',
         'status',
+        'stage',
     ];
 
     public function tournament()

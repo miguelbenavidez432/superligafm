@@ -14,7 +14,7 @@ class MatchStatisticController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request )
+    public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
             return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user'])->get());
@@ -28,11 +28,32 @@ class MatchStatisticController extends Controller
      */
     public function store(StoreMatchStatisticRequest $request)
     {
-        $data = $request->validated();
+        $statistics = $request->input('statistics');
 
-        $statistic = MatchStatistic::create($data);
+        foreach ($statistics as $statistic) {
+            $filteredData = [];
 
-        return response(new MatchStatisticResource($statistic), 201);
+            foreach ($statistic as $key => $value) {
+                if (!($value === 0 || $value === null || $value === false) || in_array($key, ['user_id', 'tournament_id', 'player_id'])) {
+                    $filteredData[$key] = $value;
+                }
+            }
+
+            $relevantStats = ['goals', 'assists', 'yellow_cards', 'red_cards', 'simple_injuries', 'serious_injuries', 'mvp'];
+            $allZeroOrNull = true;
+            foreach ($relevantStats as $stat) {
+                if (isset($filteredData[$stat]) && $filteredData[$stat] !== 0 && $filteredData[$stat] !== null && $filteredData[$stat] !== false) {
+                    $allZeroOrNull = false;
+                    break;
+                }
+            }
+
+            if (!$allZeroOrNull) {
+                MatchStatistic::create($filteredData);
+            }
+        }
+
+        return response()->json(['message' => 'Estadísticas guardadas correctamente'], 201);
     }
 
     /**

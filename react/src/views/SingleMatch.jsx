@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import axiosClient from '../axios';
@@ -9,6 +10,9 @@ export default function SingleMatch() {
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(true);
     const { user, setNotification } = useStateContext();
+    const [isEditing, setIsEditing] = useState(false);
+    const [scoreHome, setScoreHome] = useState(match.score_home || 0);
+    const [scoreAway, setScoreAway] = useState(match.score_away || 0);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -78,28 +82,27 @@ export default function SingleMatch() {
     //         });
     // };
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [scoreHome, setScoreHome] = useState(match.score_home || 0);
-    const [scoreAway, setScoreAway] = useState(match.score_away || 0);
 
-    const updateMatch = () => {
-        setIsEditing(true);
-    };
+    // const updateMatch = () => {
+    //     setIsEditing(true);
+    // };
 
-    const saveMatch = () => {
-        axiosClient.put(`/matches/${id}`, {
-            score_home: scoreHome,
-            score_away: scoreAway,
-            status: 'pending'
-        })
-        .then(() => {
-            setNotification('Partido actualizado correctamente');
-            setIsEditing(false);
-        })
-        .catch(() => {
-            setNotification('Error al actualizar el partido');
-        });
-    };
+    // const saveMatch = () => {
+    //     console.log('save match');
+    //     console.log(scoreHome, scoreAway);
+    //     axiosClient.put(`/game-update/${id}`, {
+    //         score_home: scoreHome,
+    //         score_away: scoreAway,
+    //         status: 'pending'
+    //     })
+    //     .then(() => {
+    //         setNotification('Partido actualizado correctamente');
+    //         setIsEditing(false);
+    //     })
+    //     .catch(() => {
+    //         setNotification('Error al actualizar el partido');
+    //     });
+    // };
 
     return (
         <div className="p-4">
@@ -110,125 +113,178 @@ export default function SingleMatch() {
                     <h1 className="text-2xl font-bold mb-4">
                         {match.team_home?.name} vs {match.team_away?.name}
                     </h1>
+                    <h3 className="text-2xl font-semibold mb-4">
+                        {match.score_home} - {match.score_away}
+                    </h3>
                     <p className="text-gray-600">{match.date}</p>
                     <p className="text-gray-600 mb-4">{match.status == 'pending' ? 'Pendiente de carga' : 'Completado el resultado'}</p>
-                    {user && (
-                        <div className="mb-4">
-                            {/* <button
-                                onClick={deleteMatch}
-                                className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-                            >
-                                Eliminar
-                            </button> */}
-                            {isEditing ? (
-                                <>
-                                    <input
-                                        type="number"
-                                        value={scoreHome}
-                                        onChange={(e) => setScoreHome(parseInt(e.target.value))}
-                                        className="w-16 p-1 border rounded mr-2"
-                                    />
-                                    <input
-                                        type="number"
-                                        value={scoreAway}
-                                        onChange={(e) => setScoreAway(parseInt(e.target.value))}
-                                        className="w-16 p-1 border rounded mr-2"
-                                    />
-                                    <button
-                                        onClick={saveMatch}
-                                        className="bg-green-500 text-white px-4 py-2 rounded"
-                                    >
-                                        Guardar
-                                    </button>
-                                </>
-                            ) : (
-                                <button
-                                    onClick={updateMatch}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                                >
-                                    Editar
-                                </button>
-                            )}
-                        </div>
-                    )}
                     <form onSubmit={handleSubmit}>
-                        <table className="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr>
-                                    <th className="py-2 px-4 border-b">Jugador</th>
-                                    <th className="py-2 px-4 border-b">Goles</th>
-                                    <th className="py-2 px-4 border-b">Asistencias</th>
-                                    <th className="py-2 px-4 border-b">Amarillas</th>
-                                    <th className="py-2 px-4 border-b">Rojas</th>
-                                    <th className="py-2 px-4 border-b">Lesiones Simples</th>
-                                    <th className="py-2 px-4 border-b">Lesiones Graves</th>
-                                    <th className="py-2 px-4 border-b">MVP</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {players.map(player => (
-                                    <tr key={player.id} className="text-center">
-                                        <td className="py-2 px-4 border-b">{player.name}</td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="number"
-                                                value={player.goals || 0}
-                                                onChange={e => handleStatisticChange(player.id, 'goals', parseInt(e.target.value))}
-                                                className="w-16 p-1 border rounded"
-                                            />
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="number"
-                                                value={player.assists || 0}
-                                                onChange={e => handleStatisticChange(player.id, 'assists', parseInt(e.target.value))}
-                                                className="w-16 p-1 border rounded"
-                                            />
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="checkbox"
-                                                checked={player.yellow_cards || false}
-                                                onChange={e => handleStatisticChange(player.id, 'yellow_cards', e.target.checked)}
-                                                className="w-4 h-4"
-                                            />
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="checkbox"
-                                                checked={player.red_cards || false}
-                                                onChange={e => handleStatisticChange(player.id, 'red_cards', e.target.checked)}
-                                                className="w-4 h-4"
-                                            />
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="checkbox"
-                                                checked={player.simple_injuries || false}
-                                                onChange={e => handleStatisticChange(player.id, 'simple_injuries', e.target.checked)}
-                                                className="w-4 h-4"
-                                            />
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="checkbox"
-                                                checked={player.serious_injuries || false}
-                                                onChange={e => handleStatisticChange(player.id, 'serious_injuries', e.target.checked)}
-                                                className="w-4 h-4"
-                                            />
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <input
-                                                type="checkbox"
-                                                checked={player.mvp || false}
-                                                onChange={e => handleStatisticChange(player.id, 'mvp', e.target.checked)}
-                                                className="w-4 h-4"
-                                            />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <div className="flex flex-col lg:flex-row mb-8">
+                            <div className="w-full lg:w-1/2 lg:pr-2 mb-4 lg:mb-0">
+                                <h2 className="text-xl font-semibold mb-2">{match.team_home?.name}</h2>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full bg-white border border-gray-200 mb-4">
+                                        <thead>
+                                            <tr>
+                                                <th className="py-2 px-4 border-b">Jugador</th>
+                                                <th className="py-2 px-4 border-b">Goles</th>
+                                                <th className="py-2 px-4 border-b">Asistencias</th>
+                                                <th className="py-2 px-4 border-b">Amarillas</th>
+                                                <th className="py-2 px-4 border-b">Rojas</th>
+                                                <th className="py-2 px-4 border-b">Lesiones Simples</th>
+                                                <th className="py-2 px-4 border-b">Lesiones Graves</th>
+                                                <th className="py-2 px-4 border-b">MVP</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {players.filter(player => player.id_team?.id == match.team_home?.id).map(player => (
+                                                <tr key={player.id} className="text-center">
+                                                    <td className="py-2 px-4 border-b">{player.name}</td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="number"
+                                                            value={player.goals || 0}
+                                                            onChange={e => handleStatisticChange(player.id, 'goals', parseInt(e.target.value))}
+                                                            className="w-16 p-1 border rounded"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="number"
+                                                            value={player.assists || 0}
+                                                            onChange={e => handleStatisticChange(player.id, 'assists', parseInt(e.target.value))}
+                                                            className="w-16 p-1 border rounded"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.yellow_cards || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'yellow_cards', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.red_cards || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'red_cards', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.simple_injuries || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'simple_injuries', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.serious_injuries || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'serious_injuries', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.mvp || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'mvp', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div className="w-full lg:w-1/2 lg:pl-2">
+                                <h2 className="text-xl font-semibold mb-2">{match.team_away?.name}</h2>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full bg-white border border-gray-200">
+                                        <thead>
+                                            <tr>
+                                                <th className="py-2 px-4 border-b">Jugador</th>
+                                                <th className="py-2 px-4 border-b">Goles</th>
+                                                <th className="py-2 px-4 border-b">Asistencias</th>
+                                                <th className="py-2 px-4 border-b">Amarillas</th>
+                                                <th className="py-2 px-4 border-b">Rojas</th>
+                                                <th className="py-2 px-4 border-b">Lesiones Simples</th>
+                                                <th className="py-2 px-4 border-b">Lesiones Graves</th>
+                                                <th className="py-2 px-4 border-b">MVP</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {players.filter(player => player.id_team?.id == match.team_away?.id).map(player => (
+                                                <tr key={player.id} className="text-center">
+                                                    <td className="py-2 px-4 border-b">{player.name}</td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="number"
+                                                            value={player.goals || 0}
+                                                            onChange={e => handleStatisticChange(player.id, 'goals', parseInt(e.target.value))}
+                                                            className="w-16 p-1 border rounded"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="number"
+                                                            value={player.assists || 0}
+                                                            onChange={e => handleStatisticChange(player.id, 'assists', parseInt(e.target.value))}
+                                                            className="w-16 p-1 border rounded"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.yellow_cards || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'yellow_cards', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.red_cards || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'red_cards', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.simple_injuries || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'simple_injuries', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.serious_injuries || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'serious_injuries', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                    <td className="py-2 px-4 border-b">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={player.mvp || false}
+                                                            onChange={e => handleStatisticChange(player.id, 'mvp', e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                         <button
                             type="submit"
                             className="mt-4 bg-green-500 text-white px-4 py-2 rounded"

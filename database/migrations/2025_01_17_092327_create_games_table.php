@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('score_away')->nullable();
             $table->date('match_date');
             $table->string('status')->default('pending');
+            $table->string('stage')->nullable();
             $table->timestamps();
         });
     }
