@@ -213,10 +213,13 @@ export default function Dashboard() {
 
 
     return (
-        <div className="dashboard">
-            <h1>Dashboard de Temporada</h1>
+        <div className="dashboard p-8 mx-8">
+            <h1 className="text-2xl font-bold mb-4">Dashboard de Temporada</h1>
 
-            <select onChange={e => setSeasonId(e.target.value)}>
+            <select
+                className="p-2 border rounded mb-4"
+                onChange={e => setSeasonId(e.target.value)}
+            >
                 <option value="">Seleccione una temporada</option>
                 {seasons.map(season => (
                     <option key={season.id} value={season.id}>
@@ -227,39 +230,35 @@ export default function Dashboard() {
 
             {seasonId && (
                 <div>
-                    <h2>Transferencias</h2>
-                    <ul>
+                    <h2 className="text-xl font-semibold mb-2">Transferencias</h2>
+                    <ul className="list-disc pl-5 mb-4">
                         {pendingTransfers.map(transfer => (
-                            <li key={transfer.id}>
+                            <li key={transfer.id} className="mb-2">
                                 Jugador: {transfer.transferred_players}, Valor: {transfer.budget}
                             </li>
                         ))}
                     </ul>
-                    <br />
-                    <br />
-                    <h2>Subastas</h2>
-                    <br />
-                    <ul>
+
+                    <h2 className="text-xl font-semibold mb-2">Subastas</h2>
+                    <ul className="list-disc pl-5 mb-4">
                         {auctions
                             .filter(auction => auction.creator && auction.creator.id == user.id)
                             .map(auction => (
-                                <li key={auction.id}>
+                                <li key={auction.id} className="mb-2">
                                     Jugador: {auction.player?.name || 'Sin jugador'}, Última oferta: {auction.amount || 'Sin oferta'}
                                 </li>
                             ))}
                     </ul>
 
-                    <br />
-                    <br />
-                    <h2>Clausulas ejecutadas</h2>
-                    <table>
+                    <h2 className="text-xl font-semibold mb-2">Clausulas ejecutadas</h2>
+                    <table className="min-w-full bg-white border border-gray-200 mb-4">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Jugadores Transferidos</th>
-                                <th>Equipo Desde</th>
-                                <th>Presupuesto</th>
-                                <th>Acciones</th>
+                                <th className="py-2 px-4 border-b">ID</th>
+                                <th className="py-2 px-4 border-b">Jugadores Transferidos</th>
+                                <th className="py-2 px-4 border-b">Equipo Desde</th>
+                                <th className="py-2 px-4 border-b">Presupuesto</th>
+                                <th className="py-2 px-4 border-b">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -268,43 +267,42 @@ export default function Dashboard() {
                                 const teamNameToShow = teamName ? teamName.name : " ";
                                 return (
                                     <tr key={transfer.id}>
-                                        <td>{transfer.id}</td>
-                                        <td>{transfer.name}</td>
-                                        <td>{teamNameToShow}</td>
-                                        <td>{transfer.total_value}</td>
-                                        <td>
-                                            <Link className="btn-edit my-1" to={`/offers/${transfer.id_player}`}>Ofertas</Link>
+                                        <td className="py-2 px-4 border-b">{transfer.id}</td>
+                                        <td className="py-2 px-4 border-b">{transfer.name}</td>
+                                        <td className="py-2 px-4 border-b">{teamNameToShow}</td>
+                                        <td className="py-2 px-4 border-b">{transfer.total_value}</td>
+                                        <td className="py-2 px-4 border-b">
+                                            <Link className="btn-edit my-1 text-blue-500" to={`/offers/${transfer.id_player}`}>Ofertas</Link>
                                         </td>
                                     </tr>
                                 )
                             })}
                         </tbody>
                     </table>
-                    <br />
-                    <br />
-                    <h2>Cláusulas recibidas en el equipo</h2>
-                    <br />
-                    <ul>
+
+                    <h2 className="text-xl font-semibold mb-2">Cláusulas recibidas en el equipo</h2>
+                    <ul className="list-disc pl-5 mb-4">
                         {receivedClauses.map(clause => {
-                            const teamName = teams.find(t => t.id === transfer.id_team)
+                            const teamName = teams.find(t => t.id === clause.id_team)
                             const teamNameToShow = teamName ? teamName.name : " ";
                             return (
-                                <li key={clause.id}>
+                                <li key={clause.id} className="mb-2">
+                                    Jugador: {clause.name}, Equipo: {teamNameToShow}, Valor: {clause.total_value}
                                 </li>
                             )
                         })}
                     </ul>
-                    <br /><br />
-                    <h2>Transferencias Pendientes</h2>
-                    <table>
+
+                    <h2 className="text-xl font-semibold mb-2">Transferencias Pendientes</h2>
+                    <table className="min-w-full bg-white border border-gray-200 mb-4">
                         <thead>
                             <tr>
-                                <th>N°</th>
-                                <th>Jugadores Transferidos</th>
-                                <th>Equipo Desde</th>
-                                <th>Equipo Hasta</th>
-                                <th>Presupuesto</th>
-                                <th>Acciones</th>
+                                <th className="py-2 px-4 border-b">N°</th>
+                                <th className="py-2 px-4 border-b">Jugadores Transferidos</th>
+                                <th className="py-2 px-4 border-b">Equipo Desde</th>
+                                <th className="py-2 px-4 border-b">Equipo Hasta</th>
+                                <th className="py-2 px-4 border-b">Presupuesto</th>
+                                <th className="py-2 px-4 border-b">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -315,13 +313,13 @@ export default function Dashboard() {
                                 const teamNameToShowFrom = teamNamefrom ? teamNamefrom.name : " ";
                                 return (
                                     <tr key={transfer.id}>
-                                        <td>{transfer.id}</td>
-                                        <td>{transfer.transferred_players}</td>
-                                        <td>{teamNameToShowFrom}</td>
-                                        <td>{teamNameToShow}</td>
-                                        <td>{transfer.budget}</td>
-                                        <td>
-                                            <button className="btn-edit" onClick={() => confirmTransfer(transfer.id)}>
+                                        <td className="py-2 px-4 border-b">{transfer.id}</td>
+                                        <td className="py-2 px-4 border-b">{transfer.transferred_players}</td>
+                                        <td className="py-2 px-4 border-b">{teamNameToShowFrom}</td>
+                                        <td className="py-2 px-4 border-b">{teamNameToShow}</td>
+                                        <td className="py-2 px-4 border-b">{transfer.budget}</td>
+                                        <td className="py-2 px-4 border-b">
+                                            <button className="btn-edit text-blue-500" onClick={() => confirmTransfer(transfer.id)}>
                                                 Confirmar Transferencia
                                             </button>
                                         </td>
@@ -331,8 +329,8 @@ export default function Dashboard() {
                         </tbody>
                     </table>
 
-                    <h2>Presupuesto gastado</h2>
-                    <p>Total: {totalSpent}</p>
+                    <h2 className="text-xl font-semibold mb-2">Presupuesto gastado</h2>
+                    <p className="text-lg">Total: {totalSpent}</p>
                 </div>
             )}
         </div>
