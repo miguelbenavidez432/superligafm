@@ -174,7 +174,7 @@ export default function DefaultLayout() {
 
     return (
         <div id="defaultLayout" className="flex min-h-screen">
-            <aside className={`w-72 bg-gray-800 text-white flex flex-col transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`w-72 bg-gray-800 text-white flex flex-col transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-3/4'}`}>
                 <div className="p-4">
                     <h1 className="text-2xl font-bold">Superliga FM</h1>
                 </div>
@@ -239,7 +239,7 @@ export default function DefaultLayout() {
                     <a href="" className="block py-2.5 px-4 bg-red-600 hover:bg-red-700 text-center rounded" onClick={onLogout}>Logout</a>
                 </div>
             </aside>
-            <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-0' : '-ml-72'}`}>
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-0' : '-ml-52'}`}>
                 <header className="bg-white shadow p-4 flex justify-between items-center">
                     <button onClick={toggleSidebar}>
                     {isSidebarOpen ? (
