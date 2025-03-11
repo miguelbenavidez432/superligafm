@@ -22,16 +22,18 @@ class UpdateMatchStatisticRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'player_id' => 'sometimes|exists:players,id',
-            'tournament_id' => 'sometimes|exists:tournaments,id',
-            'user_id' => 'sometimes|exists:users,id',
-            'goal' => 'nullable|integer',
-            'assists' => 'nullable|integer',
-            'yellow_cards' => 'nullable|integer',
-            'red_cards' => 'nullable|integer',
-            'simple_injuries' => 'nullable|integer',
-            'serious_injuries' => 'nullable|integer',
-            'mvp' => 'nullable|boolean',
+            'statistics' => 'required|array',
+            'statistics.*.player_id' => 'required|integer',
+            'statistics.*.tournament_id' => 'required|integer',
+            'statistics.*.user_id' => 'required|integer',
+            'statistics.*.goal' => 'nullable|integer',
+            'statistics.*.assists' => 'nullable|integer',
+            'statistics.*.yellow_cards' => 'nullable|integer',
+            'statistics.*.red_cards' => 'nullable|integer',
+            'statistics.*.simple_injuries' => 'nullable|integer',
+            'statistics.*.serious_injuries' => 'nullable|integer',
+            'statistics.*.mvp' => 'nullable|boolean',
+            'statistics.*.match_id' => 'required|integer',
         ];
     }
 }

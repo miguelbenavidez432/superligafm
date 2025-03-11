@@ -33,6 +33,7 @@ class StoreMatchStatisticRequest extends FormRequest
             'statistics.*.simple_injuries' => 'nullable|integer',
             'statistics.*.serious_injuries' => 'nullable|integer',
             'statistics.*.mvp' => 'nullable|boolean',
+            'statistics.*.match_id' => 'required|integer',
         ];
     }
 }

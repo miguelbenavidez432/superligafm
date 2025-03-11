@@ -18,9 +18,9 @@ class MatchStatisticController extends Controller
     public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
-            return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user'])->get());
+            return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user', 'match'])->get());
         } else {
-            return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user'])->paginate(100));
+            return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user', 'match'])->paginate(100));
         }
     }
 
@@ -35,7 +35,7 @@ class MatchStatisticController extends Controller
             $filteredData = [];
 
             foreach ($statistic as $key => $value) {
-                if (!($value === 0 || $value === null || $value === false) || in_array($key, ['user_id', 'tournament_id', 'player_id'])) {
+                if (!($value === 0 || $value === null || $value === false) || in_array($key, ['user_id', 'tournament_id', 'player_id', 'match_id'])) {
                     $filteredData[$key] = $value;
                 }
             }
@@ -66,7 +66,7 @@ class MatchStatisticController extends Controller
      */
     public function show(MatchStatistic $matchStatistic)
     {
-        $game = $matchStatistic->load(['player', 'tournament', 'user']);
+        $game = $matchStatistic->load(['player', 'tournament', 'user', 'match']);
         return new MatchStatisticResource($game);
     }
 
@@ -79,7 +79,7 @@ class MatchStatisticController extends Controller
 
         $matchStatistic->update($data);
 
-        return new MatchStatisticResource($matchStatistic->load(['player', 'tournament', 'user']));
+        return new MatchStatisticResource($matchStatistic->load(['player', 'tournament', 'user', 'match']));
     }
 
     /**
