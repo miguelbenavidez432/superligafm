@@ -119,8 +119,6 @@ class AuctionController extends Controller
             ->useSecret($webhookSecret)
             ->dispatch();
 
-        //return response(new AuctionResource($auction, 201));
-
         return response()->json(['message' => 'Success'], 200)
             ->header('Content-Type', 'application/json');
 

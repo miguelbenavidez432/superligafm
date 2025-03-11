@@ -31,7 +31,6 @@ class Auction extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Relación con el usuario que hizo la oferta
     public function auctioneer()
     {
         return $this->belongsTo(User::class, 'auctioned_by');

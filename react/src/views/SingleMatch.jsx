@@ -118,7 +118,7 @@ export default function SingleMatch() {
                         {match.score_home} - {match.score_away}
                     </h3>
                     <p className="text-gray-600">{match.date}</p>
-                    <p className="text-gray-600 mb-4">{match.status == 'pending' ? 'Pendiente de carga' : 'Completado el resultado'}</p>
+                    <p className="text-gray-600 mb-4">{match.status == 'pending' ? 'Pendiente de carga' : 'Estadísticas completadas y cargadas'}</p>
                     <form onSubmit={handleSubmit}>
                         <div className="flex flex-col lg:flex-row mb-4">
                             <div className="w-full lg:w-1/2 lg:pr-2 mb-4 lg:mb-0">

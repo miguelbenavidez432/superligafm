@@ -13,6 +13,7 @@ class MatchStatistic extends Model
         'player_id',
         'tournament_id',
         'user_id',
+        'match_id',
         'goals',
         'assists',
         'yellow_cards',
@@ -35,5 +36,10 @@ class MatchStatistic extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function match()
+    {
+        return $this->belongsTo(Game::class, 'match_id');
     }
 }
