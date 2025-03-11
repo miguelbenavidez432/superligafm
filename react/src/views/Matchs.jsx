@@ -68,6 +68,8 @@ export default function Matches() {
                 setTeamAwayId('');
                 setStage('');
                 setTournamentId('');
+                setScoreAway('');
+                setScoreHome('');
                 setNotification('Partido creado correctamente');
                 setCreating(false);
             })

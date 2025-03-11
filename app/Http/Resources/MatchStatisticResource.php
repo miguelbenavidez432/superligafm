@@ -20,7 +20,7 @@ class MatchStatisticResource extends JsonResource
             'tournament_id' => new TournamentResource($this->whenLoaded('tournament')),
             'user_id' => new TeamResource($this->whenLoaded('user')),
             'match_id' => new GameResource($this->whenLoaded('match')),
-            'goal' => $this->goal,
+            'goals' => $this->goals,
             'assists' => $this->assists,
             'yellow_cards' => $this->yellow_cards,
             'red_cards' => $this->red_cards,

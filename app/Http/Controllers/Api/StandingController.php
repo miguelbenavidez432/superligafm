@@ -2,19 +2,32 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\StandingResource;
 use App\Models\Standing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStandingRequest;
 use App\Http\Requests\UpdateStandingRequest;
+use Illuminate\Http\Request;
 
 class StandingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Standing::with(['tournament', 'team'])
+            ->where('tournament_id', $request->query('tournament_id'))
+            ->orderBy('points', 'desc')
+            ->orderBy('goal_difference', 'desc')
+            ->orderBy('goals_for', 'desc')
+            ->orderBy('team_id', 'desc');
+
+        if ($request->query('all') == 'true') {
+            return StandingResource::collection($query->get());
+        } else {
+            return StandingResource::collection($query->paginate(14));
+        }
     }
 
     /**
@@ -22,7 +35,9 @@ class StandingController extends Controller
      */
     public function store(StoreStandingRequest $request)
     {
-        //
+        $data = $request->validated();
+        $standing = Standing::create($data);
+        return response(new StandingResource($standing), 201);
     }
 
     /**
@@ -30,7 +45,7 @@ class StandingController extends Controller
      */
     public function show(Standing $standing)
     {
-        //
+        return new StandingResource($standing->load('tournament', 'team'));
     }
 
     /**
@@ -38,7 +53,9 @@ class StandingController extends Controller
      */
     public function update(UpdateStandingRequest $request, Standing $standing)
     {
-        //
+        $data = $request->validated();
+        $standing->update($data);
+        return new StandingResource($standing);
     }
 
     /**
@@ -46,6 +63,7 @@ class StandingController extends Controller
      */
     public function destroy(Standing $standing)
     {
-        //
+        $standing->delete();
+        return response()->json(null, 204);
     }
 }

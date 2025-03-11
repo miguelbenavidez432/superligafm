@@ -22,7 +22,14 @@ class UpdateStandingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'point' => 'nullable|integer',
+            'played' => 'nullable|integer',
+            'won' => 'nullable|integer',
+            'drawn' => 'nullable|integer',
+            'lost' => 'nullable|integer',
+            'goals_for' => 'nullable|integer',
+            'goals_against' => 'nullable|integer',
+            'goal_difference' => 'nullable|integer',
         ];
     }
 }

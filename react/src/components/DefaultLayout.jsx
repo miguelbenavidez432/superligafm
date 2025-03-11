@@ -180,6 +180,8 @@ export default function DefaultLayout() {
                 </div>
                 <nav className="flex-1">
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/dashboard'>Mi estado</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/tablas'>Tablas</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/estadisticas'>Estadísticas</Link>
                     <div className="group relative">
                         <button className="block w-full text-left py-2.5 px-4 hover:bg-gray-700">Fixture</button>
                         <div className="absolute left-0 hidden w-full bg-gray-800 group-hover:block">

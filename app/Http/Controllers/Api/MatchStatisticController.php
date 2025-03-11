@@ -17,10 +17,23 @@ class MatchStatisticController extends Controller
      */
     public function index(Request $request)
     {
+        $tournamentId = $request->query('tournament_id');
+        $matchId = $request->query('match_id');
+
+        $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
+            ->selectRaw('player_id, SUM(goals) as total_goals, SUM(assists) as total_assists, SUM(yellow_cards) as total_yellow_cards')
+            ->groupBy('player_id')
+            ->orderBy('total_goals', 'desc')
+            ->orderBy('total_assists', 'desc')
+            ->orderBy('total_yellow_cards', 'desc')
+            ->where('tournament_id', $tournamentId)
+            ->orWhere('match_id', $matchId);
+
+
         if ($request->query('all') == 'true') {
-            return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user', 'match'])->get());
+            return MatchStatisticResource::collection($query->get());
         } else {
-            return MatchStatisticResource::collection(MatchStatistic::with(['player', 'tournament', 'user', 'match'])->paginate(100));
+            return MatchStatisticResource::collection($query->paginate(100));
         }
     }
 

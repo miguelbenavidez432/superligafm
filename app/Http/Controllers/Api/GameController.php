@@ -7,6 +7,8 @@ use App\Models\Game;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use App\Models\Standing;
+use App\Models\Tournament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -33,6 +35,74 @@ class GameController extends Controller
         $data = $request->validated();
         $date = new \DateTime(now());
         $data['match_date'] = date('Y-m-d H:i:s', strtotime($date->format('Y-m-d H:i:s')));
+        $tournamentId = $data['tournament_id'];
+
+        $tournament = Tournament::find($tournamentId);
+
+        if ($tournament->type == 'league') {
+            $teamHomeId = $data['team_home_id'];
+            $teamAwayId = $data['team_away_id'];
+
+            $homeStanding = Standing::firstOrNew([
+                'tournament_id' => $tournamentId,
+                'team_id' => $teamHomeId,
+            ]);
+
+            $awayStanding = Standing::firstOrNew([
+                'tournament_id' => $tournamentId,
+                'team_id' => $teamAwayId,
+            ]);
+
+            switch ($data['score_home'] <=> $data['score_away']) {
+                case 1:
+                    $data['winner'] = 'home';
+                    $homeStanding->played += 1;
+                    $homeStanding->won += 1;
+                    $homeStanding->points += 3;
+                    $homeStanding->goals_for += $data['score_home'];
+                    $homeStanding->goals_against += $data['score_away'];
+                    $homeStanding->goal_difference = $homeStanding->goals_for - $homeStanding->goals_against;
+                    $awayStanding->played += 1;
+                    $awayStanding->lost += 1;
+                    $awayStanding->goals_for += $data['score_away'];
+                    $awayStanding->goals_against += $data['score_home'];
+                    $awayStanding->goal_difference = $awayStanding->goals_for - $awayStanding->goals_against;
+                    break;
+                case -1:
+                    $data['winner'] = 'away';
+                    $homeStanding->played += 1;
+                    $homeStanding->lost += 1;
+                    $homeStanding->goals_for += $data['score_home'];
+                    $homeStanding->goals_against += $data['score_away'];
+                    $homeStanding->goal_difference = $homeStanding->goals_for - $homeStanding->goals_against;
+                    $awayStanding->played += 1;
+                    $awayStanding->won += 1;
+                    $awayStanding->points += 3;
+                    $awayStanding->goals_for += $data['score_away'];
+                    $awayStanding->goals_against += $data['score_home'];
+                    $awayStanding->goal_difference = $awayStanding->goals_for - $awayStanding->goals_against;
+                    break;
+                default:
+                    $data['winner'] = 'draw';
+                    $homeStanding->played += 1;
+                    $homeStanding->drawn += 1;
+                    $homeStanding->points += 1;
+                    $homeStanding->goals_for += $data['score_home'];
+                    $homeStanding->goals_against += $data['score_away'];
+                    $homeStanding->goal_difference = $homeStanding->goals_for - $homeStanding->goals_against;
+                    $awayStanding->played += 1;
+                    $awayStanding->drawn += 1;
+                    $awayStanding->points += 1;
+                    $awayStanding->goals_for += $data['score_away'];
+                    $awayStanding->goals_against += $data['score_home'];
+                    $awayStanding->goal_difference = $awayStanding->goals_for - $awayStanding->goals_against;
+                    break;
+            }
+
+            $homeStanding->save();
+            $awayStanding->save();
+        }
+
         $game = Game::create($data);
         return response(new GameResource($game), 201);
     }

@@ -38,7 +38,7 @@ class TournamentController extends Controller
      */
     public function show(Tournament $tournament)
     {
-        return new TournamentResource($tournament);
+        return new TournamentResource($tournament->load(['matches', 'season', 'standings']));
     }
 
     /**
