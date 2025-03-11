@@ -10,6 +10,7 @@ class MatchStatistic extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'player_id',
         'tournament_id',
         'user_id',

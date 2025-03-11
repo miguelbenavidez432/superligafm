@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\PrizeController;
 use App\Http\Controllers\Api\RescissionController;
 use App\Http\Controllers\Api\SeasonController;
+use App\Http\Controllers\Api\StandingController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TournamentController;
 use App\Http\Controllers\Api\TransferController;
@@ -86,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
 
     Route::apiResource('prizes', PrizeController::class);
+    Route::apiResource('standings', StandingController::class);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
@@ -94,3 +96,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
+

@@ -40,6 +40,8 @@ import ConfirmedOffersList from './views/ConfirmedOffersList';
 import Matchs from './views/Matchs';
 import SingleMatch from './views/SingleMatch';
 import Tournament from './views/Tournaments';
+import Standings from './views/Standings';
+import Statistics from './views/Statistics';
 
 const router = createBrowserRouter([
     {
@@ -210,6 +212,14 @@ const router = createBrowserRouter([
             {
                 path: '/torneos',
                 element: <Tournament />
+            },
+            {
+                path: '/tablas',
+                element: <Standings />
+            },
+            {
+                path: '/estadisticas',
+                element: <Statistics />
             }
         ]
     },
