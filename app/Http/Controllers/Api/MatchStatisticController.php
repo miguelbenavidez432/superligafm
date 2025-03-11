@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\MatchStatisticResource;
+use App\Models\Game;
 use App\Models\MatchStatistic;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMatchStatisticRequest;
@@ -52,6 +53,10 @@ class MatchStatisticController extends Controller
                 MatchStatistic::create($filteredData);
             }
         }
+
+        $matachId = $request->input('statistics')[0]['match_id'];
+        $match = Game::find($matachId);
+        $match->update(['status' => 'completed']);
 
         return response()->json(['message' => 'Estadísticas guardadas correctamente'], 201);
     }

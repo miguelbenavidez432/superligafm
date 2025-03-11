@@ -59,6 +59,7 @@ export default function SingleMatch() {
             simple_injuries: player.simple_injuries || 0,
             serious_injuries: player.serious_injuries || 0,
             mvp: player.mvp || false,
+            match_id: match.id
         }));
 
         axiosClient.post('/match-statistics', { statistics })
