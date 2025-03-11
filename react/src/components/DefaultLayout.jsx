@@ -140,7 +140,7 @@
 // }
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axiosClient from "../axios";
 
 export default function DefaultLayout() {
@@ -166,9 +166,15 @@ export default function DefaultLayout() {
             })
     }, [])
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
     return (
         <div id="defaultLayout" className="flex min-h-screen">
-            <aside className="w-72 bg-gray-800 text-white flex flex-col">
+            <aside className={`w-72 bg-gray-800 text-white flex flex-col transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-4">
                     <h1 className="text-2xl font-bold">Superliga FM</h1>
                 </div>
@@ -231,8 +237,19 @@ export default function DefaultLayout() {
                     <a href="" className="block py-2.5 px-4 bg-red-600 hover:bg-red-700 text-center rounded" onClick={onLogout}>Logout</a>
                 </div>
             </aside>
-            <div className="flex-1 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-0' : '-ml-72'}`}>
                 <header className="bg-white shadow p-4 flex justify-between items-center">
+                    <button onClick={toggleSidebar}>
+                    {isSidebarOpen ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5l-7.5-7.5 7.5-7.5" />
+                            </svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        )}
+                    </button>
                     <div>
                         <a href="http://mpago.la/2NzBSxx" className="btn-edit">Aportar a la Superliga FM</a>
                     </div>

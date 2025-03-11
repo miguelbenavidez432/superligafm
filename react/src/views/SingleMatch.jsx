@@ -59,6 +59,7 @@ export default function SingleMatch() {
             simple_injuries: player.simple_injuries || 0,
             serious_injuries: player.serious_injuries || 0,
             mvp: player.mvp || false,
+            match_id: match.id
         }));
 
         axiosClient.post('/match-statistics', { statistics })
@@ -119,44 +120,44 @@ export default function SingleMatch() {
                     <p className="text-gray-600">{match.date}</p>
                     <p className="text-gray-600 mb-4">{match.status == 'pending' ? 'Pendiente de carga' : 'Completado el resultado'}</p>
                     <form onSubmit={handleSubmit}>
-                        <div className="flex flex-col lg:flex-row mb-8">
+                        <div className="flex flex-col lg:flex-row mb-4">
                             <div className="w-full lg:w-1/2 lg:pr-2 mb-4 lg:mb-0">
                                 <h2 className="text-xl font-semibold mb-2">{match.team_home?.name}</h2>
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full bg-white border border-gray-200 mb-4">
+                                    <table className="min-w-1/2 bg-white border border-gray-200 mb-4">
                                         <thead>
                                             <tr>
-                                                <th className="py-2 px-4 border-b">Jugador</th>
-                                                <th className="py-2 px-4 border-b">Goles</th>
-                                                <th className="py-2 px-4 border-b">Asistencias</th>
-                                                <th className="py-2 px-4 border-b">Amarillas</th>
-                                                <th className="py-2 px-4 border-b">Rojas</th>
-                                                <th className="py-2 px-4 border-b">Lesiones Simples</th>
-                                                <th className="py-2 px-4 border-b">Lesiones Graves</th>
-                                                <th className="py-2 px-4 border-b">MVP</th>
+                                                <th className="py-1 px-1 border-b">Jugador</th>
+                                                <th className="py-1 px-1 border-b">Goles</th>
+                                                <th className="py-1 px-1 border-b">Asis.</th>
+                                                <th className="py-1 px-1 border-b">Amar.</th>
+                                                <th className="py-1 px-1 border-b">Rojas</th>
+                                                <th className="py-1 px-1 border-b">L. Simples</th>
+                                                <th className="py-1 px-1 border-b">L. Graves</th>
+                                                <th className="py-1 px-1 border-b">MVP</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {players.filter(player => player.id_team?.id == match.team_home?.id).map(player => (
                                                 <tr key={player.id} className="text-center">
-                                                    <td className="py-2 px-4 border-b">{player.name}</td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b text-left">{player.name}</td>
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="number"
                                                             value={player.goals || 0}
                                                             onChange={e => handleStatisticChange(player.id, 'goals', parseInt(e.target.value))}
-                                                            className="w-16 p-1 border rounded"
+                                                            className="w-8 p-1 border rounded"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="number"
                                                             value={player.assists || 0}
                                                             onChange={e => handleStatisticChange(player.id, 'assists', parseInt(e.target.value))}
-                                                            className="w-16 p-1 border rounded"
+                                                            className="w-8 p-1 border rounded"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.yellow_cards || false}
@@ -164,7 +165,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.red_cards || false}
@@ -172,7 +173,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.simple_injuries || false}
@@ -180,7 +181,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.serious_injuries || false}
@@ -188,7 +189,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.mvp || false}
@@ -205,40 +206,40 @@ export default function SingleMatch() {
                             <div className="w-full lg:w-1/2 lg:pl-2">
                                 <h2 className="text-xl font-semibold mb-2">{match.team_away?.name}</h2>
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full bg-white border border-gray-200">
+                                    <table className="min-w-1/2 bg-white border border-gray-200 mb-4">
                                         <thead>
                                             <tr>
-                                                <th className="py-2 px-4 border-b">Jugador</th>
-                                                <th className="py-2 px-4 border-b">Goles</th>
-                                                <th className="py-2 px-4 border-b">Asistencias</th>
-                                                <th className="py-2 px-4 border-b">Amarillas</th>
-                                                <th className="py-2 px-4 border-b">Rojas</th>
-                                                <th className="py-2 px-4 border-b">Lesiones Simples</th>
-                                                <th className="py-2 px-4 border-b">Lesiones Graves</th>
-                                                <th className="py-2 px-4 border-b">MVP</th>
+                                                <th className="py-1 px-1 border-b">Jugador</th>
+                                                <th className="py-1 px-1 border-b">Goles</th>
+                                                <th className="py-1 px-1 border-b">Asis.</th>
+                                                <th className="py-1 px-1 border-b">Amar.</th>
+                                                <th className="py-1 px-1 border-b">Rojas</th>
+                                                <th className="py-1 px-1 border-b">L. Simples</th>
+                                                <th className="py-1 px-1 border-b">L. Graves</th>
+                                                <th className="py-1 px-1 border-b">MVP</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {players.filter(player => player.id_team?.id == match.team_away?.id).map(player => (
                                                 <tr key={player.id} className="text-center">
-                                                    <td className="py-2 px-4 border-b">{player.name}</td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b text-left">{player.name}</td>
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="number"
                                                             value={player.goals || 0}
                                                             onChange={e => handleStatisticChange(player.id, 'goals', parseInt(e.target.value))}
-                                                            className="w-16 p-1 border rounded"
+                                                            className="w-8 p-1 border rounded"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="number"
                                                             value={player.assists || 0}
                                                             onChange={e => handleStatisticChange(player.id, 'assists', parseInt(e.target.value))}
-                                                            className="w-16 p-1 border rounded"
+                                                            className="w-8 p-1 border rounded"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.yellow_cards || false}
@@ -246,7 +247,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.red_cards || false}
@@ -254,7 +255,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.simple_injuries || false}
@@ -262,7 +263,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.serious_injuries || false}
@@ -270,7 +271,7 @@ export default function SingleMatch() {
                                                             className="w-4 h-4"
                                                         />
                                                     </td>
-                                                    <td className="py-2 px-4 border-b">
+                                                    <td className="py-1 px-1 border-b">
                                                         <input
                                                             type="checkbox"
                                                             checked={player.mvp || false}
