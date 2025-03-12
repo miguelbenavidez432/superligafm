@@ -30,4 +30,9 @@ class Tournament extends Model
     {
         return $this->hasMany(Standing::class);
     }
+
+    public function matchStatistics()
+    {
+        return $this->hasMany(MatchStatistic::class);
+    }
 }

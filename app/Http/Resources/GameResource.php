@@ -26,6 +26,7 @@ class GameResource extends JsonResource
             'score_away' => $this->score_away,
             'match_date' => $this->match_date,
             'status' => $this->status,
+            'stage' => $this->stage,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -106,4 +106,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rescission::class, 'created_by');
     }
+
+    public function matchStatistics()
+    {
+        return $this->hasMany(MatchStatistic::class);
+    }
 }

@@ -42,6 +42,7 @@ import SingleMatch from './views/SingleMatch';
 import Tournament from './views/Tournaments';
 import Standings from './views/Standings';
 import Statistics from './views/Statistics';
+import TeamStatistics from './views/TeamStatistics';
 
 const router = createBrowserRouter([
     {
@@ -220,6 +221,10 @@ const router = createBrowserRouter([
             {
                 path: '/estadisticas',
                 element: <Statistics />
+            },
+            {
+                path: '/estadisticas/:team_id',
+                element: <TeamStatistics />
             }
         ]
     },
