@@ -79,9 +79,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tournaments', TournamentController::class);
     Route::apiResource('/matches', GameController::class);
-    Route::apiResource('match-statistics', MatchStatisticController::class);
     Route::get('/games/{id}', [GameController::class, 'getGameById']);
     Route::put('/game-update/{id}', [GameController::class, 'update']);
+
 
     Route::post('/chat', [ChatbotController::class, 'handleMessage']);
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
@@ -97,3 +97,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
 
+
+Route::apiResource('match-statistics', MatchStatisticController::class);
+Route::get('/match-statistics/team/{id_team}', [MatchStatisticController::class, 'getDisable']);

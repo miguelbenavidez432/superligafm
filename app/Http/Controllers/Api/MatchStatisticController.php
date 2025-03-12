@@ -8,6 +8,7 @@ use App\Models\MatchStatistic;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMatchStatisticRequest;
 use App\Http\Requests\UpdateMatchStatisticRequest;
+use App\Models\Player;
 use Illuminate\Http\Request;
 
 class MatchStatisticController extends Controller
@@ -21,14 +22,37 @@ class MatchStatisticController extends Controller
         $matchId = $request->query('match_id');
 
         $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
-            ->selectRaw('player_id, SUM(goals) as total_goals, SUM(assists) as total_assists, SUM(yellow_cards) as total_yellow_cards')
-            ->groupBy('player_id')
-            ->orderBy('total_goals', 'desc')
-            ->orderBy('total_assists', 'desc')
-            ->orderBy('total_yellow_cards', 'desc')
-            ->where('tournament_id', $tournamentId)
-            ->orWhere('match_id', $matchId);
+            ->selectRaw('
+            id,
+            player_id,
+            tournament_id,
+            user_id,
+            match_id,
+            SUM(goals) as goals,
+            SUM(assists) as assists,
+            SUM(yellow_cards) as yellow_cards,
+            SUM(red_cards) as red_cards,
+            SUM(simple_injuries) as simple_injuries,
+            SUM(serious_injuries) as serious_injuries,
+            SUM(mvp) as mvp,
+            MAX(created_at) as created_at,
+            MAX(updated_at) as updated_at
+        ')
+            ->groupBy(
+                'id',
+                'player_id',
+                'tournament_id',
+                'user_id',
+                'match_id'
+            )
+            ->orderBy('goals', 'desc')
+            ->orderBy('assists', 'desc')
+            ->orderBy('mvp', 'desc')
+            ->where('tournament_id', $tournamentId);
 
+        if ($matchId) {
+            $query->orWhere('match_id', $matchId);
+        }
 
         if ($request->query('all') == 'true') {
             return MatchStatisticResource::collection($query->get());
@@ -101,5 +125,33 @@ class MatchStatisticController extends Controller
     public function destroy(MatchStatistic $matchStatistic)
     {
         //
+    }
+
+    public function getDisable($id_team)
+    {
+        $id_player = Player::where('id_team', $id_team)->pluck('id');
+        $query = MatchStatistic::with(['player', 'tournament', 'match'])
+            ->join('games', 'match_statistics.match_id', '=', 'games.id')
+            ->selectRaw('
+            player_id,
+            match_id,
+            match_statistics.tournament_id,
+            games.stage as stage,
+            SUM(yellow_cards) as yellow_cards,
+            SUM(red_cards) as red_cards,
+            MAX(simple_injuries) as simple_injuries,
+            MAX(serious_injuries) as serious_injuries,
+            SUM(mvp) as mvp
+        ')
+            ->groupBy(
+                'player_id',
+                'match_statistics.tournament_id',
+                'match_id',
+                'games.stage',
+            )
+            ->orderBy('yellow_cards', 'desc')
+            ->whereIn('player_id', $id_player);
+
+        return MatchStatisticResource::collection($query->get());
     }
 }

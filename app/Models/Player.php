@@ -35,4 +35,9 @@ class Player extends Model
     {
         return $this->hasMany(Auction::class, 'id_player');
     }
+
+    public function matchStatistics()
+    {
+        return $this->hasMany(MatchStatistic::class);
+    }
 }

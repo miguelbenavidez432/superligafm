@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import axiosClient from '../axios';
 import { useStateContext } from '../context/ContextProvider';
@@ -94,38 +95,82 @@ const Statistics = () => {
             ) : (
                 <div>
                     <h2 className="text-xl font-bold mb-4">Estadísticas</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <h3 className="text-lg font-bold">Goles</h3>
-                            <ul>
-                                {statistics.filter(stat => stat.type === 'goals').map(stat => (
-                                    <li key={stat.id}>{stat.player.name}: {stat.value}</li>
-                                ))}
-                            </ul>
+                            <table className="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2">Jugador</th>
+                                        <th className="py-2">Goles</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {statistics.slice(0, 20).filter(stat => stat.goals > 0).sort((a, b) => b.goals - a.goals).map(stat => (
+                                        <tr key={stat.id}>
+                                            <td className="border px-4 py-2">{stat.player_id?.name}</td>
+                                            <td className="border px-4 py-2">{stat.goals}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                         <div>
                             <h3 className="text-lg font-bold">Asistencias</h3>
-                            <ul>
-                                {statistics.filter(stat => stat.type === 'assists').map(stat => (
-                                    <li key={stat.id}>{stat.player.name}: {stat.value}</li>
-                                ))}
-                            </ul>
+                            <table className="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2">Jugador</th>
+                                        <th className="py-2">Asistencias</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {statistics.slice(0, 20).filter(stat => stat.assists > 0).sort((a, b) => b.assists - a.assists).map(stat => (
+                                        <tr key={stat.id}>
+                                            <td className="border px-4 py-2">{stat.player_id?.name}</td>
+                                            <td className="border px-4 py-2">{stat.assists}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                         <div>
                             <h3 className="text-lg font-bold">MVP</h3>
-                            <ul>
-                                {statistics.filter(stat => stat.type === 'mvp').map(stat => (
-                                    <li key={stat.id}>{stat.player.name}: {stat.value}</li>
-                                ))}
-                            </ul>
+                            <table className="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2">Jugador</th>
+                                        <th className="py-2">MVP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {statistics.slice(0, 20).filter(stat => stat.mvp > 0).sort((a, b) => b.mvp - a.mvp).map(stat => (
+                                        <tr key={stat.id}>
+                                            <td className="border px-4 py-2">{stat.player_id?.name}</td>
+                                            <td className="border px-4 py-2">{stat.mvp}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                         <div>
                             <h3 className="text-lg font-bold">Lesiones</h3>
-                            <ul>
-                                {statistics.filter(stat => stat.type === 'injuries').map(stat => (
-                                    <li key={stat.id}>{stat.player.name}: {stat.value}</li>
-                                ))}
-                            </ul>
+                            <table className="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2">Jugador</th>
+                                        <th className="py-2">Lesiones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {statistics.slice(0, 20).filter(stat => stat.simple_injuries > 0).sort((a, b) => b.simple_injuries - a.simple_injuries).map(stat => (
+                                        <tr key={stat.id}>
+                                            <td className="border px-4 py-2">{stat.player_id?.name}</td>
+                                            <td className="border px-4 py-2">{stat.simple_injuries}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
