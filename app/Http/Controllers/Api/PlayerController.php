@@ -288,7 +288,6 @@ class PlayerController extends Controller
             return response()->json(['error' => 'El equipo no existe'], 404);
         }
 
-        //$jugador->team = $jugador->team;
         $jugador->status = 'registrado';
         $jugador->save();
 
@@ -297,9 +296,18 @@ class PlayerController extends Controller
 
     public function filterPlayersByTeamDivision(Request $request)
     {
-        $players = Player::whereHas('team', function ($query) {
-            $query->whereNotIn('division', ['Primera', 'Segunda']);
-        })->orderBy('ca', 'desc')->limit(1000)->get();
+        $players = \DB::table('players')
+            ->join('teams', 'players.id_team', '=', 'teams.id')
+            ->whereNotIn('teams.division', ['Primera', 'Segunda'])
+            ->orderBy('players.ca', 'desc')
+            ->limit(1000)
+            ->select('players.*') // Selecciona solo las columnas de la tabla 'players'
+            ->get();
+
+        // Verifica si hay resultados
+        if ($players->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron jugadores en equipos fuera de Primera y Segunda división'], 404);
+        }
 
         return response()->json($players);
     }
