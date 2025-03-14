@@ -23,6 +23,7 @@ class UpdateTeamRequest extends FormRequest
     {
         return [
                 'name' => 'string',
+                'id_user' => 'integer|nullable',
                 'division' => 'string|nullable',
                 'cdr' => 'integer|nullable',
         ];

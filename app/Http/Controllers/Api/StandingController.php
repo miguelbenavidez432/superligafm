@@ -23,8 +23,14 @@ class StandingController extends Controller
             ->orderBy('goals_for', 'desc')
             ->orderBy('team_id', 'desc');
 
+        $standings = $query->get();
+
+        if ($standings->isEmpty()) {
+            return response()->json(null, 204);
+        }
+
         if ($request->query('all') == 'true') {
-            return StandingResource::collection($query->get());
+            return StandingResource::collection($standings);
         } else {
             return StandingResource::collection($query->paginate(14));
         }

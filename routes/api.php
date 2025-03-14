@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::get('/players/filter', [PlayerController::class, 'filter']);
     Route::get('/players/filter-by-division', [PlayerController::class, 'filterPlayersByTeamDivision']);
+
     Route::get('/players-teams', [PlayerController::class, 'getPlayersByTeams']);
 
     Route::apiResource('/users', UserController::class);
@@ -88,6 +89,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('prizes', PrizeController::class);
     Route::apiResource('standings', StandingController::class);
+    Route::apiResource('match-statistics', MatchStatisticController::class);
+    Route::get('/match-statistics/team/{id_team}', [MatchStatisticController::class, 'getDisable']);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
@@ -98,5 +101,3 @@ Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::apiResource('match-statistics', MatchStatisticController::class);
-Route::get('/match-statistics/team/{id_team}', [MatchStatisticController::class, 'getDisable']);

@@ -143,28 +143,28 @@ export default function Plantel() {
 
     return (
         <>
-            <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap' }}>
+            <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
                 <h1 className="text-2xl font-bold mb-4">Plantel</h1>
-                <button className="btn-add"><Link to={`/estadisticas/${team.id}`}>Ver Estadísticas</Link></button>
+                <button className="btn btn-primary"><Link to={`/estadisticas/${team?.id}`} style={{ color: 'white', textDecoration: 'none' }}>Ver Estadísticas</Link></button>
             </div>
-            <div className="card animated fadeInDown">
-                <div className="table-responsive"></div>
-                    <table className="table">
-                        <thead>
+            <div className="card animated fadeInDown" style={{ padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <div className="table-responsive">
+                    <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
                             <tr>
-                                <th>NOMBRE</th>
-                                <th>EDAD</th>
-                                <th>CA</th>
-                                <th>PA</th>
-                                <th>VALOR</th>
-                                <th>ESTADO</th>
-                                <th>ACCIONES</th>
+                                <th style={{ padding: '10px' }}>NOMBRE</th>
+                                <th style={{ padding: '10px' }}>EDAD</th>
+                                <th style={{ padding: '10px' }}>CA</th>
+                                <th style={{ padding: '10px' }}>PA</th>
+                                <th style={{ padding: '10px' }}>VALOR</th>
+                                <th style={{ padding: '10px' }}>ESTADO</th>
+                                <th style={{ padding: '10px' }}>ACCIONES</th>
                             </tr>
                         </thead>
                         {loading &&
                             <tbody>
                                 <tr>
-                                    <td colSpan="8" className="text-center">
+                                    <td colSpan="8" className="text-center" style={{ padding: '20px', fontStyle: 'italic' }}>
                                         CARGANDO...
                                     </td>
                                 </tr>
@@ -174,18 +174,17 @@ export default function Plantel() {
                             <tbody>
                                 {
                                     team ? players.map(p => (
-                                        <tr key={p.id}>
-                                            <td>{p.name}</td>
-                                            <td>{p.age}</td>
-                                            <td>{p.ca}</td>
-                                            <td>{p.pa}</td>
-                                            <td>{p.value}</td>
-                                            <td>{p.status}</td>
-                                            <td>
-                                                {/* <Link className="btn btn-secondary mx-1" to={`/players/${p.id}`}>Editar estado</Link> */}
+                                        <tr key={p.id} style={{ borderBottom: '1px solid #dee2e6' }}>
+                                            <td style={{ padding: '10px' }}>{p.name}</td>
+                                            <td style={{ padding: '10px' }}>{p.age}</td>
+                                            <td style={{ padding: '10px' }}>{p.ca}</td>
+                                            <td style={{ padding: '10px' }}>{p.pa}</td>
+                                            <td style={{ padding: '10px' }}>{p.value}</td>
+                                            <td style={{ padding: '10px' }}>{p.status}</td>
+                                            <td style={{ padding: '10px' }}>
                                                 {p.status !== 'nada' && (
                                                     <>
-                                                        <button className="btn-add mx-1" onClick={() => {
+                                                        <button className="btn-edit mx-1" onClick={() => {
                                                             if (window.confirm('¿Estás seguro de que deseas bloquear a este jugador?')) {
                                                                 handleBlockPlayer(p);
                                                             }
@@ -195,7 +194,7 @@ export default function Plantel() {
                                                                 handleReleasePlayer(p);
                                                             }
                                                         }}>Liberar</button>
-                                                        <button className="btn-edit mx-1" onClick={() => {
+                                                        <button className="btn-add mx-1" onClick={() => {
                                                             if (window.confirm('¿Estás seguro de que deseas registrar a este jugador? Una vez registrado no se puede quitar')) {
                                                                 handleListPlayer(p);
                                                             }
@@ -206,8 +205,8 @@ export default function Plantel() {
                                         </tr>
                                     )) :
                                         <tr>
-                                            <td colSpan="8" className="text-center">
-                                                <strong>No tienes equipo asignado. Prueba presionando el botón Cargar plantel</strong>
+                                            <td colSpan="8" className="text-center" style={{ padding: '20px', fontWeight: 'bold' }}>
+                                                No tienes equipo asignado. Prueba presionando el botón Cargar plantel
                                             </td>
                                         </tr>
                                 }
@@ -215,7 +214,7 @@ export default function Plantel() {
                         }
                     </table>
                 </div>
-                <div className="stats">
+                <div className="stats" style={{ marginTop: '20px', lineHeight: '1.6' }}>
                     {bestPlayersCA !== null && (
                         <p>Promedio de CA de los mejores 16 jugadores: <strong>{bestPlayersCA}</strong></p>
                     )}
@@ -225,6 +224,7 @@ export default function Plantel() {
                     <p>Cantidad de registrados: <strong>{filterPlayersByRegister}</strong></p>
                     <p>Presupuesto: <strong>{user.profits}</strong></p>
                 </div>
+            </div>
         </>
     );
 }

@@ -241,7 +241,7 @@ export default function DefaultLayout() {
             </aside>
             <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-0' : '-ml-52'}`}>
                 <header className="bg-white shadow p-4 flex justify-between items-center">
-                    <button onClick={toggleSidebar}>
+                    <button onClick={toggleSidebar} className="sm:mx-12 md:mx-8 min-[290px]:mx-16">
                     {isSidebarOpen ? (
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5l-7.5-7.5 7.5-7.5" />

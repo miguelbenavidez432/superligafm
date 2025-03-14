@@ -313,57 +313,60 @@ export default function Players() {
     };
 
     return (
-        <div>
-            <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1><strong> Jugadores</strong></h1>
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', color: '#333' }}>
+            <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Jugadores</h1>
                 <Link to='/players/new' className="btn-add">Agregar nuevo jugador</Link>
             </div>
-            <br />
-            <div>
-                <form onSubmit={handleSearchSubmit}>
+            <div style={{ marginBottom: '20px' }}>
+                <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '10px' }}>
                     <input
                         type="text"
                         value={searchName}
                         onChange={handleSearchChange}
                         placeholder="Buscar por nombre"
+                        style={{
+                            padding: '10px',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            width: '200px'
+                        }}
                     />
                     <button className="btn-add" type="submit">Buscar</button>
                 </form>
             </div>
-            <br />
-            <div>
+            <div style={{ marginBottom: '20px' }}>
                 <button className="btn-add" onClick={filterPlayersByTeamDivision}>Filtrar por equipos fuera de Primera y Segunda</button>
             </div>
-            <br />
-            <div>
+            <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
                 {currentPage > 1 && (
                     <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
-                )}&nbsp;&nbsp;
+                )}
                 {currentPage < totalPages && (
                     <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
                 )}
             </div>
-            <div className="card animated fadeInDown">
-                <table>
+            <div className="card animated fadeInDown" style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
-                            <th>NOMBRE</th>
-                            <th>EDAD</th>
-                            <th>CA</th>
-                            <th>PA</th>
-                            <th>EQUIPO</th>
-                            <th>VALOR</th>
-                            <th>ESTADO</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>NOMBRE</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>EDAD</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>CA</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>PA</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>EQUIPO</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>VALOR</th>
+                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>ESTADO</th>
                             {
                                 user.rol === 'Admin' &&
-                                <th>ACCIONES</th>
+                                <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>ACCIONES</th>
                             }
                         </tr>
                     </thead>
                     {loading &&
                         <tbody>
                             <tr>
-                                <td colSpan="10" className="text-center">
+                                <td colSpan="10" className="text-center" style={{ padding: '20px', textAlign: 'center' }}>
                                     CARGANDO...
                                 </td>
                             </tr>
@@ -377,17 +380,17 @@ export default function Players() {
                                     const teamName = team.find(t => t.id === p.id_team);
                                     const teamNameToShow = teamName ? teamName.name : '';
                                     return (
-                                        <tr key={p.id}>
-                                            <td>{p.name}</td>
-                                            <td>{p.age}</td>
-                                            <td>{p.ca}</td>
-                                            <td>{p.pa}</td>
-                                            <td>{teamNameToShow}</td>
-                                            <td>{p.value}</td>
-                                            <td>{p.status}</td>
+                                        <tr key={p.id} style={{ borderBottom: '1px solid #ccc' }}>
+                                            <td style={{ padding: '10px' }}>{p.name}</td>
+                                            <td style={{ padding: '10px' }}>{p.age}</td>
+                                            <td style={{ padding: '10px' }}>{p.ca}</td>
+                                            <td style={{ padding: '10px' }}>{p.pa}</td>
+                                            <td style={{ padding: '10px' }}>{teamNameToShow}</td>
+                                            <td style={{ padding: '10px' }}>{p.value}</td>
+                                            <td style={{ padding: '10px' }}>{p.status}</td>
                                             {
                                                 user.rol === 'Admin' &&
-                                                <td>
+                                                <td style={{ padding: '10px' }}>
                                                     <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
                                                     &nbsp;
                                                     <button onClick={e => onDelete(p)} className="btn-delete">Borrar</button>

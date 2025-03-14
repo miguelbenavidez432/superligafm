@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axiosClient from '../axios';
+import { useStateContext } from '../context/ContextProvider';
 
 
 const Standings = () => {
@@ -9,6 +10,7 @@ const Standings = () => {
     const [seasons, setSeasons] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState('');
     const [tournament, setTournament] = useState('');
+    const { setNotification } = useStateContext();
 
     useEffect(() => {
         axiosClient.get('/season')
@@ -31,14 +33,19 @@ const Standings = () => {
     const getStandings = (selectedTournament) => {
         setLoading(true);
         axiosClient.get(`/standings/`, { params: { tournament_id: selectedTournament } })
-            .then(({ data }) => {
-                const dataFilter = data.data.filter(standing => standing.tournament.id == selectedTournament);
-                setStandings(dataFilter);
+            .then(({ data, status }) => {
+                if (status === 204) {
+                    setStandings([]);
+                    setNotification('No hay datos disponibles para este torneo');
+                } else {
+                    const dataFilter = data.data.filter(standing => standing.tournament.id == selectedTournament);
+                    setStandings(dataFilter);
+                }
                 setLoading(false);
             })
             .catch(() => {
                 setLoading(false);
-                console.error('No se pudo obtener la información');
+                setNotification('No se pudo obtener la información');
             });
     }
 
