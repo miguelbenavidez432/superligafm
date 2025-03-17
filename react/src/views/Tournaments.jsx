@@ -9,6 +9,7 @@ export default function TournamentForm() {
         start_date: '',
         end_date: '',
         season_id: '',
+        type: '',
     });
     const [seasons, setSeasons] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -36,6 +37,7 @@ export default function TournamentForm() {
                     start_date: '',
                     end_date: '',
                     season_id: '',
+                    type: '',
                 });
             })
             .catch(() => {
@@ -56,6 +58,15 @@ export default function TournamentForm() {
             <div className="mb-4">
                 <label htmlFor="end_date" className="block text-gray-700 text-sm font-bold mb-2">Fecha de fin</label>
                 <input id="end_date" value={tournament.end_date} onChange={e => setTournament({ ...tournament, end_date: e.target.value })} placeholder="Fecha de fin" type="date" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline sm:w-1/2" />
+            </div>
+            <div className="mb-4">
+                <label htmlFor="type" className="block text-gray-700 text-sm font-bold mb-2">Tipo</label>
+                <select id="type" value={tournament.type} onChange={e => setTournament({ ...tournament, type: e.target.value })} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline sm:w-1/2">
+                    <option value=''>Seleccionar Tipo</option>
+                    <option value='PD'>Liga o Playoff de Primera</option>
+                    <option value='SD'>Liga o Playoff de Segunda</option>
+                    <option value='UCL'>Liga o Playoff UCL</option>
+                </select>
             </div>
             <div className="mb-4">
                 <label htmlFor="season_id" className="block text-gray-700 text-sm font-bold mb-2">Temporada</label>
