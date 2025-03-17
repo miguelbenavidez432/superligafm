@@ -33,14 +33,10 @@ const Standings = () => {
     const getStandings = (selectedTournament) => {
         setLoading(true);
         axiosClient.get(`/standings/`, { params: { tournament_id: selectedTournament } })
-            .then(({ data, status }) => {
-                if (status === 204) {
-                    setStandings([]);
-                    setNotification('No hay datos disponibles para este torneo');
-                } else {
-                    const dataFilter = data.data.filter(standing => standing.tournament.id == selectedTournament);
-                    setStandings(dataFilter);
-                }
+            .then(({ data }) => {
+                console.log('Standings data:', data);
+                const dataFilter = data.data.filter(standing => standing.tournament.id == selectedTournament);
+                setStandings(dataFilter);
                 setLoading(false);
             })
             .catch(() => {
