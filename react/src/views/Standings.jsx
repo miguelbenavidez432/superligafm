@@ -32,9 +32,8 @@ const Standings = () => {
 
     const getStandings = (selectedTournament) => {
         setLoading(true);
-        axiosClient.get(`/standings/`, { params: { tournament_id: selectedTournament } })
+        axiosClient.get(`/standings`, { params: { tournament_id: selectedTournament } })
             .then(({ data }) => {
-                console.log('Standings data:', data);
                 const dataFilter = data.data.filter(standing => standing.tournament.id == selectedTournament);
                 setStandings(dataFilter);
                 setLoading(false);

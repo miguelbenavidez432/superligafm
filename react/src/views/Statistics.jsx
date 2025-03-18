@@ -125,7 +125,7 @@ const Statistics = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {statistics.slice(0, 20).filter(stat => stat.assists > 0).sort((a, b) => b.assists - a.assists).map(stat => (
+                                    {statistics.filter(stat => stat.assists > 0).sort((a, b) => b.assists - a.assists).slice(0, 20).map(stat => (
                                         <tr key={stat.id}>
                                             <td className="border px-4 py-2">{stat.player_id?.name}</td>
                                             <td className="border px-4 py-2">{stat.assists}</td>
@@ -144,7 +144,7 @@ const Statistics = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {statistics.slice(0, 20).filter(stat => stat.mvp > 0).sort((a, b) => b.mvp - a.mvp).map(stat => (
+                                    {statistics.filter(stat => stat.mvp > 0).sort((a, b) => b.mvp - a.mvp).slice(0, 20).map(stat => (
                                         <tr key={stat.id}>
                                             <td className="border px-4 py-2">{stat.player_id?.name}</td>
                                             <td className="border px-4 py-2">{stat.mvp}</td>
@@ -163,7 +163,7 @@ const Statistics = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {statistics.slice(0, 20).filter(stat => stat.simple_injuries > 0).sort((a, b) => b.simple_injuries - a.simple_injuries).map(stat => (
+                                    {statistics.filter(stat => stat.simple_injuries > 0).sort((a, b) => b.simple_injuries - a.simple_injuries).slice(0, 20).map(stat => (
                                         <tr key={stat.id}>
                                             <td className="border px-4 py-2">{stat.player_id?.name}</td>
                                             <td className="border px-4 py-2">{stat.simple_injuries}</td>
