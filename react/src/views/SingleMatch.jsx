@@ -64,6 +64,7 @@ export default function SingleMatch() {
 
         axiosClient.post('/match-statistics', { statistics })
             .then(() => {
+                navigate('/partidos');
                 setNotification('Estadísticas guardadas correctamente');
             })
             .catch(() => {
