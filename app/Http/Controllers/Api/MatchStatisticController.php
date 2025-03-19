@@ -23,11 +23,9 @@ class MatchStatisticController extends Controller
 
         $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
             ->selectRaw('
-            id,
             player_id,
             tournament_id,
             user_id,
-            match_id,
             SUM(goals) as goals,
             SUM(assists) as assists,
             SUM(yellow_cards) as yellow_cards,
@@ -39,11 +37,9 @@ class MatchStatisticController extends Controller
             MAX(updated_at) as updated_at
         ')
             ->groupBy(
-                'id',
                 'player_id',
                 'tournament_id',
                 'user_id',
-                'match_id'
             )
             ->orderBy('goals', 'desc')
             ->orderBy('assists', 'desc')

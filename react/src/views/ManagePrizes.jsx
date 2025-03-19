@@ -10,6 +10,7 @@ export default function ManagePrizes() {
         team_id: '',
         amount: '',
     });
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchPrizes();
@@ -18,18 +19,34 @@ export default function ManagePrizes() {
     }, []);
 
     const fetchPrizes = async () => {
-        const response = await axiosClient.get('/prizes');
-        setPrizes(response.data);
+        try {
+            setLoading(true);
+            const response = await axiosClient.get('/prizes');
+            setPrizes(response.data || []); // Asegúrate de que sea un array
+        } catch (error) {
+            console.error('Error al obtener premios:', error);
+            setPrizes([]); // Manejo de errores
+        } finally {
+            setLoading(false);
+        }
     };
 
     const fetchCompetitions = async () => {
-        const response = await axiosClient.get('/tournaments');
-        setTournaments(response.data);
+        try {
+            const response = await axiosClient.get('/tournaments');
+            setTournaments(response.data || []);
+        } catch (error) {
+            console.error('Error al obtener torneos:', error);
+        }
     };
 
     const fetchTeams = async () => {
-        const response = await axiosClient.get('/teams');
-        setTeams(response.data);
+        try {
+            const response = await axiosClient.get('/teams');
+            setTeams(response.data || []);
+        } catch (error) {
+            console.error('Error al obtener equipos:', error);
+        }
     };
 
     const handleChange = (e) => {
@@ -38,22 +55,33 @@ export default function ManagePrizes() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axiosClient.post('/prizes', form);
-        fetchPrizes();
+
+        if (!form.tournament_id || !form.team_id || !form.amount) {
+            alert('Por favor, completa todos los campos antes de enviar.');
+            return;
+        }
+
+        try {
+            await axiosClient.post('/prizes', form);
+            fetchPrizes();
+            setForm({ tournament_id: '', team_id: '', amount: '' });
+        } catch (error) {
+            console.error('Error al guardar el premio:', error);
+        }
     };
 
     return (
         <div>
-            <h1>Manage Prizes</h1>
+            <h1>Gestión de Premios</h1>
             <form onSubmit={handleSubmit}>
                 <select name="tournament_id" value={form.tournament_id} onChange={handleChange}>
-                    <option value="">Select Competition</option>
+                    <option value="">Seleccionar Torneo</option>
                     {tournaments.map(comp => (
                         <option key={comp.id} value={comp.id}>{comp.name}</option>
                     ))}
                 </select>
                 <select name="team_id" value={form.team_id} onChange={handleChange}>
-                    <option value="">Select Team</option>
+                    <option value="">Seleccionar Equipo</option>
                     {teams.map(team => (
                         <option key={team.id} value={team.id}>{team.name}</option>
                     ))}
@@ -63,17 +91,22 @@ export default function ManagePrizes() {
                     name="amount"
                     value={form.amount}
                     onChange={handleChange}
-                    placeholder="Amount"
+                    placeholder="Monto"
                 />
-                <button type="submit">Add Prize</button>
+                <button type="submit">Agregar Premio</button>
             </form>
-            <ul>
-                {prizes.map(prize => (
-                    <li key={prize.id}>
-                        {prize.tournament.name} - {prize.team.name} - {prize.amount}
-                    </li>
-                ))}
-            </ul>
+
+            {loading ? (
+                <p>Cargando premios...</p>
+            ) : (
+                <ul>
+                    {Array.isArray(prizes) && prizes.map(prize => (
+                        <li key={prize.id}>
+                            Torneo: {prize.tournament?.name || 'N/A'} - Equipo: {prize.team?.name || 'N/A'} - Monto: {prize.amount || 0}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }

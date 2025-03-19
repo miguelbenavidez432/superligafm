@@ -43,6 +43,7 @@ import Tournament from './views/Tournaments';
 import Standings from './views/Standings';
 import Statistics from './views/Statistics';
 import TeamStatistics from './views/TeamStatistics';
+import ManagePrizes from './views/ManagePrizes';
 
 const router = createBrowserRouter([
     {
@@ -225,6 +226,10 @@ const router = createBrowserRouter([
             {
                 path: '/estadisticas/:team_id',
                 element: <TeamStatistics />
+            },
+            {
+                path: '/premios',
+                element: <ManagePrizes />
             }
         ]
     },

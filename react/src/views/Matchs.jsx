@@ -20,8 +20,7 @@ export default function Matches() {
     useEffect(() => {
         axiosClient.get('/matches')
             .then(({ data }) => {
-                const filteredMatches = data.data.filter(match => match.status !== 'completed');
-                setMatches(filteredMatches);
+                setMatches(data.data);
                 setLoading(false);
                 getTeams();
                 getTournaments();
@@ -85,16 +84,6 @@ export default function Matches() {
             {loading && <p className="text-gray-500">Cargando...</p>}
             {!loading && (
                 <>
-                    <ul className="list-disc pl-5">
-                        {matches ? matches.map(match => (
-                            <li key={match.id} className="mb-2">
-                                {match.team_home?.name} vs {match.team_away?.name} - <Link className="text-blue-500 hover:underline" to={`/partidos/${match.id}`}>Cargar datos</Link>
-                            </li>
-                        )) :
-                            <p className="text-gray-500">No hay partidos disponibles.</p>
-                        }
-                    </ul>
-                    <br />
                     <div className="mt-6">
                         <h2 className="text-xl font-semibold mb-2">Crear un nuevo partido</h2>
                         <div className="mb-4 flex flex-wrap -mx-2">
@@ -174,6 +163,42 @@ export default function Matches() {
                             {creating ? 'Creando...' : 'Crear Partido'}
                         </button>
                     </div>
+                    <br />
+                    {tournaments.map(tournament => {
+                        const tournamentMatches = matches
+                            .filter(match => match.tournament?.id == tournament.id)
+                            .sort((a, b) => b.stage - a.stage);
+
+                        return (
+                            <details key={tournament.id} className="mb-4">
+                                <summary className="cursor-pointer text-lg font-semibold">
+                                    {tournament.name}
+                                </summary>
+                                <ul className="list-disc pl-5 mt-2">
+                                    {tournamentMatches.length > 0 ? (
+                                        tournamentMatches.map(match => (
+                                            <li key={match.id} className="mb-2">
+                                                {match.team_home?.name} vs {match.team_away?.name} - Ronda {match.stage} -{' '}
+                                                {match.status === 'completed' ? (
+                                                    <Link className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" to={`/partidos/${match.id}`}>
+                                                        <span className='font-semibold'> Resultado: {' '}
+                                                            {match.score_home} - {match.score_away}
+                                                        </span>
+                                                    </Link>
+                                                ) : (
+                                                    <Link className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" to={`/partidos/${match.id}`}>
+                                                        Cargar datos
+                                                    </Link>
+                                                )}
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <p className="text-gray-500">No hay partidos disponibles para este torneo.</p>
+                                    )}
+                                </ul>
+                            </details>
+                        );
+                    })}
                 </>
             )}
         </div>
