@@ -10,9 +10,12 @@ class Prize extends Model
     use HasFactory;
 
     protected $fillable = [
-        'competition_id',
+        'tournament_id',
         'team_id',
         'amount',
+        'position',
+        'description',
+        'status'
     ];
 
     public function tournament()

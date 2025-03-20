@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePrizeRequest;
 use App\Http\Requests\UpdatePrizeRequest;
 use App\Models\Team;
+use App\Models\User;
 
 class PrizeController extends Controller
 {
@@ -25,15 +26,21 @@ class PrizeController extends Controller
      */
     public function store(StorePrizeRequest $request)
     {
-        $prize = Prize::create($request->validated());
+        $data = $request->validated();
 
-        $team = Team::find($request->team_id);
+        foreach ($data['prizes'] as $prize) {
+            $createdPrize = Prize::create($prize);
+            $team = Team::find($prize['team_id']);
+            if ($team && $team->id_user) {
+                $user = User::find($team->id_user);
+                if($user){
+                    $user->profits += $prize['amount'];
+                    $user->save();
+                }
+            }
+        }
 
-        $user = $team->user;
-        $user->profits += $request->amount;
-        $user->save();
-
-        return new PrizeResource($prize);
+        return response()->json(['message' => 'Premios creados correctamente'], 201);
     }
 
     /**
@@ -53,7 +60,8 @@ class PrizeController extends Controller
         $prize->update($request->validated());
 
         $team = Team::find($request->team_id);
-        $team->profits += ($request->amount - $oldAmount);
+        $user = User::find($team->id_user);
+        $user->profits += $request->amount - $oldAmount;
         $team->save();
 
         return new PrizeResource($prize);

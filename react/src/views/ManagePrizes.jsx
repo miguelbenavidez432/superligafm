@@ -9,32 +9,20 @@ export default function ManagePrizes() {
         tournament_id: '',
         team_id: '',
         amount: '',
+        position: '',
+        description: '',
     });
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetchPrizes();
         fetchCompetitions();
         fetchTeams();
     }, []);
 
-    const fetchPrizes = async () => {
-        try {
-            setLoading(true);
-            const response = await axiosClient.get('/prizes');
-            setPrizes(response.data || []); // Asegúrate de que sea un array
-        } catch (error) {
-            console.error('Error al obtener premios:', error);
-            setPrizes([]); // Manejo de errores
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const fetchCompetitions = async () => {
         try {
             const response = await axiosClient.get('/tournaments');
-            setTournaments(response.data || []);
+            setTournaments(response.data.data);
         } catch (error) {
             console.error('Error al obtener torneos:', error);
         }
@@ -43,7 +31,8 @@ export default function ManagePrizes() {
     const fetchTeams = async () => {
         try {
             const response = await axiosClient.get('/teams');
-            setTeams(response.data || []);
+            const filteredTeams = response.data.data.filter(team => team.division === 'Primera' || team.division === 'Segunda');
+            setTeams(filteredTeams);
         } catch (error) {
             console.error('Error al obtener equipos:', error);
         }
@@ -53,27 +42,43 @@ export default function ManagePrizes() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleAddPrize = () => {
+        if (prizes.length >= 14) {
+            alert('No puedes agregar más de 14 premios.');
+            return;
+        }
 
-        if (!form.tournament_id || !form.team_id || !form.amount) {
-            alert('Por favor, completa todos los campos antes de enviar.');
+        if (!form.tournament_id || !form.team_id || !form.amount || !form.position) {
+            alert('Por favor, completa todos los campos obligatorios.');
+            return;
+        }
+
+        setPrizes([...prizes, { ...form }]);
+        setForm({ tournament_id: '', team_id: '', amount: '', position: '', description: '' });
+    };
+
+    const handleSubmit = async () => {
+        if (prizes.length === 0) {
+            alert('No hay premios para enviar.');
             return;
         }
 
         try {
-            await axiosClient.post('/prizes', form);
-            fetchPrizes();
-            setForm({ tournament_id: '', team_id: '', amount: '' });
+            setLoading(true);
+            await axiosClient.post('/prizes/', { prizes });
+            alert('Premios enviados correctamente.');
+            setPrizes([]);
         } catch (error) {
-            console.error('Error al guardar el premio:', error);
+            console.error('Error al enviar premios:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div>
-            <h1>Gestión de Premios</h1>
-            <form onSubmit={handleSubmit}>
+            <h1 className='font-black text-2xl text-center mb-2'>Carga de Premios</h1>
+            <form className="mx-2 bg-slate-300 rounded-md p-4" onSubmit={(e) => e.preventDefault()}>
                 <select name="tournament_id" value={form.tournament_id} onChange={handleChange}>
                     <option value="">Seleccionar Torneo</option>
                     {tournaments.map(comp => (
@@ -93,20 +98,39 @@ export default function ManagePrizes() {
                     onChange={handleChange}
                     placeholder="Monto"
                 />
-                <button type="submit">Agregar Premio</button>
+                <input
+                    type="text"
+                    name="position"
+                    value={form.position}
+                    onChange={handleChange}
+                    placeholder="Posición"
+                />
+                <input
+                    type="text"
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    placeholder="Descripción (opcional)"
+                />
+                <button className='bg-green-700 text-white rounded px-4 py-2' type="button" onClick={handleAddPrize}>Agregar Premio</button>
             </form>
 
-            {loading ? (
-                <p>Cargando premios...</p>
-            ) : (
-                <ul>
-                    {Array.isArray(prizes) && prizes.map(prize => (
-                        <li key={prize.id}>
-                            Torneo: {prize.tournament?.name || 'N/A'} - Equipo: {prize.team?.name || 'N/A'} - Monto: {prize.amount || 0}
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <h2 className='mt-4 font-semibold'>Lista de Premios</h2>
+            <ul className='mx-2'>
+                {prizes.map((prize, index) => (
+                    <li key={index}>
+                        Torneo: {tournaments.find(t => t.id === parseInt(prize.tournament_id))?.name || 'N/A'} -
+                        Equipo: {teams.find(t => t.id === parseInt(prize.team_id))?.name || 'N/A'} -
+                        Monto: {prize.amount} -
+                        Posición: {prize.position} -
+                        Descripción: {prize.description || 'N/A'}
+                    </li>
+                ))}
+            </ul>
+
+            <button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={handleSubmit} disabled={loading || prizes.length === 0}>
+                {loading ? 'Enviando...' : 'Enviar Premios'}
+            </button>
         </div>
     );
 }
