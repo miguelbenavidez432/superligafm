@@ -1,4 +1,4 @@
- /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 // import { useEffect, useState } from "react";
 // import { useParams } from "react-router-dom";
 // import axiosClient from "../axios";
@@ -127,7 +127,7 @@ const TeamStatistics = () => {
                                     <tr>
                                         <th className="py-2">Jugador</th>
                                         {Array.from({ length: maxStage }, (_, i) => (
-                                            <th key={i + 1} className="py-2">Etapa {i + 1}</th>
+                                            <th key={i + 1} className="py-2">Fecha {i + 1}</th>
                                         ))}
                                     </tr>
                                 </thead>
@@ -139,11 +139,11 @@ const TeamStatistics = () => {
                                                 <td key={i + 1} className="border px-4 py-2">
                                                     {stat.match_id.stage === (i + 1).toString() ? (
                                                         <>
-                                                            <p>Amarillas: {stat.yellow_cards}</p>
-                                                            <p>Rojas: {stat.red_cards}</p>
-                                                            <p>Lesiones Simples: {stat.simple_injuries}</p>
-                                                            <p>Lesiones Graves: {stat.serious_injuries}</p>
-                                                            <p>MVP: {stat.mvp}</p>
+                                                            {stat.yellow_cards == 0 ? null : <p>Amarillas: {stat.yellow_cards}</p>}
+                                                            {stat.red_cards == 0 ? null : <p>Rojas: {stat.red_cards}</p>}
+                                                            {stat.simple_injuries == 0 ? null : <p>Lesiones Simples: {stat.simple_injuries}</p>}
+                                                            {stat.serious_injuries == 0 ? null : <p>Lesiones Graves: {stat.serious_injuries}</p>}
+                                                            {stat.mvp == 0 ? null : <p>MVP: {stat.mvp}</p>}
                                                         </>
                                                     ) : null}
                                                 </td>

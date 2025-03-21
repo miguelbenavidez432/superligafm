@@ -126,9 +126,8 @@ class MatchStatisticController extends Controller
     public function getDisable($id_team)
     {
         $id_player = Player::where('id_team', $id_team)->pluck('id');
-        $query = MatchStatistic::with(['player', 'tournament', 'match'])
-            ->join('games', 'match_statistics.match_id', '=', 'games.id')
-            ->selectRaw('
+
+        $query = MatchStatistic::selectRaw('
             player_id,
             match_id,
             match_statistics.tournament_id,
@@ -139,15 +138,16 @@ class MatchStatisticController extends Controller
             MAX(serious_injuries) as serious_injuries,
             SUM(mvp) as mvp
         ')
+            ->join('games', 'match_statistics.match_id', '=', 'games.id')
+            ->whereIn('player_id', $id_player)
             ->groupBy(
                 'player_id',
                 'match_statistics.tournament_id',
                 'match_id',
-                'games.stage',
+                'games.stage'
             )
             ->orderBy('yellow_cards', 'desc')
-            ->whereIn('player_id', $id_player);
-
+            ->with(['player', 'tournament', 'match']);
         return MatchStatisticResource::collection($query->get());
     }
 }
