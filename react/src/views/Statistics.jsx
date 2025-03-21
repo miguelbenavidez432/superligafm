@@ -33,7 +33,6 @@ const Statistics = () => {
             const response = await axiosClient.get('/season');
             setSeasons(response.data.data);
         } catch (error) {
-            console.error('Error al obtener temporadas:', error);
             setNotification('Error al obtener temporadas ' + error.response.data.message);
         }
     };
@@ -43,7 +42,6 @@ const Statistics = () => {
             const response = await axiosClient.get(`/tournaments?season=${seasonId}`);
             setTournaments(response.data.data);
         } catch (error) {
-            console.error('Error al obtener torneos:', error);
             setNotification('Error al obtener torneos ' + error.response.data
                 .message);
         }

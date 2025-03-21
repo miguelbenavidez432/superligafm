@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AmountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BetController;
 use App\Http\Controllers\Api\ChatbotController;
@@ -80,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tournaments', TournamentController::class);
     Route::apiResource('/matches', GameController::class);
+    Route::apiResource('create-prizes', AmountController::class);
     Route::get('/games/{id}', [GameController::class, 'getGameById']);
     Route::put('/game-update/{id}', [GameController::class, 'update']);
 
