@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
 use App\Models\Player;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserAuction;
@@ -42,6 +43,7 @@ class AuctionController extends Controller
     {
         $data = $request->validated();
         $player = Player::find($data['id_player']);
+        $season = Season::find($data['id_season']);
 
         $previousAuction = Auction::where('id_player', $data['id_player'])
             ->orderBy('amount', 'desc')
@@ -64,7 +66,9 @@ class AuctionController extends Controller
         $leadingUsers = array_unique($leadingUsers);
 
         foreach ($leadingUsers as $userId) {
-            $userAuctions = Auction::where('auctioned_by', $userId)->get();
+            $userAuctions = Auction::where('auctioned_by', $userId)
+                ->where('id_season', $data['id_season'])
+                ->get();
 
             $totalAuctions = $userAuctions->count();
             $over20Auctions = $userAuctions->filter(function ($auction) {

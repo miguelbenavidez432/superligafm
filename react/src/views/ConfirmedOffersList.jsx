@@ -71,61 +71,57 @@ const ConfirmedOffersList = () => {
     }
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <h1><strong>OFERTAS CONFIRMADAS</strong></h1>
+        <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-800">OFERTAS CONFIRMADAS</h1>
             </div>
-            <br />
-            <div>
-                <label>Temporada:</label>
-                <select value={selectedSeason} onChange={handleSeasonChange}>
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Temporada:</label>
+                <select
+                    value={selectedSeason}
+                    onChange={handleSeasonChange}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                >
                     <option value="">Todas las temporadas</option>
                     {seasons.map(season => (
                         <option key={season.id} value={season.id}>{season.name}</option>
                     ))}
                 </select>
             </div>
-            <br />
-            {loading &&
-                <tbody>
-                    <tr>
-                        <td colSpan="9" className="text-center">
-                            CARGANDO...
-                        </td>
-                    </tr>
-                </tbody>
-            }
-            <div className="card animated fadeInDown">
-                <table>
-                    <thead>
+            {loading && (
+                <div className="text-center text-gray-500">CARGANDO...</div>
+            )}
+            <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
                         <tr>
-                            <th>Jugador</th>
-                            <th>Equipo</th>
-                            <th>Valor</th>
-                            <th>Valor extra</th>
-                            <th>Valor Total</th>
-                            <th>Realizado por</th>
-                            <th>Horario</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jugador</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipo</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor extra</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Realizado por</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Horario</th>
                         </tr>
                     </thead>
-                    {!loading &&
-                        <tbody>
+                    {!loading && (
+                        <tbody className="bg-white divide-y divide-gray-200">
                             {offers.map((oferta) => {
                                 const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
                                 return (
                                     <tr key={oferta.id}>
-                                        <th>{oferta.name}</th>
-                                        <th>{oferta.id_team && oferta.id_team.name}</th>
-                                        <th>{oferta.value}</th>
-                                        <th>{oferta.other_players}</th>
-                                        <th>{oferta.total_value}</th>
-                                        <th>{oferta.created_by && oferta.created_by.name}</th>
-                                        <th>{formattedDate}</th>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{oferta.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{oferta.id_team && oferta.id_team.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{oferta.value}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{oferta.other_players}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{oferta.total_value}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{oferta.created_by && oferta.created_by.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formattedDate}</td>
                                     </tr>
-                                )
+                                );
                             })}
                         </tbody>
-                    }
+                    )}
                 </table>
             </div>
         </div>
