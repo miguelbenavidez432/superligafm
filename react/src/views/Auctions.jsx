@@ -74,7 +74,7 @@ const Auctions = () => {
             auctioned_by: user.id,
             created_by: user.id,
             active: 'yes',
-            id_season: 54
+            id_season: 55
         });
     };
 
@@ -100,7 +100,6 @@ const Auctions = () => {
             .catch((error) => {
                 const mensaje = error.response.data.error;
                 const mensaje2 = error.response.data.data.message;
-                //console.log(error.response.data.data.message);
                 setNotification("Error al crear la subasta: " + mensaje + " " );
                 const response = error.response;
                 if (response && response.status === 422) {
@@ -134,43 +133,64 @@ const Auctions = () => {
     // };
 
     return (
-        <div className="card animated fadeInDown">
-            <form onSubmit={handleAuctionSubmit}>
-                <label htmlFor="equipo">Seleccionar equipo:</label>
-                <select id="equipo" onChange={e => setSelectedTeam(e.target.value)}>
-                    <option value="">Seleccione un equipo del jugador</option>
-                    {
-                        otherTeams.map(equipo => (
-                            <option key={equipo.id} value={equipo.id}>{equipo.name}</option>
-                        ))}
-                </select>
+        <div className="card animated fadeInDown p-6 bg-white shadow-md rounded-md">
+            <form onSubmit={handleAuctionSubmit} className="space-y-4">
+                <div>
+                    <label htmlFor="equipo" className="block text-sm font-medium text-gray-700">Seleccionar equipo:</label>
+                    <select
+                        id="equipo"
+                        onChange={e => setSelectedTeam(e.target.value)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    >
+                        <option value="">Seleccione un equipo del jugador</option>
+                        {
+                            otherTeams.map(equipo => (
+                                <option key={equipo.id} value={equipo.id}>{equipo.name}</option>
+                            ))
+                        }
+                    </select>
+                </div>
 
-                <select id="equipo" onChange={handlePlayerChange}>
-                    <option value="">Seleccione el jugador subastado</option>
-                    {
-                        teamPlayers.map(p => (
-                            <option key={p.id} value={p.id}>{p.name}</option>
-                        ))}
-                </select>
+                <div>
+                    <label htmlFor="jugador" className="block text-sm font-medium text-gray-700">Seleccionar jugador:</label>
+                    <select
+                        id="jugador"
+                        onChange={handlePlayerChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    >
+                        <option value="">Seleccione el jugador subastado</option>
+                        {
+                            teamPlayers.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))
+                        }
+                    </select>
+                </div>
 
                 {selectedPlayer && (
-                    <div>
-                        <p>Valor inicial de subasta: {selectedPlayer.value}</p>
+                    <div className="bg-gray-50 p-4 rounded-md shadow-inner">
+                        <p className="text-sm text-gray-700">Valor inicial de subasta: <span className="font-semibold">{selectedPlayer.value}</span></p>
                         <input
                             type="number"
                             min={selectedPlayer.value / 2}
                             value={auctionData.amount}
                             onChange={(e) => setAuctionData({ ...auctionData, amount: parseInt(e.target.value) })}
+                            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                     </div>
                 )}
 
-                <button className="btn-add" type="submit">Crear Subasta</button>
+                <button
+                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    type="submit"
+                >
+                    Crear Subasta
+                </button>
             </form>
 
             {auctionEndTime && (
-                <div className="countdown">
-                    <h4>Tiempo restante: <span id="countdown"></span></h4>
+                <div className="countdown mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
+                    <h4 className="text-sm font-medium text-yellow-700">Tiempo restante: <span id="countdown" className="font-bold"></span></h4>
                 </div>
             )}
         </div>

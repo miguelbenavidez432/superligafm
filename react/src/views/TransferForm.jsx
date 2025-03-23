@@ -23,7 +23,7 @@ export default function TransferForm() {
         created_by: '',
         buy_by: '',
         sold_by: '',
-        id_season: 54,
+        id_season: 55,
     })
     const { user, setNotification } = useStateContext();
     const navigate = useNavigate();
@@ -152,73 +152,115 @@ export default function TransferForm() {
     };
 
     return (
-        <div>
-            <label htmlFor="equipo">Seleccionar equipo:</label>
-            <select id="equipo" value={selectedEquipo} onChange={handleEquipoChange}>
-                <option key="0" value="">Seleccione un equipo</option>
-                {teams.map((equipo, index) => (
-                    <option key={index} value={equipo.id}>{equipo.name}</option>
-                ))}
-            </select>
+        <div className="p-4 max-w-4xl mx-auto">
+            <div className="mb-4">
+                <label htmlFor="equipo" className="block text-sm font-medium text-gray-700">Seleccionar equipo:</label>
+                <select
+                    id="equipo"
+                    value={selectedEquipo}
+                    onChange={handleEquipoChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                    <option key="0" value="">Seleccione un equipo</option>
+                    {teams.map((equipo, index) => (
+                        <option key={index} value={equipo.id}>{equipo.name}</option>
+                    ))}
+                </select>
+            </div>
 
             {selectedEquipo && (
-                <div>
-                    <label htmlFor="equipo">Seleccionar equipo a traspasar:</label>
-                    <select id="equipo" value={teams.name} onChange={handleIdEquipoChange}>
-                        <option key="0" value="">Seleccione un equipo</option>
-                        {teams.map((equipo, index) => (
-                            <option key={index} value={equipo.id}>{equipo.name}</option>
-                        ))}
-                    </select>
-                    <br />
-                    <label htmlFor="jugador">Seleccionar jugador:</label>
-                    <select id="jugador" value={selectedJugador} onChange={handleJugadorChange}>
-                        <option value="">Seleccione un jugador</option>
-                        {players
-                            .filter(jugador => jugador.id_team.id === parseInt(selectedEquipo))
-                            .map((jugador, index) => (
-                                <option key={index} value={jugador.id}>{jugador.name}</option>
+                <div className="space-y-4">
+                    <div>
+                        <label htmlFor="equipo" className="block text-sm font-medium text-gray-700">Seleccionar equipo a traspasar:</label>
+                        <select
+                            id="equipo"
+                            value={teams.name}
+                            onChange={handleIdEquipoChange}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        >
+                            <option key="0" value="">Seleccione un equipo</option>
+                            {teams.map((equipo, index) => (
+                                <option key={index} value={equipo.id}>{equipo.name}</option>
                             ))}
-                    </select>
-                    <br />
-                    <label htmlFor="transferValue">Valor de la transferencia:</label>
-                    <input
-                        type="number"
-                        value={transfer.budget}
-                        onChange={(e) => setTransfer({ ...transfer, budget: parseInt(e.target.value) })}
-                    />
-                    <br />
-                    <label htmlFor="buy_by">Seleccionar comprador:</label>
-                    <select value={transfer.buy_by} onChange={handleManagerChangeBuy}>
-                        <option value="">Seleccione comprador</option>
-                        {teams.map((equipo, index) => equipo.user ? (
-                            <option key={index} value={parseInt(equipo.user.id)}>{equipo.user ? equipo.user.name : ''}</option>
-                        ) : '')}
-                    </select>
-                    <br />
-                    <label htmlFor="sold_by">Seleccionar vendedor:</label>
-                    <select value={transfer.sold_by} onChange={handleManagerChangeSold}>
-                        <option value="">Seleccione vendedor</option>
-                        {teams.map((equipo, index) => equipo.user ? (
-                            <option key={index} value={parseInt(equipo.user.id)}>{equipo.user ? equipo.user.name : ''}</option>
-                        ) : '')}
-                    </select>
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="jugador" className="block text-sm font-medium text-gray-700">Seleccionar jugador:</label>
+                        <select
+                            id="jugador"
+                            value={selectedJugador}
+                            onChange={handleJugadorChange}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Seleccione un jugador</option>
+                            {players
+                                .filter(jugador => jugador.id_team.id === parseInt(selectedEquipo))
+                                .map((jugador, index) => (
+                                    <option key={index} value={jugador.id}>{jugador.name}</option>
+                                ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="transferValue" className="block text-sm font-medium text-gray-700">Valor de la transferencia:</label>
+                        <input
+                            type="number"
+                            value={transfer.budget}
+                            onChange={(e) => setTransfer({ ...transfer, budget: parseInt(e.target.value) })}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="buy_by" className="block text-sm font-medium text-gray-700">Seleccionar comprador:</label>
+                        <select
+                            value={transfer.buy_by}
+                            onChange={handleManagerChangeBuy}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Seleccione comprador</option>
+                            {teams.map((equipo, index) => equipo.user ? (
+                                <option key={index} value={parseInt(equipo.user.id)}>{equipo.user ? equipo.user.name : ''}</option>
+                            ) : '')}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="sold_by" className="block text-sm font-medium text-gray-700">Seleccionar vendedor:</label>
+                        <select
+                            value={transfer.sold_by}
+                            onChange={handleManagerChangeSold}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Seleccione vendedor</option>
+                            {teams.map((equipo, index) => equipo.user ? (
+                                <option key={index} value={parseInt(equipo.user.id)}>{equipo.user ? equipo.user.name : ''}</option>
+                            ) : '')}
+                        </select>
+                    </div>
                 </div>
             )}
-            <h3>Datos actualizados:</h3>
-            <ul>
-                {datosActualizados.map((dato, index) => (
-                    <li key={`${dato.id}-${index}`}>
-                        ID: {dato.id}, ID Equipo: {dato.id_team}, Nombre: {dato.name}
-                    </li>
-                ))}
-            </ul>
-            <br />
-            <button onClick={resetInfo} className="btn-add">Cancelar transferencia</button>
-            <br />
-            <br />
-            <button onClick={sendInfo} className="btn-add">Enviar Transferencia</button>
+            <div className="mt-6">
+                <h3 className="text-lg font-medium text-gray-900">Datos actualizados:</h3>
+                <ul className="mt-2 space-y-2">
+                    {datosActualizados.map((dato, index) => (
+                        <li key={`${dato.id}-${index}`} className="p-2 bg-gray-100 rounded-md shadow">
+                            ID: {dato.id}, ID Equipo: {dato.id_team}, Nombre: {dato.name}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className="mt-6 flex space-x-4">
+                <button
+                    onClick={resetInfo}
+                    className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600"
+                >
+                    Cancelar transferencia
+                </button>
+                <button
+                    onClick={sendInfo}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600"
+                >
+                    Enviar Transferencia
+                </button>
+            </div>
         </div>
-
     )
 }

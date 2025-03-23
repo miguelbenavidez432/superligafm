@@ -167,68 +167,69 @@ const OffersMade = () => {
     const filteredOffers = offers.filter(oferta => oferta.created_by.id === userId);
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <h1><strong>CLÁUSULAS DE RESCISIÓN REALIZADAS</strong></h1>
-                <Link to={`/clausula_rescision`} className="btn-add">Nueva oferta</Link>
+        <div className="p-4">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold text-gray-800">CLÁUSULAS DE RESCISIÓN REALIZADAS</h1>
+                <Link to={`/clausula_rescision`} className="btn-add bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Nueva oferta
+                </Link>
             </div>
-            <br />
-            <div>
-                <label>Temporada:</label>
-                <select value={selectedSeason} onChange={handleSeasonChange}>
+            <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Temporada:</label>
+                <select
+                    value={selectedSeason}
+                    onChange={handleSeasonChange}
+                    className="w-full md:w-1/3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
                     <option value="">Todas las temporadas</option>
                     {seasons.map(season => (
                         <option key={season.id} value={season.id}>{season.name}</option>
                     ))}
                 </select>
             </div>
-            <br />
-            {loading &&
-                <tbody>
-                    <tr>
-                        <td colSpan="9" className="text-center">
-                            CARGANDO...
-                        </td>
-                    </tr>
-                </tbody>
-            }
-            <div className="card animated fadeInDown">
-                <table>
+            {loading && (
+                <div className="text-center text-gray-500">CARGANDO...</div>
+            )}
+            <div className="card bg-white shadow-md rounded p-4 overflow-x-auto">
+                <table className="w-full table-auto border-collapse">
                     <thead>
-                        <tr>
-                            <th>Jugador</th>
-                            <th>Equipo</th>
-                            <th>Valor</th>
-                            <th>Valor extra</th>
-                            <th>Valor Total</th>
-                            <th>Realizado por</th>
-                            <th>Horario</th>
-                            <th>Actions</th>
+                        <tr className="bg-gray-200 text-gray-700">
+                            <th className="p-2 border">Jugador</th>
+                            <th className="p-2 border">Equipo</th>
+                            <th className="p-2 border">Valor</th>
+                            <th className="p-2 border">Valor extra</th>
+                            <th className="p-2 border">Valor Total</th>
+                            <th className="p-2 border">Realizado por</th>
+                            <th className="p-2 border">Horario</th>
+                            <th className="p-2 border">Acciones</th>
                         </tr>
                     </thead>
-                    {!loading &&
+                    {!loading && (
                         <tbody>
                             {filteredOffers.map((oferta) => {
-
                                 const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
                                 return (
-                                    <tr key={oferta.id}>
-                                        <th>{oferta.name}</th>
-                                        <th>{oferta.id_team && oferta.id_team.name}</th>
-                                        <th>{oferta.value}</th>
-                                        <th>{oferta.other_players}</th>
-                                        <th>{oferta.total_value}</th>
-                                        <th>{oferta.created_by && oferta.created_by.name}</th>
-                                        <th>{formattedDate}</th>
-                                        <th className="mt-1">
-                                            <Link className="btn-edit my-1" to={`/offers/${oferta.id_player}`}>Ofertas</Link>
-                                            <br />
-                                        </th>
+                                    <tr key={oferta.id} className="hover:bg-gray-100">
+                                        <td className="p-2 border text-center">{oferta.name}</td>
+                                        <td className="p-2 border text-center">{oferta.id_team && oferta.id_team.name}</td>
+                                        <td className="p-2 border text-center">{oferta.value}</td>
+                                        <td className="p-2 border text-center">{oferta.other_players}</td>
+                                        <td className="p-2 border text-center">{oferta.total_value}</td>
+                                        <td className="p-2 border text-center">{oferta.created_by && oferta.created_by.name}</td>
+                                        <td className="p-2 border text-center">{formattedDate}</td>
+                                        <td className="p-2 border text-center">
+                                            <Link
+                                                className="btn-edit bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                                                to={`/offers/${oferta.id_player}`}
+                                            >
+                                                Ofertas
+                                            </Link>
+                                        </td>
                                     </tr>
                                 );
                             })}
                         </tbody>
-                    }
+                    )}
                 </table>
             </div>
         </div>

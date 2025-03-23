@@ -81,7 +81,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tournaments', TournamentController::class);
     Route::apiResource('/matches', GameController::class);
-    Route::apiResource('create-prizes', AmountController::class);
     Route::get('/games/{id}', [GameController::class, 'getGameById']);
     Route::put('/game-update/{id}', [GameController::class, 'update']);
 
@@ -93,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('standings', StandingController::class);
     Route::apiResource('match-statistics', MatchStatisticController::class);
     Route::get('/match-statistics/team/{id_team}', [MatchStatisticController::class, 'getDisable']);
+    Route::get('/yellow-statistics/team/{id_team}', [MatchStatisticController::class, 'getTotalYellowCard']);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;

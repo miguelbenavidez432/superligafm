@@ -24,7 +24,7 @@ export default function Announcement() {
         other_players: [],
         extra_value: 0,
         total_value: 0,
-        id_season: 54,
+        id_season: 55,
     });
     const [inputValue, setInputValue] = useState(0);
 
@@ -179,28 +179,32 @@ export default function Announcement() {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }} >
-                <div><strong>Ejecución de cláusula de rescisión</strong></div>
+            <div className="flex justify-between items-center mb-4">
+                <div className="text-lg font-bold">Ejecución de cláusula de rescisión</div>
             </div>
-            <br />
-            <div className="card animated fadeInDown">
-                <select id="equipo"
+            <div className="card animated fadeInDown p-4 bg-white shadow-md rounded-md">
+                <select
+                    id="equipo"
                     value={selectedEquipo}
-                    onChange={handleIdEquipoChange}>
+                    onChange={handleIdEquipoChange}
+                    className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                >
                     <option value="">Selecciona un equipo</option>
-                    {
-                        team.map((t, index) => (
-                            <option value={t.id} key={index}>{t.name}</option>
-                        ))
-                    }
+                    {team.map((t, index) => (
+                        <option value={t.id} key={index}>{t.name}</option>
+                    ))}
                 </select>
 
                 {selectedEquipo && (
                     <form onSubmit={onSubmit}>
-                        <div>
-                            <br />
-                            <label htmlFor="jugador">Seleccionar jugador:</label>
-                            <select onChange={handlePlayerSelect}>
+                        <div className="mb-4">
+                            <label htmlFor="jugador" className="block text-sm font-medium text-gray-700 mb-2">
+                                Seleccionar jugador:
+                            </label>
+                            <select
+                                onChange={handlePlayerSelect}
+                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                            >
                                 <option value="">Seleccione un jugador</option>
                                 {players
                                     .filter(jugador =>
@@ -221,28 +225,28 @@ export default function Announcement() {
                                 step="any"
                                 onChange={handleInputChange}
                                 value={playerTransfered.value}
+                                className="w-full"
                             />
-                            <strong>Valor pagado para ejecutar la cláusula de rescisión:</strong> {playerTransfered.value}
-                            <br />
-                            {/* <select onChange={handlerPlayerAdd}>
-                                <option value="">Selecciona un jugador a ofrecer</option>
-                                {teamPlayers.map(p => (
-                                    <option value={p.id} key={p.id}>{p.name}</option>
-                                ))}
-                            </select> */}
+                            <div className="mt-2 text-sm">
+                                <strong>Valor pagado para ejecutar la cláusula de rescisión:</strong> {playerTransfered.value}
+                            </div>
                         </div>
-                        <br />
-                        <button type="submit" className="btn-add">Confirmar ejecución de cláusula</button>
-                        <br />
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+                        >
+                            Confirmar ejecución de cláusula
+                        </button>
                     </form>
                 )}
 
-                <br />
-                <span>Oferta a realizar por {playerTransfered.name}</span>
-                <br />
-                <span>Valor extra: {playerTransfered.extra_value}</span>
-                <br />
-                <span>Oferta a realizar por un total de: {playerTransfered.total_value}</span>
+                {selectedEquipo && (
+                    <div className="mt-4 text-sm">
+                        <div>Oferta a realizar por: <strong>{playerTransfered.name}</strong></div>
+                        <div>Valor extra: <strong>{playerTransfered.extra_value}</strong></div>
+                        <div>Oferta total: <strong>{playerTransfered.total_value}</strong></div>
+                    </div>
+                )}
             </div>
         </>
     );

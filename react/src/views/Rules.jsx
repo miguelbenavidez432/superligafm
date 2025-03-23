@@ -2,7 +2,7 @@
 
 export default function Rules() {
     return (
-        <>
+        <div className="bg-gray-900 min-h-screen py-10 px-4 sm:px-8 md:px-16 lg:px-32 text-gray-100">
             <h1 className=""> REGLAMENTO TEMPORADA 54</h1>
             <h3 className="">Se dividirán los equipos en 2 categorías.</h3>
             <p className="whitespace-normal">
@@ -365,52 +365,52 @@ export default function Rules() {
                 Premios<br />
                 Premio por posición en liga<br />
                 Primera División<br />
-                1° 65.000.000 € + Bloqueo extra de un jugador previo al mercado<br />
-                2° 50.000.000 €<br />
-                Perdedores de las semifinales 40.000.000 €<br />
-                Perdedores 1° ronda de eliminación   25.000.000 €<br />
-                9° 10° y 11° + equipo que no juega promoción 15.000.000 €<br />
-                Descendidos más equipo en promoción 5.000.000 €<br />
+                1° 150.000.000 € + Bloqueo al 50% de un jugador previo al mercado<br />
+                2° 120.000.000 €<br />
+                Perdedores de las semifinales 1040.000.000 €<br />
+                Perdedores 1° ronda de eliminación   85.000.000 €<br />
+                9° 10° y 11° + equipo que no juega promoción 70.000.000 €<br />
+                Descendidos más equipo en promoción 55.000.000 €<br />
                 <br />
             </p>
             <p>
                 Segunda División<br />
-                1° 85.000.000 € + Fichaje extra de equipos que no participan en la liga (Debe pagar el coste)<br />
-                2° 70.000.000 €<br />
-                3° 50.000.000 €<br />
-                4° al 9° 35.000.000 €<br />
-                No clasificados a playoff  15.000.000 €<br />
+                1° 160.000.000 € + Bloqueo al 100% de un jugador previo al mercado<br />
+                2° 130.000.000 €<br />
+                3° 100.000.000 € o 110.000.000 € si gana la promición<br />
+                4° al 9° 80.000.000 €<br />
+                No clasificados a playoff  50.000.000 €<br />
                 <br />
             </p>
             <p>
                 Copa FM<br />
-                Por participar en Primera Ronda: 6.000.000 €<br />
-                Por avanzar a Octavos: 6.000.000 €<br />
-                Por avanzar a Cuartos: 6.000.000 €<br />
-                Por avanzar a Semifinal: 10.000.000 €<br />
-                Por avanzar a la Final: 15.000.000 €<br />
-                Por ganar la Copa: 20.000.000 € + Bloqueo extra de un jugador previo al mercado<br />
+                Por participar en Primera Ronda: 15.000.000 €<br />
+                Por avanzar a Octavos: 10.000.000 €<br />
+                Por avanzar a Cuartos: 10.000.000 €<br />
+                Por avanzar a Semifinal: 15.000.000 €<br />
+                Por avanzar a la Final: 25.000.000 €<br />
+                Por ganar la Copa: 40.000.000 € + Bloqueo al 50% de un jugador previo al mercado<br />
                 En el caso de los equipos que participan directamente desde octavos, reciben el premio por participar en Primera Ronda
                 si quedan eliminados.<br />
                 <br />
             </p>
             <p>
                 Champions League<br />
-                Por participar en Fase de grupos: 5.000.000 € por partido disputado<br />
-                Por avanzar a Cuartos: 7.000.000 €<br />
-                Por avanzar a Semifinal: 7.000.000 €<br />
-                Por avanzar a la Final: 7.000.000 €<br />
-                Por ganar la Copa: 18.000.000 € + Fichajes extra de equipos que no participan en la liga (Debe pagar el coste)<br />
+                Por participar en Fase de grupos: 10.000.000 € por partido disputado<br />
+                Por avanzar a Cuartos: 15.000.000 €<br />
+                Por avanzar a Semifinal: 20.000.000 €<br />
+                Por avanzar a la Final: 30.000.000 €<br />
+                Por ganar la Copa: 40.000.000 € + Fichajes extra de equipos que no participan en la liga (Debe pagar el coste)<br />
                 <br />
             </p>
             <p>
                 Europa League<br />
-                Por participar en Primera Fase: 8.000.000 € por partido disputado (excepto los clasificados de Champions que recibiran
-                6.000.000 €)<br />
-                Por avanzar a Cuartos: 6.000.000 €<br />
-                Por avanzar a Semifinal: 6.000.000 €<br />
-                Por avanzar a la Final: 6.000.000 €<br />
-                Por ganar la Copa: 10.000.000 € + Fichajes extra de equipos que no participan en la liga (Debe pagar el coste)
+                Por participar en Primera Fase: 35.000.000 € por partido disputado (excepto los clasificados de Champions que recibiran
+                5.000.000 €)<br />
+                Por avanzar a Cuartos: 15.000.000 €<br />
+                Por avanzar a Semifinal: 15.000.000 €<br />
+                Por avanzar a la Final: 20.000.000 €<br />
+                Por ganar la Copa: 30.000.000 € + Fichajes extra de equipos que no participan en la liga (Debe pagar el coste)
                 En caso de que el ganador sea un equipo de 2da división tendrá un bloqueo extra en reemplazo del fichaje extra.
                 Esto será exceptuado en caso de que el mismo equipo sea campeón en a - la Copa FM o b - ascienda a la Primera División,
                 en esa situación mantendría el fichaje extra (pagando el coste).<br />
@@ -642,6 +642,6 @@ export default function Rules() {
                 y/o imponer sanciones o reglas, según lo estime conveniente. Estas determinaciones serán formalizadas mediante
                 la redacción de un anuncio cuando corresponda.<br />
             </p>
-        </>
+        </div>
     )
 }
