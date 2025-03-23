@@ -65,7 +65,7 @@ export default function ManagePrizes() {
 
         try {
             setLoading(true);
-            await axiosClient.post('/prizes/', { prizes });
+            await axiosClient.post('/prizes', { prizes });
             alert('Premios enviados correctamente.');
             setPrizes([]);
         } catch (error) {
