@@ -268,6 +268,7 @@ class PlayerController extends Controller
 
         $jugador->id_team = 61;
         $jugador->status = 'liberado';
+        $jugador->value *= 0.6;
         $jugador->save();
 
         return response()->json(['success' => 'Jugador liberado']);
