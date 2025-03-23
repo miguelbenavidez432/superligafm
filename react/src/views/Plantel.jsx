@@ -194,11 +194,11 @@ export default function Plantel() {
                                                                 handleReleasePlayer(p);
                                                             }
                                                         }}>Liberar</button>
-                                                        <button className="btn-add mx-1" onClick={() => {
+                                                        {/* <button className="btn-add mx-1" onClick={() => {
                                                             if (window.confirm('¿Estás seguro de que deseas registrar a este jugador? Una vez registrado no se puede quitar')) {
                                                                 handleListPlayer(p);
                                                             }
-                                                        }}>Registrar</button>
+                                                        }}>Registrar</button> */}
                                                     </>
                                                 )}
                                             </td>

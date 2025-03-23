@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMatchStatisticRequest;
 use App\Http\Requests\UpdateMatchStatisticRequest;
 use App\Models\Player;
+use App\Models\Tournament;
 use Illuminate\Http\Request;
 
 class MatchStatisticController extends Controller
@@ -123,7 +124,7 @@ class MatchStatisticController extends Controller
         //
     }
 
-    public function getDisable($id_team)
+    public function getStatistics($id_team)
     {
         $id_player = Player::where('id_team', $id_team)->pluck('id');
 
@@ -151,27 +152,26 @@ class MatchStatisticController extends Controller
         return MatchStatisticResource::collection($query->get());
     }
 
-    public function getTotalYellowCard($id_team)
+    public function getTotalYellowCard($id_team, Request $request)
     {
         $id_player = Player::where('id_team', $id_team)->pluck('id');
 
-        // Consulta para sumar las amarillas y obtener el stage más alto
         $query = MatchStatistic::selectRaw('
             player_id,
             match_statistics.tournament_id,
             SUM(yellow_cards) as total_yellow_cards,
             MAX(games.stage) as max_stage
         ')
-            ->join('games', 'match_statistics.match_id', '=', 'games.id') // Relación con la tabla de partidos
+            ->join('games', 'match_statistics.match_id', '=', 'games.id')
             ->whereIn('player_id', $id_player)
             ->groupBy(
                 'player_id',
                 'match_statistics.tournament_id'
             )
-            ->orderBy('total_yellow_cards', 'desc') // Ordena por la suma de amarillas
-            ->with(['player', 'tournament']); // Carga las relaciones necesarias
+            ->orderBy('total_yellow_cards', 'desc')
+            ->with(['player', 'tournament']);
 
-        // Devuelve los resultados como una colección de recursos
+
         return MatchStatisticResource::collection($query->get());
     }
 }
