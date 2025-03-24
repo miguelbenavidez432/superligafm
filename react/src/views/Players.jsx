@@ -263,14 +263,16 @@ export default function Players() {
             });
     };
 
-    const filterPlayersByTeamDivision = () => {
+    const filterPlayersByTeamDivision = async () => {
         setLoading(true);
-        axiosClient.get('/players/filter-by-division')
+        await axiosClient.get('/players/filter-by-division',)
             .then(({ data }) => {
+                console.log('Jugadores:', response.data);
                 setLoading(false);
                 setPlayers(data);
             })
-            .catch(() => {
+            .catch(error => {
+                console.error('Error:', error.response.data);
                 setLoading(false);
                 setNotification('Error al filtrar jugadores por equipo');
             });
@@ -377,15 +379,13 @@ export default function Players() {
                         <tbody>
                             {
                                 players.map(p => {
-                                    const teamName = team.find(t => t.id === p.id_team);
-                                    const teamNameToShow = teamName ? teamName.name : '';
                                     return (
                                         <tr key={p.id} style={{ borderBottom: '1px solid #ccc' }}>
                                             <td style={{ padding: '10px' }}>{p.name}</td>
                                             <td style={{ padding: '10px' }}>{p.age}</td>
                                             <td style={{ padding: '10px' }}>{p.ca}</td>
                                             <td style={{ padding: '10px' }}>{p.pa}</td>
-                                            <td style={{ padding: '10px' }}>{teamNameToShow}</td>
+                                            <td style={{ padding: '10px' }}>{p.id_team?.name}</td>
                                             <td style={{ padding: '10px' }}>{p.value}</td>
                                             <td style={{ padding: '10px' }}>{p.status}</td>
                                             {

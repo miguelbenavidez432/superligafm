@@ -8,6 +8,7 @@ use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Rescission;
+use App\Models\Team;
 use App\Models\Transfer;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class PlayerController extends Controller
         if ($request->query('all') == 'true') {
             return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->get());
         } else {
-            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(100));
+            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(500));
         }
     }
 
@@ -47,21 +48,21 @@ class PlayerController extends Controller
 
     public function transfer(Request $request)
     {
-        $datosActualizados = $request->input('data'); //obtengo la info que viene del front
-        $datos = $request->input('transfer'); // Acá recibo la información
+        $datosActualizados = $request->input('data');
+        $datos = $request->input('transfer');
 
-        $upsertData = []; //creo variable que va a reaizar el upsert
-        $buyUser = User::find($datosActualizados['buy_by']); //busco el usuario que compra
-        $sellUser = User::find($datosActualizados['sold_by']); // busco el usuario que vende
-        $transferValue = $datosActualizados['budget']; // obtengo el valor de la transferencia
+        $upsertData = [];
+        $buyUser = User::find($datosActualizados['buy_by']);
+        $sellUser = User::find($datosActualizados['sold_by']);
+        $transferValue = $datosActualizados['budget'];
 
         if ($buyUser) {
-            $buyUser->profits -= $transferValue; //Descuento el presupuesto al que compra
+            $buyUser->profits -= $transferValue;
             $buyUser->save();
         }
 
         if ($sellUser) {
-            $sellUser->profits += $transferValue; //Aumento el presupuesto al que vende
+            $sellUser->profits += $transferValue;
             $sellUser->save();
         }
         foreach ($datos as $dato) {
@@ -77,7 +78,7 @@ class PlayerController extends Controller
             ];
         }
 
-        Transfer::upsert($upsertData, 'id', ['transferred_players']); //actualizo los jugadores que vienen en el array
+        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     }
@@ -212,8 +213,8 @@ class PlayerController extends Controller
 
     public function bloquearJugador(Request $request)
     {
-        $usuarioAutenticado = auth()->user(); // Usuario autenticado
-        $jugador = Player::find($request->id); //busco el usuario
+        $usuarioAutenticado = auth()->user();
+        $jugador = Player::find($request->id);
 
         if (!$jugador) {
             return response()->json(['error' => 'Jugador no encontrado'], 404);
@@ -297,20 +298,33 @@ class PlayerController extends Controller
 
     public function filterPlayersByTeamDivision(Request $request)
     {
-        $players = \DB::table('players')
-            ->join('teams', 'players.id_team', '=', 'teams.id')
-            ->whereNotIn('teams.division', ['Primera', 'Segunda'])
-            ->orderBy('players.ca', 'desc')
-            ->limit(1000)
-            ->select('players.*') // Selecciona solo las columnas de la tabla 'players'
-            ->get();
 
-        // Verifica si hay resultados
-        if ($players->isEmpty()) {
-            return response()->json(['message' => 'No se encontraron jugadores en equipos fuera de Primera y Segunda división'], 404);
+        $usuarioAutenticado = auth()->user();
+
+        $teams = Team::whereNull('division')->orWhere('division', '')->get();
+
+        \Log::info('Equipos encontrados:', $teams->toArray());
+
+        if ($teams->isEmpty()) {
+            return response()->json(['error' => 'No se encontraron equipos con división vacía o nula'], 404);
         }
 
-        return response()->json($players);
+        $teamIds = $teams->pluck('id')->toArray();
+        \Log::info('IDs de equipos:', $teamIds);
+
+        $players = Player::whereIn('id_team', $teamIds)
+            ->with('team')
+            ->orderBy('id_team')
+            ->orderBy('ca', 'desc')
+            ->get();
+
+        \Log::info('Jugadores encontrados:', $players->toArray());
+
+        if ($players->isEmpty()) {
+            return response()->json(['error' => 'No se encontraron jugadores en los equipos especificados'], 404);
+        }
+
+        return PlayerResource::collection($players);
     }
 
     public function getPlayersByTeams(Request $request)
