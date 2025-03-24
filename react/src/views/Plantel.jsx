@@ -185,17 +185,17 @@ export default function Plantel() {
                                                 {p.status !== 'nada' && (
                                                     <>
                                                         <button className="btn-edit mx-1" onClick={() => {
-                                                            if (window.confirm('¿Estás seguro de que deseas bloquear a este jugador?')) {
+                                                            if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
                                                         }}>Bloquear</button>
                                                         <button className="btn-delete mx-1" onClick={() => {
-                                                            if (window.confirm('¿Estás seguro de que deseas liberar a este jugador?')) {
+                                                            if (window.confirm(`¿Estás seguro de que deseas liberar a ${p.name}`)) {
                                                                 handleReleasePlayer(p);
                                                             }
                                                         }}>Liberar</button>
                                                         {/* <button className="btn-add mx-1" onClick={() => {
-                                                            if (window.confirm('¿Estás seguro de que deseas registrar a este jugador? Una vez registrado no se puede quitar')) {
+                                                            if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
                                                                 handleListPlayer(p);
                                                             }
                                                         }}>Registrar</button> */}
