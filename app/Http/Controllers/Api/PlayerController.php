@@ -312,8 +312,9 @@ class PlayerController extends Controller
 
         $players = Player::whereIn('id_team', $teamIds)
             ->with('team')
-            ->orderBy('id_team')
             ->orderBy('ca', 'desc')
+            ->orderBy('id_team')
+            ->limit(10000)
             ->get();
 
         if ($players->isEmpty()) {
