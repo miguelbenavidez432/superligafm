@@ -265,14 +265,12 @@ export default function Players() {
 
     const filterPlayersByTeamDivision = async () => {
         setLoading(true);
-        await axiosClient.get('/players/filter-by-division',)
+        await axiosClient.get('/players/filter-by-division')
             .then(({ data }) => {
-                console.log('Jugadores:', response.data);
                 setLoading(false);
-                setPlayers(data);
+                setPlayers(data.data);
             })
-            .catch(error => {
-                console.error('Error:', error.response.data);
+            .catch((error) => {
                 setLoading(false);
                 setNotification('Error al filtrar jugadores por equipo');
             });

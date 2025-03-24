@@ -38,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::apiResource('/players', PlayerController::class);
     Route::get('/clausulas/{id}', [PlayerController::class, 'playerOffers']);
     Route::post('/bloquear_jugador', [PlayerController::class, 'bloquearJugador']);
     Route::post('/liberar_jugador', [PlayerController::class, 'releasePlayer']);
@@ -48,7 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/plantel', [PlayerController::class, 'filteredPlayers']);
     Route::post('/apuesta/jugador', [PlayerBetController::class, 'attach']);
     Route::get('/players/filter', [PlayerController::class, 'filter']);
-
+    Route::get('/players/filter-by-division', [PlayerController::class, 'filterPlayersByTeamDivision']);
+    Route::apiResource('/players', PlayerController::class);
     Route::get('/players-teams', [PlayerController::class, 'getPlayersByTeams']);
 
     Route::apiResource('/users', UserController::class);
@@ -100,6 +100,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/players/filter-by-division', [PlayerController::class, 'filterPlayersByTeamDivision']);
+
 
 

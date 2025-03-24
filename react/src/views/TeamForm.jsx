@@ -37,7 +37,14 @@ export default function TeamForm() {
                     setLoading(false);
                     setTeam(data);
                     getPlayers();
-                    getUsers();
+                    if(players.lenght > 0){
+                        getUsers();
+                        countBlockedPlayers();
+                        countPlayersOver20();
+                        getBestPlayersCA();
+                        countRegisterAndOver20();
+                        countRegistered();
+                    }
                 })
                 .catch(() => {
                     setLoading(false);
@@ -198,6 +205,7 @@ export default function TeamForm() {
                                 <th>CA</th>
                                 <th>EDAD</th>
                                 <th>ESTADO</th>
+                                <th>VALOR</th>
                                 {/* <th>GOLES</th>
                                     <th>ASISTENCIAS</th>
                                     <th>AMARILLAS</th>
@@ -219,7 +227,7 @@ export default function TeamForm() {
                                     <td>{p.ca}</td>
                                     <td>{p.age}</td>
                                     <td>{p.status}</td>
-
+                                    <td>{p.value}</td>
                                 </tr>
 
                             </tbody>
