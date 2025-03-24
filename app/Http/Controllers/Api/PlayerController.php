@@ -299,8 +299,6 @@ class PlayerController extends Controller
     public function filterPlayersByTeamDivision(Request $request)
     {
 
-        $usuarioAutenticado = auth()->user();
-
         $teams = Team::whereNull('division')->orWhere('division', '')->get();
 
         \Log::info('Equipos encontrados:', $teams->toArray());
@@ -317,8 +315,6 @@ class PlayerController extends Controller
             ->orderBy('id_team')
             ->orderBy('ca', 'desc')
             ->get();
-
-        \Log::info('Jugadores encontrados:', $players->toArray());
 
         if ($players->isEmpty()) {
             return response()->json(['error' => 'No se encontraron jugadores en los equipos especificados'], 404);

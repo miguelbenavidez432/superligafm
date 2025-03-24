@@ -12,6 +12,12 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        if ($request->expectsJson()) {
+            return null;
+        }
+
+        abort(response()->json([
+            'message' => 'No autenticado. Por favor, inicia sesión.',
+        ], 401));
     }
 }
