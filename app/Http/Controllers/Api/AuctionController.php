@@ -65,24 +65,24 @@ class AuctionController extends Controller
 
         $leadingUsers = array_unique($leadingUsers);
 
-        foreach ($leadingUsers as $userId) {
-            $userAuctions = Auction::where('auctioned_by', $userId)
-                ->where('id_season', 55)
-                ->get();
+        // foreach ($leadingUsers as $userId) {
+        //     $userAuctions = Auction::where('auctioned_by', $userId)
+        //         ->where('id_season', 55)
+        //         ->get();
 
-            $totalAuctions = $userAuctions->count();
-            $over20Auctions = $userAuctions->filter(function ($auction) {
-                return $auction->player->age > 20;
-            })->count();
+        //     $totalAuctions = $userAuctions->count();
+        //     $over20Auctions = $userAuctions->filter(function ($auction) {
+        //         return $auction->player->age > 20;
+        //     })->count();
 
-            if ($totalAuctions >= 4 || $over20Auctions >= 2) {
-                return response()->json(['error' => 'Has alcanzado el límite de subastas permitidas.'], 403);
-            }
+        //     if ($totalAuctions >= 4 || $over20Auctions >= 2) {
+        //         return response()->json(['error' => 'Has alcanzado el límite de subastas permitidas.'], 403);
+        //     }
 
-            if ($over20Auctions >= 2) {
-                return response()->json(['error' => 'Has alcanzado el límite de ofertas por jugadores mayores de 20 años.'], 403);
-            }
-        }
+        //     if ($over20Auctions >= 2) {
+        //         return response()->json(['error' => 'Has alcanzado el límite de ofertas por jugadores mayores de 20 años.'], 403);
+        //     }
+        // }
 
 
         if ($previousAuction) {
