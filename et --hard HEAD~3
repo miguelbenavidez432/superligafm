@@ -1,0 +1,183 @@
+[33m6f17f9c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfinal[m[33m, [m[1;31morigin/final[m[33m)[m fix auction
+[33m0ddfd08[m fix auctions
+[33m23fa28a[m Merge branch 'final' of https://github.com/miguelbenavidez432/superligafm into final
+[33mf119440[m fix
+[33m68e5668[m fix player
+[33m0c69d33[m fix routes
+[33m629bfcd[m fix some items in transfers
+[33m9bb8847[m fix
+[33mf61ae00[m fix aauthenticate
+[33m56aa3e1[m a
+[33mefbdb93[m fix filterPlayersByTeamDivision
+[33mf41405b[m fix player Resource
+[33m3432636[m fix matchstatistic and add player value when release
+[33mcd04531[m fix amount of prizes
+[33m573a0d2[m edita styles
+[33m518519d[m fix pagination
+[33mcdbff14[m test match statistic
+[33ma572101[m CRUD for Prize model completed
+[33me5f2962[m fix prize component
+[33med0cd60[m add navigate to SM component
+[33m3fe7afd[m fix statistic endpoint
+[33m4515983[m fix standing
+[33ma6b25cb[m add style
+[33ma484c19[m created statistic component
+[33m28a4554[m fix aside
+[33m61af2cb[m create statistics component
+[33mf20cc9e[m add new column on match_statistics table
+[33m92257a0[m add update to Game Model
+[33m16b74a9[m create Prizes form
+[33m3a90fcc[m fix MatchStatistic and create game
+[33m9e47f3b[m match add and edit
+[33ma14de5a[m Merge branch 'final' of https://github.com/miguelbenavidez432/superligafm into final
+[33m131d1ac[m edit chat bot
+[33m576b61d[m add matchs and tournaments components
+[33m8df7834[m chat fix
+[33m31eb5e0[m test chat bot
+[33md131324[m add upload img
+[33m9065bec[m update
+[33m0987483[m update rules
+[33m690609b[m fix auctions controller
+[33m54e6fec[m add filter
+[33m7ea12cb[m fix nullable team
+[33m94ab573[m fix components
+[33m1921a33[m fix release player
+[33md8b12b5[m debug
+[33me72dbb6[m debug
+[33m7f0b78f[m debug
+[33mf5b2998[m debug
+[33mcb1b791[m debug store
+[33m8b74ef1[m fix update team
+[33me6202c7[m fix start
+[33m4c3ffc8[m add styles
+[33mcca9841[m add id season
+[33m49d0d1b[m add chatbot
+[33mf71f8f2[m add and fix some components whith webhook
+[33md00967e[m fix offers view
+[33m633266a[m add Game Tournament and  Standing model
+[33m983441a[m add button
+[33m8d0a0c3[m add player button
+[33mf4ef632[m fix auc
+[33m7d3bd59[m fin active
+[33m30c01f8[m fix components
+[33m6bbffa5[m fix protected component
+[33m24875a6[m fix auction
+[33m5b7f441[m fix
+[33md6333d7[m fix season start
+[33mf763b6f[m add release player button
+[33m7924eae[m fix subastas
+[33me126686[m order by
+[33m7e40177[m fix resource auctions
+[33m28a8469[m delete console log
+[33m7828230[m .
+[33ma8ed93f[m fix auctions confirmed
+[33m5a377a2[m fix trasnfer
+[33mbd60dbf[m fix close offer
+[33m9dabd35[m fix upadate
+[33mdd41aca[m fix close and update offer
+[33m9c10d37[m fix link
+[33m6843dc6[m offersList
+[33mc8f8f0c[m add confirmed resource
+[33m3523667[m fix transfer list
+[33m66eab76[m fix dashboard
+[33mab02b89[m fix auctions
+[33m00ac120[m fix announcement
+[33m36529ae[m add countdown
+[33mee0663f[m fix route
+[33mafed4a5[m fix auctions
+[33m6cbf320[m edit print
+[33mf393e46[m fix auctions
+[33meb2c58f[m add countdown
+[33m1858e3c[m fix notification
+[33m6e41adb[m a
+[33m6c292c8[m Merge branch 'final' of https://github.com/miguelbenavidez432/superligafm into final
+[33m0c820c7[m fix auctions
+[33m15a73a8[m Merge branch 'main' into final
+[33m4a94fb8[m add countdown
+[33mb44ffb0[m fix route
+[33m0c9d1b7[m Merge pull request #11 from miguelbenavidez432/final
+[33me4dc106[m fix auctions
+[33mcee6f9e[m Merge pull request #10 from miguelbenavidez432/final
+[33me29db68[m fix auctions
+[33m392e022[m fix
+[33m5d14b02[m Merge pull request #9 from miguelbenavidez432/final
+[33m814315c[m fix auctions
+[33mc03231a[m update views
+[33m860f4aa[m add column
+[33mee89424[m Merge pull request #8 from miguelbenavidez432/final
+[33mee9b3ba[m add block
+[33m4b3b867[m countdown
+[33m4227297[m update auctions
+[33ma126ff1[m[33m ([m[1;31morigin/otherBranch[m[33m, [m[1;32motherBranch[m[33m)[m transfer updated
+[33mf6a7d5c[m updated
+[33m6ec794a[m add auctiosn and relationshisp
+[33m10dd736[m delete auction controller
+[33m8772cfd[m[33m ([m[1;31morigin/test[m[33m, [m[1;32mtest[m[33m)[m add count cdr
+[33me060b6c[m add auctions
+[33m241e634[m add component
+[33mfdb94e8[m add relationship
+[33ma6458d3[m[33m ([m[1;31morigin/originCopy[m[33m)[m .
+[33m313dc8d[m fix confirm
+[33m9abdb5d[m Merge pull request #7 from miguelbenavidez432/otherBranch
+[33m3253e51[m Merge branch 'main' into otherBranch
+[33m6a5d320[m fix cdr
+[33md28ce4c[m Merge pull request #6 from miguelbenavidez432/devs
+[33m17f7c66[m fix cdr
+[33m1e1e9be[m Merge pull request #5 from miguelbenavidez432/otherBranch
+[33mfc1f728[m fix transfer
+[33m582c90e[m[33m ([m[1;31morigin/devs[m[33m, [m[1;32mdevs[m[33m)[m fix
+[33m734013d[m Merge pull request #4 from miguelbenavidez432/devs
+[33m53acdaf[m fix
+[33m19527d1[m Merge branch 'devs' of https://github.com/miguelbenavidez432/superligafm into devs
+[33m2dc9da1[m transfe
+[33m0a5e975[m Merge pull request #3 from miguelbenavidez432/devs
+[33mdb4a57f[m Merge branch 'main' into devs
+[33m08a463e[m fix transfer
+[33m490fafb[m Merge pull request #2 from miguelbenavidez432/other
+[33m5edd5e4[m add relationship
+[33md2c3529[m new commit
+[33m0570c7d[m Update DB
+[33m9028ec1[m add new migrations files
+[33mf4f5455[m migrations edit
+[33m52eef62[m fix some components
+[33m01b2c27[m fix some components
+[33mc5f450b[m add softdeletes
+[33m3bd744a[m fix migrations
+[33m22f7b17[m fix some controllers
+[33m30d0f81[m Fix some controllers
+[33m2d4a45a[m add softdelets
+[33m0f16da3[m Add some public elements
+[33m982680e[m Add mis ofertas components
+[33m7d199f7[m Fix some components
+[33m141b19a[m Fix update bet
+[33m389b1dd[m Fix style
+[33m9e1d70d[m Merge pull request #1 from miguelbenavidez432/bets
+[33m5cb605b[m[33m ([m[1;31morigin/bets[m[33m, [m[1;32mbets[m[33m)[m Delete addColumns
+[33m6413aa9[m fix bet
+[33ma915143[m Feat Bet model
+[33mc58f6dd[m Fix StorePlayersRequest
+[33m1d53b3f[m Fix transferController
+[33m0ae392c[m Fix rescission controller
+[33mfeefbd0[m Fix PlayerForm and UserForm components
+[33mfc947ab[m Fix announcement component
+[33mbc2a66e[m Fix some components
+[33m5ebd554[m fix playerOffers
+[33m51cd3c8[m fix plantel component
+[33m8ff9f53[m Fix components
+[33mdcc6905[m feat some components
+[33m8401850[m feat auction component
+[33m48f4708[m feat playeroffers
+[33m21628d4[m Feat CdR component
+[33mdc598b0[m Add transfer component
+[33ma88d87e[m Feat transfers
+[33mf9838fc[m Add protected routes
+[33m5da6524[m Fix
+[33m070a7a8[m fix
+[33md748372[m Fix dashboard
+[33m40845ab[m Add team's component
+[33m24bc1a4[m fix migration
+[33mc31901f[m add relations
+[33me8b20db[m Fix formPlayer and DB model
+[33mb7be741[m TEam model add
+[33m8862bed[m players model add
+[33mf830608[m First commit
