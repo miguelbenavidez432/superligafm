@@ -197,7 +197,7 @@ class TransferController extends Controller
                 'buy_by' => $transfer['buy_by'],
                 'sold_by' => $transfer['sold_by'],
             ];
-            $players = Player::whereIn('name', $transferredPlayers)->get();
+            $players = Player::whereIn('name', $player)->get();
 
             foreach ($players as $player) {
                 if ($player->id_team === $transfer->id_team_from) {

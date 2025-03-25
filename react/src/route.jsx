@@ -86,9 +86,9 @@ const router = createBrowserRouter([
             {
                 path: '/transfer',
                 element: (
-                    <DelayedProtectedComponent delay={4} >
+                    //<DelayedProtectedComponent delay={4} >
                         <TransferForm />
-                    </DelayedProtectedComponent>
+                    //</DelayedProtectedComponent>
 
                 )
             },
@@ -159,9 +159,9 @@ const router = createBrowserRouter([
             {
                 path: '/crear_subasta',
                 element: (
-                    <DelayedProtectedComponent delay={4} >
+                    //<DelayedProtectedComponent delay={4} >
                         <Auctions />
-                    </DelayedProtectedComponent>
+                    //</DelayedProtectedComponent>
                 )
             },
             {
