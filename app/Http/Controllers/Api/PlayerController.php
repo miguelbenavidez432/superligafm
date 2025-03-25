@@ -220,17 +220,17 @@ class PlayerController extends Controller
             return response()->json(['error' => 'Jugador no encontrado'], 404);
         }
 
-        // Obtengo el equipo al que pertenece el jugador
+
         $team = $jugador->team;
 
         if (!$team) {
             return response()->json(['error' => 'El equipo no existe'], 404);
         }
 
-        // Cuento cuántos jugadores del equipo ya están bloqueados
+
         $jugadoresBloqueadosEnEquipo = $team->players()->where('status', 'bloqueado')->count();
 
-        // Verificó si ya alcanzó el límite de bloqueos de 6
+
         if ($jugadoresBloqueadosEnEquipo >= 6) {
             return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 6 jugadores'], 400);
         }
@@ -241,12 +241,12 @@ class PlayerController extends Controller
             return response()->json(['error' => 'Manager no encontrado'], 404);
         }
 
-        $costoBloqueo = $this->calcularCostoBloqueo($jugador);        // Calculo el costo de bloqueo del jugador
+        $costoBloqueo = $this->calcularCostoBloqueo($jugador);
 
-        $usuarioManejador->profits -= $costoBloqueo; // Descuento el costo de bloqueo del presupuesto
-        $usuarioManejador->save(); // Guardar los cambios en el presupuesto del manager
+        $usuarioManejador->profits -= $costoBloqueo;
+        $usuarioManejador->save();
 
-        $jugador->status = 'bloqueado'; // Actualizar el estado del jugador a 'bloqueado'
+        $jugador->status = 'bloqueado';
         $jugador->save();
 
         return response()->json(['success' => 'Jugador bloqueado', 'costo' => $costoBloqueo]);

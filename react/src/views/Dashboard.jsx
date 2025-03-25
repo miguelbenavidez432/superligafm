@@ -153,7 +153,8 @@ export default function Dashboard() {
     const fetchPendingTransfers = () => {
         axiosClient.get('/transferencia_pendiente')
             .then(({ data }) => {
-                setPendingTransfers(data);
+                const filteredTransfers = data.filter(t => t.id_season == seasonId );
+                setPendingTransfers(filteredTransfers);
             })
             .catch(error => {
                 console.error(error);
