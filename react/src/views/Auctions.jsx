@@ -99,7 +99,7 @@ const Auctions = () => {
             })
             .catch((error) => {
                 const mensaje = error.response.data.error;
-                const mensaje2 = error.response.data.data.message;
+                const mensaje2 = error.response.data.message;
                 setNotification("Error al crear la subasta: " + mensaje + " " );
                 const response = error.response;
                 if (response && response.status === 422) {
