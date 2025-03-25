@@ -130,7 +130,7 @@ class AuctionController extends Controller
      */
     public function show(Auction $auction)
     {
-        return new AuctionResource($auction);
+        return new AuctionResource($auction::with(['creator', 'auctioneer', 'player', 'team', 'season']));
     }
 
     /**
