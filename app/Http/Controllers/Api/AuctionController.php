@@ -82,7 +82,6 @@ class AuctionController extends Controller
             }
         }
 
-
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {
                 return response()->json([
