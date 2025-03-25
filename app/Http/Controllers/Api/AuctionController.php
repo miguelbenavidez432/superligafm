@@ -64,7 +64,9 @@ class AuctionController extends Controller
         $leadingUsers = array_unique($leadingUsers);
 
         foreach ($leadingUsers as $userId) {
-            $userAuctions = Auction::where('auctioned_by', $userId)->get();
+            $userAuctions = Auction::where('auctioned_by', $userId)
+            ->where('id_season' , $data['id_season'])
+            ->get();
 
             $totalAuctions = $userAuctions->count();
             $over20Auctions = $userAuctions->filter(function ($auction) {
