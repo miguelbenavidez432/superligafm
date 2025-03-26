@@ -248,6 +248,7 @@ class AuctionController extends Controller
             ->when($seasonId, function ($query, $seasonId) {
                 return $query->where('id_season', $seasonId);
             })
+            ->where('confirmed', 'no')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function (Auction $auction) {
