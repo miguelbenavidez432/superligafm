@@ -34,8 +34,6 @@ class MatchStatisticController extends Controller
             SUM(simple_injuries) as simple_injuries,
             SUM(serious_injuries) as serious_injuries,
             SUM(mvp) as mvp,
-            MAX(created_at) as created_at,
-            MAX(updated_at) as updated_at
         ')
             ->groupBy(
                 'player_id',
@@ -152,7 +150,7 @@ class MatchStatisticController extends Controller
         return MatchStatisticResource::collection($query->get());
     }
 
-    public function getTotalYellowCard($id_team, Request $request)
+    public function getTotalYellowCard($id_team)
     {
         $id_player = Player::where('id_team', $id_team)->pluck('id');
 
@@ -160,7 +158,14 @@ class MatchStatisticController extends Controller
             player_id,
             match_statistics.tournament_id,
             SUM(yellow_cards) as total_yellow_cards,
-            MAX(games.stage) as max_stage
+            SUM(red_cards) as total_red_cards,
+            simple_injuries,
+            serious_injuries,
+            MAX(games.stage) as max_stage,
+            CASE
+            WHEN SUM(yellow_cards) = 1 AND SUM(red_cards) = 1 THEN "yes"
+            ELSE "no"
+            END as direct_red
         ')
             ->join('games', 'match_statistics.match_id', '=', 'games.id')
             ->whereIn('player_id', $id_player)
@@ -173,5 +178,26 @@ class MatchStatisticController extends Controller
 
 
         return MatchStatisticResource::collection($query->get());
+
+        //otra opción
+
+        // $id_player = Player::where('id_team', $id_team)->pluck('id');
+
+        // $query = MatchStatistic::query()
+        //     ->selectRaw('
+        //     match_statistics.player_id,
+        //     match_statistics.tournament_id,
+        //     SUM(match_statistics.yellow_cards) as total_yellow_cards,
+        //     MAX(games.stage) as max_stage,
+        //     tournaments.format
+        // ')
+        //     ->join('games', 'match_statistics.match_id', '=', 'games.id')
+        //     ->join('tournaments', 'match_statistics.tournament_id', '=', 'tournaments.id')
+        //     ->whereIn('match_statistics.player_id', $id_player)
+        //     ->groupBy('match_statistics.player_id', 'match_statistics.tournament_id', 'tournaments.format')
+        //     ->orderByDesc('total_yellow_cards')
+        //     ->with(['player', 'tournament']);
+
+        // return MatchStatisticResource::collection($query->get());
     }
 }
