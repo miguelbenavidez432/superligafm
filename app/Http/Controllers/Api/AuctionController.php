@@ -215,7 +215,7 @@ class AuctionController extends Controller
         } else {
             $player = Player::find($data['id_player']);
 
-            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value/2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -248,6 +248,7 @@ class AuctionController extends Controller
             ->when($seasonId, function ($query, $seasonId) {
                 return $query->where('id_season', $seasonId);
             })
+            ->where('confirmed', 'no')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function (Auction $auction) {
