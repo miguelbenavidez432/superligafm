@@ -219,6 +219,7 @@ const TeamStatistics = () => {
         setLoading(true);
         try {
             const response = await axiosClient.get(`/match-statistics/team/${team_id}`);
+            console.log(response.data.data)
             processPlayerStats(response.data.data);
         } catch (error) {
             console.error('Error al obtener estadísticas:', error);
@@ -264,28 +265,46 @@ const TeamStatistics = () => {
             playerStats.total_red_cards += Number(stat.red_cards || 0);
             playerStats.total_simple_injuries += Number(stat.simple_injuries || 0);
             playerStats.total_serious_injuries += Number(stat.serious_injuries || 0);
-            playerStats.last_stage = Math.max(playerStats.last_stage, Number(stat.stage || 0));
+            playerStats.last_stage = Math.max(playerStats.last_stage, Number(stat.match_id.stage || 0));
 
-            const currentStage = Number(stat.stage);
+            const currentStage = Number(stat.match_id.stage);
+            if (format == 'UCL' || format == 'UEL' || format == 'CFM') {
+                if (Number(stat.yellow_cards) > 0) {
+                    if (playerStats.total_yellow_cards % 2 === 0) {
+                        playerStats.suspension.add(currentStage + 1);
+                    }
+                }
+                if (Number(stat.yellow_cards) > 3) {
+                    if (playerStats.total_yellow_cards % 6 === 0) {
+                        playerStats.suspension.add(currentStage + 2);
+                    }
+                }
+            }
             if (Number(stat.yellow_cards) > 0) {
                 if (playerStats.total_yellow_cards % 3 === 0) {
                     playerStats.suspension.add(currentStage + 1);
                 }
             }
-            if (Number(stat.yellow_cards) > 3) {
+            if (Number(stat.yellow_cards) > 0) {
                 if (playerStats.total_yellow_cards % 6 === 0) {
+                    playerStats.suspension.add(currentStage + 1);
                     playerStats.suspension.add(currentStage + 2);
                 }
             }
             if (Number(stat.simple_injuries) > 0) {
                 playerStats.suspension.add(currentStage + 1);
+                playerStats.total_simple_injuries = currentStage
             }
             if (Number(stat.serious_injuries) > 0) {
                 playerStats.suspension.add(currentStage + 1);
                 playerStats.suspension.add(currentStage + 2);
+                playerStats.total_serious_injuries = currentStage;
             }
             if (Number(stat.red_cards) > 0) {
-                playerStats.suspension.add(currentStage + 2);
+                if (stat.direct_red == null) {
+                    playerStats.suspension.add(currentStage + 1);
+                    playerStats.suspension.add(currentStage + 2);
+                }
             }
         });
 
@@ -313,8 +332,8 @@ const TeamStatistics = () => {
                                     <th className="border px-4 py-2">Jugador</th>
                                     <th className="border px-4 py-2">Amarillas</th>
                                     <th className="border px-4 py-2">Rojas</th>
-                                    <th className="border px-4 py-2">Lesiones simples</th>
-                                    <th className="border px-4 py-2">Lesiones graves</th>
+                                    <th className="border px-4 py-2">Fecha de lesión</th>
+                                    <th className="border px-4 py-2">Fecha de lesión grave</th>
                                     <th className="border px-4 py-2">Último Partido</th>
                                     <th className="border px-4 py-2">Suspendido para la fecha</th>
                                 </tr>
@@ -325,9 +344,9 @@ const TeamStatistics = () => {
                                         <td className="border px-4 py-2">{player.player}</td>
                                         <td className="border px-4 py-2">{player.total_yellow_cards}</td>
                                         <td className="border px-4 py-2">{player.total_red_cards}</td>
-                                        <td className="border px-4 py-2">{player.total_simple_injuries}</td>
-                                        <td className="border px-4 py-2">{player.total_serious_injuries}</td>
-                                        <td className="border px-4 py-2">{player.last_stage}</td>
+                                        <td className="border px-4 py-2">{player.total_simple_injuries == 0 ? '' : player.total_simple_injuries}</td>
+                                        <td className="border px-4 py-2">{player.total_serious_injuries == 0 ? '' : player.total_serious_injuries}</td>
+                                        <td className="border px-4 py-2">{'Fecha ' + player.last_stage}</td>
                                         <td className="border px-4 py-2">{player.suspension.length > 0 ? player.suspension.join(', ') : ''}</td>
                                     </tr>
                                 ))}

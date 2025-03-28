@@ -32,7 +32,7 @@ class MatchStatisticResource extends JsonResource
             'total_serious_injuries' => $this->total_serious_injuries,
             'max_stage' => $this->max_stage,
             'stage' => $this->stage,
-            'is_enabled' => $this->total_yellow_cards < 3,
+            'direct_red' => $this->direct_red,
         ];
     }
 }
