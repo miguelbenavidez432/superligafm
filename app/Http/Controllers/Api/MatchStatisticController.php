@@ -136,7 +136,11 @@ class MatchStatisticController extends Controller
             MAX(serious_injuries) as serious_injuries,
             sum(goals) as goals,
             sum(assists) as assists,
-            SUM(mvp) as mvp
+            SUM(mvp) as mvp,
+            CASE
+                WHEN MAX(CASE WHEN yellow_cards > 0 AND red_cards > 0 THEN 1 ELSE 0 END) = 1 THEN "no"
+                ELSE "yes"
+            END as direct_red
         ')
             ->join('games', 'match_statistics.match_id', '=', 'games.id')
             ->whereIn('player_id', $id_player)

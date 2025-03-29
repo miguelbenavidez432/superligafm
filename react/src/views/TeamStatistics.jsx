@@ -368,7 +368,7 @@ const TeamStatistics = () => {
                 playerStats.total_serious_injuries = currentStage;
             }
             if (Number(stat.red_cards) > 0) {
-                if (stat.direct_red == null) {
+                if (stat.direct_red == 'yes') {
                     const stage = formatStage(currentStage + 1, format);
                     playerStats.suspension.add(stage);
                     const stages = formatStage(currentStage + 2, format);
