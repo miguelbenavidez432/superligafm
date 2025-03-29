@@ -90,7 +90,7 @@ export default function PlayerForm() {
                     }
                 });
         } else {
-            axiosClient.post(`/players/`, players)
+            axiosClient.post(`/players`, players)
                 .then(() => {
                     setNotification('Jugador creado satisfactoriamente');
                     navigate('/plantel');

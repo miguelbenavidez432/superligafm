@@ -22,14 +22,7 @@ class UpdateGameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tournament_id' => 'sometimes|exists:tournaments,id',
-            'team_home_id' => 'sometimes|exists:teams,id',
-            'team_away_id' => 'sometimes|exists:teams,id',
-            'score_home' => 'nullable|integer',
-            'score_away' => 'nullable|integer',
-            'match_date' => 'sometimes|date',
-            'status' => 'sometimes|in:pending,completed',
-            'stage' => 'sometimes|string',
+            'status' => 'required|string',
         ];
     }
 }

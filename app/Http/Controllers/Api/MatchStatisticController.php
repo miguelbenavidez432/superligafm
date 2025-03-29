@@ -33,7 +33,7 @@ class MatchStatisticController extends Controller
             SUM(red_cards) as red_cards,
             SUM(simple_injuries) as simple_injuries,
             SUM(serious_injuries) as serious_injuries,
-            SUM(mvp) as mvp,
+            SUM(mvp) as mvp
         ')
             ->groupBy(
                 'player_id',
@@ -130,11 +130,12 @@ class MatchStatisticController extends Controller
             player_id,
             match_id,
             match_statistics.tournament_id,
-            games.stage as stage,
             SUM(yellow_cards) as yellow_cards,
             SUM(red_cards) as red_cards,
             MAX(simple_injuries) as simple_injuries,
             MAX(serious_injuries) as serious_injuries,
+            sum(goals) as goals,
+            sum(assists) as assists,
             SUM(mvp) as mvp
         ')
             ->join('games', 'match_statistics.match_id', '=', 'games.id')
@@ -142,10 +143,9 @@ class MatchStatisticController extends Controller
             ->groupBy(
                 'player_id',
                 'match_statistics.tournament_id',
-                'match_id',
-                'games.stage'
+                'match_id'
             )
-            ->orderBy('yellow_cards', 'desc')
+            ->orderBy('match_statistics.match_id', 'asc')
             ->with(['player', 'tournament', 'match']);
         return MatchStatisticResource::collection($query->get());
     }
@@ -163,8 +163,8 @@ class MatchStatisticController extends Controller
             serious_injuries,
             MAX(games.stage) as max_stage,
             CASE
-            WHEN SUM(yellow_cards) = 1 AND SUM(red_cards) = 1 THEN "yes"
-            ELSE "no"
+                WHEN MAX(CASE WHEN yellow_cards > 0 AND red_cards > 0 THEN 1 ELSE 0 END) = 1 THEN "no"
+                ELSE "yes"
             END as direct_red
         ')
             ->join('games', 'match_statistics.match_id', '=', 'games.id')
