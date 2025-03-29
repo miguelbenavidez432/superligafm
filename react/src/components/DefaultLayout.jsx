@@ -191,7 +191,7 @@ export default function DefaultLayout() {
                     </div>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/plantel'>Plantel</Link>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/players'>Jugadores</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/users'>Users</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/users'>Managers</Link>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/teams'>Equipos</Link>
                     <div className="group relative">
                         <button className="block w-full text-left py-2.5 px-4 hover:bg-gray-700">Apuestas</button>
