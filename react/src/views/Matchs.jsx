@@ -10,12 +10,13 @@ export default function Matches() {
     const [teamAwayId, setTeamAwayId] = useState('');
     const [teams, setTeams] = useState([]);
     const [creating, setCreating] = useState(false);
-    const { setNotification } = useStateContext();
+    const { setNotification, user } = useStateContext();
     const [tournaments, setTournaments] = useState([]);
     const [tournamentId, setTournamentId] = useState('');
     const [stage, setStage] = useState('');
     const [scoreHome, setScoreHome] = useState('');
     const [scoreAway, setScoreAway] = useState('');
+    const [message, setMessage] = useState(null);
 
     useEffect(() => {
         axiosClient.get('/matches')
@@ -52,42 +53,107 @@ export default function Matches() {
     }
 
     const handleCreateMatch = () => {
+        setMessage(null);
         setCreating(true);
-        if(!stage){
-            setNotification('Tienes que cargar Fecha o ronda')
+        if (!stage) {
+            setNotification('Tienes que cargar Fecha o Ronda')
             setCreating(false);
             return;
         }
-        axiosClient.post('/matches', {
-            team_home_id: teamHomeId,
-            team_away_id: teamAwayId,
-            tournament_id: tournamentId,
-            score_home: scoreHome,
-            score_away: scoreAway,
-            stage: stage
-        })
-            .then(({ data }) => {
-                setMatches([...matches, data]);
+        if (!teamHomeId || !teamAwayId) {
+            setNotification('Tienes que cargar los equipos')
+            setCreating(false);
+            return;
+        }
+        if (!scoreAway || !scoreHome) {
+            setNotification('Tienes que cargar los goles')
+            setCreating(false);
+            return;
+        }
+        if (!tournamentId) {
+            setNotification('Tienes que cargar el torneo')
+            setCreating(false);
+            return;
+        }
+        if (teamHomeId && teamAwayId && scoreAway && scoreHome && tournamentId && stage) {
+            const homeTeamName = teams.find(team => team.id == parseInt(teamHomeId))?.name;
+            const awayTeamName = teams.find(team => team.id == parseInt(teamAwayId))?.name;
+            const userConfirmed = confirm(`¿Estás seguro de que quieres crear el partido entre ${homeTeamName} y ${awayTeamName} con resultado ${scoreHome} - ${scoreAway}?`);
+            setMessage(null);
+            if (!userConfirmed) {
                 setTeamHomeId('');
                 setTeamAwayId('');
                 setStage('');
                 setTournamentId('');
                 setScoreAway('');
                 setScoreHome('');
-                setNotification('Partido creado correctamente');
+                setNotification('Carga de partido cancelada');
+                setCreating(false);
+                return;
+            }
+            setNotification('Creando partido...') &&
+                setCreating(true);
+            axiosClient.post('/matches', {
+                team_home_id: teamHomeId,
+                team_away_id: teamAwayId,
+                tournament_id: tournamentId,
+                score_home: scoreHome,
+                score_away: scoreAway,
+                stage: stage
+            })
+                .then(({ data }) => {
+                    setMatches([...matches, data]);
+                    setTeamHomeId('');
+                    setTeamAwayId('');
+                    setStage('');
+                    setTournamentId('');
+                    setScoreAway('');
+                    setScoreHome('');
+                    setNotification('Partido creado correctamente');
+                    setCreating(false);
+                })
+                .catch((error) => {
+                    if (error && error.status === 422) {
+                        setMessage(error.response.data.message)
+                    }
+                    setCreating(false);
+                });
+        }
+    };
+
+    const onUpdate = (match) => {
+        if (!window.confirm('Estás seguro que quieres editar este partido??')) {
+            return
+        }
+
+        const matchData = {
+            id: match,
+            status: 'pending',
+        };
+
+        axiosClient.put(`/game-update/${match}`, matchData)
+            .then(() => {
+                setNotification('Partido habilitado para editar');
                 setCreating(false);
             })
-            .catch((error) => {
-                setNotification('Error al crear el partido ' + error.response.data.message);
-                setCreating(false);
-            });
-    };
+            .catch(err => {
+                const response = err.response;
+                if (response && response.status === 422) {
+                    setMessage(response.data.errors)
+                }
+            })
+    }
 
     return (
         <div className="container mx-auto p-4">
             {loading && <p className="text-gray-500">Cargando...</p>}
             {!loading && (
                 <>
+                    {message &&
+                        <div className="alert">
+                            <p>{message}</p>
+                        </div>
+                    }
                     <div className="-mt-2 bg-black bg-opacity-70 p-5 rounded-lg">
                         <h2 className="text-xl font-semibold mb-2 text-white">Crear un nuevo partido</h2>
                         <div className="mb-4 flex flex-wrap -mx-2">
@@ -168,7 +234,7 @@ export default function Matches() {
                         </button>
                     </div>
                     <br />
-                    <h1 className="text-2xl font-bold mb-4 bg-black bg-opacity-70 p-5 rounded-lg text-white">Partidos</h1>
+                    <h1 className="text-2xl font-bold mb-4 bg-black bg-opacity-70 p-5 rounded-lg text-white text-center">Partidos</h1>
                     {tournaments.map(tournament => {
                         const tournamentMatches = matches
                             .filter(match => match.tournament?.id == tournament.id)
@@ -176,7 +242,7 @@ export default function Matches() {
 
                         return (
                             <details key={tournament.id} className="mb-4">
-                                <summary className="cursor-pointer text-lg font-semibold bg-black bg-opacity-70 p-5 rounded-lg text-white">
+                                <summary className="cursor-pointer text-lg font-semibold bg-black bg-opacity-70 p-2 rounded-lg text-white">
                                     {tournament.name}
                                 </summary>
                                 <ul className="list-disc pl-5 mt-1 bg-black bg-opacity-70 p-5 rounded-lg text-white">
@@ -191,9 +257,14 @@ export default function Matches() {
                                                         </span>
                                                     </Link>
                                                 ) : (
-                                                    <Link className="bg-blue-800 text-white px-2 py-1 rounded hover:bg-blue-600" to={`/partidos/${match.id}`}>
+                                                    <Link className="bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-700" to={`/partidos/${match.id}`}>
                                                         Cargar datos
                                                     </Link>
+                                                )}
+                                                {user.rol === 'Admin' && (
+                                                    <button className='bg-red-500 text-white px-1 py-1 rounded hover:bg-red-700 ml-4' onClick={() => onUpdate(match.id)}>
+                                                        Habilitar edición
+                                                    </button>
                                                 )}
                                             </li>
                                         ))

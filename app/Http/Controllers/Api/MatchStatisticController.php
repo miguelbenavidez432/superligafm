@@ -132,8 +132,10 @@ class MatchStatisticController extends Controller
             match_statistics.tournament_id,
             SUM(yellow_cards) as yellow_cards,
             SUM(red_cards) as red_cards,
-            simple_injuries as simple_injuries,
-            serious_injuries as serious_injuries,
+            MAX(simple_injuries) as simple_injuries,
+            MAX(serious_injuries) as serious_injuries,
+            sum(goals) as goals,
+            sum(assists) as assists,
             SUM(mvp) as mvp
         ')
             ->join('games', 'match_statistics.match_id', '=', 'games.id')
@@ -141,9 +143,7 @@ class MatchStatisticController extends Controller
             ->groupBy(
                 'player_id',
                 'match_statistics.tournament_id',
-                'match_id',
-                'simple_injuries',
-                'serious_injuries',
+                'match_id'
             )
             ->orderBy('match_statistics.match_id', 'asc')
             ->with(['player', 'tournament', 'match']);

@@ -13,7 +13,6 @@ export default function Teams() {
     }, [])
 
     const getTeam = async () => {
-        //setLoading(true)
         await axiosClient.get('/teams?all=true')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')

@@ -27,7 +27,6 @@ export default function TeamForm() {
     const [filterPlayersOver20ByRegister, setFilterPlayersOver20ByRegister] = useState(0);
     const [filterPlayersByRegister, setFilterPlayersByRegister] = useState(0);
 
-
     useEffect(() => {
         if (id) {
             setLoading(true);
@@ -37,14 +36,7 @@ export default function TeamForm() {
                     setLoading(false);
                     setTeam(data);
                     getPlayers();
-                    if(players.lenght > 0){
-                        getUsers();
-                        countBlockedPlayers();
-                        countPlayersOver20();
-                        getBestPlayersCA();
-                        countRegisterAndOver20();
-                        countRegistered();
-                    }
+                    getUsers();
                 })
                 .catch(() => {
                     setLoading(false);
@@ -58,28 +50,28 @@ export default function TeamForm() {
         }
     }, [id]);
 
-    const getPlayers = () => {
-        setLoading(true)
-        axiosClient.get('/players?all=true')
-            .then(({ data }) => {
-                setLoading(false)
-                const playersFiltered = data.data.filter((p) => p.id_team ? p.id_team.id === parseInt(id) : '')
-                setPlayers(playersFiltered)
-            })
-            .catch(() => {
-                setLoading(false)
-            })
-    }
-
     useEffect(() => {
-        if (team) {
+        if (players.length > 0) {
             countBlockedPlayers();
             countPlayersOver20();
             getBestPlayersCA();
             countRegisterAndOver20();
             countRegistered();
         }
-    }, [team]);
+    }, [players]);
+
+    const getPlayers = () => {
+        setLoading(true);
+        axiosClient.get('/players?all=true')
+            .then(({ data }) => {
+                setLoading(false);
+                const playersFiltered = data.data.filter((p) => p.id_team && p.id_team.id === parseInt(id));
+                setPlayers(playersFiltered);
+            })
+            .catch(() => {
+                setLoading(false);
+            });
+    };
 
     const getUsers = () => {
         setLoading(true)

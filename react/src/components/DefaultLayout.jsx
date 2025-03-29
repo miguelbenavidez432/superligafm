@@ -244,18 +244,18 @@ export default function DefaultLayout() {
                 <header className="bg-white shadow p-4 flex justify-between items-center">
                     <button onClick={toggleSidebar} className="sm:mx-12 md:mx-8 min-[290px]:mx-16">
                     {isSidebarOpen ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-white hover:text-zinc-400">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5l-7.5-7.5 7.5-7.5" />
                             </svg>
                         ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-white hover:text-zinc-400">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         )}
                     </button>
-                    <div>
+                    {/* <div>
                         <a href="http://mpago.la/2NzBSxx" className="btn-edit">Aportar a la Superliga FM</a>
-                    </div>
+                    </div> */}
                     <div className="flex space-x-4">
                         <a href="https://twitter.com/superligaFm" target="_blank" rel="noopener noreferrer">
                             <svg width="32" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">

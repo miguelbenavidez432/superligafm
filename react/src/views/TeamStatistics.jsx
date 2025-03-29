@@ -237,6 +237,57 @@ const TeamStatistics = () => {
         }
     };
 
+    const formatStage = (currentStage, format) => {
+        if (format === 'PD') {
+            switch (currentStage) {
+                case 14: return "Playin";
+                case 15: return "Cuartos de Final";
+                case 16: return "Semifinal";
+                case 17: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'SD') {
+            switch (currentStage) {
+                case 14: return "Cuartos de Final";
+                case 15: return "Semifinal";
+                case 18: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'UCL') {
+            switch (currentStage) {
+                case 4: return "Cuartos de Final";
+                case 5: return "Semifinal";
+                case 6: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'UEL') {
+            switch (currentStage) {
+                case 1: return "Octavos de Final";
+                case 2: return "Cuartos de Final";
+                case 3: return "Semifinal";
+                case 4: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'CFM') {
+            switch (currentStage) {
+                case 1: return "1° Ronda";
+                case 2: return "Octavos de Final";
+                case 3: return "Cuartos de Final";
+                case 4: return "Semifinal";
+                case 5: return "Final";
+                default: return currentStage;
+            }
+        }
+    };
+
     const processPlayerStats = (data) => {
         const tournaments = {};
 
@@ -256,11 +307,15 @@ const TeamStatistics = () => {
                     total_simple_injuries: 0,
                     total_serious_injuries: 0,
                     last_stage: 0,
+                    total_assists: 0,
+                    total_goals: 0,
                     suspension: new Set()
                 };
             }
 
             const playerStats = tournaments[format][playerId];
+            playerStats.total_goals += Number(stat.goals || 0);
+            playerStats.total_assists += Number(stat.assists || 0);
             playerStats.total_yellow_cards += Number(stat.yellow_cards || 0);
             playerStats.total_red_cards += Number(stat.red_cards || 0);
             playerStats.total_simple_injuries += Number(stat.simple_injuries || 0);
@@ -268,43 +323,60 @@ const TeamStatistics = () => {
             playerStats.last_stage = Math.max(playerStats.last_stage, Number(stat.match_id.stage || 0));
 
             const currentStage = Number(stat.match_id.stage);
+
             if (format == 'UCL' || format == 'UEL' || format == 'CFM') {
+                format == 'UCL' && currentStage == 5 ? stat.yellow_cards = 0 : null;
+                format == 'UEL' && currentStage == 3 ? stat.yellow_cards = 0 : null;
+                format == 'CFM' && currentStage == 4 ? stat.yellow_cards = 0 : null;
                 if (Number(stat.yellow_cards) > 0) {
                     if (playerStats.total_yellow_cards % 2 === 0) {
-                        playerStats.suspension.add(currentStage + 1);
+                        const stage = formatStage(currentStage + 1, format);
+                        playerStats.suspension.add(stage);
                     }
                 }
-                if (Number(stat.yellow_cards) > 3) {
-                    if (playerStats.total_yellow_cards % 6 === 0) {
-                        playerStats.suspension.add(currentStage + 2);
+                if (Number(stat.yellow_cards) > 0) {
+                    if (playerStats.total_yellow_cards % 4 === 0) {
+                        const stage = formatStage(currentStage + 2, format);
+                        playerStats.suspension.add(stage);
                     }
                 }
             }
             if (Number(stat.yellow_cards) > 0) {
                 if (playerStats.total_yellow_cards % 3 === 0) {
-                    playerStats.suspension.add(currentStage + 1);
+                    const stage = formatStage(currentStage + 1, format);
+                    playerStats.suspension.add(stage);
                 }
             }
             if (Number(stat.yellow_cards) > 0) {
                 if (playerStats.total_yellow_cards % 6 === 0) {
-                    playerStats.suspension.add(currentStage + 1);
-                    playerStats.suspension.add(currentStage + 2);
+                    const stage = formatStage(currentStage + 1, format);
+                    playerStats.suspension.add(stage);
+                    const stages = formatStage(currentStage + 2, format);
+                    playerStats.suspension.add(stages);
                 }
             }
             if (Number(stat.simple_injuries) > 0) {
-                playerStats.suspension.add(currentStage + 1);
+                const stage = formatStage(currentStage + 1, format);
+                playerStats.suspension.add(stage);
                 playerStats.total_simple_injuries = currentStage
             }
             if (Number(stat.serious_injuries) > 0) {
-                playerStats.suspension.add(currentStage + 1);
-                playerStats.suspension.add(currentStage + 2);
+                const stage = formatStage(currentStage + 1, format);
+                playerStats.suspension.add(stage);
+                const stages = formatStage(currentStage + 2, format);
+                playerStats.suspension.add(stages);
                 playerStats.total_serious_injuries = currentStage;
             }
             if (Number(stat.red_cards) > 0) {
                 if (stat.direct_red == null) {
-                    playerStats.suspension.add(currentStage + 1);
-                    playerStats.suspension.add(currentStage + 2);
+                    const stage = formatStage(currentStage + 1, format);
+                    playerStats.suspension.add(stage);
+                    const stages = formatStage(currentStage + 2, format);
+                    playerStats.suspension.add(stages);
                 }
+                const stage = formatStage(currentStage + 1, format);
+                playerStats.suspension.add(stage);
+                playerStats.total_red_cards = currentStage;
             }
         });
 
@@ -318,32 +390,36 @@ const TeamStatistics = () => {
     };
 
     return (
-        <div className="p-12 overflow-x-auto">
-            <h1 className="text-2xl font-bold mb-4">Estadísticas del Equipo</h1>
+        <div className="p-5 overflow-x-auto">
+            <h1 className="text-2xl font-extrabold mb-4 bg-black bg-opacity-70 p-5 rounded-lg text-white text-center">Estadísticas del Equipo</h1>
             {loading ? (
                 <p>Cargando...</p>
             ) : (
                 Object.entries(processedStats).map(([format, players]) => (
                     <div key={format} className="mb-6">
-                        <h2 className="text-xl font-semibold">{formatName(format)}</h2>
-                        <table className="min-w-full bg-white border border-gray-200 mt-2">
+                        <h2 className="pl-5 my-1 bg-black bg-opacity-70 p-5 rounded-lg text-white font-semibold">{formatName(format)}</h2>
+                        <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 my-2">
                             <thead>
                                 <tr>
-                                    <th className="border px-4 py-2">Jugador</th>
-                                    <th className="border px-4 py-2">Amarillas</th>
-                                    <th className="border px-4 py-2">Rojas</th>
-                                    <th className="border px-4 py-2">Fecha de lesión</th>
-                                    <th className="border px-4 py-2">Fecha de lesión grave</th>
-                                    <th className="border px-4 py-2">Último Partido</th>
-                                    <th className="border px-4 py-2">Suspendido para la fecha</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Jugador</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Goles</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Asis.</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Ama.</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Fecha tarjeta roja</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Fecha de lesión</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Fecha de lesión grave</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Último Partido</th>
+                                    <th className="border px-4 py-2 bg-black text-white">Inhabilitado para la fecha</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {Object.values(players).map(player => (
                                     <tr key={player.player}>
                                         <td className="border px-4 py-2">{player.player}</td>
+                                        <td className="border px-4 py-2">{player.total_goals}</td>
+                                        <td className="border px-4 py-2">{player.total_assists}</td>
                                         <td className="border px-4 py-2">{player.total_yellow_cards}</td>
-                                        <td className="border px-4 py-2">{player.total_red_cards}</td>
+                                        <td className="border px-4 py-2">{player.total_red_cards == 0 ? '' : player.total_red_cards}</td>
                                         <td className="border px-4 py-2">{player.total_simple_injuries == 0 ? '' : player.total_simple_injuries}</td>
                                         <td className="border px-4 py-2">{player.total_serious_injuries == 0 ? '' : player.total_serious_injuries}</td>
                                         <td className="border px-4 py-2">{'Fecha ' + player.last_stage}</td>

@@ -39,6 +39,18 @@ class GameController extends Controller
 
         $tournament = Tournament::find($tournamentId);
 
+        $existingGameExists = Game::where('tournament_id', $tournamentId)
+            ->where('team_home_id', $data['team_home_id'])
+            ->where('team_away_id', $data['team_away_id'])
+            ->where('stage', $data['stage'])
+            ->exists();
+
+        if ($existingGameExists) {
+            return response()->json([
+                'message' => 'Ya existe un partido registrado para este torneo, equipos y fecha.'
+            ], 422);
+        }
+
         if ($tournament->type == 'league') {
             $teamHomeId = $data['team_home_id'];
             $teamAwayId = $data['team_away_id'];
@@ -122,7 +134,6 @@ class GameController extends Controller
     public function update(UpdateGameRequest $request, Game $game)
     {
         $data = $request->validated();
-        //var_dump($data);
         $game->update($data);
         return response()->json([
             'message' => 'El juego se actualizó correctamente',
