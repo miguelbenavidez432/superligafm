@@ -17,9 +17,15 @@ class TournamentController extends Controller
     public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
-            return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])->orderBy('start_date', 'desc')->get());
+            return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])
+            ->orderBy('created_at', 'desc')
+            ->where('staus', '=', 'active')
+            ->get());
         } else {
-            return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])->orderBy('start_date', 'desc')->paginate(100));
+            return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])
+            ->orderBy('created_at', 'desc')
+            ->where('staus', '=', 'active')
+            ->paginate(100));
         }
     }
 

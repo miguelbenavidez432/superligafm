@@ -22,7 +22,7 @@ class SeasonController extends Controller
         //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->paginate(50));
         // }
         // ;
-        return SeasonResource::collection(Season::query()->where('active', 'yes')->orderBy("id", "ASC")->get());
+        return SeasonResource::collection(Season::query()->where('active', 'yes')->orderBy("id", "asc")->get());
     }
 
     /**

@@ -199,7 +199,7 @@ export default function TeamForm() {
                         placeholder="Estado"
                         className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
                     >
-                        <option value=' '>Seleccionar división</option>
+                        <option value=''>Seleccionar división</option>
                         <option value="Primera">Primera</option>
                         <option value="Segunda">Segunda</option>
                     </select>
