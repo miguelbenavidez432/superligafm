@@ -144,21 +144,21 @@ export default function Plantel() {
     return (
         <>
             <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
-                <h1 className="text-2xl font-bold mb-4">Plantel</h1>
+                <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Plantel</h1>
                 <button className="btn btn-primary"><Link to={`/estadisticas/${team?.id}`} style={{ color: 'white', textDecoration: 'none' }}>Ver Estadísticas</Link></button>
             </div>
             <div className="card animated fadeInDown" style={{ padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <div className="table-responsive">
-                    <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 mb-4" style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
                             <tr>
-                                <th style={{ padding: '10px' }}>NOMBRE</th>
-                                <th style={{ padding: '10px' }}>EDAD</th>
-                                <th style={{ padding: '10px' }}>CA</th>
-                                <th style={{ padding: '10px' }}>PA</th>
-                                <th style={{ padding: '10px' }}>VALOR</th>
-                                <th style={{ padding: '10px' }}>ESTADO</th>
-                                <th style={{ padding: '10px' }}>ACCIONES</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">NOMBRE</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">EDAD</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">CA</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">PA</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">VALOR</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">ESTADO</th>
+                                <th className="py-1 px-1 border-b bg-black text-white">ACCIONES</th>
                             </tr>
                         </thead>
                         {loading &&
@@ -175,16 +175,16 @@ export default function Plantel() {
                                 {
                                     team ? players.map(p => (
                                         <tr key={p.id} style={{ borderBottom: '1px solid #dee2e6' }}>
-                                            <td style={{ padding: '10px' }}>{p.name}</td>
-                                            <td style={{ padding: '10px' }}>{p.age}</td>
-                                            <td style={{ padding: '10px' }}>{p.ca}</td>
-                                            <td style={{ padding: '10px' }}>{p.pa}</td>
-                                            <td style={{ padding: '10px' }}>{p.value}</td>
-                                            <td style={{ padding: '10px' }}>{p.status}</td>
-                                            <td style={{ padding: '10px' }}>
+                                            <td className="border px-4 py-2">{p.name}</td>
+                                            <td className="border px-4 py-2">{p.age}</td>
+                                            <td className="border px-4 py-2">{p.ca}</td>
+                                            <td className="border px-4 py-2">{p.pa}</td>
+                                            <td className="border px-4 py-2">{p.value}</td>
+                                            <td className="border px-4 py-2">{p.status}</td>
+                                            <td className="border px-4 py-2">
                                                 {p.status !== 'nada' && (
                                                     <>
-                                                        <button className="btn-edit mx-1" onClick={() => {
+                                                        {/* <button className="btn-edit mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
@@ -198,7 +198,7 @@ export default function Plantel() {
                                                             if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
                                                                 handleListPlayer(p);
                                                             }
-                                                        }}>Registrar</button>
+                                                        }}>Registrar</button> */}
                                                     </>
                                                 )}
                                             </td>

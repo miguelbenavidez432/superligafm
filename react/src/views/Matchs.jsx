@@ -144,6 +144,57 @@ export default function Matches() {
             })
     }
 
+    const formatStage = (currentStage, format) => {
+        if (format === 'PD') {
+            switch (currentStage) {
+                case 14: return "Playin";
+                case 15: return "Cuartos de Final";
+                case 16: return "Semifinal";
+                case 17: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'SD') {
+            switch (currentStage) {
+                case 14: return "Cuartos de Final";
+                case 15: return "Semifinal";
+                case 18: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'UCL') {
+            switch (currentStage) {
+                case 4: return "Cuartos de Final";
+                case 5: return "Semifinal";
+                case 6: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'UEL') {
+            switch (currentStage) {
+                case 1: return "Octavos de Final";
+                case 2: return "Cuartos de Final";
+                case 3: return "Semifinal";
+                case 4: return "Final";
+                default: return currentStage;
+            }
+        }
+
+        if (format === 'CFM') {
+            switch (currentStage) {
+                case 1: return "1° Ronda";
+                case 2: return "Octavos de Final";
+                case 3: return "Cuartos de Final";
+                case 4: return "Semifinal";
+                case 5: return "Final";
+                default: return currentStage;
+            }
+        }
+    };
+
     return (
         <div className="container mx-auto p-4">
             {loading && <p className="text-gray-500">Cargando...</p>}
@@ -249,7 +300,7 @@ export default function Matches() {
                                     {tournamentMatches.length > 0 ? (
                                         tournamentMatches.map(match => (
                                             <li key={match.id} className="mb-2">
-                                                {match.team_home?.name} vs {match.team_away?.name} - Ronda {match.stage} -{' '}
+                                                {match.team_home?.name} vs {match.team_away?.name} - Ronda {formatStage(Number(match.stage), tournament.format)} -{' '}
                                                 {match.status === 'completed' ? (
                                                     <Link className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-800" to={`/partidos/${match.id}`}>
                                                         <span className='font-semibold'> Resultado: {' '}

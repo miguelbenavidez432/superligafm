@@ -26,16 +26,16 @@ export default function Teams() {
     return (
         <>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <div>Equipos</div>
+                <div className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">Equipos</div>
             </div>
-            <div className="card animated fadeInDown">
-                <table>
+            <div className="overflow-x-auto">
+                <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 my-2">
                     <thead>
                         <tr>
-                            <th>NOMBRE</th>
-                            <th>DIVISIÓN</th>
-                            <th>MANAGER</th>
-                            <th>ACCIONES</th>
+                            <th className="border px-4 py-2 bg-black text-white">NOMBRE</th>
+                            <th className="border px-4 py-2 bg-black text-white">DIVISIÓN</th>
+                            <th className="border px-4 py-2 bg-black text-white">MANAGER</th>
+                            <th className="border px-4 py-2 bg-black text-white">ACCIONES</th>
                         </tr>
                     </thead>
                     {loading &&
@@ -53,11 +53,11 @@ export default function Teams() {
                                 teams.map(t => {
                                     return (
                                         <tr key={t.id}>
-                                            <td>{t.name}</td>
-                                            <td>{t.division}</td>
-                                            <td>{t.user ? t.user.name : 'Equipo sin manager asignado'}</td>
-                                            <td>
-                                                <Link className="btn-edit" to={`/teams/${t.id}`}>Editar equipo</Link>
+                                            <td className="border px-4 py-2">{t.name}</td>
+                                            <td className="border px-4 py-2">{t.division}</td>
+                                            <td className="border px-4 py-2">{t.user ? t.user.name : 'Equipo sin manager asignado'}</td>
+                                            <td className="border px-4 py-2">
+                                                <Link className="p-2 bg-violet-600 hover:bg-violet-800 rounded" to={`/teams/${t.id}`}>Ver equipo</Link>
                                             </td>
                                         </tr>
                                     )

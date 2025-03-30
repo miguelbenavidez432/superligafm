@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
 
@@ -155,12 +155,12 @@ export default function TeamForm() {
 
     return (
         <>
-            {team.id && <h1>ACTUALIZAR A: {team.name}</h1>}
-            {!team.id && <h1>NUEVO EQUIPO</h1>}
+            {team.id && <h1 className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">ACTUALIZAR A: {team.name}</h1>}
+            {!team.id && <h1 className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">NUEVO EQUIPO</h1>}
 
-            <div className="card animated fadeInDown">
+            <div className="overflow-x-auto">
                 {loading &&
-                    (<div className="text-center">CARGANDO...</div>)
+                    (<div className="text-center font-semibold text-black">CARGANDO...</div>)
                 }
                 {errors &&
                     <div className="alert">
@@ -170,10 +170,21 @@ export default function TeamForm() {
                     </div>
                 }
 
-                <form onSubmit={onSubmit}>
-                    <input value={team.name} onChange={e => setTeam({ ...team, name: e.target.value })} placeholder="Nombre" type="text" />
-                    <select onChange={handleUserChange}>
-                        <option value=''></option>
+                <form onSubmit={onSubmit} className="mt-0 bg-black bg-opacity-70 p-5 rounded-lg">
+                    <input
+                        className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
+                        value={team.name}
+                        onChange={e => setTeam({ ...team, name: e.target.value })}
+                        placeholder="Nombre"
+                        type="text"
+                        disabled={user.rol !== 'Admin'} />
+                    <select
+                        className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
+                        onChange={handleUserChange}>
+                        <option
+                            value=''>
+                            Seleccione el manager
+                        </option>
                         {
                             users.map((u, index) => {
                                 return (
@@ -182,51 +193,49 @@ export default function TeamForm() {
                             })
                         }
                     </select>
-                    <span>División</span>
-                    <select onChange={e => setTeam({ ...team, division: e.target.value })} placeholder="Estado">
-                        <option value=' '></option>
+                    <span className="text-white font-medium pl-2">División</span>
+                    <select
+                        onChange={e => setTeam({ ...team, division: e.target.value })}
+                        placeholder="Estado"
+                        className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
+                    >
+                        <option value=''>Seleccionar división</option>
                         <option value="Primera">Primera</option>
                         <option value="Segunda">Segunda</option>
                     </select>
-                    <button className="btn">Guardar cambios</button>
+                    <div className="py-2">
+
+                    {
+                        user.rol == 'Admin' &&
+                        <button className="bg-green-600 hover:bg-green-800 p-3 rounded text-white">Guardar cambios</button>
+                    }
+                    {
+                        <Link className="bg-violet-600 hover:bg-violet-800 p-4 rounded text-white mx-2" to={`/estadisticas/${id}`}>Ver estadísticas</Link>
+                    }
+                    </div>
                     <br />
-                    <table>
+                    <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 my-2">
                         <thead>
                             <tr>
-                                <th>NOMBRE</th>
-                                <th>CA</th>
-                                <th>EDAD</th>
-                                <th>ESTADO</th>
-                                <th>VALOR</th>
-                                {/* <th>GOLES</th>
-                                    <th>ASISTENCIAS</th>
-                                    <th>AMARILLAS</th>
-                                    <th>ROJA</th>
-                                    <th>ROJA DIRECTA</th>
-                                    <th>LESIONES LEVES</th>
-                                    <th>LESIONES GRAVES</th>
-                                    <th>MVP</th> */}
+                                <th className="border px-4 py-2 bg-black text-white">NOMBRE</th>
+                                <th className="border px-4 py-2 bg-black text-white">CA</th>
+                                <th className="border px-4 py-2 bg-black text-white">EDAD</th>
+                                <th className="border px-4 py-2 bg-black text-white">ESTADO</th>
+                                <th className="border px-4 py-2 bg-black text-white">VALOR</th>
                             </tr>
                         </thead>
-
-
-
                         {players.map(p => (
                             <tbody key={p.id}>
-
                                 <tr key={p.id}>
-                                    <td>{p.name}</td>
-                                    <td>{p.ca}</td>
-                                    <td>{p.age}</td>
-                                    <td>{p.status}</td>
-                                    <td>{p.value}</td>
+                                    <td className="border px-4 py-2">{p.name}</td>
+                                    <td className="border px-4 py-2">{p.ca}</td>
+                                    <td className="border px-4 py-2">{p.age}</td>
+                                    <td className="border px-4 py-2">{p.status}</td>
+                                    <td className="border px-4 py-2">{p.value}</td>
                                 </tr>
-
                             </tbody>
-
-
                         ))}</table>
-                    <div>
+                    <div className="container mx-auto p-4 mt-2 bg-black bg-opacity-70 rounded-lg text-white">
                         {bestPlayersCA !== null && (
                             <p>Promedio de CA de los mejores 16 jugadores: <strong> {bestPlayersCA} </strong></p>
                         )}
