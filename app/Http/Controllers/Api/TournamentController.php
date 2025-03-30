@@ -18,13 +18,13 @@ class TournamentController extends Controller
     {
         if ($request->query('all') == 'true') {
             return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])
+            ->where('status', '=', 'active')
             ->orderBy('created_at', 'desc')
-            ->where('staus', '=', 'active')
             ->get());
         } else {
             return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])
+            ->where('status', '=', 'active')
             ->orderBy('created_at', 'desc')
-            ->where('staus', '=', 'active')
             ->paginate(100));
         }
     }
