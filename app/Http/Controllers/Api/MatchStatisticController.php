@@ -22,11 +22,9 @@ class MatchStatisticController extends Controller
         $tournamentId = $request->query('tournament_id');
         $matchId = $request->query('match_id');
 
-        $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
-            ->selectRaw('
+        $query = MatchStatistic::selectRaw('
             player_id,
             tournament_id,
-            user_id,
             SUM(goals) as goals,
             SUM(assists) as assists,
             SUM(yellow_cards) as yellow_cards,
@@ -35,21 +33,16 @@ class MatchStatisticController extends Controller
             SUM(serious_injuries) as serious_injuries,
             SUM(mvp) as mvp
         ')
-            ->groupBy(
-                'player_id',
-                'tournament_id',
-                'user_id'
-            )
-            ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
+            ->where('tournament_id', $tournamentId)
+            ->groupBy('player_id', 'tournament_id')
+            ->orderBy('goals', 'desc')
+            ->orderBy('assists', 'desc')
+            ->orderBy('mvp', 'desc');
+        ;
 
-        $query->where(function ($q) use ($tournamentId, $matchId) {
-            if ($matchId) {
-                $q->where('tournament_id', $tournamentId)
-                    ->where('match_id', $matchId);
-            } else {
-                $q->where('tournament_id', $tournamentId);
-            }
-        });
+        if ($matchId) {
+            $query->where('match_id', $matchId);
+        }
 
         if ($request->query('all') == 'true') {
             return MatchStatisticResource::collection($query->get());
