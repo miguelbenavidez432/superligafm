@@ -44,15 +44,13 @@ class MatchStatisticController extends Controller
             ->orderBy('assists', 'desc')
             ->orderBy('mvp', 'desc');
 
-        // Agrupar correctamente las condiciones
+        // Ajustar la lógica de filtrado
         $query->where(function ($q) use ($tournamentId, $matchId) {
-            $q->where('tournament_id', $tournamentId);
-
             if ($matchId) {
-                $q->orWhere(function ($subQuery) use ($matchId, $tournamentId) {
-                    $subQuery->where('match_id', $matchId)
-                        ->where('tournament_id', $tournamentId);
-                });
+                $q->where('tournament_id', $tournamentId)
+                    ->where('match_id', $matchId);
+            } else {
+                $q->where('tournament_id', $tournamentId);
             }
         });
 
