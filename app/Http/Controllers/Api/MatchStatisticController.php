@@ -18,12 +18,12 @@ class MatchStatisticController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    $tournamentId = $request->query('tournament_id');
-    $matchId = $request->query('match_id');
+    {
+        $tournamentId = $request->query('tournament_id');
+        $matchId = $request->query('match_id');
 
-    $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
-        ->selectRaw('
+        $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
+            ->selectRaw('
             player_id,
             tournament_id,
             user_id,
@@ -35,29 +35,33 @@ class MatchStatisticController extends Controller
             SUM(serious_injuries) as serious_injuries,
             SUM(mvp) as mvp
         ')
-        ->groupBy(
-            'player_id',
-            'tournament_id',
-            'user_id'
-        )
-        ->orderBy('goals', 'desc')
-        ->orderBy('assists', 'desc')
-        ->orderBy('mvp', 'desc');
+            ->groupBy(
+                'player_id',
+                'tournament_id',
+                'user_id'
+            )
+            ->orderBy('goals', 'desc')
+            ->orderBy('assists', 'desc')
+            ->orderBy('mvp', 'desc');
 
-    $query->where(function ($q) use ($tournamentId, $matchId) {
-        $q->where('tournament_id', $tournamentId);
+        // Agrupar correctamente las condiciones
+        $query->where(function ($q) use ($tournamentId, $matchId) {
+            $q->where('tournament_id', $tournamentId);
 
-        if ($matchId) {
-            $q->orWhere('match_id', $matchId);
+            if ($matchId) {
+                $q->orWhere(function ($subQuery) use ($matchId, $tournamentId) {
+                    $subQuery->where('match_id', $matchId)
+                        ->where('tournament_id', $tournamentId);
+                });
+            }
+        });
+
+        if ($request->query('all') == 'true') {
+            return MatchStatisticResource::collection($query->get());
+        } else {
+            return MatchStatisticResource::collection($query->paginate(100));
         }
-    });
-
-    if ($request->query('all') == 'true') {
-        return MatchStatisticResource::collection($query->get());
-    } else {
-        return MatchStatisticResource::collection($query->paginate(100));
     }
-}
 
     /**
      * Store a newly created resource in storage.
