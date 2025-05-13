@@ -312,17 +312,17 @@ export default function SingleMatch() {
                             </form>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="min-w-full bg-white border border-gray-200">
+                                <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 mb-4">
                                     <thead>
                                         <tr>
-                                            <th className="border px-4 py-2">Jugador</th>
-                                            <th className="border px-4 py-2">Goles</th>
-                                            <th className="border px-4 py-2">Asistencias</th>
-                                            <th className="border px-4 py-2">Amarillas</th>
-                                            <th className="border px-4 py-2">Rojas</th>
-                                            <th className="border px-4 py-2">Lesiones</th>
-                                            <th className="border px-4 py-2">Lesiones Graves</th>
-                                            <th className="border px-4 py-2">MVP</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Jugador</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Goles</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Asistencias</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Amarillas</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Rojas</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Lesiones</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">Lesiones Graves</th>
+                                            <th className="py-1 px-1 border-b bg-black text-white">MVP</th>
                                         </tr>
                                     </thead>
                                     <tbody>
