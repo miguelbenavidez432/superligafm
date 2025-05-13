@@ -53,7 +53,7 @@ class MatchStatisticController extends Controller
                 $q->where('tournament_id', $tournamentId);
             }
         });
-
+        dd($query->toSql(), $query->getBindings());
         if ($request->query('all') == 'true') {
             return MatchStatisticResource::collection($query->get());
         } else {
