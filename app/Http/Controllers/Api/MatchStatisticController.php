@@ -40,18 +40,13 @@ class MatchStatisticController extends Controller
                 'tournament_id',
                 'user_id'
             )
-            ->orderBy('goals', 'desc')
-            ->orderBy('assists', 'desc')
-            ->orderBy('mvp', 'desc');
+            ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
 
-        // Ajustar la lógica de filtrado
         $query->where(function ($q) use ($tournamentId, $matchId) {
             if ($matchId) {
-                // Si se proporciona match_id, filtrar por ambos
                 $q->where('tournament_id', $tournamentId)
                     ->where('match_id', $matchId);
             } else {
-                // Si no se proporciona match_id, filtrar solo por tournament_id
                 $q->where('tournament_id', $tournamentId);
             }
         });
