@@ -47,13 +47,15 @@ class MatchStatisticController extends Controller
         // Ajustar la lógica de filtrado
         $query->where(function ($q) use ($tournamentId, $matchId) {
             if ($matchId) {
+                // Si se proporciona match_id, filtrar por ambos
                 $q->where('tournament_id', $tournamentId)
                     ->where('match_id', $matchId);
             } else {
+                // Si no se proporciona match_id, filtrar solo por tournament_id
                 $q->where('tournament_id', $tournamentId);
             }
         });
-        dd($query->toSql(), $query->getBindings());
+
         if ($request->query('all') == 'true') {
             return MatchStatisticResource::collection($query->get());
         } else {
