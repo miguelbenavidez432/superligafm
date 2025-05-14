@@ -26,7 +26,6 @@ class MatchStatisticController extends Controller
             ->selectRaw('
             player_id,
             tournament_id,
-            user_id,
             SUM(goals) as goals,
             SUM(assists) as assists,
             SUM(yellow_cards) as yellow_cards,
@@ -38,7 +37,6 @@ class MatchStatisticController extends Controller
             ->groupBy(
                 'player_id',
                 'tournament_id',
-                'user_id'
             )
             ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
 
