@@ -540,6 +540,8 @@ export default function Rules() {
             <p>
                 Presupuestos<br />
                 Será el restante de la temporada anterior más el ingreso por premios al finalizar la temporada.<br />
+                Para participar en el mercado, cada usuario deberá tener presupuesto positivo. En caso contrario, deberá vender jugadores
+                hasta tener presupuesto positivo.<br />
                 <br />
             </p>
             <p>
