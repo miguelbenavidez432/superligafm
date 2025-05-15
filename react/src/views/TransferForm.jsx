@@ -23,7 +23,7 @@ export default function TransferForm() {
         created_by: '',
         buy_by: '',
         sold_by: '',
-        id_season: 55,
+        id_season: 56,
     })
     const { user, setNotification } = useStateContext();
     const navigate = useNavigate();
@@ -131,7 +131,7 @@ export default function TransferForm() {
             transferred_players: playersToSend.toString(),
         };
 
-        axiosClient.post('/transfer', {data: transferData})
+        axiosClient.post('/transfer', { data: transferData })
             .then(() => {
                 setNotification('Transferencia realizada correctamente');
                 navigate('/dashboard');

@@ -74,7 +74,7 @@ const Auctions = () => {
             auctioned_by: user.id,
             created_by: user.id,
             active: 'yes',
-            id_season: 55
+            id_season: 56
         });
     };
 
@@ -95,12 +95,13 @@ const Auctions = () => {
                     amount: 0,
                     created_by: user.id,
                     status: 'active',
+                    id_season: 56,
                 });
             })
             .catch((error) => {
                 const mensaje = error.response.data.error;
                 const mensaje2 = error.response.data.message;
-                setNotification("Error al crear la subasta: " + mensaje + " " );
+                setNotification("Error al crear la subasta: " + mensaje + " ");
                 const response = error.response;
                 if (response && response.status === 422) {
                     setErrors(response.data.errors);
