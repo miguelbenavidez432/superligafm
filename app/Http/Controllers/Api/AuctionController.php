@@ -46,7 +46,7 @@ class AuctionController extends Controller
         $season = Season::find($data['id_season']);
 
         $previousAuction = Auction::where('id_player', $data['id_player'])
-        ->where('id_season', $data['id_season'])
+            ->where('id_season', $data['id_season'])
             ->orderBy('amount', 'desc')
             ->first();
 
@@ -100,7 +100,7 @@ class AuctionController extends Controller
             }
         } else {
 
-            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -184,8 +184,8 @@ class AuctionController extends Controller
 
         foreach ($leadingUsers as $userId) {
             $userAuctions = Auction::where('id_auctioned', $userId)
-            ->where('id_season', $data['id_season'])
-            ->get();
+                ->where('id_season', $data['id_season'])
+                ->get();
 
             $totalAuctions = $userAuctions->count();
             $over20Auctions = $userAuctions->filter(function ($auction) {
@@ -217,7 +217,7 @@ class AuctionController extends Controller
         } else {
             $player = Player::find($data['id_player']);
 
-            if ($data['amount'] < $player->value/2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
