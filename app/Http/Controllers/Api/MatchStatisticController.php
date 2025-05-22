@@ -22,8 +22,27 @@ class MatchStatisticController extends Controller
         $tournamentId = $request->query('tournament_id');
         $matchId = $request->query('match_id');
 
-        $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
-            ->selectRaw('
+        if ($matchId) {
+            $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
+                ->selectRaw('
+            player_id,
+            match_id,
+            SUM(goals) as goals,
+            SUM(assists) as assists,
+            SUM(yellow_cards) as yellow_cards,
+            SUM(red_cards) as red_cards,
+            SUM(simple_injuries) as simple_injuries,
+            SUM(serious_injuries) as serious_injuries,
+            SUM(mvp) as mvp
+        ')
+                ->groupBy(
+                    'player_id',
+                    'match_id',
+                )
+                ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
+        } else {
+            $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
+                ->selectRaw('
             player_id,
             tournament_id,
             SUM(goals) as goals,
@@ -34,26 +53,25 @@ class MatchStatisticController extends Controller
             SUM(serious_injuries) as serious_injuries,
             SUM(mvp) as mvp
         ')
-            ->groupBy(
-                'player_id',
-                'tournament_id',
-            )
-            ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
+                ->groupBy(
+                    'player_id',
+                    'tournament_id',
+                )
+                ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
+        }
 
         $query->where(function ($q) use ($tournamentId, $matchId) {
-            if ($matchId) {
+            if ($matchId && $tournamentId) {
                 $q->where('tournament_id', $tournamentId)
                     ->where('match_id', $matchId);
-            } else {
+            } elseif ($matchId) {
+                $q->where('match_id', $matchId);
+            } elseif ($tournamentId) {
                 $q->where('tournament_id', $tournamentId);
             }
         });
 
-        if ($request->query('all') == 'true') {
-            return MatchStatisticResource::collection($query->get());
-        } else {
-            return MatchStatisticResource::collection($query->paginate(100));
-        }
+        return MatchStatisticResource::collection($query->get());
     }
 
     /**
