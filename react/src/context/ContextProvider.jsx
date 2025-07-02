@@ -22,7 +22,7 @@ export const ContextProvider = ({children}) => {
         _setNotification(message);
         setTimeout(()=>{
             _setNotification('')
-        }, 6000)
+        }, 8000)
     }
 
     const setToken = (token) =>{

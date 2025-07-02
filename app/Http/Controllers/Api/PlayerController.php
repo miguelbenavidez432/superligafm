@@ -183,27 +183,25 @@ class PlayerController extends Controller
         return PlayerResource::collection($players);
     }
 
-    public function calcularCostoBloqueo(Player $player)
+    public function calcularCostoBloqueo(Player $player, $cantidad)
     {
         $ca = $player->ca;
         $division = $player->team->division;
 
         $costo = 0;
 
+        if ($cantidad == 0) return $costo;
+
         if ($division == 'Primera') {
             if ($ca >= 180 && $ca <= 200) {
-                $costo = 75000000;
-            } elseif ($ca >= 155 && $ca <= 179) {
-                $costo = 50000000;
-            } elseif ($ca < 155) {
+                $costo = 60000000;
+            } elseif ($ca < 180) {
                 $costo = 40000000;
             }
         } elseif ($division == 'Segunda') {
             if ($ca >= 180 && $ca <= 200) {
-                $costo = 105000000;
-            } elseif ($ca >= 155 && $ca <= 179) {
-                $costo = 75000000;
-            } elseif ($ca < 155) {
+                $costo = 85000000;
+            } elseif ($ca < 180) {
                 $costo = 60000000;
             }
         }
@@ -220,19 +218,16 @@ class PlayerController extends Controller
             return response()->json(['error' => 'Jugador no encontrado'], 404);
         }
 
-
         $team = $jugador->team;
 
         if (!$team) {
             return response()->json(['error' => 'El equipo no existe'], 404);
         }
 
-
         $jugadoresBloqueadosEnEquipo = $team->players()->where('status', 'bloqueado')->count();
 
-
-        if ($jugadoresBloqueadosEnEquipo >= 6) {
-            return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 6 jugadores'], 400);
+        if ($jugadoresBloqueadosEnEquipo >= 3) {
+            return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 3 jugadores'], 400);
         }
 
         $usuarioManejador = $team->user;
@@ -241,7 +236,7 @@ class PlayerController extends Controller
             return response()->json(['error' => 'Manager no encontrado'], 404);
         }
 
-        $costoBloqueo = $this->calcularCostoBloqueo($jugador);
+        $costoBloqueo = $this->calcularCostoBloqueo($jugador, $jugadoresBloqueadosEnEquipo);
 
         $usuarioManejador->profits -= $costoBloqueo;
         $usuarioManejador->save();

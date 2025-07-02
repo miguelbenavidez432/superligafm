@@ -19,6 +19,7 @@ export default function Plantel() {
     const [playersOver20Count, setPlayersOver20Count] = useState(0);
     const [filterPlayersOver20ByRegister, setFilterPlayersOver20ByRegister] = useState(0);
     const [filterPlayersByRegister, setFilterPlayersByRegister] = useState(0);
+    const [errors, setErrors] = useState();
 
     useEffect(() => {
         getTeam();
@@ -37,10 +38,6 @@ export default function Plantel() {
             filterPlayersByTeam();
         }
     }, [team]);
-
-    const cargarJugadores = () => {
-        filterPlayersByTeam();
-    };
 
     const countBlockedPlayers = () => {
         const blockedPlayers = players.filter((player) => player.status === "bloqueado");
@@ -110,7 +107,7 @@ export default function Plantel() {
             setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "bloqueado" } : p));
             countBlockedPlayers();
         } catch (error) {
-            console.error('Error al bloquear jugador:', error);
+            setErrors('Error al bloquear jugador: ' + error.response.data.error);
         } finally {
             setLoading(false);
         }
@@ -123,6 +120,7 @@ export default function Plantel() {
             setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "liberado" } : p));
             countBlockedPlayers();
         } catch (error) {
+            setNotification('Error al liberar jugador: ' + error);
             console.error('Error al bloquear jugador:', error);
         } finally {
             setLoading(false);
@@ -143,6 +141,15 @@ export default function Plantel() {
 
     return (
         <>
+            {errors &&
+                <div className="alert">
+                    <p>
+                        {typeof errors === 'string'
+                            ? errors
+                            : Object.keys(errors).map(key => errors[key][0]).join(' ')}
+                    </p>
+                </div>
+            }
             <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
                 <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Plantel</h1>
                 <button className="btn btn-primary"><Link to={`/estadisticas/${team?.id}`} style={{ color: 'white', textDecoration: 'none' }}>Ver Estadísticas</Link></button>
@@ -167,7 +174,7 @@ export default function Plantel() {
                                     <td colSpan="8" className="text-center" style={{ padding: '20px', fontStyle: 'italic' }}>
                                         CARGANDO...
                                     </td>
-                                </tr>
+                                </tr> bg-black bg-opacity-70
                             </tbody>
                         }
                         {!loading &&
@@ -175,16 +182,16 @@ export default function Plantel() {
                                 {
                                     team ? players.map(p => (
                                         <tr key={p.id} style={{ borderBottom: '1px solid #dee2e6' }}>
-                                            <td className="border px-4 py-2">{p.name}</td>
-                                            <td className="border px-4 py-2">{p.age}</td>
-                                            <td className="border px-4 py-2">{p.ca}</td>
-                                            <td className="border px-4 py-2">{p.pa}</td>
-                                            <td className="border px-4 py-2">{p.value}</td>
-                                            <td className="border px-4 py-2">{p.status}</td>
-                                            <td className="border px-4 py-2">
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.name}</td>
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.age}</td>
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.ca}</td>
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.pa}</td>
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.value}</td>
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.status}</td>
+                                            <td className="border px-4 py-2 bg-black bg-opacity-70">
                                                 {p.status !== 'nada' && (
                                                     <>
-                                                        {/* <button className="btn-edit mx-1" onClick={() => {
+                                                        <button className="btn-edit mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
@@ -198,7 +205,7 @@ export default function Plantel() {
                                                             if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
                                                                 handleListPlayer(p);
                                                             }
-                                                        }}>Registrar</button> */}
+                                                        }}>Registrar</button>
                                                     </>
                                                 )}
                                             </td>

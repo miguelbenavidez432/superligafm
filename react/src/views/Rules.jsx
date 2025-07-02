@@ -3,7 +3,8 @@
 export default function Rules() {
     return (
         <div className="bg-gray-900 min-h-screen py-10 px-4 sm:px-8 md:px-16 lg:px-32 text-gray-100">
-            <h1 className="font-black text-4xl text-center sm: text-2xl"> REGLAMENTO TEMPORADA 54</h1>
+            <h1 className="font-black text-4xl text-center sm: text-2xl"> REGLAMENTO TEMPORADA 57</h1>
+            <br />
             <h3 className="">Se dividirán los equipos en 2 categorías.</h3>
             <p className="whitespace-normal">
                 <strong>Primera División </strong>formada por 14 equipos y
@@ -41,8 +42,8 @@ export default function Rules() {
                 los manager de Primera División deberán presentar una lista de 18 jugadores.
                 Los jugadores que no estén en esa lista y sean mayores de 20 años quedarán libres para la próxima temporada o
                 en el equipo de reserva sin jugar según decida cada usuario.<br />
-            </p>
-            <h1>FORMATO DE LA LIGA</h1><br /><br />
+            </p><br /><br />
+            <h1 className="font-black text-center sm: text-2xl">FORMATO DE LA LIGA</h1><br />
             <p>
                 Primera División<br /><br />
             </p>
@@ -80,8 +81,8 @@ export default function Rules() {
                 en cancha neutral con prórroga y penales. El ganador jugará una promoción contra un equipo de Segunda División y
                 el perdedor descenderá.<br />
             </p>
-            <br /><br />
-            <h3>Las posiciones finales de Primera División se definirán de la siguiente manera:</h3><br /><br />
+            <br />
+            <h3>Las posiciones finales de Primera División se definirán de la siguiente manera:</h3><br />
             <p>
                 1° Campeón<br />
                 2° Subcampeón<br />
@@ -93,8 +94,6 @@ export default function Rules() {
                 12° Equipo que juega la Promoción<br />
                 13° Perdedor del play out<br />
                 14° Equipo en descenso directo.<br />
-                <br />
-                <br />
                 <br />
             </p>
             <p>
@@ -118,8 +117,7 @@ export default function Rules() {
                 Promoción: La jugarán el equipo de Primera División ganador en la última ronda del play out y el perdedor de la final por el segundo ascenso de la Segunda División. Será un solo partido. En caso de empate, el equipo de Primera conservará su lugar en la división.<br />
             </p>
             <br />
-            <br />
-            <h1>Copa FM</h1><br /><br />
+            <h1 className="font-extrabold">Copa FM</h1><br />
             <p>
                 La jugarán todos los equipos participantes. Habrá una primera ronda de eliminación entre 24 equipos sorteados al azar.
                 Los 12 ganadores de los duelos se unirán a los restantes 4 equipos divididos en 8 llaves.
@@ -133,8 +131,7 @@ export default function Rules() {
                 si en este último el resultado es un empate.<br />
             </p>
             <br />
-            <br />
-            <h1>Champions League y Europa League</h1><br /><br />
+            <h1 className="font-extrabold">Champions League y Europa League</h1><br />
             <p>
                 Champions League:<br />
                 La jugarán 16 equipos, que serán:<br />
@@ -156,7 +153,7 @@ export default function Rules() {
                 Será a formato de eliminación directa, a partido único con prórroga y penales en caso de empate.<br />
                 <br />
             </p>
-            <h1>Supercopa FM</h1><br />
+            <h1 className="font-extrabold">Supercopa FM</h1><br />
             <p>
                 Se jugará Semifinales y Final entre:<br />
                 -Campeón Primera División<br />
@@ -166,7 +163,8 @@ export default function Rules() {
                 <br />
                 <br />
             </p>
-            <h1>Lista de buena fe</h1>
+            <h1 className="font-black text-center sm:text-2xl">Lista de buena fe</h1>
+            <br />
             <p>
                 Todos los managers deberán tener en sus equipos un máximo de 18 jugadores mayores de 20 años + 6 juveniles (sub– 20)
                 que utilizarán en todos los torneos. Los jugadores que no estén en el primer equipo quedarán inhabilitados
@@ -183,8 +181,7 @@ export default function Rules() {
             </p>
             <br />
             <br />
-            <br />
-            <h1> Modo de dsiputa y plazos</h1><br />
+            <h1 className="font-black text-center sm:text-2xl"> Modo de disputa y plazos</h1><br />
             <p>
                 -Cada fecha tiene un plazo máximo para disputarse el cual está informado en el calendario anclado en los canales de Discord
                 del servidor, estos pueden ser modificados por la organización a medida que avanza la temporada.<br />
@@ -226,7 +223,8 @@ export default function Rules() {
                 D - En caso de que el rival no se presente (habiendo coordinado para jugar en las últimas 24 horas del vencimiento de la fecha),
                 el partido se dará por ganado 3-0 y se le dará una amonestación al usuario que no se presentó.
             </p>
-            <h1>Partidos</h1><br />
+            <br />
+            <h1 className="font-black text-center sm:text-2xl">Partidos</h1><br />
             <p>
                 Los partidos se disputarán en el FM 24 utilizando las partidas que la organización entregará previo al inicio de la temporada.
                 Cada usuario que sea local en el calendario determinado por la partida (teniendo en cuenta la primera ronda únicamente)
@@ -311,9 +309,8 @@ export default function Rules() {
                 directamente/indirectamente a otro manager.<br />
                 <br />
                 <br />
-                <br />
             </p>
-            <h1>Suspensiones de jugadores</h1>
+            <h1 className="font-black text-center sm:text-2xl">Suspensiones de jugadores</h1>
             <br />
             <p>
                 1 - Recibirán un partido de sanción los jugadores expulsados durante el partido por acumulación de amarillas.
@@ -350,10 +347,7 @@ export default function Rules() {
             <br />
             <br />
             <br />
-            <br />
-            <br />
-            <br />
-            <h1>Objetivos de la Temporada</h1><br />
+            <h1 className="font-black text-center sm:text-2xl">Objetivos de la Temporada</h1><br />
             <p>
                 Los equipos tendrán un objetivo mínimo de temporada el cual debe cumplirse para recibir el dinero.
                 Los equipos estarán divididos en grupos y el premio o sanción en su presupuesto para fichajes será de +/- 10.000.000
@@ -432,10 +426,8 @@ export default function Rules() {
                 En caso de que los equipos mencionados tengan un fichaje extra, se sorteará entre los subcampeones de Primera y Segunda División.<br />
                 <br />
                 <br />
-                <br />
-                <br />
             </p>
-            <h1>Mercado de pases</h1><br />
+            <h1 className="font-black text-center sm:text-2xl">Mercado de pases</h1><br />
             <p>
                 Bloqueos Primera División: 4 bloqueos por equipo.<br />
                 Bloqueos Segunda División: 4 bloqueos por equipo.<br />
@@ -534,11 +526,9 @@ export default function Rules() {
                 subastas normales.<br />
                 <br />
                 <br />
-                <br />
-                <br />
             </p>
+                <h1 className="font-black text-center sm:text-2xl">Presupuestos</h1><br />
             <p>
-                Presupuestos<br />
                 Será el restante de la temporada anterior más el ingreso por premios al finalizar la temporada.<br />
                 Para participar en el mercado, cada usuario deberá tener presupuesto positivo. En caso contrario, deberá vender jugadores
                 hasta tener presupuesto positivo.<br />
