@@ -107,9 +107,9 @@ const router = createBrowserRouter([
             {
                 path: '/clausula_rescision',
                 element: (
-                    <ProtectedComponent>
+                    //<ProtectedComponent>
                     <Announcement />
-                    </ProtectedComponent>
+                    //</ProtectedComponent>
                 )
             },
             {

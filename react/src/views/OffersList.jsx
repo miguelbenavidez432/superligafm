@@ -456,7 +456,7 @@ const OffersList = () => {
                     className="w-full md:w-1/3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     <option value="">Todas las temporadas</option>
-                    {seasons.map(season => (
+                    {seasons && seasons.map(season => (
                         <option key={season.id} value={season.id}>
                             {season.name}
                         </option>
@@ -509,7 +509,7 @@ const OffersList = () => {
                                                 <td className="px-4 py-2 text-sm text-gray-700">
                                                     <Link
                                                         className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                                                        to={`/offers/${oferta.id_player.id}`}
+                                                        to={oferta.id_player ? `/offers/${oferta.id_player.id}` : "#"}
                                                     >
                                                         Ofertas
                                                     </Link>
