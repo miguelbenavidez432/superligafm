@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\DiscordUserResource;
 use App\Models\DiscordUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDiscordUserRequest;
@@ -17,7 +18,7 @@ class DiscordUserController extends Controller
      */
     public function index()
     {
-        //
+        return DiscordUserResource::collection(DiscordUser::with(['user'])->get());
     }
 
     /**
@@ -33,7 +34,7 @@ class DiscordUserController extends Controller
      */
     public function show(DiscordUser $discordUser)
     {
-        //
+        return new DiscordUserResource($discordUser->load('user'));
     }
 
     /**

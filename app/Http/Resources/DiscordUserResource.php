@@ -14,6 +14,10 @@ class DiscordUserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'user_id' => new UserResource($this->whenLoaded('user')),
+            'discord_username' => $this->discord_username,
+        ];
     }
 }
