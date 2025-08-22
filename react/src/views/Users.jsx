@@ -69,7 +69,7 @@ export default function Users() {
             const response = await axiosClient.get(`discord/redirect`, { params: { userId } });
 
             if (response.data.url) {
-                window.location.href = response.data.url;
+                 window.open(response.data.url, '_blank');
             } else {
                 console.error("No se recibió la URL de Discord.");
             }

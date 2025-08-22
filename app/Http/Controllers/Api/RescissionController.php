@@ -135,6 +135,9 @@ class RescissionController extends Controller
             $user->profits -= $value;
             $user->save();
 
+            $userDiscord = DiscordUser::find($teamTo->id_user);
+            $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
+
             $receiver->profits += $value;
             $receiver->save();
 
@@ -152,7 +155,7 @@ class RescissionController extends Controller
                 ->payload([
                     'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.
                     \nEl jugador va a ser transferido al equipo de {$teamTo->name}.
-                \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name} {$user->discord_id}.\n",
+                \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name} {$mentionMessage}.\n",
                 ])
                 ->useSecret($webhookSecret)
                 ->dispatch();

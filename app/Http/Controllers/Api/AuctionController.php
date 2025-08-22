@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
 use App\Http\Resources\AuctionResource;
 use App\Models\Auction;
+use App\Models\DiscordUser;
 use App\Models\Player;
 use App\Models\Season;
 use App\Models\Team;
@@ -65,13 +66,13 @@ class AuctionController extends Controller
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
-                $userDiscord = User::find($highestAuction->auctioned_by);
+                $userDiscord = DiscordUser::find($highestAuction->auctioned_by);
                 $idDiscord = $userDiscord->discord_id;
             }
         }
 
         $leadingUsers = array_unique($leadingUsers);
-        foreach ($idDiscord as $userDiscord){
+        foreach ($idDiscord as $userDiscord) {
             $mentionMessage .= '<@' . idDiscord . '> ';
         }
         if ($previousAuction) {
@@ -158,16 +159,25 @@ class AuctionController extends Controller
             ->get();
 
         $leadingUsers = [];
+        $idDiscord = [];
+        $mentionMessage = '';
+
         foreach ($highestAuctions as $auction) {
             $highestAuction = Auction::where('id_player', $auction->id_player)
                 ->where('amount', $auction->highestAmount)
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->id_auctioned;
+                $userDiscord = DiscordUser::find($highestAuction->auctioned_by);
+                $idDiscord = $userDiscord->discord_id;
             }
         }
 
         $leadingUsers = array_unique($leadingUsers);
+
+        foreach ($idDiscord as $userDiscord) {
+            $mentionMessage .= '<@' . $idDiscord . '> ';
+        }
 
         foreach ($leadingUsers as $userId) {
             $userAuctions = Auction::where('id_auctioned', $userId)
@@ -306,6 +316,9 @@ class AuctionController extends Controller
         $player = Player::find($request->input('id_player'));
         $winner = User::find($request->input('id_auctioned'));
 
+        $userDiscord = DiscordUser::find($winner->user_id);
+        $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
+
         if (!$player || !$winner) {
             return response()->json(['error' => 'Datos del jugador o usuario no válidos.'], 400);
         }
@@ -329,7 +342,7 @@ class AuctionController extends Controller
             ->url($webhookUrl)
             ->payload([
                 'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
-                \nEl monto de la transferencia es de $ {$auction->amount} y fue pagado por {$winner->name}.\n",
+                \nEl monto de la transferencia es de $ {$auction->amount} y fue pagado por {$mentionMessage}.\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();
