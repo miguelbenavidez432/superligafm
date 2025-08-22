@@ -43,9 +43,16 @@ class RescissionController extends Controller
 
         $user = DiscordUser::find($team->id_user);
 
+        $player = Player::find($data['id_player']);
+
+        $teamIdOwner = $player->id_team;
+
+        $userOfert = DiscordUser::find($teamIdOwner->id_user);
+
         $mentionMessage = '';
         if ($user && $user->discord_id) {
-            $mentionMessage .= '<@' . $user->discord_id . '> '; // Mencionar al usuario con su discord_id
+            $mentionMessage .= '<@' . $user->discord_id . '> ' . '<@' . $userOfert->discord_id . '> ' ; // Mencionar al usuario con su discord_id
+
         } else {
             $mentionMessage .= $user->discord_id;
         }
