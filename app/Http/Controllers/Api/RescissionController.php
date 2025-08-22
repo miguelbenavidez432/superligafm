@@ -41,7 +41,7 @@ class RescissionController extends Controller
 
         $team = Team::find($teamId);
 
-        $user = DiscordUser::find($team->id_user);
+        $user = DiscordUser::where('id_user', $team->id_user)->first();
 
         $mentionMessage = '';
         if ($user && $user->discord_id) {
