@@ -493,7 +493,7 @@ const OffersList = () => {
                                         const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
                                         const hideValues = shouldHideValues(oferta.created_at);
                                         return (
-                                            <tr key={oferta.id} className="border-b hover:bg-gray-50">
+                                            <tr key={oferta.id} className="border-b hover:bg-slate-900">
                                                 <td className="px-4 py-2 text-sm ">{oferta.name}</td>
                                                 <td className="px-4 py-2 text-sm ">
                                                     {oferta.id_team && oferta.id_team.name}

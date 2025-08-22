@@ -387,12 +387,20 @@ export default function Players() {
                                             <td style={{ padding: '10px' }}>{p.value}</td>
                                             <td style={{ padding: '10px' }}>{p.status}</td>
                                             {
-                                                user.rol === 'Admin' &&
-                                                <td style={{ padding: '10px' }}>
-                                                    <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
-                                                    &nbsp;
-                                                    <button onClick={e => onDelete(p)} className="btn-delete">Borrar</button>
-                                                </td>
+                                                user.rol === 'Admin' ? (
+                                                    <td style={{ padding: '10px' }}>
+                                                        <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
+                                                        &nbsp;
+                                                        <button onClick={() => onDelete(p)} className="btn-delete">Borrar</button>
+                                                    </td>
+                                                ) : (
+                                                    (p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
+                                                        <td style={{ padding: '10px' }}>
+                                                            <Link className="btn-edit" to={'/subastas/' + p.id}>Ofertar</Link>
+                                                            &nbsp;
+                                                        </td>
+                                                    )
+                                                )
                                             }
                                         </tr>
                                     )
