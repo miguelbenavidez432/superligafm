@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DiscordUser;
 use App\Models\Player;
 use App\Models\Rescission;
 use App\Http\Requests\StoreRescissionRequest;
@@ -40,7 +41,7 @@ class RescissionController extends Controller
 
         $team = Team::find($teamId);
 
-        $user = User::find($team->id_user);
+        $user = DiscordUser::find($team->id_user);
 
         $mentionMessage = '';
         if ($user && $user->discord_id) {
