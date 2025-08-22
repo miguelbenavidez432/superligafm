@@ -131,7 +131,7 @@ export default function Matches() {
             status: 'pending',
         };
 
-        axiosClient.put(`/game-update/${match}`, matchData)
+        axiosClient.put(`/matches/${match}`, matchData)
             .then(() => {
                 setNotification('Partido habilitado para editar');
                 setCreating(false);
@@ -168,7 +168,8 @@ export default function Matches() {
             switch (currentStage) {
                 case 4: return "Cuartos de Final";
                 case 5: return "Semifinal";
-                case 6: return "Final";
+                case 6: return "Semifinal";
+                case 7: return "Final";
                 default: return currentStage;
             }
         }

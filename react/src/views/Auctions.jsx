@@ -74,7 +74,7 @@ const Auctions = () => {
             auctioned_by: user.id,
             created_by: user.id,
             active: 'yes',
-            id_season: 57
+            id_season: 58
         });
     };
 
@@ -95,7 +95,7 @@ const Auctions = () => {
                     amount: 0,
                     created_by: user.id,
                     status: 'active',
-                    id_season: 57,
+                    id_season: 58,
                 });
             })
             .catch((error) => {

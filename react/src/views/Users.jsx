@@ -51,6 +51,23 @@ export default function Users() {
         setCurrentPage((prevPage) => prevPage - 1);
     };
 
+const getDiscordAuthorizeUrl = async () => {
+    try {
+        const userId = user.id;
+        // Realizamos la solicitud a tu backend para obtener la URL de redirección de Discord
+        const response = await axiosClient.get(`discord/redirect`);
+
+        // Verificamos si la URL está en la respuesta
+        if (response.data.url) {
+            window.location.href = response.data.url;  // Redirigir al usuario a Discord para autorizar
+        } else {
+            console.error("No se recibió la URL de Discord.");
+        }
+    } catch (error) {
+        console.error("Error al obtener la URL de Discord:", error.response ? error.response.data : error.message);
+    }
+};
+
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-4 mx-8">
@@ -98,6 +115,10 @@ export default function Users() {
                                                 </>
                                             ) : user.id === u.id && (
                                                 <Link to={'/users/' + u.id} className="btn-edit bg-green-500 text-white px-4 py-2 rounded">Editar</Link>
+                                            )}
+
+                                            {!u.discord_id && (
+                                                <button onClick={getDiscordAuthorizeUrl} className="btn-add bg-blue-500 text-white px-4 py-2 rounded ml-2">Vincula tu cuenta de Discord</button>
                                             )}
                                         </td>
                                     </tr>

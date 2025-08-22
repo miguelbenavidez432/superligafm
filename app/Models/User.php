@@ -111,4 +111,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(MatchStatistic::class);
     }
+
+    public function discordUser()
+    {
+        return $this->hasOne(DiscordUser::class);
+    }
 }

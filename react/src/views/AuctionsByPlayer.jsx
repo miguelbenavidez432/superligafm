@@ -252,7 +252,7 @@ const PlayerAuctions = () => {
             created_by: user.id,
             auctioned_by: user.id,
             status: 'active',
-            id_season: 57,
+            id_season: 58,
         };
 
         try {

@@ -2,14 +2,17 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
 import { Link } from "react-router-dom";
+import Objectives from "./Objectives";
 
 export default function Teams() {
 
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [players, setPlayers] = useState([]);
 
     useEffect(() => {
         getTeam();
+        getPlayers();
     }, [])
 
     const getTeam = async () => {
@@ -17,6 +20,17 @@ export default function Teams() {
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
                 setTeams(teamFilter)
+            })
+            .catch(() => {
+                setLoading(false)
+            })
+    }
+    const getPlayers = async () => {
+        setLoading(true);
+        await axiosClient.get('/players?all=true')
+            .then(({ data }) => {
+                setPlayers(data.data)
+                setLoading(false)
             })
             .catch(() => {
                 setLoading(false)
@@ -67,6 +81,10 @@ export default function Teams() {
                     }
                 </table>
             </div >
+            {/* <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
+                <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Objetivos</h1>
+                <Objectives teams={teams ? [teams, ...players.map(p => p.id_team).filter(Boolean)] : []} />
+            </div> */}
 
         </>
     )

@@ -182,8 +182,8 @@ export default function Dashboard() {
         setTeam(filteredTeam);
         axiosClient.get('/clausula_rescision?all=true')
             .then(({ data }) => {
-                const filteredExecutedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.created_by === user.id)
-                const filteredReceivedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.id_team && cdr.id_team.id_user === user.id)
+                const filteredExecutedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.created_by === user.id && cdr.id_season === seasonId )
+                const filteredReceivedClauses = data.data.filter(cdr => cdr.confirmed === 'no' && cdr.id_team && cdr.id_team.id_user === user.id && cdr.id_season === seasonId)
                 setExecutedClauses(filteredExecutedClauses);
                 setReceivedClauses(filteredReceivedClauses);
             })
@@ -243,7 +243,7 @@ export default function Dashboard() {
                     <h2 className="text-xl font-semibold mb-2">Subastas</h2>
                     <ul className="list-disc pl-5 mb-4">
                         {auctions
-                            .filter(auction => auction.creator && auction.creator.id == user.id)
+                            .filter(auction => auction.creator && auction.creator.id == user.id && auction.id_season == seasonId)
                             .map(auction => (
                                 <li key={auction.id} className="mb-2">
                                     Jugador: {auction.player?.name || 'Sin jugador'}, Última oferta: {auction.amount || 'Sin oferta'}

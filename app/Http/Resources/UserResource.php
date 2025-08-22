@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'rol' => $this->rol,
             'profits' => $this->profits,
             'costs' => $this->costs,
+            'discord_user' => new DiscordUserResource($this->whenLoaded('discordUser')),
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
         ];
     }
