@@ -191,7 +191,7 @@ export default function Plantel() {
                                             <td className="border px-4 py-2 bg-black bg-opacity-70">
                                                 {p.status !== 'nada' && (
                                                     <>
-                                                        <button className="btn-edit mx-1" onClick={() => {
+                                                        {/* <button className="btn-edit mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
@@ -205,7 +205,7 @@ export default function Plantel() {
                                                             if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
                                                                 handleListPlayer(p);
                                                             }
-                                                        }}>Registrar</button>
+                                                        }}>Registrar</button> */}
                                                     </>
                                                 )}
                                             </td>

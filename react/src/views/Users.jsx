@@ -66,7 +66,7 @@ export default function Users() {
         try {
             const userId = user.id;
             console.log("ID de usuario:", userId);
-            const response = await axiosClient.get(`/discord/redirect`, { params: { userId } });
+            const response = await axiosClient.get(`discord/redirect`, { params: { userId } });
 
             if (response.data.url) {
                 window.location.href = response.data.url;
