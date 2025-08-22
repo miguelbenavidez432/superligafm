@@ -45,6 +45,8 @@ class RescissionController extends Controller
         $mentionMessage = '';
         if ($user && $user->discord_id) {
             $mentionMessage .= '<@' . $user->discord_id . '> '; // Mencionar al usuario con su discord_id
+        } else {
+            $mentionMessage .= $user->discord_id;
         }
 
         if ($team->cdr >= 4) {
