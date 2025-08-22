@@ -468,7 +468,6 @@ const OffersList = () => {
                     <p className="text-gray-500">CARGANDO...</p>
                 </div>
             )}
-            <div className="overflow-x-auto">
                 <div className="overflow-x-auto">
                     <table className="min-w-full table-auto bg-black bg-opacity-70 text-white border-gray-800 my-2">
                         <thead>
@@ -522,7 +521,6 @@ const OffersList = () => {
                     </table>
                 </div>
             </div>
-        </div>
     );
 };
 
