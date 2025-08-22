@@ -54,19 +54,15 @@ class DiscordUserController extends Controller
 
 
     public function redirectToDiscord(Request $request)
-{
-    // Verificar si el usuario está autenticado
-
+    {
         $userId = $request->query('userId');
 
-        // Generar la URL de redirección de Discord
         $discordAuthorizeUrl = 'https://discord.com/oauth2/authorize?client_id=' . env('DISCORD_CLIENT_ID') .
             '&redirect_uri=' . urlencode(env('DISCORD_REDIRECT_URI')) .
             '&response_type=code&scope=identify&state=' . $userId;
 
         return response()->json(['url' => $discordAuthorizeUrl]);
-
-}
+    }
 
     // Manejar la redirección de Discord y asociar la cuenta de Discord con el usuario autenticado
     public function handleCallback(Request $request)

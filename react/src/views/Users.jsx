@@ -18,6 +18,17 @@ export default function Users() {
         getUsers();
     }, [currentPage])
 
+    const [message, setMessage] = useState(null);
+
+    useEffect(() => {
+        // Verifica si hay un mensaje en el query de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMessage = urlParams.get('message');
+        if (successMessage) {
+            setMessage(successMessage); // Establecer el mensaje de éxito
+        }
+    }, []);
+
     const onDelete = (u) => {
         if (!window.confirm('Estás seguro que quieres borrar este usuario??')) {
             return
@@ -51,25 +62,25 @@ export default function Users() {
         setCurrentPage((prevPage) => prevPage - 1);
     };
 
-const getDiscordAuthorizeUrl = async () => {
-    try {
-        const userId = user.id;
-        // Realizamos la solicitud a tu backend para obtener la URL de redirección de Discord
-        const response = await axiosClient.get(`discord/redirect`);
+    const getDiscordAuthorizeUrl = async () => {
+        try {
+            const userId = user.id;
+            console.log("ID de usuario:", userId);
+            const response = await axiosClient.get(`/discord/redirect`, { params: { userId } });
 
-        // Verificamos si la URL está en la respuesta
-        if (response.data.url) {
-            window.location.href = response.data.url;  // Redirigir al usuario a Discord para autorizar
-        } else {
-            console.error("No se recibió la URL de Discord.");
+            if (response.data.url) {
+                window.location.href = response.data.url;
+            } else {
+                console.error("No se recibió la URL de Discord.");
+            }
+        } catch (error) {
+            console.error("Error al obtener la URL de Discord:", error.response ? error.response.data : error.message);
         }
-    } catch (error) {
-        console.error("Error al obtener la URL de Discord:", error.response ? error.response.data : error.message);
-    }
-};
+    };
 
     return (
         <div className="p-6">
+         {message && <div className="alert alert-success">{message}</div>}
             <div className="flex justify-between items-center mb-4 mx-8">
                 <h1 className="text-2xl font-bold">USUARIOS</h1>
                 <Link to='/users/new' className="btn-add bg-blue-500 text-white px-4 py-2 rounded">Nuevo Usuario</Link>
