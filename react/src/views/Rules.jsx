@@ -361,7 +361,7 @@ export default function Rules() {
                 Primera División<br />
                 1° 150.000.000 € + Bloqueo al 50% de un jugador previo al mercado<br />
                 2° 120.000.000 €<br />
-                Perdedores de las semifinales 1040.000.000 €<br />
+                Perdedores de las semifinales 100.000.000 €<br />
                 Perdedores 1° ronda de eliminación   85.000.000 €<br />
                 9° 10° y 11° + equipo que no juega promoción 70.000.000 €<br />
                 Descendidos más equipo en promoción 55.000.000 €<br />

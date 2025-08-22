@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AmountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BetController;
 use App\Http\Controllers\Api\ChatbotController;
+use App\Http\Controllers\Api\DiscordUserController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\MatchStatisticController;
 use App\Http\Controllers\Api\PlayerBetController;
@@ -96,8 +97,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
     });
-});
 
+});
+Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
+Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
 

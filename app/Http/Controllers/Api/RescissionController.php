@@ -40,6 +40,13 @@ class RescissionController extends Controller
 
         $team = Team::find($teamId);
 
+        $user = User::find($team->id_user);
+
+        $mentionMessage = '';
+        if ($user && $user->discord_id) {
+            $mentionMessage .= '<@' . $user->discord_id . '> '; // Mencionar al usuario con su discord_id
+        }
+
         if ($team->cdr >= 4) {
             return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
         }
@@ -60,7 +67,7 @@ class RescissionController extends Controller
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
-                'content' => "La oferta por {$player->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
+                'content' => "{$mentionMessage}\nLa oferta por {$player->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();
@@ -142,7 +149,7 @@ class RescissionController extends Controller
                 ->payload([
                     'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.
                     \nEl jugador va a ser transferido al equipo de {$teamTo->name}.
-                \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name}.\n",
+                \nEl monto de la transferencia es de $ {$value} y fue pagado por {$user->name} {$user->discord_id}.\n",
                 ])
                 ->useSecret($webhookSecret)
                 ->dispatch();

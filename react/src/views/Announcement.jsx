@@ -24,7 +24,7 @@ export default function Announcement() {
         other_players: [],
         extra_value: 0,
         total_value: 0,
-        id_season: 57,
+        id_season: 58,
     });
     const [inputValue, setInputValue] = useState(0);
 
@@ -159,7 +159,7 @@ export default function Announcement() {
                     extra_value: 0,
                     total_value: 0,
                     status: 'bloqueado',
-                    id_season: 57
+                    id_season: 58
                 });
                 setNotification('Ejecución de cláusula enviada');
             })

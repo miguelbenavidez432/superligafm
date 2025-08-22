@@ -469,16 +469,16 @@ const OffersList = () => {
                 </div>
             )}
             <div className="overflow-x-auto">
-                <div className="bg-white shadow-md rounded-lg">
-                    <table className="min-w-full table-auto">
-                        <thead className="bg-gray-100">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full table-auto bg-black bg-opacity-70 text-white border-gray-800 my-2">
+                        <thead>
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Jugador</th>
-                                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Equipo</th>
-                                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Valor</th>
-                                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Realizado por</th>
-                                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Horario</th>
-                                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Acciones</th>
+                                <th className="border px-4 py-2 bg-black text-white">Jugador</th>
+                                <th className="border px-4 py-2 bg-black text-white">Equipo</th>
+                                <th className="border px-4 py-2 bg-black text-white">Valor</th>
+                                <th className="border px-4 py-2 bg-black text-white">Realizado por</th>
+                                <th className="border px-4 py-2 bg-black text-white">Horario</th>
+                                <th className="border px-4 py-2 bg-black text-white">Acciones</th>
                             </tr>
                         </thead>
                         {!loading && (
@@ -495,18 +495,18 @@ const OffersList = () => {
                                         const hideValues = shouldHideValues(oferta.created_at);
                                         return (
                                             <tr key={oferta.id} className="border-b hover:bg-gray-50">
-                                                <td className="px-4 py-2 text-sm text-gray-700">{oferta.name}</td>
-                                                <td className="px-4 py-2 text-sm text-gray-700">
+                                                <td className="px-4 py-2 text-sm ">{oferta.name}</td>
+                                                <td className="px-4 py-2 text-sm ">
                                                     {oferta.id_team && oferta.id_team.name}
                                                 </td>
-                                                <td className="px-4 py-2 text-sm text-gray-700">
+                                                <td className="px-4 py-2 text-sm ">
                                                     {hideValues ? 'Oculto' : oferta.total_value}
                                                 </td>
-                                                <td className="px-4 py-2 text-sm text-gray-700">
+                                                <td className="px-4 py-2 text-sm ">
                                                     {oferta.created_by && oferta.created_by.name}
                                                 </td>
-                                                <td className="px-4 py-2 text-sm text-gray-700">{formattedDate}</td>
-                                                <td className="px-4 py-2 text-sm text-gray-700">
+                                                <td className="px-4 py-2 text-sm ">{formattedDate}</td>
+                                                <td className="px-4 py-2 text-sm ">
                                                     <Link
                                                         className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
                                                         to={oferta.id_player ? `/offers/${oferta.id_player.id}` : "#"}
