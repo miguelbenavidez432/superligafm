@@ -66,14 +66,14 @@ class AuctionController extends Controller
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
-                $userDiscord = DiscordUser::find($highestAuction->auctioned_by);
+                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
                 $idDiscord = $userDiscord->discord_id;
             }
         }
 
         $leadingUsers = array_unique($leadingUsers);
         foreach ($idDiscord as $userDiscord) {
-            $mentionMessage .= '<@' . idDiscord . '> ';
+            $mentionMessage .= '<@' . $userDiscord . '> ';
         }
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {

@@ -392,6 +392,13 @@ export default function Players() {
                                                         <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
                                                         &nbsp;
                                                         <button onClick={() => onDelete(p)} className="btn-delete">Borrar</button>
+                                                        &nbsp;
+                                                        {(p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
+                                                            <>
+                                                                <Link className="btn-edit" to={'/subastas/' + p.id}>Ofertar</Link>
+                                                                &nbsp;
+                                                            </>
+                                                        )}
                                                     </td>
                                                 ) : (
                                                     (p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (

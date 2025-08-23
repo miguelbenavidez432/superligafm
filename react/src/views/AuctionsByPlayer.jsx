@@ -171,6 +171,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
+import { el } from "date-fns/locale";
 
 const PlayerAuctions = () => {
     const { id } = useParams();
@@ -221,7 +222,32 @@ const PlayerAuctions = () => {
                     season: selectedSeason
                 }
             });
-            setAuctions(response.data);
+            if (response) {
+                setAuctions(response.data);
+            }
+            else {
+                const fetchPlayers = () => {
+                    setLoading(true);
+                    axiosClient.get('/players?all=true')
+                        .then(({ data }) => {
+                            setLoading(false);
+                            const filteredPlayer = data.data.find(player => player.id === parseInt(id));
+                            if (filteredPlayer) {
+                                setName({
+                                    ...filteredPlayer,
+                                    name: filteredPlayer.name
+                                });
+                            } else {
+                                console.log('Jugador no encontrado');
+                            }
+                            getTeam();
+                        })
+                        .catch(() => {
+                            setLoading(false);
+                            console.log('Error al obtener los jugadores');
+                        });
+                };
+            }
         } catch (error) {
             console.error(error);
         }
