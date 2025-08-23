@@ -66,8 +66,6 @@ class AuctionController extends Controller
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
-                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
-                if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         }
 
@@ -100,8 +98,17 @@ class AuctionController extends Controller
         $team = Team::find($data['id_team']);
         $user = User::find($data['auctioned_by']);
         $userDiscord = DiscordUser::where('user_id', $data['auctioned_by'])->first();
-
         if($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
+
+        $auctioners = Auction::where('id_player', $data['id_player'])
+            ->where('id_season', $data['id_season'])
+            ->pluck('auctioned_by')
+            ->toArray();
+
+            foreach ($auctioners as $auctioner) {
+                $userDiscord = DiscordUser::where('user_id', $auctioner)->first();
+                if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
+            }
 
         if(!empty($idDiscord)){
             foreach ($idDiscord as $userDiscord) {
