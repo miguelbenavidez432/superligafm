@@ -47,6 +47,7 @@ class AuctionController extends Controller
         $season = Season::find($data['id_season']);
 
         $previousAuction = Auction::where('id_player', $data['id_player'])
+            ->where('id_season', $data['id_season'])
             ->orderBy('amount', 'desc')
             ->first();
 
@@ -59,7 +60,7 @@ class AuctionController extends Controller
         $mentionMessage = '';
 
         foreach ($highestAuctions as $auction) {
-            $highestAuction = Auction::where('id_player', $data['id_player'])
+            $highestAuction = Auction::where('id_player', $auction->id_player)
                 ->where('amount', $auction->highestAmount)
                 ->where('id_season', $data['id_season'])
                 ->first();
