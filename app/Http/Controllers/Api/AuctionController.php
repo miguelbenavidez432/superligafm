@@ -67,7 +67,7 @@ class AuctionController extends Controller
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
                 $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
-                if ($userDiscord) $idDiscord[] = $userDiscord->discord_id;
+                if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         }
 
@@ -84,7 +84,7 @@ class AuctionController extends Controller
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
                 $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
-                if ($userDiscord) $idDiscord[] = $userDiscord->discord_id;
+                if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         } else {
             if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
@@ -102,7 +102,7 @@ class AuctionController extends Controller
         $user = User::find($data['auctioned_by']);
         $userDiscord = DiscordUser::where('user_id', $data['auctioned_by'])->first();
 
-        if($userDiscord) $idDiscord[] = $userDiscord->discord_id;
+        if($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
 
         if(!empty($idDiscord)){
             foreach ($idDiscord as $userDiscord) {
