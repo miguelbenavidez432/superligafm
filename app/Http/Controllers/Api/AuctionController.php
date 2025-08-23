@@ -66,35 +66,29 @@ class AuctionController extends Controller
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
-                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
-                $idDiscord = $userDiscord->discord_id;
+                // $userDiscord = DiscordUser::find($highestAuction->auctioned_by);
+                // $idDiscord = $userDiscord->discord_id;
             }
         }
-        $user = User::find($data['auctioned_by']);
+
         $leadingUsers = array_unique($leadingUsers);
-        dd($leadingUsers);
-        if (!empty($idDiscord)) {
-            foreach ($idDiscord as $userDiscord) {
-                dd($mentionMessage);
-                $mentionMessage .= '<@' . $userDiscord . '> ';
-            }
-        } else {
-            dd($mentionMessage);
-            $mentionMessage .= "{$user->name}";
-        }
+        // foreach ($idDiscord as $userDiscord) {
+        //     $mentionMessage .= '<@' . idDiscord . '> ';
+        // }
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {
                 return response()->json([
                     'message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.'
                 ], 422);
             }
+
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
             }
         } else {
 
-            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -105,6 +99,7 @@ class AuctionController extends Controller
 
         $auction = Auction::create($data);
         $team = Team::find($data['id_team']);
+        $user = User::find($data['auctioned_by']);
 
         $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
@@ -112,7 +107,7 @@ class AuctionController extends Controller
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
-                'content' => "  " . $mentionMessage . "La oferta por {$player->name} ha sido realizada por un total de $ {$data['amount']}.
+                'content' => "La oferta por {$player->name} ha sido realizada por un total de $ {$data['amount']}.
                 \nEl jugador pertenece al equipo {$team->name} y fue realizada por {$user->name}.\n",
             ])
             ->useSecret($webhookSecret)
