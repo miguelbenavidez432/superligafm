@@ -74,9 +74,11 @@ class AuctionController extends Controller
         $leadingUsers = array_unique($leadingUsers);
         if (!empty($idDiscord)) {
             foreach ($idDiscord as $userDiscord) {
+                dd($mentionMessage);
                 $mentionMessage .= '<@' . $userDiscord . '> ';
             }
         } else {
+            dd($mentionMessage);
             $mentionMessage .= "{$user->name}";
         }
         if ($previousAuction) {
@@ -85,7 +87,6 @@ class AuctionController extends Controller
                     'message' => 'La nueva oferta debe ser al menos un millón más alta que la oferta anterior.'
                 ], 422);
             }
-
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
@@ -106,7 +107,7 @@ class AuctionController extends Controller
 
         $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
-        dd($mentionMessage);
+
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
