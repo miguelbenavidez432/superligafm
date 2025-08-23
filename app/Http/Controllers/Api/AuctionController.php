@@ -79,9 +79,9 @@ class AuctionController extends Controller
             }
 
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
+            var_dump($previousBidders);
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
-                var_dump($user);
                 $userDiscord = DiscordUser::where('user_id', $user->auctioned_by)->first();
                 if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
