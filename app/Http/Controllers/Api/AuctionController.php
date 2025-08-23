@@ -92,7 +92,7 @@ class AuctionController extends Controller
             }
         } else {
 
-            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -104,10 +104,9 @@ class AuctionController extends Controller
         $auction = Auction::create($data);
         $team = Team::find($data['id_team']);
 
-
         $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
-
+        dd($mentionMessage);
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
