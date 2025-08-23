@@ -133,19 +133,17 @@ class RescissionController extends Controller
             ]);
 
             $user = User::findOrFail($offer['created_by']);
+            $userDiscord = DiscordUser::where('user_id', $teamTo->id_user)->first();
 
-            $user->profits -= $value;
-            $user->save();
+            // $user->profits -= $value;
+            // $user->save();
 
             $mentionMessage = '';
-            if ($user && $user->discord_id) {
-                $mentionMessage .= '<@' . $user->discord_id . '> ';
+            if ($userDiscord && $userDiscord->discord_id) {
+                $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
             } else {
                 $mentionMessage .= $user->name;
             }
-
-            $userDiscord = DiscordUser::where('user_id', $teamTo->id_user)->first();
-            $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
 
             $receiver->profits += $value;
             $receiver->save();
