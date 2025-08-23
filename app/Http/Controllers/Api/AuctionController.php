@@ -66,8 +66,6 @@ class AuctionController extends Controller
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
-                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
-                if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         }
 
@@ -83,7 +81,7 @@ class AuctionController extends Controller
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
-                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
+                $userDiscord = DiscordUser::where('user_id', $user->id)->first();
                 if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         } else {
@@ -95,7 +93,6 @@ class AuctionController extends Controller
         }
 
         $data['close'] = Carbon::now()->addHours(12);
-
 
         $auction = Auction::create($data);
         $team = Team::find($data['id_team']);
