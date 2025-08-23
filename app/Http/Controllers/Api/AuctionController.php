@@ -70,10 +70,14 @@ class AuctionController extends Controller
                 $idDiscord = $userDiscord->discord_id;
             }
         }
-
+        $user = User::find($data['auctioned_by']);
         $leadingUsers = array_unique($leadingUsers);
-        foreach ($idDiscord as $userDiscord) {
-            $mentionMessage .= '<@' . $userDiscord . '> ';
+        if (!empty($idDiscord)) {
+            foreach ($idDiscord as $userDiscord) {
+                $mentionMessage .= '<@' . $userDiscord . '> ';
+            }
+        } else {
+            $mentionMessage .= "{$user->name}";
         }
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {
@@ -99,7 +103,7 @@ class AuctionController extends Controller
 
         $auction = Auction::create($data);
         $team = Team::find($data['id_team']);
-        $user = User::find($data['auctioned_by']);
+
 
         $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
