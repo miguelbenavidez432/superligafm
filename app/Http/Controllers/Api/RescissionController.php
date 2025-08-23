@@ -45,11 +45,29 @@ class RescissionController extends Controller
 
         $userModel = User::find($team->id_user);
 
+        $offerIds = Rescission::where('id_player', $data['id_player'])
+            ->where('id_season', $data['id_season'])
+            ->pluck('created_by')
+            ->toArray();
+
+        $idDiscord = [];
+        foreach ($offerIds as $auctioner) {
+            $userDiscord = DiscordUser::where('user_id', $auctioner)->first();
+            if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord))
+                $idDiscord[] = $userDiscord->discord_id;
+        }
+
         $mentionMessage = '';
         if ($user && $user->discord_id) {
             $mentionMessage .= '<@' . $user->discord_id . '> '; // Mencionar al usuario con su discord_id
         } else {
             $mentionMessage .= $userModel->name;
+        }
+
+        if (!empty($idDiscord)) {
+            foreach ($idDiscord as $userDiscord) {
+                $mentionMessage .= '<@' . $userDiscord . '> ';
+            }
         }
 
         if ($team->cdr >= 4) {
