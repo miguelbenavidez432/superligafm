@@ -72,6 +72,7 @@ class AuctionController extends Controller
         }
         $user = User::find($data['auctioned_by']);
         $leadingUsers = array_unique($leadingUsers);
+        dd($leadingUsers);
         if (!empty($idDiscord)) {
             foreach ($idDiscord as $userDiscord) {
                 dd($mentionMessage);
