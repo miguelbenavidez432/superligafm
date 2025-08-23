@@ -135,8 +135,8 @@ class RescissionController extends Controller
             $user = User::findOrFail($offer['created_by']);
             $userDiscord = DiscordUser::where('user_id', $teamTo->id_user)->first();
 
-            // $user->profits -= $value;
-            // $user->save();
+            $user->profits -= $value;
+            $user->save();
 
             $mentionMessage = '';
             if ($userDiscord && $userDiscord->discord_id) {
