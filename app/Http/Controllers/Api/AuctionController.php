@@ -66,15 +66,13 @@ class AuctionController extends Controller
                 ->first();
             if ($highestAuction) {
                 $leadingUsers[] = $highestAuction->auctioned_by;
-                // $userDiscord = DiscordUser::find($highestAuction->auctioned_by);
-                // $idDiscord = $userDiscord->discord_id;
+                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
+                if ($userDiscord) $idDiscord[] = $userDiscord->discord_id;
             }
         }
 
         $leadingUsers = array_unique($leadingUsers);
-        // foreach ($idDiscord as $userDiscord) {
-        //     $mentionMessage .= '<@' . idDiscord . '> ';
-        // }
+
         if ($previousAuction) {
             if ($data['amount'] < $previousAuction->amount + 1000000) {
                 return response()->json([
@@ -85,10 +83,11 @@ class AuctionController extends Controller
             $previousBidders = Auction::where('id_player', $data['id_player'])->get();
             foreach ($previousBidders as $bidder) {
                 $user = $bidder->user;
+                $userDiscord = DiscordUser::where('user_id', $highestAuction->auctioned_by)->first();
+                if ($userDiscord) $idDiscord[] = $userDiscord->discord_id;
             }
         } else {
-
-            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -97,10 +96,19 @@ class AuctionController extends Controller
 
         $data['close'] = Carbon::now()->addHours(12);
 
+
         $auction = Auction::create($data);
         $team = Team::find($data['id_team']);
         $user = User::find($data['auctioned_by']);
+        $userDiscord = DiscordUser::where('user_id', $data['auctioned_by'])->first();
 
+        if($userDiscord) $idDiscord[] = $userDiscord->discord_id;
+
+        if(!empty($idDiscord)){
+            foreach ($idDiscord as $userDiscord) {
+                $mentionMessage .= '<@' . $userDiscord . '> ';
+            }
+        }
         $webhookUrl = env('DISCORD_WEBHOOK_AUCTIONS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
@@ -108,7 +116,8 @@ class AuctionController extends Controller
             ->url($webhookUrl)
             ->payload([
                 'content' => "La oferta por {$player->name} ha sido realizada por un total de $ {$data['amount']}.
-                \nEl jugador pertenece al equipo {$team->name} y fue realizada por {$user->name}.\n",
+                \nEl jugador pertenece al equipo {$team->name} y fue realizada por {$user->name}.\n
+                \nActualmente los usuarios que están subastando son: {$mentionMessage}\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();
