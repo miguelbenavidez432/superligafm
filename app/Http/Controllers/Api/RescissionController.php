@@ -137,7 +137,14 @@ class RescissionController extends Controller
             $user->profits -= $value;
             $user->save();
 
-            $userDiscord = DiscordUser::find($teamTo->id_user);
+            $mentionMessage = '';
+            if ($user && $user->discord_id) {
+                $mentionMessage .= '<@' . $user->discord_id . '> ';
+            } else {
+                $mentionMessage .= $user->name;
+            }
+
+            $userDiscord = DiscordUser::where('user_id', $teamTo->id_user)->first();
             $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
 
             $receiver->profits += $value;
