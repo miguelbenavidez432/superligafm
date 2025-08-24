@@ -333,8 +333,8 @@ class AuctionController extends Controller
         $player = Player::find($request->input('id_player'));
         $winner = User::find($request->input('id_auctioned'));
 
-        $userDiscord = DiscordUser::find($winner->user_id);
-        $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
+        $userDiscord = DiscordUser::find($winner->id);
+        $userDiscord && $userDiscord->discord_id ? $mentionMessage = '<@' . $userDiscord->discord_id . '> ' : $mentionMessage = '';
 
         if (!$player || !$winner) {
             return response()->json(['error' => 'Datos del jugador o usuario no válidos.'], 400);
