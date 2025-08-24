@@ -359,7 +359,7 @@ class AuctionController extends Controller
             ->url($webhookUrl)
             ->payload([
                 'content' => "HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada.\nEl jugador va a ser transferido al equipo de {$teamTo->name}.
-                \nEl monto de la transferencia es de $ {$auction->amount} y fue pagado por {$mentionMessage}.\n",
+                \nEl monto de la transferencia es de $ {$auction->amount} y fue pagado por {$winner->name} {$mentionMessage}.\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();
