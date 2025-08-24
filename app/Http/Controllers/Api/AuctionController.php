@@ -333,7 +333,7 @@ class AuctionController extends Controller
         $player = Player::find($request->input('id_player'));
         $winner = User::find($request->input('id_auctioned'));
 
-        $userDiscord = DiscordUser::find($winner->id);
+        $userDiscord = DiscordUser::where('user_id', $winner->id)->first();
         $userDiscord && $userDiscord->discord_id ? $mentionMessage = '<@' . $userDiscord->discord_id . '> ' : $mentionMessage = '';
 
         if (!$player || !$winner) {
