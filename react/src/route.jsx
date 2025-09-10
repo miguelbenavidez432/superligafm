@@ -45,6 +45,7 @@ import Statistics from './views/Statistics';
 import TeamStatistics from './views/TeamStatistics';
 import ManagePrizes from './views/ManagePrizes';
 import CreatePrizes from './views/CreatePrizes';
+import UploadMatch from './views/UploadMatch';
 
 const router = createBrowserRouter([
     {
@@ -235,6 +236,10 @@ const router = createBrowserRouter([
             {
                 path: '/crear-premios',
                 element: <CreatePrizes />
+            },
+            {
+                path: '/cargar-imagenes',
+                element: <UploadMatch />
             }
         ]
     },

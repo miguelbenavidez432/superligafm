@@ -195,7 +195,7 @@ export default function Plantel() {
                                                             if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
-                                                        }}>Bloquear</button>
+                                                        }}>Bloquear</button> */}
                                                         <button className="btn-delete mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas liberar a ${p.name}`)) {
                                                                 handleReleasePlayer(p);
@@ -205,7 +205,7 @@ export default function Plantel() {
                                                             if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
                                                                 handleListPlayer(p);
                                                             }
-                                                        }}>Registrar</button> */}
+                                                        }}>Registrar</button>
                                                     </>
                                                 )}
                                             </td>

@@ -23,7 +23,7 @@ class GameController extends Controller
         if ($request->query('all') == 'true') {
             return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->get());
         } else {
-            return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->paginate(1000));
+            return GameResource::collection(Game::with(['tournament', 'teamHome', 'teamAway'])->paginate(2000));
         }
     }
 

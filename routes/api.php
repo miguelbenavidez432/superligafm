@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ChatbotController;
 use App\Http\Controllers\Api\DiscordUserController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\MatchStatisticController;
+use App\Http\Controllers\Api\OcrController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\PrizeController;
@@ -99,6 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 });
+Route::post('/ocr', [OcrController::class, 'process']);
 Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
 Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
 Route::post('/signup', [AuthController::class, 'signup']);
