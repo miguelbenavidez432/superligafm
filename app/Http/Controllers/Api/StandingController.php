@@ -20,26 +20,44 @@ class StandingController extends Controller
      */
     public function index(Request $request)
     {
-        $tournamentId = $request->query('tournament_id');
-        if (!$tournamentId) {
-            return response()->json(['message' => 'tournament_id is required'], 400);
+        try {
+            $tournamentId = $request->query('tournament_id');
+            \Log::info('Tournament ID recibido:', ['tournament_id' => $tournamentId]);
+
+            if (!$tournamentId) {
+                return response()->json(['message' => 'tournament_id is required'], 400);
+            }
+
+            $matches = $this->getMatches($tournamentId);
+            \Log::info('Partidos encontrados:', ['count' => $matches->count()]);
+
+            if ($matches->isEmpty()) {
+                return response()->json(['message' => 'No hay partidos jugados en este torneo.'], 204);
+            }
+
+            $standingsData = $this->calculateStandings($matches, $tournamentId);
+            \Log::info('Standings calculados:', ['data' => $standingsData]);
+
+            $this->syncStandingsWithDatabase($standingsData, $tournamentId);
+
+            $standings = $this->prepareStandingsCollection($standingsData, $tournamentId);
+
+            if ($standings->isEmpty()) {
+                return response()->json(null, 204);
+            }
+
+            return StandingResource::collection($standings);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en standings:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['error' => 'Error interno del servidor'], 500);
         }
-
-        $matches = $this->getMatches($tournamentId);
-        if ($matches->isEmpty()) {
-            return response()->json(['message' => 'No hay partidos jugados en este torneo.'], 204);
-        }
-
-        $standingsData = $this->calculateStandings($matches, $tournamentId);
-        $this->syncStandingsWithDatabase($standingsData, $tournamentId);
-
-        $standings = $this->prepareStandingsCollection($standingsData, $tournamentId);
-
-        if ($standings->isEmpty()) {
-            return response()->json(null, 204);
-        }
-
-        return StandingResource::collection($standings);
     }
 
     private function getMatches($tournamentId)
