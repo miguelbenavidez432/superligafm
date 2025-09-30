@@ -45,7 +45,7 @@ class StandingController extends Controller
             if ($standings->isEmpty()) {
                 return response()->json(null, 204);
             }
-
+            dd($standings);
             return StandingResource::collection($standings);
 
         } catch (\Exception $e) {
