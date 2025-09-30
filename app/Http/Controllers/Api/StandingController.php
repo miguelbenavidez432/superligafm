@@ -21,14 +21,38 @@ class StandingController extends Controller
     public function index(Request $request)
     {
         $tournamentId = $request->query('tournament_id');
-        $matches = Game::with(['homeTeam', 'awayTeam'])
+        if (!$tournamentId) {
+            return response()->json(['message' => 'tournament_id is required'], 400);
+        }
+
+        $matches = $this->getMatches($tournamentId);
+        if ($matches->isEmpty()) {
+            return response()->json(['message' => 'No hay partidos jugados en este torneo.'], 204);
+        }
+
+        $standingsData = $this->calculateStandings($matches, $tournamentId);
+        $this->syncStandingsWithDatabase($standingsData, $tournamentId);
+
+        $standings = $this->prepareStandingsCollection($standingsData, $tournamentId);
+
+        if ($standings->isEmpty()) {
+            return response()->json(null, 204);
+        }
+
+        return StandingResource::collection($standings);
+    }
+
+    private function getMatches($tournamentId)
+    {
+        return Game::with(['homeTeam', 'awayTeam'])
             ->where('tournament_id', $tournamentId)
             ->whereNotNull('home_score')
             ->whereNotNull('away_score')
             ->get();
-        if ($matches->isEmpty()) {
-            return response()->json(['message' => 'No hay partidos jugados en este torneo.'], 204);
-        }
+    }
+
+    private function calculateStandings($matches, $tournamentId)
+    {
         $standingsData = [];
         foreach ($matches as $match) {
             foreach (['home', 'away'] as $side) {
@@ -71,8 +95,12 @@ class StandingController extends Controller
         }
         unset($row);
 
-        $dbStandings = Standing::where('tournament_id', $tournamentId)->get()->keyBy('team_id');
+        return $standingsData;
+    }
 
+    private function syncStandingsWithDatabase($standingsData, $tournamentId)
+    {
+        $dbStandings = Standing::where('tournament_id', $tournamentId)->get()->keyBy('team_id');
         foreach ($standingsData as $teamId => $data) {
             $db = $dbStandings->get($teamId);
             if (!$db || array_diff_assoc($data, $db->only(array_keys($data)))) {
@@ -82,7 +110,10 @@ class StandingController extends Controller
                 );
             }
         }
+    }
 
+    private function prepareStandingsCollection($standingsData, $tournamentId)
+    {
         $standings = collect($standingsData)
             ->sortByDesc('points')
             ->sortByDesc('goal_difference')
@@ -94,18 +125,12 @@ class StandingController extends Controller
         $teams = Team::query()->whereIn('id', $teamIds)->get()->keyBy('id');
         $tournament = Tournament::find($tournamentId);
 
-        $standings = $standings->map(function ($row) use ($teams, $tournament) {
+        return $standings->map(function ($row) use ($teams, $tournament) {
             $standing = new Standing($row);
             $standing->setRelation('team', $teams->get($row['team_id']));
             $standing->setRelation('tournament', $tournament);
             return $standing;
         });
-
-        if ($standings->isEmpty()) {
-            return response()->json(null, 204);
-        }
-
-        return StandingResource::collection($standings);
     }
 
     /**
