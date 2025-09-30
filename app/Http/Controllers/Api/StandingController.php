@@ -20,7 +20,6 @@ class StandingController extends Controller
      */
     public function index(Request $request)
     {
-        // Obtener los partidos jugados del torneo
         $tournamentId = $request->query('tournament_id');
         $matches = Game::with(['homeTeam', 'awayTeam'])
             ->where('tournament_id', $tournamentId)
@@ -101,7 +100,7 @@ class StandingController extends Controller
             $standing->setRelation('tournament', $tournament);
             return $standing;
         });
-
+        dd($standings);
         if ($standings->isEmpty()) {
             return response()->json(null, 204);
         }
