@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\StandingResource;
-use App\Models\Game;
 use App\Models\Standing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStandingRequest;
 use App\Http\Requests\UpdateStandingRequest;
+use App\Models\Game;
 use App\Models\Team;
-use App\Models\Tournament;
 use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Match_;
 
 class StandingController extends Controller
 {
@@ -20,135 +18,171 @@ class StandingController extends Controller
      */
     public function index(Request $request)
     {
+        $tournamentId = $request->query('tournament_id');
+
+        if (!$tournamentId) {
+            return response()->json(['message' => 'tournament_id is required'], 400);
+        }
+
         try {
-            $tournamentId = $request->query('tournament_id');
-            \Log::info('Tournament ID recibido:', ['tournament_id' => $tournamentId]);
+            // Calcular standings desde los partidos
+            $calculatedStandings = $this->calculateStandingsFromMatches($tournamentId);
 
-            if (!$tournamentId) {
-                return response()->json(['message' => 'tournament_id is required'], 400);
-            }
+            // Sincronizar con la base de datos
+            $this->syncStandingsWithDatabase($calculatedStandings, $tournamentId);
 
-            $matches = $this->getMatches($tournamentId);
-            \Log::info('Partidos encontrados:', ['count' => $matches->count()]);
-
-            if ($matches->isEmpty()) {
-                return response()->json(['message' => 'No hay partidos jugados en este torneo.'], 204);
-            }
-
-            $standingsData = $this->calculateStandings($matches, $tournamentId);
-            \Log::info('Standings calculados:', ['data' => $standingsData]);
-
-            $this->syncStandingsWithDatabase($standingsData, $tournamentId);
-
-            $standings = $this->prepareStandingsCollection($standingsData, $tournamentId);
+            // Obtener standings actualizados desde la base de datos
+            $standings = Standing::with(['tournament', 'team'])
+                ->where('tournament_id', $tournamentId)
+                ->orderBy('points', 'desc')
+                ->orderBy('goal_difference', 'desc')
+                ->orderBy('goals_for', 'desc')
+                ->orderBy('team_id', 'asc')
+                ->get();
 
             if ($standings->isEmpty()) {
                 return response()->json(null, 204);
             }
-            dd($standings);
-            return StandingResource::collection($standings);
+
+            if ($request->query('all') == 'true') {
+                return StandingResource::collection($standings);
+            } else {
+                return StandingResource::collection($standings->take(14));
+            }
 
         } catch (\Exception $e) {
             \Log::error('Error en standings:', [
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'tournament_id' => $tournamentId
             ]);
 
             return response()->json(['error' => 'Error interno del servidor'], 500);
         }
     }
 
-    private function getMatches($tournamentId)
+    /**
+     * Calcular standings desde los partidos jugados
+     */
+    private function calculateStandingsFromMatches($tournamentId)
     {
-        return Game::with(['homeTeam', 'awayTeam'])
-            ->where('tournament_id', $tournamentId)
-            ->whereNotNull('home_score')
-            ->whereNotNull('away_score')
+        // Obtener todos los partidos completados del torneo
+        $matches = Game::where('tournament_id', $tournamentId)
+            ->where('status', 'completed')
+            ->whereNotNull('score_home')
+            ->whereNotNull('score_away')
+            ->with(['teamHome', 'teamAway'])
             ->get();
+
+        // Obtener todos los equipos del torneo
+        $teamIds = $matches->pluck('team_home_id')
+            ->merge($matches->pluck('team_away_id'))
+            ->unique();
+
+        $standings = [];
+
+        // Inicializar estadísticas para cada equipo
+        foreach ($teamIds as $teamId) {
+            $standings[$teamId] = [
+                'team_id' => $teamId,
+                'tournament_id' => $tournamentId,
+                'played' => 0,
+                'won' => 0,
+                'drawn' => 0,
+                'lost' => 0,
+                'goals_for' => 0,
+                'goals_against' => 0,
+                'goal_difference' => 0,
+                'points' => 0,
+            ];
+        }
+
+        // Procesar cada partido
+        foreach ($matches as $match) {
+            $homeId = $match->team_home_id;
+            $awayId = $match->team_away_id;
+            $scoreHome = $match->score_home;
+            $scoreAway = $match->score_away;
+
+            // Actualizar estadísticas del equipo local
+            $standings[$homeId]['played']++;
+            $standings[$homeId]['goals_for'] += $scoreHome;
+            $standings[$homeId]['goals_against'] += $scoreAway;
+
+            // Actualizar estadísticas del equipo visitante
+            $standings[$awayId]['played']++;
+            $standings[$awayId]['goals_for'] += $scoreAway;
+            $standings[$awayId]['goals_against'] += $scoreHome;
+
+            // Determinar resultado y asignar puntos
+            if ($scoreHome > $scoreAway) {
+                // Victoria local
+                $standings[$homeId]['won']++;
+                $standings[$homeId]['points'] += 3;
+                $standings[$awayId]['lost']++;
+            } elseif ($scoreHome < $scoreAway) {
+                // Victoria visitante
+                $standings[$awayId]['won']++;
+                $standings[$awayId]['points'] += 3;
+                $standings[$homeId]['lost']++;
+            } else {
+                // Empate
+                $standings[$homeId]['drawn']++;
+                $standings[$homeId]['points'] += 1;
+                $standings[$awayId]['drawn']++;
+                $standings[$awayId]['points'] += 1;
+            }
+        }
+
+        // Calcular diferencia de goles
+        foreach ($standings as &$standing) {
+            $standing['goal_difference'] = $standing['goals_for'] - $standing['goals_against'];
+        }
+
+        return $standings;
     }
 
-    private function calculateStandings($matches, $tournamentId)
+    /**
+     * Sincronizar standings calculados con la base de datos
+     */
+    private function syncStandingsWithDatabase($calculatedStandings, $tournamentId)
     {
-        $standingsData = [];
-        foreach ($matches as $match) {
-            foreach (['home', 'away'] as $side) {
-                $teamId = $side === 'home' ? $match->home_team_id : $match->away_team_id;
-                if (!isset($standingsData[$teamId])) {
-                    $standingsData[$teamId] = [
+        foreach ($calculatedStandings as $teamId => $calculatedData) {
+            // Buscar o crear el registro en la base de datos
+            $existingStanding = Standing::where('tournament_id', $tournamentId)
+                ->where('team_id', $teamId)
+                ->first();
+
+            if ($existingStanding) {
+                // Verificar si hay diferencias
+                $hasChanges = false;
+                $fieldsToCheck = ['played', 'won', 'drawn', 'lost', 'goals_for', 'goals_against', 'goal_difference', 'points'];
+
+                foreach ($fieldsToCheck as $field) {
+                    if ($existingStanding->$field != $calculatedData[$field]) {
+                        $hasChanges = true;
+                        break;
+                    }
+                }
+
+                // Actualizar solo si hay cambios
+                if ($hasChanges) {
+                    $existingStanding->update($calculatedData);
+                    \Log::info('Standing actualizado:', [
                         'tournament_id' => $tournamentId,
                         'team_id' => $teamId,
-                        'played' => 0,
-                        'won' => 0,
-                        'drawn' => 0,
-                        'lost' => 0,
-                        'goals_for' => 0,
-                        'goals_against' => 0,
-                        'goal_difference' => 0,
-                        'points' => 0,
-                    ];
+                        'changes' => $calculatedData
+                    ]);
                 }
-                $standingsData[$teamId]['played']++;
-
-                $gf = $side === 'home' ? $match->home_score : $match->away_score;
-                $ga = $side === 'home' ? $match->away_score : $match->home_score;
-                $standingsData[$teamId]['goals_for'] += $gf;
-                $standingsData[$teamId]['goals_against'] += $ga;
-
-                if ($gf > $ga) {
-                    $standingsData[$teamId]['won']++;
-                    $standingsData[$teamId]['points'] += 3;
-                } elseif ($gf == $ga) {
-                    $standingsData[$teamId]['drawn']++;
-                    $standingsData[$teamId]['points'] += 1;
-                } else {
-                    $standingsData[$teamId]['lost']++;
-                }
+            } else {
+                // Crear nuevo registro
+                Standing::create($calculatedData);
+                \Log::info('Standing creado:', [
+                    'tournament_id' => $tournamentId,
+                    'team_id' => $teamId,
+                    'data' => $calculatedData
+                ]);
             }
         }
-
-        foreach ($standingsData as &$row) {
-            $row['goal_difference'] = $row['goals_for'] - $row['goals_against'];
-        }
-        unset($row);
-
-        return $standingsData;
-    }
-
-    private function syncStandingsWithDatabase($standingsData, $tournamentId)
-    {
-        $dbStandings = Standing::where('tournament_id', $tournamentId)->get()->keyBy('team_id');
-        foreach ($standingsData as $teamId => $data) {
-            $db = $dbStandings->get($teamId);
-            if (!$db || array_diff_assoc($data, $db->only(array_keys($data)))) {
-                Standing::updateOrCreate(
-                    ['tournament_id' => $tournamentId, 'team_id' => $teamId],
-                    $data
-                );
-            }
-        }
-    }
-
-    private function prepareStandingsCollection($standingsData, $tournamentId)
-    {
-        $standings = collect($standingsData)
-            ->sortByDesc('points')
-            ->sortByDesc('goal_difference')
-            ->sortByDesc('goals_for')
-            ->sortByDesc('team_id')
-            ->values();
-
-        $teamIds = $standings->pluck('team_id')->all();
-        $teams = Team::query()->whereIn('id', $teamIds)->get()->keyBy('id');
-        $tournament = Tournament::find($tournamentId);
-
-        return $standings->map(function ($row) use ($teams, $tournament) {
-            $standing = new Standing($row);
-            $standing->setRelation('team', $teams->get($row['team_id']));
-            $standing->setRelation('tournament', $tournament);
-            return $standing;
-        });
     }
 
     /**
