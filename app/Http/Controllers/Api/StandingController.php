@@ -100,25 +100,12 @@ class StandingController extends Controller
             $standing->setRelation('tournament', $tournament);
             return $standing;
         });
-        dd($standings);
+
         if ($standings->isEmpty()) {
             return response()->json(null, 204);
         }
-        switch ($request->query('all')) {
-            case 'true':
-                return StandingResource::collection($standings);
-            default:
-                $perPage = 14;
-                $page = $request->query('page', 1);
-                $paginated = $standings->forPage($page, $perPage);
-                return StandingResource::collection(new \Illuminate\Pagination\LengthAwarePaginator(
-                    $paginated,
-                    $standings->count(),
-                    $perPage,
-                    $page,
-                    ['path' => $request->url(), 'query' => $request->query()]
-                ));
-        }
+
+        return StandingResource::collection($standings);
     }
 
     /**
