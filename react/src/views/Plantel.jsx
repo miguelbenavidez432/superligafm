@@ -191,11 +191,11 @@ export default function Plantel() {
                                             <td className="border px-4 py-2 bg-black bg-opacity-70">
                                                 {p.status !== 'nada' && (
                                                     <>
-                                                        {/* <button className="btn-edit mx-1" onClick={() => {
+                                                        <button className="btn-edit mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
-                                                        }}>Bloquear</button> */}
+                                                        }}>Bloquear</button>
                                                         <button className="btn-delete mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas liberar a ${p.name}`)) {
                                                                 handleReleasePlayer(p);

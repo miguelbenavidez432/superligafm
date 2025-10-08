@@ -25,13 +25,10 @@ class StandingController extends Controller
         }
 
         try {
-            // Calcular standings desde los partidos
             $calculatedStandings = $this->calculateStandingsFromMatches($tournamentId);
 
-            // Sincronizar con la base de datos
             $this->syncStandingsWithDatabase($calculatedStandings, $tournamentId);
 
-            // Obtener standings actualizados desde la base de datos
             $standings = Standing::with(['tournament', 'team'])
                 ->where('tournament_id', $tournamentId)
                 ->orderBy('points', 'desc')
@@ -65,7 +62,6 @@ class StandingController extends Controller
      */
     private function calculateStandingsFromMatches($tournamentId)
     {
-        // Obtener todos los partidos completados del torneo
         $matches = Game::where('tournament_id', $tournamentId)
             ->where('status', 'completed')
             ->whereNotNull('score_home')
@@ -73,14 +69,12 @@ class StandingController extends Controller
             ->with(['teamHome', 'teamAway'])
             ->get();
 
-        // Obtener todos los equipos del torneo
         $teamIds = $matches->pluck('team_home_id')
             ->merge($matches->pluck('team_away_id'))
             ->unique();
 
         $standings = [];
 
-        // Inicializar estadísticas para cada equipo
         foreach ($teamIds as $teamId) {
             $standings[$teamId] = [
                 'team_id' => $teamId,
@@ -96,36 +90,29 @@ class StandingController extends Controller
             ];
         }
 
-        // Procesar cada partido
         foreach ($matches as $match) {
             $homeId = $match->team_home_id;
             $awayId = $match->team_away_id;
             $scoreHome = $match->score_home;
             $scoreAway = $match->score_away;
 
-            // Actualizar estadísticas del equipo local
             $standings[$homeId]['played']++;
             $standings[$homeId]['goals_for'] += $scoreHome;
             $standings[$homeId]['goals_against'] += $scoreAway;
 
-            // Actualizar estadísticas del equipo visitante
             $standings[$awayId]['played']++;
             $standings[$awayId]['goals_for'] += $scoreAway;
             $standings[$awayId]['goals_against'] += $scoreHome;
 
-            // Determinar resultado y asignar puntos
             if ($scoreHome > $scoreAway) {
-                // Victoria local
                 $standings[$homeId]['won']++;
                 $standings[$homeId]['points'] += 3;
                 $standings[$awayId]['lost']++;
             } elseif ($scoreHome < $scoreAway) {
-                // Victoria visitante
                 $standings[$awayId]['won']++;
                 $standings[$awayId]['points'] += 3;
                 $standings[$homeId]['lost']++;
             } else {
-                // Empate
                 $standings[$homeId]['drawn']++;
                 $standings[$homeId]['points'] += 1;
                 $standings[$awayId]['drawn']++;
@@ -133,7 +120,6 @@ class StandingController extends Controller
             }
         }
 
-        // Calcular diferencia de goles
         foreach ($standings as &$standing) {
             $standing['goal_difference'] = $standing['goals_for'] - $standing['goals_against'];
         }
@@ -147,13 +133,13 @@ class StandingController extends Controller
     private function syncStandingsWithDatabase($calculatedStandings, $tournamentId)
     {
         foreach ($calculatedStandings as $teamId => $calculatedData) {
-            // Buscar o crear el registro en la base de datos
+
             $existingStanding = Standing::where('tournament_id', $tournamentId)
                 ->where('team_id', $teamId)
                 ->first();
 
             if ($existingStanding) {
-                // Verificar si hay diferencias
+
                 $hasChanges = false;
                 $fieldsToCheck = ['played', 'won', 'drawn', 'lost', 'goals_for', 'goals_against', 'goal_difference', 'points'];
 
@@ -164,7 +150,6 @@ class StandingController extends Controller
                     }
                 }
 
-                // Actualizar solo si hay cambios
                 if ($hasChanges) {
                     $existingStanding->update($calculatedData);
                     \Log::info('Standing actualizado:', [
@@ -174,7 +159,6 @@ class StandingController extends Controller
                     ]);
                 }
             } else {
-                // Crear nuevo registro
                 Standing::create($calculatedData);
                 \Log::info('Standing creado:', [
                     'tournament_id' => $tournamentId,

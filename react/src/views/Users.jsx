@@ -21,11 +21,10 @@ export default function Users() {
     const [message, setMessage] = useState(null);
 
     useEffect(() => {
-        // Verifica si hay un mensaje en el query de la URL
         const urlParams = new URLSearchParams(window.location.search);
         const successMessage = urlParams.get('message');
         if (successMessage) {
-            setMessage(successMessage); // Establecer el mensaje de éxito
+            setMessage(successMessage);
         }
     }, []);
 
@@ -79,65 +78,113 @@ export default function Users() {
     };
 
     return (
-        <div className="p-6">
-         {message && <div className="alert alert-success">{message}</div>}
-            <div className="flex justify-between items-center mb-4 mx-8">
-                <h1 className="text-2xl font-bold">USUARIOS</h1>
-                <Link to='/users/new' className="btn-add bg-blue-500 text-white px-4 py-2 rounded">Nuevo Usuario</Link>
+        <>
+            {/* Header estilo Teams.jsx */}
+            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                <div className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">
+                    USUARIOS
+                </div>
+                {user.rol === 'Admin' && (
+                    <Link to='/users/new' className="bg-green-600 hover:bg-green-800 p-3 rounded text-white">
+                        Nuevo Usuario
+                    </Link>
+                )}
             </div>
-            <div className="mb-4">
+
+            {/* Mensaje de éxito */}
+            {message &&
+                <div className="bg-green-600 bg-opacity-70 p-3 rounded-lg text-white mb-4">
+                    {message}
+                </div>
+            }
+
+            {/* Paginación */}
+            <div className="mb-4 flex gap-2">
                 {currentPage > 1 && (
-                    <button className="btn-add bg-blue-500 text-white px-4 py-2 rounded mr-2" onClick={handlePrevPage}>Página anterior</button>
+                    <button
+                        className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white"
+                        onClick={handlePrevPage}
+                    >
+                        Página anterior
+                    </button>
                 )}
                 {currentPage < totalPages && (
-                    <button className='btn-add bg-blue-500 text-white px-4 py-2 rounded' onClick={handleNextPage}>Página siguiente</button>
+                    <button
+                        className='bg-blue-600 hover:bg-blue-800 p-3 rounded text-white'
+                        onClick={handleNextPage}
+                    >
+                        Página siguiente
+                    </button>
                 )}
             </div>
-            <div className="card animated fadeInDown bg-white shadow-md rounded p-4">
-                <table className="min-w-fit bg-white">
+
+            {/* Tabla con estilo Teams.jsx */}
+            <div>
+                <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 my-2">
                     <thead>
                         <tr>
-                            <th className="py-2 px-4 border-b">Nombre</th>
-                            <th className="py-2 px-4 border-b">Rol</th>
-                            <th className="py-2 px-4 border-b">Presupuesto</th>
-                            <th className="py-2 px-4 border-b">Acciones</th>
+                            <th className="border px-4 py-2 bg-black text-white">Nombre</th>
+                            <th className="border px-4 py-2 bg-black text-white">Rol</th>
+                            <th className="border px-4 py-2 bg-black text-white">Presupuesto</th>
+                            <th className="border px-4 py-2 bg-black text-white">Acciones</th>
                         </tr>
                     </thead>
                     {loading &&
                         <tbody>
                             <tr>
-                                <td colSpan="5" className="text-center py-4">CARGANDO...</td>
+                                <td colSpan="4" className="border px-4 py-2 text-center">
+                                    CARGANDO...
+                                </td>
                             </tr>
                         </tbody>
                     }
                     {!loading &&
                         <tbody>
-                            {
-                                users.map(u => (
-                                    <tr key={u.id}>
-                                        <td className="py-2 px-4 border-b">{u.name}</td>
-                                        <td className="py-2 px-4 border-b">{u.rol}</td>
-                                        <td className="py-2 px-4 border-b">{u.profits}</td>
-                                        <td className="py-2 px-4 border-b">
-                                            {user.rol === 'Admin' ? (
-                                                <>
-                                                    <Link to={'/users/' + u.id} className="btn-edit bg-green-500 text-white px-4 py-2 rounded mr-2">Editar</Link>
-                                                    <button onClick={e => onDelete(u)} className="btn-delete bg-red-500 text-white px-4 py-2 rounded">Borrar</button>
-                                                </>
-                                            ) : user.id === u.id && (
-                                                <Link to={'/users/' + u.id} className="btn-edit bg-green-500 text-white px-4 py-2 rounded">Editar</Link>
-                                            )}
+                            {users.map(u => (
+                                <tr key={u.id}>
+                                    <td className="border px-4 py-2">{u.name}</td>
+                                    <td className="border px-4 py-2">{u.rol}</td>
+                                    <td className="border px-4 py-2">{u.profits}</td>
+                                    <td className="border px-4 py-2">
+                                        {user.rol === 'Admin' ? (
+                                            <>
+                                                <Link
+                                                    to={'/users/' + u.id}
+                                                    className="bg-green-600 hover:bg-green-800 p-2 rounded text-white mr-2"
+                                                >
+                                                    Editar
+                                                </Link>
+                                                <button
+                                                    onClick={e => onDelete(u)}
+                                                    className="bg-red-600 hover:bg-red-800 p-2 rounded text-white"
+                                                >
+                                                    Borrar
+                                                </button>
+                                            </>
+                                        ) : user.id === u.id && (
+                                            <Link
+                                                to={'/users/' + u.id}
+                                                className="bg-green-600 hover:bg-green-800 p-2 rounded text-white"
+                                            >
+                                                Editar
+                                            </Link>
+                                        )}
 
-                                            {!u.discord_id && (
-                                                <button onClick={getDiscordAuthorizeUrl} className="btn-add bg-blue-500 text-white px-4 py-2 rounded ml-2">Vincula tu cuenta de Discord</button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
+                                        {user.id === u.id && u.discord_user === null && (
+                                            <button
+                                                onClick={getDiscordAuthorizeUrl}
+                                                className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white ml-2"
+                                            >
+                                                Vincula Discord
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     }
                 </table>
             </div>
-        </div>
+        </>
     )
 }
