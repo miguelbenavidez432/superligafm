@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         return UserResource::collection(
-            User::query()->orderBy('id', 'asc')->paginate(200)
+            User::with('discordUser')->orderBy('id', 'asc')->paginate(200)
         );
     }
 

@@ -197,16 +197,18 @@ class TransferController extends Controller
                 'buy_by' => $transfer['buy_by'],
                 'sold_by' => $transfer['sold_by'],
             ];
-            $players = Player::whereIn('name', $transferredPlayers)->get();
-            $playersToMove = Player::where('name', $player)->get();
+            //$players = Player::whereIn('name', $transferredPlayers)->get();
+            $playersToMove = Player::where('name', $player)
+                ->whereIn('id_team', [$transfer->id_team_from, $transfer->id_team_to])
+                ->get();
 
-            foreach ($players as $player) {
-                if ($player->id_team == $transfer->id_team_from) {
-                    $player->id_team = $transfer->id_team_to;
-                    $player->status = 'bloqueado';
-                    $player->save();
-                }
-            }
+            // foreach ($players as $player) {
+            //     if ($player->id_team == $transfer->id_team_from) {
+            //         $player->id_team = $transfer->id_team_to;
+            //         $player->status = 'bloqueado';
+            //         $player->save();
+            //     }
+            // }
 
             foreach ($playersToMove as $playerToMove) {
                 if ($playerToMove->id_team == $transfer->id_team_from) {
@@ -277,6 +279,4 @@ class TransferController extends Controller
             return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
     }
-
-
 }

@@ -14,7 +14,6 @@ const CreatePrizes = () => {
         position: '',
         value: '',
     });
-    //const { id } = useParams();
 
     useEffect(() => {
         fetchPrizes();

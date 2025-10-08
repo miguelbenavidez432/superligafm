@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\AmountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BetController;
 use App\Http\Controllers\Api\ChatbotController;
@@ -100,7 +99,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 });
-Route::post('/ocr', [OcrController::class, 'process']);
+Route::post('/ocr/process', [OcrController::class, 'processImage']);
+Route::post('/ocr/process-multiple', [OcrController::class, 'processMultipleImages']);
 Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
 Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
 Route::post('/signup', [AuthController::class, 'signup']);

@@ -215,10 +215,6 @@ export default function Players() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchName, setSearchName] = useState('');
-    const [ageRange, setAgeRange] = useState([0, 100]);
-    const [selectedTeam, setSelectedTeam] = useState('');
-    const [sortField, setSortField] = useState('');
-    const [sortOrder, setSortOrder] = useState('asc');
 
     useEffect(() => {
         getPlayers();
@@ -238,19 +234,6 @@ export default function Players() {
             });
     };
 
-    const getPlayersName = (name) => {
-        setLoading(true);
-        axiosClient.get(`/playername?name=${name}`)
-            .then(({ data }) => {
-                setLoading(false);
-                setPlayers(data.data);
-            })
-            .catch(() => {
-                setLoading(false);
-                setNotification('Error al buscar jugadores por nombre');
-            });
-    };
-
     const getTeam = () => {
         setLoading(true);
         axiosClient.get('/teams')
@@ -263,6 +246,18 @@ export default function Players() {
             });
     };
 
+    const onDelete = (p) => {
+        if (!window.confirm('Estás seguro que quieres borrar este jugador??')) {
+            return
+        }
+
+        axiosClient.delete(`/players/${p.id}`)
+            .then(() => {
+                setNotification('Jugador eliminado satisfactoriamente')
+                getPlayers()
+            })
+    }
+
     const filterPlayersByTeamDivision = async () => {
         setLoading(true);
         await axiosClient.get('/players/filter-by-division')
@@ -273,6 +268,19 @@ export default function Players() {
             .catch((error) => {
                 setLoading(false);
                 setNotification('Error al filtrar jugadores por equipo');
+            });
+    };
+
+    const getPlayersName = (name) => {
+        setLoading(true);
+        axiosClient.get(`/playername?name=${name}`)
+            .then(({ data }) => {
+                setLoading(false);
+                setPlayers(data.data);
+            })
+            .catch(() => {
+                setLoading(false);
+                setNotification('Error al buscar jugadores por nombre');
             });
     };
 
@@ -294,129 +302,146 @@ export default function Players() {
         getPlayersName(searchName);
     };
 
-    const handleAgeRangeChange = (e) => {
-        const { name, value } = e.target;
-        setAgeRange((prevRange) => ({
-            ...prevRange,
-            [name]: value
-        }));
-    };
-
-    const handleTeamChange = (e) => {
-        setSelectedTeam(e.target.value);
-    };
-
-    const handleSortChange = (field) => {
-        const order = sortOrder === 'asc' ? 'desc' : 'asc';
-        setSortField(field);
-        setSortOrder(order);
-    };
-
     return (
-        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', color: '#333' }}>
-            <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Jugadores</h1>
-                <Link to='/players/new' className="btn-add">Agregar nuevo jugador</Link>
+        <>
+            {/* Header estilo Teams.jsx */}
+            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                <div className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">
+                    Jugadores
+                </div>
+                {user.rol === 'Admin' && (
+                    <Link to='/players/new' className="bg-green-600 hover:bg-green-800 p-3 rounded text-white">
+                        Agregar Jugador
+                    </Link>
+                )}
             </div>
-            <div style={{ marginBottom: '20px' }}>
-                <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '10px' }}>
+
+            {/* Buscador */}
+            <div className="bg-black bg-opacity-70 p-4 rounded-lg mb-4">
+                <form onSubmit={handleSearchSubmit} className="flex gap-3">
                     <input
                         type="text"
                         value={searchName}
                         onChange={handleSearchChange}
                         placeholder="Buscar por nombre"
-                        style={{
-                            padding: '10px',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
-                            width: '200px'
-                        }}
+                        className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
                     />
-                    <button className="btn-add" type="submit">Buscar</button>
+                    <button className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white" type="submit">
+                        Buscar
+                    </button>
                 </form>
             </div>
-            <div style={{ marginBottom: '20px' }}>
-                <button className="btn-add" onClick={filterPlayersByTeamDivision}>Filtrar por equipos fuera de Primera y Segunda</button>
+
+            {/* Filtros */}
+            <div className="mb-4 flex gap-2 flex-wrap">
+                <button
+                    className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white"
+                    onClick={filterPlayersByTeamDivision}
+                >
+                    Filtrar equipos fuera de Primera/Segunda
+                </button>
             </div>
-            <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+
+            {/* Paginación */}
+            <div className="mb-4 flex gap-2">
                 {currentPage > 1 && (
-                    <button className="btn-add" onClick={handlePrevPage}>Página anterior</button>
+                    <button
+                        className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white"
+                        onClick={handlePrevPage}
+                    >
+                        Página anterior
+                    </button>
                 )}
                 {currentPage < totalPages && (
-                    <button className='btn-add' onClick={handleNextPage}>Página siguiente</button>
+                    <button
+                        className='bg-blue-600 hover:bg-blue-800 p-3 rounded text-white'
+                        onClick={handleNextPage}
+                    >
+                        Página siguiente
+                    </button>
                 )}
             </div>
-            <div className="card animated fadeInDown" style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+
+            {/* Tabla con estilo Teams.jsx */}
+            <div>
+                <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 my-2">
                     <thead>
                         <tr>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>NOMBRE</th>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>EDAD</th>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>CA</th>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>PA</th>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>EQUIPO</th>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>VALOR</th>
-                            <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>ESTADO</th>
-                            {
-                                user.rol === 'Admin' &&
-                                <th style={{ borderBottom: '2px solid #ccc', padding: '10px', textAlign: 'left' }}>ACCIONES</th>
-                            }
+                            <th className="border px-4 py-2 bg-black text-white">NOMBRE</th>
+                            <th className="border px-4 py-2 bg-black text-white">EDAD</th>
+                            <th className="border px-4 py-2 bg-black text-white">CA</th>
+                            <th className="border px-4 py-2 bg-black text-white">PA</th>
+                            <th className="border px-4 py-2 bg-black text-white">EQUIPO</th>
+                            <th className="border px-4 py-2 bg-black text-white">VALOR</th>
+                            <th className="border px-4 py-2 bg-black text-white">ESTADO</th>
+                            {user.rol === 'Admin' && (
+                                <th className="border px-4 py-2 bg-black text-white">ACCIONES</th>
+                            )}
                         </tr>
                     </thead>
                     {loading &&
                         <tbody>
                             <tr>
-                                <td colSpan="10" className="text-center" style={{ padding: '20px', textAlign: 'center' }}>
+                                <td colSpan="8" className="border px-4 py-2 text-center">
                                     CARGANDO...
                                 </td>
                             </tr>
                         </tbody>
                     }
-                    {
-                        !loading &&
+                    {!loading &&
                         <tbody>
-                            {
-                                players.map(p => {
-                                    return (
-                                        <tr key={p.id} style={{ borderBottom: '1px solid #ccc' }}>
-                                            <td style={{ padding: '10px' }}>{p.name}</td>
-                                            <td style={{ padding: '10px' }}>{p.age}</td>
-                                            <td style={{ padding: '10px' }}>{p.ca}</td>
-                                            <td style={{ padding: '10px' }}>{p.pa}</td>
-                                            <td style={{ padding: '10px' }}>{p.id_team?.name}</td>
-                                            <td style={{ padding: '10px' }}>{p.value}</td>
-                                            <td style={{ padding: '10px' }}>{p.status}</td>
-                                            {
-                                                user.rol === 'Admin' ? (
-                                                    <td style={{ padding: '10px' }}>
-                                                        <Link className="btn-edit" to={'/players/' + p.id}>Editar</Link>
-                                                        &nbsp;
-                                                        <button onClick={() => onDelete(p)} className="btn-delete">Borrar</button>
-                                                        &nbsp;
-                                                        {(p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
-                                                            <>
-                                                                <Link className="btn-edit" to={'/subastas/' + p.id}>Ofertar</Link>
-                                                                &nbsp;
-                                                            </>
-                                                        )}
-                                                    </td>
-                                                ) : (
-                                                    (p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
-                                                        <td style={{ padding: '10px' }}>
-                                                            <Link className="btn-edit" to={'/subastas/' + p.id}>Ofertar</Link>
-                                                            &nbsp;
-                                                        </td>
-                                                    )
-                                                )
-                                            }
-                                        </tr>
-                                    )
-                                })
-                            }
+                            {players.map(p => (
+                                <tr key={p.id}>
+                                    <td className="border px-4 py-2">{p.name}</td>
+                                    <td className="border px-4 py-2">{p.age}</td>
+                                    <td className="border px-4 py-2">{p.ca}</td>
+                                    <td className="border px-4 py-2">{p.pa}</td>
+                                    <td className="border px-4 py-2">{p.id_team?.name}</td>
+                                    <td className="border px-4 py-2">{p.value}</td>
+                                    <td className="border px-4 py-2">{p.status}</td>
+                                    {user.rol === 'Admin' ? (
+                                        <td className="border px-4 py-2">
+                                            <div className="flex gap-2 flex-wrap">
+                                                <Link
+                                                    className="bg-green-600 hover:bg-green-800 p-2 rounded text-white text-sm"
+                                                    to={'/players/' + p.id}
+                                                >
+                                                    Editar
+                                                </Link>
+                                                <button
+                                                    onClick={() => onDelete(p)}
+                                                    className="bg-red-600 hover:bg-red-800 p-2 rounded text-white text-sm"
+                                                >
+                                                    Borrar
+                                                </button>
+                                                {(p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
+                                                    <Link
+                                                        className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
+                                                        to={'/subastas/' + p.id}
+                                                    >
+                                                        Ofertar
+                                                    </Link>
+                                                )}
+                                            </div>
+                                        </td>
+                                    ) : (
+                                        (p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
+                                            <td className="border px-4 py-2">
+                                                <Link
+                                                    className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
+                                                    to={'/subastas/' + p.id}
+                                                >
+                                                    Ofertar
+                                                </Link>
+                                            </td>
+                                        )
+                                    )}
+                                </tr>
+                            ))}
                         </tbody>
                     }
                 </table>
             </div>
-        </div>
+        </>
     );
 }

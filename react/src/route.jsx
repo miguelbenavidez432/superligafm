@@ -238,7 +238,7 @@ const router = createBrowserRouter([
                 element: <CreatePrizes />
             },
             {
-                path: '/cargar-imagenes',
+                path: '/cargar-imagenes/:id',
                 element: <UploadMatch />
             }
         ]

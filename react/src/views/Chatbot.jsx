@@ -15,7 +15,6 @@ const Chatbot = () => {
 
         try {
             const response = await axiosClient.post('/chatbot', {
-                model: "gpt-3.5-turbo",
                 content: input
             });
 
