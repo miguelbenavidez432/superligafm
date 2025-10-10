@@ -154,12 +154,12 @@ export default function TransferForm() {
     return (
         <div className="p-4 max-w-4xl mx-auto">
             <div className="mb-4">
-                <label htmlFor="equipo" className="block text-sm font-medium text-gray-700">Seleccionar equipo:</label>
+                <label htmlFor="equipo" className="block text-sm font-medium text-black">Seleccionar equipo:</label>
                 <select
                     id="equipo"
                     value={selectedEquipo}
                     onChange={handleEquipoChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md bg-slate-900 text-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 >
                     <option key="0" value="">Seleccione un equipo</option>
                     {teams.map((equipo, index) => (
@@ -171,12 +171,12 @@ export default function TransferForm() {
             {selectedEquipo && (
                 <div className="space-y-4">
                     <div>
-                        <label htmlFor="equipo" className="block text-sm font-medium text-gray-700">Seleccionar equipo a traspasar:</label>
+                        <label htmlFor="equipo" className="block text-sm font-medium text-black">Seleccionar equipo a traspasar:</label>
                         <select
                             id="equipo"
                             value={teams.name}
                             onChange={handleIdEquipoChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full rounded-md bg-slate-900 text-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         >
                             <option key="0" value="">Seleccione un equipo</option>
                             {teams.map((equipo, index) => (
@@ -185,12 +185,12 @@ export default function TransferForm() {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="jugador" className="block text-sm font-medium text-gray-700">Seleccionar jugador:</label>
+                        <label htmlFor="jugador" className="block text-sm font-medium text-black">Seleccionar jugador:</label>
                         <select
                             id="jugador"
                             value={selectedJugador}
                             onChange={handleJugadorChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full rounded-md bg-slate-900 text-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         >
                             <option value="">Seleccione un jugador</option>
                             {players
@@ -201,20 +201,20 @@ export default function TransferForm() {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="transferValue" className="block text-sm font-medium text-gray-700">Valor de la transferencia:</label>
+                        <label htmlFor="transferValue" className="block text-sm font-medium text-black">Valor de la transferencia:</label>
                         <input
                             type="number"
                             value={transfer.budget}
                             onChange={(e) => setTransfer({ ...transfer, budget: parseInt(e.target.value) })}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full rounded-md bg-slate-900 text-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                     </div>
                     <div>
-                        <label htmlFor="buy_by" className="block text-sm font-medium text-gray-700">Seleccionar comprador:</label>
+                        <label htmlFor="buy_by" className="block text-sm font-medium text-black">Seleccionar comprador:</label>
                         <select
                             value={transfer.buy_by}
                             onChange={handleManagerChangeBuy}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full rounded-md bg-slate-900 text-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         >
                             <option value="">Seleccione comprador</option>
                             {teams.map((equipo, index) => equipo.user ? (
@@ -223,11 +223,11 @@ export default function TransferForm() {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="sold_by" className="block text-sm font-medium text-gray-700">Seleccionar vendedor:</label>
+                        <label htmlFor="sold_by" className="block text-sm font-medium text-black">Seleccionar vendedor:</label>
                         <select
                             value={transfer.sold_by}
                             onChange={handleManagerChangeSold}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full rounded-md bg-slate-900 text-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         >
                             <option value="">Seleccione vendedor</option>
                             {teams.map((equipo, index) => equipo.user ? (

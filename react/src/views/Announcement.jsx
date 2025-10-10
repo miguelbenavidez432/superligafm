@@ -4,9 +4,12 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../axios"
 import { useStateContext } from "../context/ContextProvider";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Announcement() {
 
+    const navigate = useNavigate();
+    const { playerId } = useParams();
     const [team, setTeam] = useState([]);
     const [players, setPlayers] = useState([]);
     const [filteredTeam, setFilteredTeam] = useState([]);
@@ -30,6 +33,7 @@ export default function Announcement() {
 
     useEffect(() => {
         getTeam();
+        getPlayers();
     }, []);
 
     useEffect(() => {
@@ -38,6 +42,36 @@ export default function Announcement() {
             filterPlayersByUser();
         }
     }, [selectedEquipo]);
+
+    useEffect(() => {
+        if (playerId && players.length > 0) {
+            preloadPlayerData(playerId);
+        }
+    }, [playerId, players]);
+
+    const preloadPlayerData = (playerIdParam) => {
+        const player = players.find(p => p.id === parseInt(playerIdParam));
+        if (player && player.id_team) {
+            setSelectedEquipo(player.id_team.id);
+            setInputValue(player.value);
+            setPlayerTransfered({
+                created_by: user.id,
+                id_player: player.id,
+                name: player.name,
+                id_team: player.id_team ? player.id_team.id : '',
+                value: player.value,
+                other_players: [],
+                extra_value: 0,
+                total_value: player.value,
+                id_season: 59,
+            });
+
+            if (player.id_team) {
+                const filteredPlayers = players.filter(p => p.id_team && p.id_team.id === player.id_team.id);
+                setTeamPlayers(player.id_team?.id);
+            }
+        }
+    };
 
     const getTeam = () => {
         axiosClient.get('/teams')
@@ -51,6 +85,13 @@ export default function Announcement() {
                 setErrors("Error al obtener los equipos.");
             });
     };
+
+    const getPlayers = () => {
+        axiosClient.get('/players')
+            .then(({ data })=>  {
+                setPlayers(data.data);
+            })
+    }
 
     const handleIdEquipoChange = (event) => {
         const equipoId = parseInt(event.target.value);
@@ -162,6 +203,7 @@ export default function Announcement() {
                     id_season: 59
                 });
                 setNotification('Ejecución de cláusula enviada');
+                navigate('/offers');
             })
             .catch(error => {
                 setErrors(error.response?.data.errors || "Error al enviar la cláusula de rescisión.");
@@ -171,14 +213,27 @@ export default function Announcement() {
     return (
         <>
             <div className="flex justify-between items-center mb-4">
-                <div className="text-lg font-bold">Ejecución de cláusula de rescisión</div>
+                <div className="text-lg font-bold bg-slate-900 text-white rounded-md p-2">Ejecución de cláusula de rescisión</div>
             </div>
-            <div className="card animated fadeInDown p-4 bg-white shadow-md rounded-md">
+            {playerId && (
+                <div className="mb-4 p-4 bg-blue-800 border-l-4 border-blue-400 rounded-md">
+                    <p className="text-white font-medium">
+                        🎯 Jugador seleccionado: {playerTransfered ? playerTransfered.name : 'Cargando...'}
+                    </p>
+                    {playerTransfered && (
+                        <p className=" bg-blue-800 text-white text-sm mt-1">
+                            Equipo: {playerTransfered.id_team ? playerTransfered.id_team.name : 'Sin equipo'} |
+                            Valor mínimo: {playerTransfered.value}
+                        </p>
+                    )}
+                </div>
+            )}
+            <div className="bg-slate-900 shadow-md rounded-md">
                 <select
                     id="equipo"
                     value={selectedEquipo}
                     onChange={handleIdEquipoChange}
-                    className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                    className="w-4/5 mx-2 p-2 border bg-gray-800 text-white border-gray-300 rounded-md my-4"
                 >
                     <option value="">Selecciona un equipo</option>
                     {team.map((t, index) => (
@@ -189,12 +244,13 @@ export default function Announcement() {
                 {selectedEquipo && (
                     <form onSubmit={onSubmit}>
                         <div className="mb-4">
-                            <label htmlFor="jugador" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label htmlFor="jugador" className="block text-sm font-medium text-white mx-2 mb-2">
                                 Seleccionar jugador:
                             </label>
                             <select
+                                value={playerTransfered?.id_player || ''}
                                 onChange={handlePlayerSelect}
-                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                                className="w-4/5 mx-2 p-2 border bg-gray-800 text-white border-gray-300 rounded-md mb-4"
                             >
                                 <option value="">Seleccione un jugador</option>
                                 {players
@@ -216,15 +272,15 @@ export default function Announcement() {
                                 step="any"
                                 onChange={handleInputChange}
                                 value={playerTransfered.value}
-                                className="w-full"
+                                className="w-4/5 mx-2"
                             />
-                            <div className="mt-2 text-sm">
+                            <div className="mt-2 text-sm text-white mx-2">
                                 <strong>Valor pagado para ejecutar la cláusula de rescisión:</strong> {playerTransfered.value}
                             </div>
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+                            className="w-4/5 mx-2 bg-blue-700 text-white py-2 px-4 rounded-md hover:bg-blue-900 transition"
                         >
                             Confirmar ejecución de cláusula
                         </button>
@@ -232,7 +288,7 @@ export default function Announcement() {
                 )}
 
                 {selectedEquipo && (
-                    <div className="mt-4 text-sm">
+                    <div className="mt-4 mb-4 text-sm text-white mx-2">
                         <div>Oferta a realizar por: <strong>{playerTransfered.name}</strong></div>
                         <div>Valor extra: <strong>{playerTransfered.extra_value}</strong></div>
                         <div>Oferta total: <strong>{playerTransfered.total_value}</strong></div>

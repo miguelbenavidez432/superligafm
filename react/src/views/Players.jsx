@@ -304,7 +304,6 @@ export default function Players() {
 
     return (
         <>
-            {/* Header estilo Teams.jsx */}
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
                 <div className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">
                     Jugadores
@@ -414,14 +413,19 @@ export default function Players() {
                                                 >
                                                     Borrar
                                                 </button>
-                                                {(p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
+                                                {p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda' ?
                                                     <Link
                                                         className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                        to={'/subastas/' + p.id}
+                                                        to={'/crear_subasta/' + p.id}
                                                     >
                                                         Ofertar
                                                     </Link>
-                                                )}
+                                                 : <Link
+                                                    className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
+                                                    to={'/clausula_rescision/' + p.id}
+                                                >
+                                                    Ofertar
+                                                </Link>}
                                             </div>
                                         </td>
                                     ) : (
@@ -429,7 +433,7 @@ export default function Players() {
                                             <td className="border px-4 py-2">
                                                 <Link
                                                     className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                    to={'/subastas/' + p.id}
+                                                    to={'/crear_subasta/' + p.id}
                                                 >
                                                     Ofertar
                                                 </Link>

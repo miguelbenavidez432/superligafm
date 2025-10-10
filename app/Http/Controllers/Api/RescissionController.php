@@ -95,7 +95,6 @@ class RescissionController extends Controller
             ->useSecret($webhookSecret)
             ->dispatch();
 
-        // Devolver la respuesta
         return response(new RescissionResource($offer), 201);
     }
 

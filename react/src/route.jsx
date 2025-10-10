@@ -108,9 +108,17 @@ const router = createBrowserRouter([
             {
                 path: '/clausula_rescision',
                 element: (
-                    //<ProtectedComponent>
+                    <ProtectedComponent>
                     <Announcement />
-                    //</ProtectedComponent>
+                    </ProtectedComponent>
+                )
+            },
+            {
+                path: '/clausula_rescision/:playerId',
+                element: (
+                    <ProtectedComponent>
+                    <Announcement />
+                    </ProtectedComponent>
                 )
             },
             {
@@ -160,9 +168,17 @@ const router = createBrowserRouter([
             {
                 path: '/crear_subasta',
                 element: (
-                   //<DelayedProtectedComponent delay={4} >
+                    <DelayedProtectedComponent delay={4} >
                     <Auctions />
-                    //</DelayedProtectedComponent>
+                    </DelayedProtectedComponent>
+                )
+            },
+            {
+                path: '/crear_subasta/:playerId',
+                element: (
+                    <DelayedProtectedComponent delay={4} >
+                    <Auctions />
+                    </DelayedProtectedComponent>
                 )
             },
             {

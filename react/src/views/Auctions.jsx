@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 //import Tempo from "../path/to/formkit_tempo";
 
 const Auctions = () => {
@@ -11,6 +11,7 @@ const Auctions = () => {
     const navigate = useNavigate();
     const [errors, setErrors] = useState(null);
     const [players, setPlayers] = useState([]);
+    const { playerId } = useParams();
     const [leagueTeams, setLeagueTeams] = useState([]);
     const [otherTeams, setOtherTeams] = useState([]);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -38,6 +39,41 @@ const Auctions = () => {
             }
         }
     }, [selectedTeam]);
+
+    useEffect(() => {
+        if (playerId && players.length > 0) {
+            preloadPlayerData(playerId);
+        }
+    }, [playerId, players]);
+
+     const preloadPlayerData = (playerIdParam) => {
+        const player = players.find(p => p.id === parseInt(playerIdParam));
+        if (player) {
+            setSelectedPlayer(player);
+            if (player.id_team) {
+                setSelectedTeam(player.id_team.id);
+                const filteredPlayers = players.filter(p =>
+                    p.id_team && p.id_team.id === player.id_team.id
+                );
+                setTeamPlayers(filteredPlayers);
+            }
+            setAuctionData({
+                ...auctionData,
+                id_player: player.id,
+                amount: player.value,
+                id_team: player.id_team ? player.id_team.id : '',
+                auctioned_by: user.id,
+                created_by: user.id,
+                active: 'yes',
+                id_season: 59
+            });
+
+            if (player.id_team) {
+                const filteredPlayers = players.filter(p => p.id_team && p.id_team.id === player.id_team.id);
+                setTeamPlayers(filteredPlayers);
+            }
+        }
+    };
 
     const getTeam = () => {
         axiosClient.get('/teams?all=true')
@@ -134,16 +170,30 @@ const Auctions = () => {
     // };
 
     return (
-        <div className="card animated fadeInDown p-6 bg-white shadow-md rounded-md">
+        <div className=" p-6 bg-gray-900 shadow-md rounded-md">
+            {playerId && (
+                <div className="mb-4 p-4 bg-blue-800 border-l-4 border-blue-400 rounded-md">
+                    <p className="text-white font-medium">
+                        🎯 Jugador seleccionado: {selectedPlayer ? selectedPlayer.name : 'Cargando...'}
+                    </p>
+                    {selectedPlayer && (
+                        <p className="text-white text-sm mt-1">
+                            Equipo: {selectedPlayer.id_team ? selectedPlayer.id_team.name : 'Sin equipo'} |
+                            Valor: {selectedPlayer.value}
+                        </p>
+                    )}
+                </div>
+            )}
             <form onSubmit={handleAuctionSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="equipo" className="block text-sm font-medium text-gray-700">Seleccionar equipo:</label>
+                    <label htmlFor="equipo" className="block text-sm font-medium text-white">Seleccionar equipo:</label>
                     <select
                         id="equipo"
                         onChange={e => setSelectedTeam(e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        value={selectedTeam}
+                        className="bg-gray-800 text-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     >
-                        <option value="">Seleccione un equipo del jugador</option>
+                        <option value="">Seleccione el equipo del jugador a ofertar</option>
                         {
                             otherTeams.map(equipo => (
                                 <option key={equipo.id} value={equipo.id}>{equipo.name}</option>
@@ -157,7 +207,8 @@ const Auctions = () => {
                     <select
                         id="jugador"
                         onChange={handlePlayerChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        value={selectedPlayer?.id || ''}
+                        className="bg-gray-800 text-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     >
                         <option value="">Seleccione el jugador subastado</option>
                         {
@@ -169,8 +220,8 @@ const Auctions = () => {
                 </div>
 
                 {selectedPlayer && (
-                    <div className="bg-gray-50 p-4 rounded-md shadow-inner">
-                        <p className="text-sm text-gray-700">Valor inicial de subasta: <span className="font-semibold">{selectedPlayer.value}</span></p>
+                    <div className="bg-gray-800 p-4 rounded-md shadow-inner">
+                        <p className="text-sm text-white">Valor inicial de subasta: <span className="font-semibold">{selectedPlayer.value}</span></p>
                         <input
                             type="number"
                             min={selectedPlayer.value / 2}
