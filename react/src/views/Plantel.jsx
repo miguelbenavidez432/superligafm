@@ -142,7 +142,7 @@ export default function Plantel() {
     return (
         <>
             {errors &&
-                <div className="alert">
+                <div className="alert bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                     <p>
                         {typeof errors === 'string'
                             ? errors
@@ -150,14 +150,16 @@ export default function Plantel() {
                     </p>
                 </div>
             }
-            <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
+            <div className="flex justify-between items-center flex-wrap mb-5">
                 <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Plantel</h1>
-                <button className="btn btn-primary"><Link to={`/estadisticas/${team?.id}`} style={{ color: 'white', textDecoration: 'none' }}>Ver Estadísticas</Link></button>
+                <button className="btn btn-primary">
+                    <Link to={`/estadisticas/${team?.id}`} className="text-white no-underline">Ver Estadísticas</Link>
+                </button>
             </div>
-            <div className="card animated fadeInDown" style={{ padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <div className="bg-slate-800 bg-opacity-70 p-4 rounded-lg shadow-md">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 mb-4" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
+                    <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 mb-4 border-collapse">
+                        <thead className="bg-gray-100 text-left">
                             <tr>
                                 <th className="py-1 px-1 border-b bg-black text-white">NOMBRE</th>
                                 <th className="py-1 px-1 border-b bg-black text-white">EDAD</th>
@@ -171,7 +173,7 @@ export default function Plantel() {
                         {loading &&
                             <tbody>
                                 <tr>
-                                    <td colSpan="8" className="text-center" style={{ padding: '20px', fontStyle: 'italic' }}>
+                                    <td colSpan="8" className="text-center py-5 italic text-white">
                                         CARGANDO...
                                     </td>
                                 </tr>
@@ -181,7 +183,7 @@ export default function Plantel() {
                             <tbody>
                                 {
                                     team ? players.map(p => (
-                                        <tr key={p.id} style={{ borderBottom: '1px solid #dee2e6' }}>
+                                        <tr key={p.id} className="border-b border-gray-300">
                                             <td className="border px-4 py-2 bg-black bg-opacity-70">{p.name}</td>
                                             <td className="border px-4 py-2 bg-black bg-opacity-70">{p.age}</td>
                                             <td className="border px-4 py-2 bg-black bg-opacity-70">{p.ca}</td>
@@ -191,7 +193,7 @@ export default function Plantel() {
                                             <td className="border px-4 py-2 bg-black bg-opacity-70">
                                                 {p.status !== 'nada' && (
                                                     <>
-                                                        <button className="btn-edit mx-1" onClick={() => {
+                                                        {/* <button className="btn-edit mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
                                                                 handleBlockPlayer(p);
                                                             }
@@ -200,7 +202,7 @@ export default function Plantel() {
                                                             if (window.confirm(`¿Estás seguro de que deseas liberar a ${p.name}`)) {
                                                                 handleReleasePlayer(p);
                                                             }
-                                                        }}>Liberar</button>
+                                                        }}>Liberar</button> */}
                                                         <button className="btn-add mx-1" onClick={() => {
                                                             if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
                                                                 handleListPlayer(p);
@@ -212,7 +214,7 @@ export default function Plantel() {
                                         </tr>
                                     )) :
                                         <tr>
-                                            <td colSpan="8" className="text-center" style={{ padding: '20px', fontWeight: 'bold' }}>
+                                            <td colSpan="8" className="text-center py-5 font-bold">
                                                 No tienes equipo asignado. Prueba presionando el botón Cargar plantel
                                             </td>
                                         </tr>
@@ -221,7 +223,7 @@ export default function Plantel() {
                         }
                     </table>
                 </div>
-                <div className="stats" style={{ marginTop: '20px', lineHeight: '1.6' }}>
+                <div className="stats mt-5 leading-relaxed text-white">
                     {bestPlayersCA !== null && (
                         <p>Promedio de CA de los mejores 16 jugadores: <strong>{bestPlayersCA}</strong></p>
                     )}

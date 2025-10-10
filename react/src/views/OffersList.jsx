@@ -438,7 +438,7 @@ const OffersList = () => {
     return (
         <div className="p-4">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold text-center md:text-left mb-4 md:mb-0">
+                <h1 className="text-2xl font-bold text-center md:text-left mb-4 md:mb-0 bg-slate-800 bg-oppacity-70 rounded text-white p-3">
                     CLÁUSULAS DE RESCISIÓN EJECUTADAS
                 </h1>
                 <Link
@@ -449,11 +449,11 @@ const OffersList = () => {
                 </Link>
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Temporada:</label>
+                <label className="block text-sm font-medium mb-2 text-black">Temporada:</label>
                 <select
                     value={selectedSeason}
                     onChange={handleSeasonChange}
-                    className="w-full md:w-1/3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full md:w-1/3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-800 text-white"
                 >
                     <option value="">Todas las temporadas</option>
                     {seasons && seasons.map(season => (

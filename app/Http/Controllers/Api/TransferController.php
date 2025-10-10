@@ -168,6 +168,10 @@ class TransferController extends Controller
             return response()->json(['message' => 'No puedes confirmar tu propia transferencia'], 403);
         }
 
+        if ($transfer->confirmed === 'si') {
+        return response()->json(['message' => 'Transferencia ya confirmada'], 403);
+    }
+
         $buyUser = User::find($transfer->buy_by);
         $sellUser = User::find($transfer->sold_by);
         $transferValue = $transfer->budget;
@@ -182,33 +186,11 @@ class TransferController extends Controller
             $sellUser->save();
         }
 
-        $transfer->confirmed = 'si';
-        $transfer->confirmed_by = $user->id;
-        $transfer->save();
-
         $transferredPlayers = explode(',', $transfer['transferred_players']);
         foreach ($transferredPlayers as $player) {
-            $upsertData[] = [
-                'transferred_players' => $player,
-                'id_team_from' => $transfer['id_team_from'],
-                'id_team_to' => $transfer['id_team_to'],
-                'budget' => $transfer['budget'],
-                'created_by' => $transfer['created_by'],
-                'buy_by' => $transfer['buy_by'],
-                'sold_by' => $transfer['sold_by'],
-            ];
-            //$players = Player::whereIn('name', $transferredPlayers)->get();
             $playersToMove = Player::where('name', $player)
                 ->whereIn('id_team', [$transfer->id_team_from, $transfer->id_team_to])
                 ->get();
-
-            // foreach ($players as $player) {
-            //     if ($player->id_team == $transfer->id_team_from) {
-            //         $player->id_team = $transfer->id_team_to;
-            //         $player->status = 'bloqueado';
-            //         $player->save();
-            //     }
-            // }
 
             foreach ($playersToMove as $playerToMove) {
                 if ($playerToMove->id_team == $transfer->id_team_from) {
@@ -218,6 +200,10 @@ class TransferController extends Controller
                 }
             }
         }
+
+        $transfer->confirmed = 'si';
+        $transfer->confirmed_by = $user->id;
+        $transfer->save();
 
         $teamFrom = Team::find($transfer->id_team_from);
         $teamTo = Team::find($transfer->id_team_to);
@@ -248,8 +234,6 @@ class TransferController extends Controller
                 ->useSecret($webhookSecret)
                 ->dispatch();
         }
-
-        Transfer::upsert($upsertData, 'id', ['transferred_players']);
 
         return response()->json(['message' => 'Transferencia confirmada correctamente']);
     }
