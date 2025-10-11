@@ -420,26 +420,27 @@ export default function Players() {
                                                     >
                                                         Ofertar
                                                     </Link>
-                                                 : <Link
-                                                    className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                    to={'/clausula_rescision/' + p.id}
-                                                >
-                                                    Ofertar
-                                                </Link>}
+                                                    : <Link
+                                                        className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
+                                                        to={'/clausula_rescision/' + p.id}
+                                                    >
+                                                        Ofertar
+                                                    </Link>}
                                             </div>
                                         </td>
-                                    ) : (
-                                        (p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda') && (
-                                            <td className="border px-4 py-2">
-                                                <Link
-                                                    className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                    to={'/crear_subasta/' + p.id}
-                                                >
-                                                    Ofertar
-                                                </Link>
-                                            </td>
-                                        )
-                                    )}
+                                    ) : (p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda' ?
+                                        <Link
+                                            className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
+                                            to={'/crear_subasta/' + p.id}
+                                        >
+                                            Ofertar
+                                        </Link>
+                                        : <Link
+                                            className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
+                                            to={'/clausula_rescision/' + p.id}
+                                        >
+                                            Ofertar
+                                        </Link>)}
                                 </tr>
                             ))}
                         </tbody>

@@ -2,15 +2,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const SeasonCountdown = ({ startDate }) => {
     const [timeLeft, setTimeLeft] = useState({});
 
     useEffect(() => {
         const calculateTimeLeft = () => {
-            const now = new Date();
-            const timeDifference = startDate - now;
+            const nowUTC = new Date().getTime();
+            const startDateUTC = new Date(startDate).getTime();
+
+            const timeDifference = startDateUTC - nowUTC;
 
             if (timeDifference <= 0) {
                 return {};
@@ -27,6 +29,8 @@ const SeasonCountdown = ({ startDate }) => {
         const interval = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
+
+        setTimeLeft(calculateTimeLeft());
 
         return () => clearInterval(interval);
     }, [startDate]);

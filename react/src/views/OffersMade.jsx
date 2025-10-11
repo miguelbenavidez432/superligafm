@@ -112,6 +112,7 @@
 //     );
 // };
 // export default OffersMade;
+// ...existing code...
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosClient from "../axios";
@@ -124,12 +125,14 @@ const OffersMade = () => {
     const [seasons, setSeasons] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState('');
     const { user } = useStateContext();
-    const userId = user.id;
+    const userId = user ? user.id : null; // Protección adicional
 
     useEffect(() => {
-        getOffers();
-        getSeasons()
-    }, [selectedSeason]);
+        if (userId) { // Solo ejecutar si hay un usuario válido
+            getOffers();
+            getSeasons();
+        }
+    }, [selectedSeason, userId]);
 
     const getOffers = async () => {
         setLoading(true);
@@ -140,9 +143,10 @@ const OffersMade = () => {
                     season: selectedSeason
                 }
             });
-            setOffers(response.data.data);
+            setOffers(response.data.data || []); // Protección adicional
         } catch (error) {
             console.error('Error al obtener ofertas:', error);
+            setOffers([]); // Establecer array vacío en caso de error
         } finally {
             setLoading(false);
         }
@@ -155,6 +159,7 @@ const OffersMade = () => {
             setSeasons(response.data.data || []);
         } catch (error) {
             console.error('Error al obtener temporadas:', error);
+            setSeasons([]);
         } finally {
             setLoading(false);
         }
@@ -164,7 +169,29 @@ const OffersMade = () => {
         setSelectedSeason(e.target.value);
     };
 
-    const filteredOffers = offers.filter(oferta => oferta.created_by.id === userId);
+    // FIX: Proteger contra created_by nulo y verificar que sea un objeto válido
+    const filteredOffers = offers.filter(oferta => {
+        // Verificar que oferta existe
+        if (!oferta) return false;
+
+        // Verificar que created_by existe y tiene id
+        if (!oferta.created_by || typeof oferta.created_by !== 'object') return false;
+
+        // Verificar que created_by.id existe y coincide con userId
+        return oferta.created_by.id === userId;
+    });
+
+    // Protección adicional: si no hay usuario logueado
+    if (!user || !userId) {
+        return (
+            <div className="p-4">
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded">
+                    <h3 className="font-bold">Acceso requerido</h3>
+                    <p>Debes estar logueado para ver tus ofertas.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4">
@@ -206,28 +233,42 @@ const OffersMade = () => {
                     </thead>
                     {!loading && (
                         <tbody>
-                            {filteredOffers.map((oferta) => {
+                            {filteredOffers.length > 0 ? filteredOffers.map((oferta) => {
                                 const formattedDate = moment(oferta.created_at).format('DD-MM-YYYY HH:mm:ss');
                                 return (
                                     <tr key={oferta.id} className="hover:bg-gray-100">
-                                        <td className="p-2 border text-center">{oferta.name}</td>
-                                        <td className="p-2 border text-center">{oferta.id_team && oferta.id_team.name}</td>
-                                        <td className="p-2 border text-center">{oferta.value}</td>
-                                        <td className="p-2 border text-center">{oferta.other_players}</td>
-                                        <td className="p-2 border text-center">{oferta.total_value}</td>
-                                        <td className="p-2 border text-center">{oferta.created_by && oferta.created_by.name}</td>
+                                        <td className="p-2 border text-center">{oferta.name || 'Sin nombre'}</td>
+                                        <td className="p-2 border text-center">
+                                            {oferta.id_team && oferta.id_team.name ? oferta.id_team.name : 'Sin equipo'}
+                                        </td>
+                                        <td className="p-2 border text-center">{oferta.value || 0}</td>
+                                        <td className="p-2 border text-center">{oferta.other_players || 'Ninguno'}</td>
+                                        <td className="p-2 border text-center">{oferta.total_value || 0}</td>
+                                        <td className="p-2 border text-center">
+                                            {oferta.created_by && oferta.created_by.name ? oferta.created_by.name : 'Usuario desconocido'}
+                                        </td>
                                         <td className="p-2 border text-center">{formattedDate}</td>
                                         <td className="p-2 border text-center">
-                                            <Link
-                                                className="btn-edit bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                                                to={`/offers/${oferta.id_player}`}
-                                            >
-                                                Ofertas
-                                            </Link>
+                                            {oferta.id_player ? (
+                                                <Link
+                                                    className="btn-edit bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                                                    to={`/offers/${oferta.id_player}`}
+                                                >
+                                                    Ofertas
+                                                </Link>
+                                            ) : (
+                                                <span className="text-gray-400">No disponible</span>
+                                            )}
                                         </td>
                                     </tr>
                                 );
-                            })}
+                            }) : (
+                                <tr>
+                                    <td colSpan="8" className="p-4 text-center text-gray-500">
+                                        {loading ? 'Cargando...' : `No tienes ofertas realizadas${selectedSeason ? ' en esta temporada' : ''}.`}
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     )}
                 </table>

@@ -45,7 +45,7 @@ import Statistics from './views/Statistics';
 import TeamStatistics from './views/TeamStatistics';
 import ManagePrizes from './views/ManagePrizes';
 import CreatePrizes from './views/CreatePrizes';
-import UploadMatch from './views/UploadMatch';
+import UploadMatch from './views/uploadMatch';
 
 const router = createBrowserRouter([
     {
@@ -87,9 +87,9 @@ const router = createBrowserRouter([
             {
                 path: '/transfer',
                 element: (
-                    //<DelayedProtectedComponent delay={4} >
+                    <DelayedProtectedComponent delay={4} >
                     <TransferForm />
-                    //</DelayedProtectedComponent>
+                    </DelayedProtectedComponent>
 
                 )
             },
