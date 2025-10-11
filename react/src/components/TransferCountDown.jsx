@@ -16,12 +16,16 @@ const TransferCountDown = ({ children }) => {
     useEffect(() => {
         axiosClient.get('/seasons/start')
             .then(response => {
-                const startDate = new Date(response.data.start_date);
-                const marketEnd = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
-                setMarketEndTime(marketEnd);
+                 const startDateString = response.data.start_date;
+                const startDateUTC = new Date(startDateString + 'Z');
 
-                const now = new Date();
-                if (now >= startDate) {
+                const marketEndTime = startDateUTC.getTime() + (4 * 60 * 60 * 1000);
+                const marketEndDate = new Date(marketEndTime);
+                setMarketEndTime(marketEndDate);
+
+const nowUTC = new Date().getTime();
+
+                if (nowUTC >= startDateUTC.getTime() && nowUTC < marketEndTime) {
                     setMarketActive(true);
                 }
             })
@@ -36,8 +40,9 @@ const TransferCountDown = ({ children }) => {
     useEffect(() => {
         if (marketEndTime) {
             const interval = setInterval(() => {
-                const now = new Date();
-                const timeDifference = marketEndTime - now;
+                const nowUTC = new Date().getTime();
+                const endTimeUTC = marketEndTime.getTime();
+                const timeDifference = endTimeUTC - nowUTC;
 
                 if (timeDifference <= 0) {
                     clearInterval(interval);

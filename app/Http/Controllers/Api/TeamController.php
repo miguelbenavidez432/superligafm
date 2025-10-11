@@ -19,7 +19,7 @@ class TeamController extends Controller
         if ($request->query('all') == 'true') {
             return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->get());
         } else {
-            return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->paginate(200));
+            return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->paginate(280));
         }
         ;
     }

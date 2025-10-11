@@ -13,11 +13,15 @@ const ProtectedComponent = ({ children }) => {
     useEffect(() => {
         axiosClient.get('/seasons/start')
             .then(response => {
-                const startDate = new Date(response.data.start_date);
-                setSeasonStart(startDate);
+                const startDateString = response.data.start_date;
+                const startDateUTC = new Date(startDateString + 'Z')
 
-                const now = new Date();
-                if (now >= startDate) {
+                setSeasonStart(startDateUTC);
+
+                const nowUTC = new Date().getTime();
+                const startTimeUTC = startDateUTC.getTime();
+
+                if (nowUTC >= startTimeUTC) {
                     setSeasonActive(true);
                 }
             })

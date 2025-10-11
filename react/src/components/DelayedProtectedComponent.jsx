@@ -17,14 +17,18 @@ const DelayedProtectedComponent = ({ children, delay }) => {
     useEffect(() => {
         axiosClient.get('/seasons/start')
             .then(response => {
-                const startDateUTC = new Date(response.data.start_date); // UTC desde la DB
+                const startDateString = response.data.start_date;
+                const startDateUTC = new Date(startDateString + 'Z');
+
                 setSeasonStart(startDateUTC);
 
-                const adjustedStartDate = new Date(startDateUTC.getTime() + delay * 60 * 60 * 1000);
+                const adjustedStartTime = startDateUTC.getTime() + (delay * 60 * 60 * 1000);
+                const adjustedStartDate = new Date(adjustedStartTime);
+
                 calculateTimeLeft(adjustedStartDate);
 
-                const nowUTC = new Date(new Date().toISOString()); // UTC actual
-                if (nowUTC >= adjustedStartDate) {
+                const nowUTC = new Date().getTime();
+                if (nowUTC >= adjustedStartDate.getTime()) {
                     setIsActive(true);
                 } else {
                     const interval = setInterval(() => calculateTimeLeft(adjustedStartDate), 1000);
@@ -41,8 +45,9 @@ const DelayedProtectedComponent = ({ children, delay }) => {
     }, [delay]);
 
     const calculateTimeLeft = (adjustedStartDate) => {
-        const now = new Date();
-        const timeDifference = adjustedStartDate - now;
+        const nowUTC = new Date().getTime();
+        const targetTime = adjustedStartDate.getTime();
+        const timeDifference = targetTime - nowUTC;
 
         if (timeDifference <= 0) {
             setIsActive(true);
