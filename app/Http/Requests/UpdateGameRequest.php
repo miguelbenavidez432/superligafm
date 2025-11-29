@@ -23,6 +23,12 @@ class UpdateGameRequest extends FormRequest
     {
         return [
             'status' => 'required|string',
+            'score_home' => 'nullable|integer',
+            'score_away' => 'nullable|integer',
+            'penalties' => 'nullable|boolean',
+            'penalties_home' => 'nullable|integer',
+            'penalties_away' => 'nullable|integer',
+            'stage' => 'nullable|string',
         ];
     }
 }

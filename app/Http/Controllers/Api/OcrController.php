@@ -220,24 +220,19 @@ class OcrController extends Controller
                 $parts = explode("\t", $playerData);
                 $playerName = trim($parts[0]);
 
-                // Inicializar valores por defecto
                 $goals = 0;
                 $assists = 0;
                 $rating = 0.0;
 
-                // Si hay más partes, la última podría ser la calificación
                 if (count($parts) > 1) {
                     $lastPart = trim($parts[count($parts) - 1]);
 
-                    // Verificar si la última parte es una calificación válida
                     if (preg_match('/^(\d+\.\d+)$/', $lastPart, $ratingMatch)) {
                         $rating = floatval($ratingMatch[1]);
 
-                        // Buscar goles y asistencias en las partes intermedias
                         for ($i = 1; $i < count($parts) - 1; $i++) {
                             $part = trim($parts[$i]);
 
-                            // Buscar números que podrían ser goles (números sin %)
                             if (preg_match('/^(\d+)$/', $part, $goalMatch)) {
                                 $potentialGoal = intval($goalMatch[1]);
                                 // Solo considerar como gol si es un número razonable (0-50)
@@ -246,7 +241,6 @@ class OcrController extends Controller
                                 }
                             }
 
-                            // Buscar asistencias (números seguidos de %)
                             if (preg_match('/^(\d+)%$/', $part, $assistMatch)) {
                                 $assists = intval($assistMatch[1]);
                             }

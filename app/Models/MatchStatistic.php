@@ -22,6 +22,11 @@ class MatchStatistic extends Model
         'simple_injuries',
         'serious_injuries',
         'mvp',
+        'rating',
+    ];
+
+    protected $casts = [
+        'rating' => 'decimal:1',
     ];
 
     public function player()

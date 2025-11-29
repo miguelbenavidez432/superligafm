@@ -135,9 +135,7 @@ class GameController extends Controller
     {
         $data = $request->validated();
         $game->update($data);
-        return response()->json([
-            'message' => 'El juego se actualizó correctamente',
-        ], 200);
+        return new GameResource($game->load(['tournament', 'teamHome', 'teamAway']));
     }
 
     /**
@@ -193,6 +191,20 @@ class GameController extends Controller
         }
 
         return new GameResource($game);
+    }
+
+    public function enableEdit(Request $request, $id)
+    {
+        $game = Game::findOrFail($id);
+
+        $game->update([
+            'status' => 'pending'
+        ]);
+
+        return response()->json([
+            'message' => 'Partido habilitado para edición',
+            'data' => new GameResource($game->load(['tournament', 'teamHome', 'teamAway']))
+        ], 200);
     }
 
 

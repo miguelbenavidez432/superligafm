@@ -10,9 +10,11 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
+        "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.8",
         "openai-php/laravel": "^0.10.2",
         "pusher/pusher-php-server": "^7.2",
+        "spatie/laravel-permission": "^6.23",
         "spatie/laravel-webhook-server": "^3.8"
     },
     "require-dev": {

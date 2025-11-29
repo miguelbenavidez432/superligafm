@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import axiosClient from "../axios";
 import { Link } from "react-router-dom";
 import Objectives from "./Objectives";
+import { useStateContext } from "../context/ContextProvider";
 
 export default function Teams() {
 
+    const { user } = useStateContext();
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -81,11 +83,12 @@ export default function Teams() {
                     }
                 </table>
             </div >
-            {/* <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
+            <div className="header" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap', marginBottom: '20px' }}>
                 <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Objetivos</h1>
-                <Objectives teams={teams ? [teams, ...players.map(p => p.id_team).filter(Boolean)] : []} />
-            </div> */}
-
+                {!loading && teams.length > 0 && (
+                    <Objectives teams={teams} />
+                )}
+            </div>
         </>
     )
 }

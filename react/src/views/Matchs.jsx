@@ -126,22 +126,22 @@ export default function Matches() {
             return
         }
 
-        const matchData = {
-            id: match,
-            status: 'pending',
-        };
-
-        axiosClient.put(`/matches/${match}`, matchData)
+        axiosClient.put(`/games/${match}/enable-edit`)
             .then(() => {
                 setNotification('Partido habilitado para editar');
+                axiosClient.get('/matches?all=true')
+                    .then(({ data }) => {
+                        setMatches(data.data);
+                    });
                 setCreating(false);
             })
             .catch(err => {
                 const response = err.response;
                 if (response && response.status === 422) {
-                    setMessage(response.data.errors)
+                    setMessage(response.data.errors);
                 }
-            })
+                setCreating(false);
+            });
     }
 
     const formatStage = (currentStage, format) => {

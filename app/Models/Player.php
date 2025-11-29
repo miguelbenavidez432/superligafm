@@ -19,7 +19,8 @@ class Player extends Model
         'pa',
         'value',
         'status',
-        'team'
+        'team',
+        'image'
     ];
 
     public function team()
