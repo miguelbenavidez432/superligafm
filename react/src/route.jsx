@@ -428,7 +428,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/crear_subasta',
-                element: <Navigate to='app/'>
+                element: <Navigate to='app/' />
             },
             {
                 path: '/crear_subasta/:playerId',

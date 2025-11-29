@@ -34,6 +34,32 @@ use App\Http\Controllers\Api\MatchStatisticController;
 |
 */
 
+Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
+Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
+Route::post('/signup', [AuthController::class, 'signup']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+// Solo index (GET) de recursos públicos
+Route::get('/teams', [TeamController::class, 'index']);
+Route::get('/players', [PlayerController::class, 'index']);
+Route::get('/playername', [PlayerController::class, 'searchPlayers']);
+Route::get('/standings', [StandingController::class, 'index']);
+Route::get('/match-statistics', [MatchStatisticController::class, 'index']);
+Route::get('/tournaments', [TournamentController::class, 'index']);
+Route::get('/season', [SeasonController::class, 'index']);
+Route::get('/games', [GameController::class, 'index']);
+Route::get('/traspasos', [TransferController::class, 'index']);
+Route::get('/clausula_rescision', [RescissionController::class, 'index']);
+Route::get('/auctions', [AuctionController::class, 'index']);
+Route::get('/bets', [BetController::class, 'index']);
+
+
+// ============================================
+// RUTAS PROTEGIDAS (requieren autenticación)
+// ============================================
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {
@@ -103,12 +129,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/games/{id}/enable-edit', [GameController::class, 'enableEdit']);
 
 });
-Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
-Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
-Route::post('/signup', [AuthController::class, 'signup']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
-Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 
 
 
