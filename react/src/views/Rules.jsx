@@ -3,7 +3,7 @@
 export default function Rules() {
     return (
         <div className="bg-gray-900 min-h-screen py-10 px-4 sm:px-8 md:px-16 lg:px-32 text-gray-100">
-            <h1 className="font-black text-4xl text-center sm: text-2xl"> REGLAMENTO TEMPORADA 57</h1>
+            <h1 className="font-black text-4xl text-center sm: text-2xl"> REGLAMENTO TEMPORADA 60</h1>
             <br />
             <h3 className="">Se dividirán los equipos en 2 categorías.</h3>
             <p className="whitespace-normal">

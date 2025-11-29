@@ -1,26 +1,27 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BetController;
-use App\Http\Controllers\Api\ChatbotController;
-use App\Http\Controllers\Api\DiscordUserController;
-use App\Http\Controllers\Api\GameController;
-use App\Http\Controllers\Api\MatchStatisticController;
-use App\Http\Controllers\Api\OcrController;
-use App\Http\Controllers\Api\PlayerBetController;
-use App\Http\Controllers\Api\PlayerController;
-use App\Http\Controllers\Api\PrizeController;
-use App\Http\Controllers\Api\RescissionController;
-use App\Http\Controllers\Api\SeasonController;
-use App\Http\Controllers\Api\StandingController;
-use App\Http\Controllers\Api\TeamController;
-use App\Http\Controllers\Api\TournamentController;
-use App\Http\Controllers\Api\TransferController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\AuctionController;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BetController;
+use App\Http\Controllers\Api\OcrController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PrizeController;
+use App\Http\Controllers\Api\PlayerController;
+use App\Http\Controllers\Api\SeasonController;
+use App\Http\Controllers\Api\AuctionController;
+use App\Http\Controllers\Api\ChatbotController;
+use App\Http\Controllers\Api\StandingController;
+use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\Api\PlayerBetController;
+use App\Http\Controllers\Api\GoogleAuthController;
+use App\Http\Controllers\Api\RescissionController;
+
+use App\Http\Controllers\Api\TournamentController;
+use App\Http\Controllers\Api\DiscordUserController;
+use App\Http\Controllers\Api\MatchStatisticController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,32 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
+Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
+Route::post('/signup', [AuthController::class, 'signup']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+// Solo index (GET) de recursos públicos
+Route::get('/teams', [TeamController::class, 'index']);
+Route::get('/players', [PlayerController::class, 'index']);
+Route::get('/playername', [PlayerController::class, 'searchPlayers']);
+Route::get('/standings', [StandingController::class, 'index']);
+Route::get('/match-statistics', [MatchStatisticController::class, 'index']);
+Route::get('/tournaments', [TournamentController::class, 'index']);
+Route::get('/season', [SeasonController::class, 'index']);
+Route::get('/games', [GameController::class, 'index']);
+Route::get('/traspasos', [TransferController::class, 'index']);
+Route::get('/clausula_rescision', [RescissionController::class, 'index']);
+Route::get('/auctions', [AuctionController::class, 'index']);
+Route::get('/bets', [BetController::class, 'index']);
+
+
+// ============================================
+// RUTAS PROTEGIDAS (requieren autenticación)
+// ============================================
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -97,14 +124,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;
     });
+    Route::post('/ocr/process', [OcrController::class, 'processImage']);
+    Route::post('/ocr/process-multiple', [OcrController::class, 'processMultipleImages']);
+    Route::put('/games/{id}/enable-edit', [GameController::class, 'enableEdit']);
 
 });
-Route::post('/ocr/process', [OcrController::class, 'processImage']);
-Route::post('/ocr/process-multiple', [OcrController::class, 'processMultipleImages']);
-Route::get('discord/callback', [DiscordUserController::class, 'handleCallback']);
-Route::get('discord/redirect', [DiscordUserController::class, 'redirectToDiscord']);
-Route::post('/signup', [AuthController::class, 'signup']);
-Route::post('/login', [AuthController::class, 'login']);
 
 
 

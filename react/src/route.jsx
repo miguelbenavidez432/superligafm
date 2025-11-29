@@ -46,13 +46,299 @@ import TeamStatistics from './views/TeamStatistics';
 import ManagePrizes from './views/ManagePrizes';
 import CreatePrizes from './views/CreatePrizes';
 import UploadMatch from './views/uploadMatch';
+import PublicLayout from './components/PublicLayout';
+import LandingPage from './views/public/LandingPage';
+// import PublicTeams from './views/public/PublicTeams';
+// import PublicPlayers from './views/public/PublicPlayers';
+// import PublicStandings from './views/public/PublicStandings';
+// import PublicStatistics from './views/public/PublicStatistics';
+// import PublicRules from './views/public/PublicRules';
 
 const router = createBrowserRouter([
     {
         path: '/',
+        element: <PublicLayout />,
+        children: [
+            {
+                path: '/',
+                element: <LandingPage />
+            },
+            {
+                path: '/public/teams',
+                element: <Teams />
+            },
+            {
+                path: '/public/players',
+                element: <Players />
+            },
+            {
+                path: '/public/standings',
+                element: <Standings />
+            },
+            {
+                path: '/public/statistics',
+                element: <Statistics />
+            },
+            {
+                path: '/public/rules',
+                element: <Rules />
+            }
+        ]
+    },
+    {
+        path: '/app',
         element: <DefaultLayout />,
         children: [
             {
+                path: '/app',
+                element: <Navigate to='/dashboard' />
+            },
+            {
+                path: '/app/dashboard',
+                element: <Dashboard />
+            },
+            {
+                path: '/app/users',
+                element: <Users />
+            },
+            {
+                path: '/app/users/new',
+                element: <UserForm key='userCreate' />
+            },
+            {
+                path: '/app/users/:id',
+                element: <UserForm key='userUpdate' />
+            },
+            {
+                path: '/app/players',
+                element: <Players />
+            },
+            {
+                path: '/app/players/new',
+                element: <PlayerForm key='playerCreate' />
+            },
+            {
+                path: '/app/players/:id',
+                element: <PlayerForm key='playerUpdate' />
+            },
+            {
+                path: '/app/transfer',
+                element: (
+                    <DelayedProtectedComponent delay={4} >
+                    <TransferForm />
+                    </DelayedProtectedComponent>
+
+                )
+            },
+            {
+                path: '/app/about',
+                element: <About />
+            },
+            {
+                path: '/app/prode',
+                element: <Prode />
+            },
+            {
+                path: '/app/plantel',
+                element: <Plantel />
+            },
+            {
+                path: '/app/clausula_rescision',
+                element: (
+                    <ProtectedComponent>
+                    <Announcement />
+                    </ProtectedComponent>
+                )
+            },
+            {
+                path: '/app/clausula_rescision/:playerId',
+                element: (
+                    <ProtectedComponent>
+                    <Announcement />
+                    </ProtectedComponent>
+                )
+            },
+            {
+                path: '/app/teams',
+                element: <Teams />
+            },
+            {
+                path: '/app/teams/:id',
+                element: <TeamForm key='playerUpdate' />
+            },
+            {
+                path: '/app/offers',
+                element: <OffersList />
+            },
+            {
+                path: '/app/offers/:id',
+                element: <PlayerOffers />
+            },
+            // {
+            //     path: '/subastas',
+            //     element: <AuctionConfirmation />
+            // },
+            {
+                path: '/app/ofertas-confirmadas',
+                element: <ConfirmedOffersList />,
+            },
+            {
+                path: '/app/apuestas',
+                element: <Bets />
+            },
+            {
+                path: '/app/apuestas/new',
+                element: <CreateBets />
+            },
+            {
+                path: '/app/apuestas/:id',
+                element: <ConfirmBets />
+            },
+            {
+                path: '/app/apuestas/usuarios',
+                element: <BetsConfirmation />
+            },
+            {
+                path: '/app/misofertas',
+                element: <OffersMade />
+            },
+            {
+                path: '/app/crear_subasta',
+                element: (
+                    <DelayedProtectedComponent delay={4} >
+                    <Auctions />
+                    </DelayedProtectedComponent>
+                )
+            },
+            {
+                path: '/app/crear_subasta/:playerId',
+                element: (
+                    <DelayedProtectedComponent delay={4} >
+                    <Auctions />
+                    </DelayedProtectedComponent>
+                )
+            },
+            {
+                path: '*',
+                element: <NotFound />
+            },
+            {
+                path: '/app/fixture_primera',
+                element: <FixtureFirstDivision />
+            },
+            {
+                path: '/app/fixture_segunda',
+                element: <FixtureSecondDivision />
+            },
+            {
+                path: '/app/reglamento',
+                element: <Rules />
+            },
+            {
+                path: '/app/subastas/:id',
+                element: <PlayerAuctions />
+            },
+            {
+                path: '/app/subastas',
+                element: <AuctionsList />
+            },
+            {
+                path: '/app/transferencias',
+                element: <TransferList />
+            },
+            {
+                path: '/app/season-countdown',
+                element: <SeasonCountdown />
+            },
+            {
+                path: '/app/protected',
+                element: <ProtectedComponent />
+            },
+            {
+                path: '/app/chatbot',
+                element: <Chatbot />
+            },
+            {
+                path: '/app/partidos',
+                element: <Matchs />
+            },
+            {
+                path: '/app/partidos/:id',
+                element: <SingleMatch />
+            },
+            {
+                path: '/app/torneos',
+                element: <Tournament />
+            },
+            {
+                path: '/app/tablas',
+                element: <Standings />
+            },
+            {
+                path: '/app/estadisticas',
+                element: <Statistics />
+            },
+            {
+                path: '/app/estadisticas/:team_id',
+                element: <TeamStatistics />
+            },
+            {
+                path: '/app/premios',
+                element: <ManagePrizes />
+            },
+            {
+                path: '/app/crear-premios',
+                element: <CreatePrizes />
+            },
+            {
+                path: '/app/cargar-imagenes/:id',
+                element: <UploadMatch />
+            }
+        ]
+    },
+    {
+        path: '/auth',
+        element: <GuestLayout />,
+        children: [
+            {
+                path: 'login',
+                element: <Login />
+            },
+            {
+                path: 'signup',
+                element: <Signup />
+            },
+        ]
+    },
+    {
+        path: '/login',
+        element: <Navigate to='/auth/login' />
+    },
+    {
+        path: '/signup',
+        element: <Navigate to='/auth/signup' />
+    },
+    {
+        path: '/dashboard',
+        element: <Navigate to='/app/dashboard' />
+    },
+    {
+        path: '/players',
+        element: <Navigate to='/app/players' />
+    },
+    {
+        path: '/teams',
+        element: <Navigate to='/app/teams' />
+    },
+    {
+        path: '/users',
+        element: <Navigate to='/app/users' />
+    },
+    {
+        path: '*',
+        element: <NotFound />
+    },
+    {
                 path: '/',
                 element: <Navigate to='/dashboard' />
             },
@@ -66,112 +352,83 @@ const router = createBrowserRouter([
             },
             {
                 path: '/users/new',
-                element: <UserForm key='userCreate' />
+                element: <Navigate to='/app/users/new' />
             },
             {
                 path: '/users/:id',
-                element: <UserForm key='userUpdate' />
-            },
-            {
-                path: '/players',
-                element: <Players />
+                element: <Navigate to='/app/users/:id' />
             },
             {
                 path: '/players/new',
-                element: <PlayerForm key='playerCreate' />
+                element: <Navigate to='/app/players/new' />
             },
             {
                 path: '/players/:id',
-                element: <PlayerForm key='playerUpdate' />
+                element: <Navigate to='/app/players/:id' />
             },
             {
                 path: '/transfer',
-                element: (
-                    <DelayedProtectedComponent delay={4} >
-                    <TransferForm />
-                    </DelayedProtectedComponent>
-
-                )
+                element: <Navigate to='/app/transfer' />
             },
             {
                 path: '/about',
-                element: <About />
+                element: <Navigate to='/app/about' />
             },
             {
                 path: '/prode',
-                element: <Prode />
+                element: <Navigate to='/app/prode' />
             },
             {
                 path: '/plantel',
-                element: <Plantel />
+                element: <Navigate to='/app/plantel' />
             },
             {
                 path: '/clausula_rescision',
-                element: (
-                    <ProtectedComponent>
-                    <Announcement />
-                    </ProtectedComponent>
-                )
+                element: <Navigate to='app/clausula_rescision' />
             },
             {
                 path: '/clausula_rescision/:playerId',
-                element: (
-                    <ProtectedComponent>
-                    <Announcement />
-                    </ProtectedComponent>
-                )
-            },
-            {
-                path: '/teams',
-                element: <Teams />
+                element: <Navigate to='app/clausula_rescision/:playerId' />
             },
             {
                 path: '/teams/:id',
-                element: <TeamForm key='playerUpdate' />
+                element: <Navigate to='/app/teams/:id' />
             },
             {
                 path: '/offers',
-                element: <OffersList />
+                element: <Navigate to='/app/offers' />
             },
             {
                 path: '/offers/:id',
-                element: <PlayerOffers />
+                element: <Navigate to='/app/offers/:id' />
             },
-            // {
-            //     path: '/subastas',
-            //     element: <AuctionConfirmation />
-            // },
             {
                 path: '/ofertas-confirmadas',
-                element: <ConfirmedOffersList />,
+                element: <Navigate to='/app/ofertas-confirmadas' />,
             },
             {
                 path: '/apuestas',
-                element: <Bets />
+                element: <Navigate to='/app/apuestas' />
             },
             {
                 path: '/apuestas/new',
-                element: <CreateBets />
+                element: <Navigate to='/app/apuestas/new' />
             },
             {
                 path: '/apuestas/:id',
-                element: <ConfirmBets />
+                element: <Navigate to='/app/apuestas/:id' />
             },
             {
                 path: '/apuestas/usuarios',
-                element: <BetsConfirmation />
+                element: <Navigate to='/app/apuestas/usuarios' />
             },
             {
                 path: '/misofertas',
-                element: <OffersMade />
+                element: <Navigate to='/app/misofertas' />
             },
             {
                 path: '/crear_subasta',
-                element: (
-                    <DelayedProtectedComponent delay={4} >
-                    <Auctions />
-                    </DelayedProtectedComponent>
-                )
+                element: <Navigate to='app/' />
             },
             {
                 path: '/crear_subasta/:playerId',
@@ -257,22 +514,6 @@ const router = createBrowserRouter([
                 path: '/cargar-imagenes/:id',
                 element: <UploadMatch />
             }
-        ]
-    },
-    {
-        path: '/',
-        element: <GuestLayout />,
-        children: [
-            {
-                path: '/login',
-                element: <Login />
-            },
-            {
-                path: '/signup',
-                element: <Signup />
-            },
-        ]
-    },
 
 ]);
 

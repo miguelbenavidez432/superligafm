@@ -26,6 +26,8 @@ class User extends Authenticatable
         'rol',
         'profits',
         'costs',
+        'google_id',
+        'avatar',
     ];
 
     /**

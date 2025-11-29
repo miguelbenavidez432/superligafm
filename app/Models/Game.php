@@ -18,6 +18,13 @@ class Game extends Model
         'match_date',
         'status',
         'stage',
+        'penalties',
+        'penalties_home',
+        'penalties_away',
+    ];
+
+    protected $casts = [
+        'penalties' => 'boolean',
     ];
 
     public function tournament()

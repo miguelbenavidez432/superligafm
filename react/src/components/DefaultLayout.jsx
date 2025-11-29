@@ -147,7 +147,7 @@ export default function DefaultLayout() {
     const { user, token, setUser, setToken, notification } = useStateContext();
 
     if (!token) {
-        return <Navigate to='/login' />
+        return <Navigate to='/' />
     }
 
     const onLogout = (e) => {
@@ -281,6 +281,11 @@ export default function DefaultLayout() {
                 <main className="flex-1 p-4">
                     <Outlet />
                 </main>
+                <footer className="bg-gray-800 mt-12">
+                                <div className="container mx-auto px-4 py-6 text-center text-gray-400">
+                                    <p>&copy; 2025 Superliga FM. Todos los derechos reservados.</p>
+                                </div>
+                            </footer>
                 {notification && <div className="notification">
                     {notification}
                 </div>}
