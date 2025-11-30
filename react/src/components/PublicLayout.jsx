@@ -45,10 +45,10 @@ export default function PublicLayout() {
                             <Link to="/public/rules" className="text-white hover:text-blue-400 transition">
                                 Reglamento
                             </Link>
-                            <Link to="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
+                            <Link to="/auth/login" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
                                 Iniciar Sesión
                             </Link>
-                            <Link to="/signup" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">
+                            <Link to="/auth/signup" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">
                                 Registrarse
                             </Link>
                         </nav>
@@ -93,14 +93,14 @@ export default function PublicLayout() {
                                 Reglamento
                             </Link>
                             <Link
-                                to="/login"
+                                to="/auth/login"
                                 className="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-center"
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 Iniciar Sesión
                             </Link>
                             <Link
-                                to="/signup"
+                                to="/auth/signup"
                                 className="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center"
                                 onClick={() => setIsMenuOpen(false)}
                             >
@@ -119,7 +119,7 @@ export default function PublicLayout() {
             {/* Footer */}
             <footer className="bg-gray-800 mt-12">
                 <div className="container mx-auto px-4 py-6 text-center text-gray-400">
-                    <p>&copy; 2025 Superliga FM. Todos los derechos reservados.</p>
+                    <p>&copy; 2018 Superliga FM. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>
