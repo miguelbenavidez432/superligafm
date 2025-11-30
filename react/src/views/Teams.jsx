@@ -18,7 +18,7 @@ export default function Teams() {
     }, [])
 
     const getTeam = async () => {
-        await axiosClient.get('/teams?all=true')
+        await axiosClient.get('/teams/public?all=true')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
                 setTeams(teamFilter)
@@ -29,7 +29,7 @@ export default function Teams() {
     }
     const getPlayers = async () => {
         setLoading(true);
-        await axiosClient.get('/players?all=true')
+        await axiosClient.get('/players/public?all=true')
             .then(({ data }) => {
                 setPlayers(data.data)
                 setLoading(false)

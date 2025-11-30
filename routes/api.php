@@ -41,18 +41,18 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 // Solo index (GET) de recursos públicos
-Route::get('/teams', [TeamController::class, 'index']);
-Route::get('/players', [PlayerController::class, 'index']);
-Route::get('/playername', [PlayerController::class, 'searchPlayers']);
-Route::get('/standings', [StandingController::class, 'index']);
-Route::get('/match-statistics', [MatchStatisticController::class, 'index']);
-Route::get('/tournaments', [TournamentController::class, 'index']);
-Route::get('/season', [SeasonController::class, 'index']);
-Route::get('/games', [GameController::class, 'index']);
-Route::get('/traspasos', [TransferController::class, 'index']);
-Route::get('/clausula_rescision', [RescissionController::class, 'index']);
-Route::get('/auctions', [AuctionController::class, 'index']);
-Route::get('/bets', [BetController::class, 'index']);
+Route::get('/teams/public', [TeamController::class, 'index']);
+Route::get('/players/public', [PlayerController::class, 'index']);
+Route::get('/standings/public', [StandingController::class, 'index']);
+Route::get('/match-statistics/public', [MatchStatisticController::class, 'index']);
+Route::get('/tournaments/public', [TournamentController::class, 'index']);
+Route::get('/season/public', [SeasonController::class, 'index']);
+Route::get('/games/public', [GameController::class, 'index']);
+Route::get('/traspasos/public', [TransferController::class, 'index']);
+Route::get('/clausula_rescision/public', [RescissionController::class, 'index']);
+Route::get('/auctions/public', [AuctionController::class, 'index']);
+Route::get('/bets/public', [BetController::class, 'index']);
+
 
 
 // ============================================
