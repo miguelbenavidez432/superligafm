@@ -202,7 +202,7 @@ export default function Players() {
                                             <div className="flex gap-2 flex-wrap">
                                                 <Link
                                                     className="bg-green-600 hover:bg-green-800 p-2 rounded text-white text-sm"
-                                                    to={'/players/' + p.id}
+                                                    to={'/app/players/' + p.id}
                                                 >
                                                     Editar
                                                 </Link>
@@ -215,13 +215,13 @@ export default function Players() {
                                                 {p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda' ?
                                                     <Link
                                                         className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                        to={'/crear_subasta/' + p.id}
+                                                        to={'/app/crear_subasta/' + p.id}
                                                     >
                                                         Ofertar
                                                     </Link>
                                                     : <Link
                                                         className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                        to={'/clausula_rescision/' + p.id}
+                                                        to={'/app/clausula_rescision/' + p.id}
                                                     >
                                                         Ofertar
                                                     </Link>}
@@ -230,13 +230,13 @@ export default function Players() {
                                     ) : (user && p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda' ?
                                         <Link
                                             className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                            to={'/crear_subasta/' + p.id}
+                                            to={'/app/crear_subasta/' + p.id}
                                         >
                                             Ofertar
                                         </Link>
                                         : <Link
                                             className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                            to={'/clausula_rescision/' + p.id}
+                                            to={'/app/clausula_rescision/' + p.id}
                                         >
                                             Ofertar
                                         </Link>)}

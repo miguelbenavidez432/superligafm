@@ -61,7 +61,7 @@ export default function PlayerForm() {
 
     const getTeam = () => {
         setLoading(true);
-        axiosClient.get('/teams?all=true')
+        axiosClient.get('/teams/public?all=true')
             .then(({ data }) => {
                 setLoading(false);
                 setTeam(data.data);
@@ -148,7 +148,7 @@ export default function PlayerForm() {
                         <div>
                             <label className="block text-white text-sm font-medium mb-2">Equipo</label>
                             <select
-                                value={players.id_team}
+                                value={players.id_team?.id}
                                 onChange={e => setPlayers({ ...players, id_team: parseInt(e.target.value) })}
                                 className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
                             >

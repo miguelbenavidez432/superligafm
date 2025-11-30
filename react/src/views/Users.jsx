@@ -149,7 +149,7 @@ export default function Users() {
                                         {user.rol === 'Admin' ? (
                                             <>
                                                 <Link
-                                                    to={'/users/' + u.id}
+                                                    to={'/app/users/' + u.id}
                                                     className="bg-green-600 hover:bg-green-800 p-2 rounded text-white mr-2"
                                                 >
                                                     Editar
@@ -163,7 +163,7 @@ export default function Users() {
                                             </>
                                         ) : user.id === u.id && (
                                             <Link
-                                                to={'/users/' + u.id}
+                                                to={'/app/users/' + u.id}
                                                 className="bg-green-600 hover:bg-green-800 p-2 rounded text-white"
                                             >
                                                 Editar
