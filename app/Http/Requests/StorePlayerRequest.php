@@ -27,7 +27,8 @@ class StorePlayerRequest extends FormRequest
             'ca' => 'integer|max:200|required',
             'pa' => 'integer|max:200|required',
             'value' => 'integer|nullable',
-            'id_team' => 'integer|nullable'
+            'id_team' => 'integer|nullable',
+            'id_external' => 'integer|required'
         ];
     }
 }

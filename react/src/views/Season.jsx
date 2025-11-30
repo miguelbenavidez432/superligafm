@@ -13,7 +13,7 @@ const Season = () => {
 
     const getSeason = async() =>{
         setLoading(true);
-        await axiosClient.get('/season')
+        await axiosClient.get('/season/public')
         .then(({ data }) => {
             setSeason(data.data)
         })

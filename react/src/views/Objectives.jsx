@@ -20,7 +20,7 @@ const Objectives = ({ teams }) => {
     const getPlayers = async () => {
         try {
             setLoading(true);
-            const response = await axiosClient.get('/players?all=true');
+            const response = await axiosClient.get('/players/public?all=true');
             // Filtrar solo jugadores registrados
             const registeredPlayers = response.data.data.filter(player =>
                 player.status === 'registrado' && player.id_team

@@ -26,6 +26,7 @@ class PlayerResource extends JsonResource
             'id_team' => new TeamResource($this->whenLoaded('team')),
             'value' => $this->value,
             'status' => $this->status,
+            'id_external' => $this->id_external,
         ];
     }
 }

@@ -14,7 +14,7 @@ const Standings = () => {
     const { setNotification } = useStateContext();
 
     useEffect(() => {
-        axiosClient.get('/season')
+        axiosClient.get('/season/public')
             .then(({ data }) => {
                 setSeasons(data.data);
                 setSelectedSeason(data.data[0].id);
@@ -33,7 +33,7 @@ const Standings = () => {
 
     const getStandings = (selectedTournament) => {
         setLoading(true);
-        axiosClient.get(`/standings`, { params: { tournament_id: selectedTournament } })
+        axiosClient.get(`/standings/public`, { params: { tournament_id: selectedTournament } })
             .then(({ data }) => {
                 const dataFilter = data.data.filter(standing => standing.tournament.id == selectedTournament);
                 setStandings(dataFilter);
@@ -46,7 +46,7 @@ const Standings = () => {
     }
 
     const getTournaments = (selectedSeason) => {
-        axiosClient.get(`/tournaments`)
+        axiosClient.get(`/tournaments/public`)
             .then(({ data }) => {
                 const dataFilter = data.data.filter(tournament => tournament.season.id == selectedSeason);
                 setTournament(dataFilter);

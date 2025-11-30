@@ -28,7 +28,7 @@ export default function TournamentForm() {
     const onSubmit = (e) => {
         e.preventDefault();
         setLoading(true);
-        axiosClient.post('/tournaments', tournament)
+        axiosClient.post('/tournaments/public', tournament)
             .then(() => {
                 setLoading(false);
                 setNotification('Torneo creado correctamente');
