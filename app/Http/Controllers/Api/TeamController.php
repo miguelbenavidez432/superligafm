@@ -16,7 +16,8 @@ class TeamController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->query('all') == 'true') {
+        $isPublic = !auth('sanctum')->check();
+        if ($request->query('all') == 'true' || $isPublic) {
             return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->get());
         } else {
             return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->paginate(280));
