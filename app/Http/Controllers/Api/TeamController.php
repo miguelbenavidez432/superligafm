@@ -21,7 +21,6 @@ class TeamController extends Controller
         } else {
             return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->paginate(280));
         }
-        ;
     }
 
     /**
