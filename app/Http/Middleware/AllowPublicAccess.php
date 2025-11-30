@@ -16,7 +16,7 @@ class AllowPublicAccess
     public function handle(Request $request, Closure $next): Response
     {
          // Si la petición tiene 'all=true', permitir acceso sin autenticación
-        if ($request->query('all') === 'true') {
+        if ($request->query('all') == 'true') {
             return $next($request);
         }
 
