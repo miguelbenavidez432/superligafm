@@ -6,21 +6,26 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use((config) =>{
     const token = localStorage.getItem('ACCESS_TOKEN')
-    config.headers.Authorization = `Bearer ${token}`
-    return config
+    if (token && token !== 'null' && token !== 'undefined' && token.trim() !== '') {
+        config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
+    }
+
+    return config;
 });
 
-axiosClient.interceptors.response.use((response)=>{
-    return response;
-}, (error)=>{
-    const {response} = error;
-    if(response.status === 401){
-        localStorage.removeItem('ACCESS_TOKEN')
-    }else if (response.status === 404) {
-        //Show not found
-      }
-    
-      throw error;
-})
+axiosClient.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        const { response } = error;
+        if (response && response.status === 401) {
+            localStorage.removeItem('ACCESS_TOKEN');
+        }
+        throw error;
+    }
+);
 
 export default axiosClient;

@@ -11,13 +11,13 @@ export default function LandingPage() {
                 </p>
                 <div className="flex justify-center gap-4">
                     <Link
-                        to="/login"
+                        to="/auth/login"
                         className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
                     >
                         Iniciar Sesión
                     </Link>
                     <Link
-                        to="/signup"
+                        to="/auth/signup"
                         className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
                     >
                         Registrarse
@@ -93,7 +93,7 @@ export default function LandingPage() {
                             Regístrate para participar en la liga
                         </p>
                         <Link
-                            to="/signup"
+                            to="/auth/signup"
                             className="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition inline-block"
                         >
                             Crear Cuenta
