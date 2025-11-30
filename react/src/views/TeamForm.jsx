@@ -62,7 +62,7 @@ export default function TeamForm() {
 
     const getPlayers = () => {
         setLoading(true);
-        axiosClient.get('/players?all=true')
+        axiosClient.get('/players/public?all=true')
             .then(({ data }) => {
                 setLoading(false);
                 const playersFiltered = data.data.filter((p) => p.id_team && p.id_team.id === parseInt(id));

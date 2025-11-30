@@ -10,6 +10,7 @@ import axiosClient from "../axios";
 export default function PlayerForm() {
     const [players, setPlayers] = useState({
         name: '',
+        id_external: 0,
         id_team: 61,
         status: '',
         value: '',
@@ -29,7 +30,7 @@ export default function PlayerForm() {
     useEffect(() => {
         const fetchPlayers = () => {
             setLoading(true);
-            axiosClient.get('/players?all=true')
+            axiosClient.get('/players/public?all=true')
                 .then(({ data }) => {
                     setLoading(false);
                     const filteredPlayer = data.data.find(player => player.id === parseInt(id));
@@ -235,6 +236,24 @@ export default function PlayerForm() {
                                             : 'text-gray-400 bg-gray-800'
                                         }`}
                                 />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-white text-sm font-medium mb-2">ID FM</label>
+                                <input
+                                    value={players.id_external}
+                                    onChange={e => setPlayers({ ...players, id_external: parseInt(e.target.value) })}
+                                    placeholder="ID FM"
+                                    type="text"
+                                    disabled={!(user.rol === 'Admin' || user.rol === 'Organizador')}
+                                    className={`block w-full p-2 border border-blue-700 rounded ${(user.rol === 'Admin' || user.rol === 'Organizador')
+                                            ? 'text-white bg-slate-950'
+                                            : 'text-gray-400 bg-gray-800'
+                                        }`}
+                                />
+                            </div>
+                            <div>
                             </div>
                         </div>
 

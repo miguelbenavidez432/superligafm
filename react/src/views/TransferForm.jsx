@@ -41,7 +41,7 @@ export default function TransferForm() {
     }, [playersToSend]);
 
     const getTeam = () => {
-        axiosClient.get('/teams')
+        axiosClient.get('/teams/public')
             .then(({ data }) => {
                 const teamFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
                 setTeams(teamFilter)
@@ -51,7 +51,7 @@ export default function TransferForm() {
     }
 
     const getPlayers = () => {
-        axiosClient.get('/players?all=true')
+        axiosClient.get('/players/public?all=true')
             .then(({ data }) => {
                 setPlayers(data.data)
             })

@@ -76,7 +76,7 @@ const Auctions = () => {
     };
 
     const getTeam = () => {
-        axiosClient.get('/teams?all=true')
+        axiosClient.get('/teams/public?all=true')
             .then(({ data }) => {
                 const leagueTeamsFilter = data.data.filter((t) => t.division === 'Primera' || t.division === 'Segunda')
                 const otherTeamsFilter = data.data.filter((t) => t.division === '')
@@ -88,7 +88,7 @@ const Auctions = () => {
     };
 
     const getPlayers = () => {
-        axiosClient.get('/players?all=true')
+        axiosClient.get('/players/public?all=true')
             .then(({ data }) => {
                 setPlayers(data.data)
                 const filteredPlayers = data.data.filter(p => p.id_team && p.id_team.id == selectedTeam)
@@ -116,7 +116,7 @@ const Auctions = () => {
 
     const handleAuctionSubmit = (e) => {
         e.preventDefault();
-        axiosClient.post('/auctions', auctionData)
+        axiosClient.post('/auctions/public', auctionData)
             .then((response) => {
                 setNotification('Subasta creada exitosamente');
 

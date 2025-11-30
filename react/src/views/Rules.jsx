@@ -16,7 +16,8 @@ export default function Rules() {
             <p>
                 - La selección de equipos para los usuarios será aleatoria en la primera temporada y cada vez que se reinicie la partida.
                 Finalizada cada una de las temporadas los usuarios podrán mantener su equipo o elegir otro equipo de Primera División
-                (los que jueguen en esa categoría) o Segunda (los que jueguen esa división) según el orden de ubicación luego de finalizar la temporada.
+                (los que jueguen en esa categoría) o Segunda (los que jueguen esa división) según el orden de ubicación luego de
+                finalizar la temporada.
                 Aquellos usuarios que descendieron no podrán elegir el mismo equipo con el que perdieron la categoría.
                 Si por algún motivo un usuario no se presenta a disputar dos partidos en la temporada (no coordinación y/o no presentación)
                 perderán el derecho de mantener el equipo en caso de superar objetivos.
@@ -50,19 +51,17 @@ export default function Rules() {
             <p>
                 Se jugará con el sistema todos contra todos, una sola rueda y en cancha neutral, contabilizando 13 partidos por equipo.
                 Si el equipo que finaliza en la primera posición tiene 5 o menos puntos de ventaja sobre el segundo,
-                los equipos que finalicen en las posiciones 8 y 9 se enfrentarán en el Play-in para acceder a los playoffs.
-                Será a partido único con ventaja en caso de empate para el mejor ubicado (8° posición).
+                clasificarán a playoff los 8 primeros equipos de la tabla de posiciones.
                 Al finalizar la temporada regular, si el equipo que finaliza en la primera posición tiene 6 o más puntos de ventaja
-                sobre el segundo clasificará de manera directa a semifinales, accediendo los equipos que finalicen en las posiciones 7 y 8
-                al play-in para clasificar a los playoffs.<br /><br />
-            </p>
-            <p>
-                Play-in: -Será a partido único con ventaja en caso de empate para el mejor ubicado (7° u 8° posición).<br />
+                sobre el segundo mejor equipo, clasificará de manera directa a semifinales, accediendo los equipos que finalicen entre las posiciones
+                2 y 7 a la primer ronda de playoffs.<br /><br />
             </p>
             <p>
                 Los cruces de Cuartos de Final se realizan mediante elección directa del manager, eligiendo en primer lugar quien se ubique
                 1° en la tabla, pudiendo elegir cualquier rival de los puestos 5º - 8º, y así sucesivamente en la tabla;
-                es decir, los posicionados 1º-4º, pueden elegir a sus rivales en posiciones 5º-8º.<br />
+                es decir, los posicionados 1º-4º, pueden elegir a sus rivales en posiciones 5º-8º.
+                En caso ser 7 los equipos clasificados, la elección será entre los posicionados 2º-4º, 
+                podrán elegir a sus rivales en posiciones 5º-7º<br />
             </p>
             <p>
                 El que sea mejor ubicado en la tabla del cruce tendrá ventaja deportiva, clasificando a la siguiente ronda
@@ -80,6 +79,10 @@ export default function Rules() {
                 Los partidos serán en cancha neutral con prórroga y penales. Los perdedores de los cruces se enfrentarán entre sí,
                 en cancha neutral con prórroga y penales. El ganador jugará una promoción contra un equipo de Segunda División y
                 el perdedor descenderá.<br />
+            </p>
+            <p>
+                Las posiciones para este y el resto de los torneos, se definirá primero por deiferencia de gol, luego por goles a favor
+                y por último, encuentro/s entre si a excepción de los partidos que definan descenso o campeonato<br />
             </p>
             <br />
             <h3>Las posiciones finales de Primera División se definirán de la siguiente manera:</h3><br />
@@ -166,17 +169,17 @@ export default function Rules() {
             <h1 className="font-black text-center sm:text-2xl">Lista de buena fe</h1>
             <br />
             <p>
-                Todos los managers deberán tener en sus equipos un máximo de 18 jugadores mayores de 20 años + 6 juveniles (sub– 20)
+                Todos los managers deberán tener en sus equipos un máximo de 20 jugadores mayores de 20 años + 4 juveniles (sub– 20)
                 que utilizarán en todos los torneos. Los jugadores que no estén en el primer equipo quedarán inhabilitados
                 durante la simulación de la partida y no podrán ser utilizados en la temporada.<br />
                 En caso de que un manager no pudiese cumplir con la obligación de colocar un arquero entre los sustitutos
                 (renudación de partido por desconexión) podrá agregar uno del equipo juvenil sin necesidad de que el mismo
                 esté incluído en la lista de buena fe y deberá ser sub-20. Es decir que la lista estará conformada por 24 jugadores
-                de los cuales, mínimamente 6 deberán ser sub 20 (20 años o menos al momento del inicio de la temporada).
-                En caso de no completar los 6 lugares, estos quedarán libres.
+                de los cuales, mínimamente 4 deberán ser sub 20 (20 años o menos al momento del inicio de la temporada).
+                En caso de no completar los 4 lugares, estos quedarán libres.
                 Los equipos de Primera División deben tener como promedio máximo de los mejores 16 CA de 160 puntos
                 al cierre del mercado de pases (estén o no incluídos en la lista de buena fe).
-                Los equipos de Segunda División deben tener como promedio máximo de los mejores 16 CA de 153 puntos
+                Los equipos de Segunda División deben tener como promedio máximo de los mejores 16 CA de 155 puntos
                 al cierre del mercado de pases (estén o no incluídos en la lista de buena fe).<br />
             </p>
             <br />
@@ -537,7 +540,7 @@ export default function Rules() {
             <p>
                 Fin de mercado:<br />
                 -Límite CA Primera: 160CA<br />
-                -Límite CA Segunda: 153CA<br />
+                -Límite CA Segunda: 155CA<br />
                 <br />
                 <br />
             </p>
