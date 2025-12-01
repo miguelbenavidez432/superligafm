@@ -166,7 +166,7 @@ const OffersList = () => {
                                                 <td className="px-4 py-2 text-sm ">
                                                     <Link
                                                         className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                                                        to={oferta.id_player ? `/offers/${oferta.id_player.id}` : "#"}
+                                                        to={oferta.id_player ? `app/offers/${oferta.id_player.id}` : "#"}
                                                     >
                                                         Ofertas
                                                     </Link>

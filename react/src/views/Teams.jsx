@@ -73,7 +73,7 @@ export default function Teams() {
                                             <td className="border px-4 py-2">{t.division}</td>
                                             <td className="border px-4 py-2">{t.user ? t.user.name : 'Equipo sin manager asignado'}</td>
                                             <td className="border px-4 py-2">
-                                                <Link className="p-2 bg-violet-600 hover:bg-violet-800 rounded" to={`/teams/${t.id}`}>Ver equipo</Link>
+                                                <Link className="p-2 bg-violet-600 hover:bg-violet-800 rounded" to={`/app/teams/${t.id}`}>Ver equipo</Link>
                                             </td>
                                         </tr>
                                     )

@@ -274,7 +274,7 @@ export default function Dashboard() {
                                             <td className="py-2 px-2 border-b text-xs">{teamNameToShow}</td>
                                             <td className="py-2 px-2 border-b text-xs">{transfer.total_value}</td>
                                             <td className="py-2 px-2 border-b text-xs">
-                                                <Link className="btn-edit my-1 text-blue-500" to={`/offers/${transfer.id_player}`}>Ofertas</Link>
+                                                <Link className="btn-edit my-1 text-blue-500" to={`app/offers/${transfer.id_player}`}>Ofertas</Link>
                                             </td>
                                         </tr>
                                     )

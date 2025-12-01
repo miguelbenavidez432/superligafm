@@ -210,7 +210,7 @@ export default function TeamForm() {
                         <button className="bg-green-600 hover:bg-green-800 p-3 rounded text-white">Guardar cambios</button>
                     }
                     {
-                        <Link className="bg-violet-600 hover:bg-violet-800 p-4 rounded text-white mx-2" to={`/estadisticas/${id}`}>Ver estadísticas</Link>
+                        <Link className="bg-violet-600 hover:bg-violet-800 p-4 rounded text-white mx-2" to={`/app/estadisticas/${id}`}>Ver estadísticas</Link>
                     }
                     </div>
                     <br />

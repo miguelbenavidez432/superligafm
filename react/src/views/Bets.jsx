@@ -111,7 +111,7 @@ export default function Bets() {
                                                 user ?
                                                     (<>
                                                         <th>
-                                                            <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+                                                            <Link className="btn-add" to={`app/apuestas/${b.id}`}>Apostar</Link>
                                                             &nbsp;
                                                             {
                                                                 user.rol === 'Admin' &&
@@ -163,7 +163,7 @@ export default function Bets() {
                                             user ?
                                                 (<>
                                                     <th>
-                                                        <Link className="btn-add" to={`/apuestas/${b.id}`}>Apostar</Link>
+                                                        <Link className="btn-add" to={`/app/apuestas/${b.id}`}>Apostar</Link>
 
                                                     </th>
                                                 </>
