@@ -12,7 +12,20 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Ejecutar todos los días a las 01:00 AM
+        $schedule->command('rescissions:confirm')
+            ->dailyAt('01:05')
+            ->timezone('America/Argentina/Buenos_Aires');
+
+        // Ejecutar todos los días a las 10:00 AM
+        $schedule->command('rescissions:confirm')
+            ->dailyAt('10:05')
+            ->timezone('America/Argentina/Buenos_Aires');
+
+        // Ejecutar todos los días a las 18:00 (6:00 PM)
+        $schedule->command('rescissions:confirm')
+            ->dailyAt('18:05')
+            ->timezone('America/Argentina/Buenos_Aires');
     }
 
     /**

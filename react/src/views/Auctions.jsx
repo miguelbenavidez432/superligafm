@@ -65,7 +65,7 @@ const Auctions = () => {
                 auctioned_by: user.id,
                 created_by: user.id,
                 active: 'yes',
-                id_season: 59
+                id_season: 60
             });
 
             if (player.id_team) {
@@ -110,13 +110,13 @@ const Auctions = () => {
             auctioned_by: user.id,
             created_by: user.id,
             active: 'yes',
-            id_season: 59
+            id_season: 60
         });
     };
 
     const handleAuctionSubmit = (e) => {
         e.preventDefault();
-        axiosClient.post('/auctions/public', auctionData)
+        axiosClient.post('/auctions', auctionData)
             .then((response) => {
                 setNotification('Subasta creada exitosamente');
 
@@ -131,7 +131,7 @@ const Auctions = () => {
                     amount: 0,
                     created_by: user.id,
                     status: 'active',
-                    id_season: 59,
+                    id_season: 60,
                 });
             })
             .catch((error) => {

@@ -27,7 +27,7 @@ export default function Announcement() {
         other_players: [],
         extra_value: 0,
         total_value: 0,
-        id_season: 59,
+        id_season: 60,
     });
     const [inputValue, setInputValue] = useState(0);
 
@@ -63,7 +63,7 @@ export default function Announcement() {
                 other_players: [],
                 extra_value: 0,
                 total_value: player.value,
-                id_season: 59,
+                id_season: 60,
             });
 
             if (player.id_team) {
