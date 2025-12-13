@@ -88,7 +88,7 @@ export default function AuctionsList() {
                                 <strong> Hora de inicio:</strong> {formatDate(auction.created_at) + " "}
                             </label>
                             <Link
-                                to={`/subastas/${auction.id_player}`}
+                                to={`/app/subastas/${auction.id_player}`}
                                 className="inline-block px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 transition"
                             >
                                 Hacer una nueva oferta

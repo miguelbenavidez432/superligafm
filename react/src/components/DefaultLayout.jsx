@@ -80,16 +80,17 @@ export default function DefaultLayout() {
                     <div className="group relative">
                         <button className="block w-full text-left py-2.5 px-4 hover:bg-gray-700">Mercado</button>
                         <div className="absolute left-0 hidden w-full bg-gray-800 group-hover:block">
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/misofertas'>Mis ofertas</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/offers'>Ofertas</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/transferencias'>Intercambios</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/crear_subasta'>Crear Subasta</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/subastas'>Lista de Subastas</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/clausula_rescision'>Claúsula de rescisión</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/transfer'>Transferencia</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/misofertas'>Mis ofertas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/offers'>Ofertas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/transferencias'>Intercambios</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/crear_subasta'>Crear Subasta</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/subastas'>Lista de Subastas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/clausula_rescision'>Claúsula de rescisión</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/transfer'>Transferencia</Link>
                             {user.rol === 'Admin' && (
                                 <>
-                                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/ofertas-confirmadas'>Traspasos confirmados</Link>
+                                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/ofertas-confirmadas'>Traspasos confirmados</Link>
+                                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/reverse-offer'>Revertir Oferta </Link>
                                 </>
                             )}
                         </div>

@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/traspasos', TransferController::class);
     Route::apiResource('/bets', BetController::class);
 
+    Route::post('/rescission/reverse', [RescissionController::class, 'reverseOffer']);
     Route::apiResource('/clausula_rescision', RescissionController::class);
     Route::post('/confirm-offer', [RescissionController::class, 'confirmOffer']);
     Route::put('/cerrar-oferta/{id}', [RescissionController::class, 'closeOffer']);

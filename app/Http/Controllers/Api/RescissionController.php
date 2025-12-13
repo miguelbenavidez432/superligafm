@@ -213,4 +213,85 @@ class RescissionController extends Controller
         }
     }
 
+    public function reverseOffer(Request $request)
+    {
+        // Validar datos
+        $validated = $request->validate([
+            'offer_id' => 'required|integer|exists:rescissions,id',
+            'player_id' => 'required|integer|exists:players,id'
+        ]);
+
+        try {
+            // 1. Verificar que el usuario sea Admin
+            $user = auth()->user();
+            if ($user->rol !== 'Admin' && $user->rol !== 'Organizador') {
+                return response()->json([
+                    'message' => 'No tienes permisos para realizar esta acción'
+                ], 403);
+            }
+
+            // 2. Obtener la oferta
+            $offer = Rescission::findOrFail($validated['offer_id']);
+
+            if ($offer->confirmed !== 'yes') {
+                return response()->json([
+                    'message' => 'La oferta NO está confirmada. No se puede revertir.'
+                ], 400);
+            }
+
+            // 3. Obtener datos necesarios
+            $player = Player::findOrFail($validated['player_id']);
+            $buyer = User::findOrFail($offer->created_by);
+            $originalTeam = Team::findOrFail($offer->id_team);
+            $seller = User::findOrFail($originalTeam->id_user);
+
+            $value = $offer->total_value;
+
+            // 4. Revertir el jugador al equipo original
+            $player->update([
+                'id_team' => $offer->id_team,
+                'status' => 'registrado'
+            ]);
+
+            // 5. Revertir presupuestos
+            $buyer->profits += $value;
+            $buyer->save();
+
+            $seller->profits -= $value;
+            $seller->save();
+
+            // 6. Revertir el estado de la oferta
+            $offer->update([
+                'confirmed' => 'no',
+                'active' => 'no'
+            ]);
+
+            Log::info("Oferta de rescisión revertida por {$user->name}", [
+                'offer_id' => $validated['offer_id'],
+                'player_id' => $validated['player_id'],
+                'player_name' => $player->name,
+                'buyer' => $buyer->name,
+                'seller' => $seller->name,
+                'amount' => $value
+            ]);
+
+            return response()->json([
+                'message' => 'Oferta revertida exitosamente',
+                'data' => [
+                    'player' => $player->name,
+                    'returned_to_team' => $originalTeam->name,
+                    'refunded_amount' => $value,
+                    'buyer' => $buyer->name,
+                    'seller' => $seller->name
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error al revertir oferta: {$e->getMessage()}");
+            return response()->json([
+                'message' => 'Error al revertir la oferta',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
