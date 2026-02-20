@@ -139,7 +139,7 @@ const OffersMade = () => {
                                             {oferta.id_player ? (
                                                 <Link
                                                     className="btn-edit bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                                                    to={`app/offers/${oferta.id_player}`}
+                                                    to={`/app/offers/${oferta.id_player}`}
                                                 >
                                                     Ofertas
                                                 </Link>

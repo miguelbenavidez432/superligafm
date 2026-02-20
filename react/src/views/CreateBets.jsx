@@ -47,7 +47,7 @@ export default function CreateBets() {
         axiosClient.post('/bets', bet)
             .then(() => {
                 setNotification('Apuesta de partido creada correctamente')
-                navigate('/apuestas')
+                navigate('/app/apuestas')
             })
             .catch(err => {
                 setNotification('Error al cargar la apuesta'+ errors)
@@ -67,7 +67,7 @@ export default function CreateBets() {
         axiosClient.post('/singlebet', data)
             .then(() => {
                 setNotification('Apuesta de jugador creada correctamente')
-                navigate('/apuestas')
+                navigate('/app/apuestas')
             })
             .catch(err => {
                 setNotification('Error al cargar la apuesta')

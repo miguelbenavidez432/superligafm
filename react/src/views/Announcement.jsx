@@ -203,7 +203,7 @@ export default function Announcement() {
                     id_season: 59
                 });
                 setNotification('Ejecución de cláusula enviada');
-                navigate('/offers');
+                navigate('/app/offers');
             })
             .catch(error => {
                 setErrors(error.response?.data.errors || "Error al enviar la cláusula de rescisión.");

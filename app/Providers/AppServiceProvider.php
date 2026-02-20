@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Providers;
-
+use App\Contracts\OcrAnalyzerInterface;
+use App\Services\GeminiOcrService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(OcrAnalyzerInterface::class, GeminiOcrService::class);
     }
 
     /**

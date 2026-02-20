@@ -45,7 +45,7 @@ import Statistics from './views/Statistics';
 import TeamStatistics from './views/TeamStatistics';
 import ManagePrizes from './views/ManagePrizes';
 import CreatePrizes from './views/CreatePrizes';
-import UploadMatch from './views/uploadMatch';
+import UploadMatch from './views/UploadMatch';
 import PublicLayout from './components/PublicLayout';
 import LandingPage from './views/public/LandingPage';
 // import PublicTeams from './views/public/PublicTeams';
@@ -292,7 +292,7 @@ const router = createBrowserRouter([
                 element: <CreatePrizes />
             },
             {
-                path: '/app/cargar-imagenes/:id',
+                path: '/app/cargar-imagenes',
                 element: <UploadMatch />
             }
         ]
@@ -520,7 +520,7 @@ const router = createBrowserRouter([
         element: <CreatePrizes />
     },
     {
-        path: '/cargar-imagenes/:id',
+        path: '/cargar-imagenes',
         element: <UploadMatch />
     }
 

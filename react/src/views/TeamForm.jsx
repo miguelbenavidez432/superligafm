@@ -130,7 +130,7 @@ export default function TeamForm() {
             axiosClient.put(`/teams/${team.id}`, team)
                 .then(() => {
                     setNotification('Equipo actualizado satisfactoriamente')
-                    navigate('/teams')
+                    navigate('/app/teams')
                 })
                 .catch(err => {
                     const response = err.response;
@@ -142,7 +142,7 @@ export default function TeamForm() {
             axiosClient.post(`/teams`, team)
                 .then(() => {
                     setNotification('Equipo creado satisfactoriamente')
-                    navigate('/teams')
+                    navigate('/app/teams')
                 })
                 .catch(err => {
                     const response = err.response;

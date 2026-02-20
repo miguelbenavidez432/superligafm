@@ -119,7 +119,7 @@ const AuctionConfirmation = () => {
             await axiosClient.put(`/players/${selectedPlayer.id}`, selectedPlayer)
                 .then(() => {
                     setNotification('Subasta actualizada')
-                    navigate('/plantel')
+                    navigate('/app/plantel')
                 });
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);

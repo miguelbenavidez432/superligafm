@@ -128,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/ocr/process', [OcrController::class, 'processImage']);
     Route::post('/ocr/process-multiple', [OcrController::class, 'processMultipleImages']);
     Route::put('/games/{id}/enable-edit', [GameController::class, 'enableEdit']);
+    Route::post('/games/store-from-ocr', [GameController::class, 'storeFromOcr']);
 
 });
 

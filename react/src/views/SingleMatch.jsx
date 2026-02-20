@@ -75,8 +75,8 @@ export default function SingleMatch() {
 
         axiosClient.post('/match-statistics', { statistics })
             .then(() => {
-                navigate('/partidos');
                 setNotification('Estadísticas guardadas correctamente');
+                navigate('/app/partidos');
             })
             .catch(() => {
                 setNotification('Error al guardar estadísticas');
@@ -88,7 +88,7 @@ export default function SingleMatch() {
     //     axiosClient.delete(`/games/${id}`)
     //         .then(() => {
     //             setNotification('Partido eliminado correctamente');
-    //             navigate('/partidos');
+    //             navigate('/app/partidos');
     //         })
     //         .catch(() => {
     //             setLoading(false);

@@ -238,7 +238,7 @@ const PlayerOffers = () => {
                 <p>Las ofertas estarán disponibles después de 7 u 8 horas de la primera oferta.</p>
             )}
             <br />
-            <Link className="btn-edit" to={`/clausula_rescision`}>Realizar ofertas</Link>
+            <Link className="btn-edit" to={`/app/clausula_rescision`}>Realizar ofertas</Link>
         </div>
     );
 };

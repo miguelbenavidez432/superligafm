@@ -167,7 +167,7 @@ const PlayerAuctions = () => {
             if (response.status === 200) {
                 alert('Subasta confirmada y jugador transferido.');
                 getAuctionsByPlayer();
-                navigate('/subastas');
+                navigate('/app/subastas');
             } else {
                 alert('Error al confirmar la subasta.');
             }

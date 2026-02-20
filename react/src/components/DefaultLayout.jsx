@@ -44,37 +44,37 @@ export default function DefaultLayout() {
                     <h1 className="text-2xl font-bold">Superliga FM</h1>
                 </div>
                 <nav className="flex-1">
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/dashboard'>Mi estado</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/tablas'>Tablas</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/estadisticas'>Estadísticas</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/dashboard'>Mi estado</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/tablas'>Tablas</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/estadisticas'>Estadísticas</Link>
                     <div className="group relative">
                         <button className="block w-full text-left py-2.5 px-4 hover:bg-gray-700">Fixture</button>
                         <div className="absolute left-0 hidden w-full bg-gray-800 group-hover:block">
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/fixture_primera'>Fixture Primera</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/fixture_segunda'>Fixture Segunda</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/fixture_primera'>Fixture Primera</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/fixture_segunda'>Fixture Segunda</Link>
                         </div>
                     </div>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/plantel'>Plantel</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/players'>Jugadores</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/users'>Managers</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/teams'>Equipos</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/plantel'>Plantel</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/players'>Jugadores</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/users'>Managers</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/teams'>Equipos</Link>
                     <div className="group relative">
                         <button className="block w-full text-left py-2.5 px-4 hover:bg-gray-700">Apuestas</button>
                         <div className="absolute left-0 hidden w-full bg-gray-800 group-hover:block">
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas'>Apuestas</Link>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas/new'>Crear apuestas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/apuestas'>Apuestas</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/apuestas/new'>Crear apuestas</Link>
                             {user.rol === 'Admin' && (
                                 <>
-                                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/apuestas/usuarios'>Confirmar apuestas ganadas</Link>
+                                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/apuestas/usuarios'>Confirmar apuestas ganadas</Link>
                                 </>
                             )}
                         </div>
                     </div>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/reglamento'>Reglamento</Link>
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/partidos'>Partidos</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/reglamento'>Reglamento</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/partidos'>Partidos</Link>
                     {user.rol === 'Admin' && (
                         <>
-                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/torneos'>Cargar Torneo</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/torneos'>Cargar Torneo</Link>
                         </>
                     )}
                     <div className="group relative">
@@ -97,10 +97,10 @@ export default function DefaultLayout() {
                     </div>
                     {user.rol === 'Admin' && (
                         <>
-                        <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/premios'>Premios</Link>
+                        <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/premios'>Premios</Link>
                         </>
                     )}
-                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/about'>Nosotros</Link>
+                    <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/about'>Nosotros</Link>
                 </nav>
                 <div className="p-4">
                     <a href="" className="block py-2.5 px-4 bg-red-600 hover:bg-red-700 text-center rounded" onClick={onLogout}>Logout</a>

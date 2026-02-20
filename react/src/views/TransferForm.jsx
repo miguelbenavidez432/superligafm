@@ -134,7 +134,7 @@ export default function TransferForm() {
         axiosClient.post('/transfer', { data: transferData })
             .then(() => {
                 setNotification('Transferencia realizada correctamente');
-                navigate('/dashboard');
+                navigate('/app/dashboard');
                 setDatosActualizados([]);
                 setPlayersToSend([]);
             })

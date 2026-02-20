@@ -153,7 +153,7 @@ export default function Plantel() {
             <div className="flex justify-between items-center flex-wrap mb-5">
                 <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Plantel</h1>
                 <button className="btn btn-primary">
-                    <Link to={`app/estadisticas/${team?.id}`} className="text-white no-underline">Ver Estadísticas</Link>
+                    <Link to={`/app/estadisticas/${team?.id}`} className="text-white no-underline">Ver Estadísticas</Link>
                 </button>
             </div>
             <div className="bg-slate-800 bg-opacity-70 p-4 rounded-lg shadow-md">

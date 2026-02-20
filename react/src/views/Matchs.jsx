@@ -303,13 +303,13 @@ export default function Matches() {
                                             <li key={match.id} className="mb-2">
                                                 {match.team_home?.name} vs {match.team_away?.name} - Ronda {formatStage(Number(match.stage), tournament.format)} -{' '}
                                                 {match.status === 'completed' ? (
-                                                    <Link className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-800" to={`app/partidos/${match.id}`}>
+                                                    <Link className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-800" to={`/app/partidos/${match.id}`}>
                                                         <span className='font-semibold'> Resultado: {' '}
                                                             {match.score_home} - {match.score_away}
                                                         </span>
                                                     </Link>
                                                 ) : (
-                                                    <Link className="bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-700" to={`app/partidos/${match.id}`}>
+                                                    <Link className="bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-700" to={`/app/partidos/${match.id}`}>
                                                         Cargar datos
                                                     </Link>
                                                 )}

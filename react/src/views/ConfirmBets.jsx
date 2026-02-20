@@ -52,7 +52,7 @@ export default function ConfirmBets() {
                         id_bet: '',
                         id_playerbet: '',
                     })
-                    navigate('/apuestas')
+                    navigate('/app/apuestas')
                 })
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
@@ -77,7 +77,7 @@ export default function ConfirmBets() {
                         id_bet: '',
                         id_playerbet: '',
                     })
-                    navigate('/apuestas')
+                    navigate('/app/apuestas')
                 })
         } catch (error) {
             setNotification("Error al confirmar la oferta:", error);
