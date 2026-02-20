@@ -31,7 +31,7 @@ class GeminiOcrService implements OcrAnalyzerInterface
         $prompt = $this->buildPrompt($playersContext);
 
         $client = \Gemini::factory()
-            ->withApiKey(env('GEMINI_API_KEY'))
+            ->withApiKey(config('services.gemini.api_key'))
             ->withHttpClient(new Client(['timeout' => 120, 'connect_timeout' => 120]))
             ->make();
 
