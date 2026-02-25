@@ -18,9 +18,9 @@ class Game extends Model
         'match_date',
         'status',
         'stage',
-        'penalties',
+        'outcome_type',
         'penalties_home',
-        'penalties_away',
+        'penalties_away'
     ];
 
     protected $casts = [
@@ -45,5 +45,10 @@ class Game extends Model
     public function matchStatistics()
     {
         return $this->hasMany(MatchStatistic::class, 'match_id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(GameImage::class);
     }
 }

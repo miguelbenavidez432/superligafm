@@ -60,21 +60,29 @@ class StandingController extends Controller
     /**
      * Calcular standings desde los partidos jugados
      */
-    private function calculateStandingsFromMatches($tournamentId)
+    private function calculateStandingsFromMatches($tournamentId, $includeStage13 = false)
     {
-        $matches = Game::where('tournament_id', $tournamentId)
+        // 1. Armamos la consulta base
+        $query = Game::where('tournament_id', $tournamentId)
             ->where('status', 'completed')
-            ->whereNotNull('score_home')
-            ->whereNotNull('score_away')
-            ->with(['teamHome', 'teamAway'])
-            ->get();
+            ->with(['teamHome', 'teamAway']);
 
+        // 2. Filtramos la Fecha 13 si no fue solicitada explícitamente
+        if ($includeStage13) {
+            // Ajusta 'stage' por el nombre real de tu columna en BD (puede ser 'matchday', 'round', etc.)
+            $query->where('stage', '!=', '13');
+        }
+
+        $matches = $query->get();
+
+        // 3. Obtenemos los IDs únicos de los equipos
         $teamIds = $matches->pluck('team_home_id')
             ->merge($matches->pluck('team_away_id'))
             ->unique();
 
         $standings = [];
 
+        // Inicializamos la tabla en 0
         foreach ($teamIds as $teamId) {
             $standings[$teamId] = [
                 'team_id' => $teamId,
@@ -90,25 +98,54 @@ class StandingController extends Controller
             ];
         }
 
+        // 4. Calculamos los puntos partido a partido
         foreach ($matches as $match) {
             $homeId = $match->team_home_id;
             $awayId = $match->team_away_id;
-            $scoreHome = $match->score_home;
-            $scoreAway = $match->score_away;
 
+            // REGLA DE ORO: Todo partido cuenta como jugado, sin importar cómo se definió
             $standings[$homeId]['played']++;
+            $standings[$awayId]['played']++;
+
+            // REGLA NUEVA: Si es "No Jugado", cortamos acá. No suma goles ni puntos.
+            if ($match->outcome_type === 'unplayed') {
+                continue;
+            }
+
+            // Normal, Administrativo o Penales
+            $scoreHome = $match->score_home ?? 0;
+            $scoreAway = $match->score_away ?? 0;
+
             $standings[$homeId]['goals_for'] += $scoreHome;
             $standings[$homeId]['goals_against'] += $scoreAway;
-
-            $standings[$awayId]['played']++;
             $standings[$awayId]['goals_for'] += $scoreAway;
             $standings[$awayId]['goals_against'] += $scoreHome;
 
-            if ($scoreHome > $scoreAway) {
+            // Determinamos al ganador
+            $winner = 'draw';
+
+            if ($match->outcome_type === 'penalties') {
+                // Si hubo penales, manda el resultado de los penales
+                if ($match->penalties_home > $match->penalties_away) {
+                    $winner = 'home';
+                } elseif ($match->penalties_away > $match->penalties_home) {
+                    $winner = 'away';
+                }
+            } else {
+                // Definición normal o escritorio
+                if ($scoreHome > $scoreAway) {
+                    $winner = 'home';
+                } elseif ($scoreAway > $scoreHome) {
+                    $winner = 'away';
+                }
+            }
+
+            // Asignamos puntos y estadísticas
+            if ($winner === 'home') {
                 $standings[$homeId]['won']++;
                 $standings[$homeId]['points'] += 3;
                 $standings[$awayId]['lost']++;
-            } elseif ($scoreHome < $scoreAway) {
+            } elseif ($winner === 'away') {
                 $standings[$awayId]['won']++;
                 $standings[$awayId]['points'] += 3;
                 $standings[$homeId]['lost']++;
@@ -120,6 +157,7 @@ class StandingController extends Controller
             }
         }
 
+        // 5. Calculamos la diferencia de gol final
         foreach ($standings as &$standing) {
             $standing['goal_difference'] = $standing['goals_for'] - $standing['goals_against'];
         }

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 // filepath: src/views/UploadMatch.jsx
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axiosClient from '../axios';
 import { useMatchData } from '../hooks/useMatchData';
 import { useOcrProcessor } from '../hooks/useOcrProcessor';
@@ -9,6 +9,8 @@ import { useOcrProcessor } from '../hooks/useOcrProcessor';
 export default function UploadMatch() {
     const matchData = useMatchData();
     const ocrProcessor = useOcrProcessor();
+    const [outcomeType, setOutcomeType] = useState('normal');
+    const [penalties, setPenalties] = useState({ home: 0, away: 0 });
 
     useEffect(() => {
         if (ocrProcessor.statusMessage) {
@@ -35,18 +37,37 @@ export default function UploadMatch() {
         if (!confirm("¿Estás seguro que los datos son correctos? Se guardará el partido y se actualizará la tabla de posiciones.")) return;
 
         try {
-            const payload = {
-                tournament_id: matchData.selectedTournament,
-                home_team_id: matchData.selectedHomeTeam,
-                away_team_id: matchData.selectedAwayTeam,
-                stage: matchData.stage,
-                score_home: ocrProcessor.mergedData.score.home,
-                score_away: ocrProcessor.mergedData.score.away,
-                statistics: ocrProcessor.mergedData.statistics,
-                players: ocrProcessor.mergedData.players
-            };
+            // Reemplazamos el "payload" JSON por un objeto FormData para poder adjuntar imágenes
+            const formData = new FormData();
 
-            const response = await axiosClient.post('/games/store-from-ocr', payload);
+            // Adjuntamos los datos básicos
+            formData.append('tournament_id', matchData.selectedTournament);
+            formData.append('home_team_id', matchData.selectedHomeTeam);
+            formData.append('away_team_id', matchData.selectedAwayTeam);
+            formData.append('stage', matchData.stage);
+            formData.append('outcome_type', outcomeType);
+            formData.append('score_home', ocrProcessor.mergedData.score.home);
+            formData.append('score_away', ocrProcessor.mergedData.score.away);
+
+            // Adjuntamos los penales solo si el tipo de resultado es 'penalties'
+            if (outcomeType === 'penalties') {
+                formData.append('penalties_home', penalties.home);
+                formData.append('penalties_away', penalties.away);
+            }
+
+            // Los jugadores deben enviarse como un string JSON dentro del formulario
+            formData.append('players', JSON.stringify(ocrProcessor.mergedData.players));
+
+            // Iteramos sobre las imágenes que subió el usuario y las adjuntamos una por una
+            if (ocrProcessor.files && ocrProcessor.files.length > 0) {
+                ocrProcessor.files.forEach((file) => {
+                    formData.append('images[]', file);
+                });
+            }
+
+            // Enviamos la petición indicando que es un formulario 'multipart/form-data'
+            const response = await axiosClient.post('/games/store-from-ocr', formData);
+
             alert("¡Partido guardado exitosamente!");
             // Redirigir a la vista de partidos (ajusta la ruta según tu app)
             window.location.href = '/app/partidos';
@@ -75,7 +96,7 @@ export default function UploadMatch() {
             <h2 className="text-3xl font-bold mb-6 text-center text-white">Cargar Nuevo Partido con imágenes</h2>
 
             {ocrProcessor.statusMessage && (
-                <div className={`p-4 rounded-lg mb-4 text-center font-bold ${ocrProcessor.statusMessage.includes('✅') ? 'bg-green-600' : 'bg-blue-600'
+                <div className={`p-4 rounded-lg mb-4 text-center font-bold ${ocrProcessor.statusMessage.includes('✅') ? 'bg-green-600' : 'bg-red-600 text-white'
                     }`}>
                     {ocrProcessor.statusMessage}
                 </div>
@@ -129,6 +150,73 @@ export default function UploadMatch() {
                         onChange={(e) => matchData.setStage(e.target.value)} />
                 </div>
             </div>
+            <div className="bg-slate-800 text-white rounded-lg shadow-md p-6 mb-6">
+                <label className="block text-sm mb-2 font-semibold">⚙️ Tipo de Definición del Partido</label>
+                <select
+                    className="w-full p-3 rounded text-black bg-white font-medium"
+                    value={outcomeType}
+                    onChange={(e) => setOutcomeType(e.target.value)}
+                >
+                    <option value="normal">Normal (Carga con IA o Manual)</option>
+                    <option value="penalties">Definición por Penales</option>
+                    <option value="administrative">Victoria por Escritorio</option>
+                    <option value="unplayed">Partido No Jugado (Suma PJ, pero 0 puntos)</option>
+                </select>
+
+                {/* Aparece mágicamente SOLO si seleccionó Penales */}
+                {outcomeType === 'penalties' && (
+                    <div className="flex gap-6 items-center justify-center bg-slate-700 p-4 rounded-lg mt-4 shadow-inner">
+                        <div className="flex flex-col items-center">
+                            <label className="text-sm font-bold text-blue-300 mb-1">Penales {homeTeamName}</label>
+                            <input
+                                type="number" min="0"
+                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                value={penalties.home}
+                                onChange={(e) => setPenalties({ ...penalties, home: parseInt(e.target.value) || 0 })}
+                            />
+                        </div>
+                        <span className="text-3xl font-black text-gray-400">-</span>
+                        <div className="flex flex-col items-center">
+                            <label className="text-sm font-bold text-blue-300 mb-1">Penales {awayTeamName}</label>
+                            <input
+                                type="number" min="0"
+                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                value={penalties.away}
+                                onChange={(e) => setPenalties({ ...penalties, away: parseInt(e.target.value) || 0 })}
+                            />
+                        </div>
+                    </div>
+                )}
+                {outcomeType === 'administrative' && (
+                    <div className="flex gap-6 items-center justify-center bg-slate-700 p-4 rounded-lg mt-4 shadow-inner">
+                        <div className="flex flex-col items-center">
+                            <label className="text-sm font-bold text-blue-300 mb-1">Goles {homeTeamName}</label>
+                            <input
+                                type="number" min="0"
+                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                value={ocrProcessor.mergedData.score.home}
+                                onChange={(e) => ocrProcessor.setMergedData(prev => ({
+                                    ...prev,
+                                    score: { ...prev.score, home: parseInt(e.target.value) || 0 }
+                                }))}
+                            />
+                        </div>
+                        <span className="text-3xl font-black text-gray-400">-</span>
+                        <div className="flex flex-col items-center">
+                            <label className="text-sm font-bold text-blue-300 mb-1">Goles {awayTeamName}</label>
+                            <input
+                                type="number" min="0"
+                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                value={ocrProcessor.mergedData.score.away}
+                                onChange={(e) => ocrProcessor.setMergedData(prev => ({
+                                    ...prev,
+                                    score: { ...prev.score, away: parseInt(e.target.value) || 0 }
+                                }))}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* SECCIÓN 2: Imágenes */}
             <div className={`text-white bg-slate-900 rounded-lg shadow-md p-6 mb-6 space-y-2 ${(!matchData.selectedHomeTeam || !matchData.selectedAwayTeam || !matchData.selectedTournament) ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -164,6 +252,46 @@ export default function UploadMatch() {
                     </button>
                 )}
             </div>
+
+            {ocrProcessor.mergedData.players.length > 0 && (
+                <div className="bg-slate-800 text-white rounded-lg shadow-xl p-6 mb-6 flex flex-col items-center border border-slate-700">
+                    <h3 className="text-xl font-bold mb-4 text-blue-400">⚽ Resultado Final</h3>
+
+                    <div className="flex items-center gap-8 text-3xl font-black">
+                        {/* Equipo Local */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-sm mb-2 font-semibold text-gray-300">{homeTeamName}</span>
+                            <input
+                                type="number"
+                                min="0"
+                                className="w-24 text-center p-3 rounded-lg text-black border-2 border-transparent focus:border-blue-500 focus:outline-none"
+                                value={ocrProcessor.mergedData.score.home}
+                                onChange={(e) => ocrProcessor.setMergedData(prev => ({
+                                    ...prev,
+                                    score: { ...prev.score, home: parseInt(e.target.value) || 0 }
+                                }))}
+                            />
+                        </div>
+
+                        <div className="text-gray-500">-</div>
+
+                        {/* Equipo Visitante */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-sm mb-2 font-semibold text-gray-300">{awayTeamName}</span>
+                            <input
+                                type="number"
+                                min="0"
+                                className="w-24 text-center p-3 rounded-lg text-black border-2 border-transparent focus:border-blue-500 focus:outline-none"
+                                value={ocrProcessor.mergedData.score.away}
+                                onChange={(e) => ocrProcessor.setMergedData(prev => ({
+                                    ...prev,
+                                    score: { ...prev.score, away: parseInt(e.target.value) || 0 }
+                                }))}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* SECCIÓN 3: Tabla Editable */}
             {ocrProcessor.mergedData.players.length > 0 && (
@@ -259,10 +387,14 @@ export default function UploadMatch() {
                 <button onClick={() => window.location.reload()} className="bg-slate-700 px-6 py-3 rounded-lg font-bold">Cancelar</button>
                 <button
                     onClick={handleSaveMatch}
-                    // LÓGICA: Se deshabilita si está cargando O si la lista de jugadores está vacía
-                    disabled={ocrProcessor.loadingOcr || ocrProcessor.mergedData.players.length === 0}
+                    // NUEVA LÓGICA: Se deshabilita si está cargando la IA, O si es un partido 'normal' o 'penales' y no hay jugadores cargados.
+                    // Si es 'unplayed' o 'administrative', SÍ te deja guardar aunque no haya jugadores.
+                    disabled={
+                        ocrProcessor.loadingOcr ||
+                        ((outcomeType === 'normal' || outcomeType === 'penalties') && ocrProcessor.mergedData.players.length === 0)
+                    }
                     className={`px-10 py-3 rounded-lg font-black text-lg shadow-xl transition-all
-                    ${(ocrProcessor.loadingOcr || ocrProcessor.mergedData.players.length === 0)
+                    ${(ocrProcessor.loadingOcr || ((outcomeType === 'normal' || outcomeType === 'penalties') && ocrProcessor.mergedData.players.length === 0))
                             ? 'bg-gray-600 opacity-50 cursor-not-allowed'
                             : 'bg-green-600 hover:bg-green-500 animate-pulse cursor-pointer'
                         }`}

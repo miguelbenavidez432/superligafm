@@ -29,6 +29,12 @@ class GameResource extends JsonResource
             'stage' => $this->stage,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'images' => $this->images->map(function ($img) {
+                return [
+                    'id' => $img->id,
+                    'url' => asset('storage/' . $img->image_path)
+                ];
+            }),
         ];
     }
 }

@@ -13,6 +13,7 @@ export default function SingleMatch() {
     const [statistics, setStatistics] = useState([]);
     const { id } = useParams();
     const navigate = useNavigate();
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         axiosClient.get(`/games/${id}`)
@@ -20,6 +21,7 @@ export default function SingleMatch() {
                 setMatch(data.data);
                 fectchStatistics();
                 fetchPlayers(data.data.team_home.id, data.data.team_away.id);
+                setSelectedImage(data.data.images.length > 0 ? data.data.images[0].url : null);
                 setLoading(false);
             })
             .catch(() => {
@@ -327,8 +329,8 @@ export default function SingleMatch() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {statistics.map(stat => (
-                                            <tr key={stat.id}>
+                                        {statistics.map((stat, index) => (
+                                            <tr key={stat.id || index}>
                                                 <td className="border px-4 py-2">
                                                     {stat.player_id?.name.length > 15 ? `${stat.player_id.name.substring(0, 15)}...` : stat.player_id?.name}
                                                 </td>
@@ -343,6 +345,22 @@ export default function SingleMatch() {
                                         ))}
                                     </tbody>
                                 </table>
+                                {match.images && match.images.length > 0 && (
+                                    <div className="bg-black bg-opacity-70 p-4 rounded-lg mt-4 mb-4">
+                                        <h3 className="text-lg font-bold text-white mb-3">📸 Capturas del Partido</h3>
+                                        <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                                            {match.images.map((image, index) => (
+                                                <img
+                                                    key={image.id || index}
+                                                    src={image.url}
+                                                    alt={`Captura ${index + 1}`}
+                                                    className="h-24 sm:h-32 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform border-2 border-transparent hover:border-blue-500"
+                                                    onClick={() => setSelectedImage(image.url)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )
                     }
