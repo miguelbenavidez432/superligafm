@@ -11,6 +11,7 @@ use App\Models\Rescission;
 use App\Models\Team;
 use App\Models\Transfer;
 use App\Models\User;
+use App\Services\PlayerManagementService;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
@@ -183,112 +184,54 @@ class PlayerController extends Controller
         return PlayerResource::collection($players);
     }
 
-    public function calcularCostoBloqueo(Player $player, $cantidad)
+    public function bloquearJugador(Request $request, PlayerManagementService $playerService)
     {
-        $ca = $player->ca;
-        $division = $player->team->division;
+        // 1. Validamos que nos envíen un arreglo de IDs válidos
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:players,id'
+        ]);
 
-        $costo = 0;
+        try {
+            // 2. Delegamos la responsabilidad al servicio
+            $resultado = $playerService->blockPlayersMassively(auth()->user(), $request->ids);
 
-        if ($cantidad == 0) return $costo;
+            return response()->json($resultado, 200);
 
-        if ($division == 'Primera') {
-            if ($ca >= 180 && $ca <= 200) {
-                $costo = 60000000;
-            } elseif ($ca < 180) {
-                $costo = 40000000;
-            }
-        } elseif ($division == 'Segunda') {
-            if ($ca >= 180 && $ca <= 200) {
-                $costo = 85000000;
-            } elseif ($ca < 180) {
-                $costo = 60000000;
-            }
+        } catch (\Exception $e) {
+            // 3. Atrapamos cualquier regla de negocio que haya fallado
+            return response()->json(['error' => $e->getMessage()], 400);
         }
-
-        return $costo;
     }
 
-    public function bloquearJugador(Request $request)
+    public function releasePlayer(Request $request, PlayerManagementService $playerService)
     {
-        $usuarioAutenticado = auth()->user();
-        $jugador = Player::find($request->id);
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:players,id'
+        ]);
 
-        if (!$jugador) {
-            return response()->json(['error' => 'Jugador no encontrado'], 404);
+        try {
+            $resultado = $playerService->releasePlayersMassively(auth()->user(), $request->ids);
+            return response()->json($resultado, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
-
-        $team = $jugador->team;
-
-        if (!$team) {
-            return response()->json(['error' => 'El equipo no existe'], 404);
-        }
-
-        $jugadoresBloqueadosEnEquipo = $team->players()->where('status', 'bloqueado')->count();
-
-        if ($jugadoresBloqueadosEnEquipo >= 3) {
-            return response()->json(['error' => 'El equipo ya ha bloqueado el máximo de 3 jugadores'], 400);
-        }
-
-        $usuarioManejador = $team->user;
-
-        if (!$usuarioManejador) {
-            return response()->json(['error' => 'Manager no encontrado'], 404);
-        }
-
-        $costoBloqueo = $this->calcularCostoBloqueo($jugador, $jugadoresBloqueadosEnEquipo);
-
-        $usuarioManejador->profits -= $costoBloqueo;
-        $usuarioManejador->save();
-
-        $jugador->status = 'bloqueado';
-        $jugador->save();
-
-        return response()->json(['success' => 'Jugador bloqueado', 'costo' => $costoBloqueo]);
     }
 
-    public function releasePlayer(Request $request)
+    public function listPlayer(Request $request, PlayerManagementService $playerService)
     {
-        $usuarioAutenticado = auth()->user();
-        $jugador = Player::find($request->id);
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:players,id'
+        ]);
 
-        if (!$jugador) {
-            return response()->json(['error' => 'Jugador no encontrado'], 404);
+        try {
+            $resultado = $playerService->registerPlayersMassively(auth()->user(), $request->ids);
+            return response()->json($resultado, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
-
-        $team = $jugador->team;
-
-        if (!$team) {
-            return response()->json(['error' => 'El equipo no existe'], 404);
-        }
-
-        $jugador->id_team = 61;
-        $jugador->status = 'liberado';
-        $jugador->value *= 0.6;
-        $jugador->save();
-
-        return response()->json(['success' => 'Jugador liberado']);
-    }
-
-    public function listPlayer(Request $request)
-    {
-        $usuarioAutenticado = auth()->user();
-        $jugador = Player::find($request->id);
-
-        if (!$jugador) {
-            return response()->json(['error' => 'Jugador no encontrado'], 404);
-        }
-
-        $team = $jugador->team;
-
-        if (!$team) {
-            return response()->json(['error' => 'El equipo no existe'], 404);
-        }
-
-        $jugador->status = 'registrado';
-        $jugador->save();
-
-        return response()->json(['success' => 'Jugador liberado']);
     }
 
     public function filterPlayersByTeamDivision(Request $request)
