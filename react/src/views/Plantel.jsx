@@ -1,239 +1,293 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
 import { Link } from "react-router-dom";
+import { act } from "react";
 
 export default function Plantel() {
+    const { user, setNotification } = useStateContext();
+
     const [team, setTeam] = useState(null);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { user, setNotification } = useStateContext();
-    const [bestPlayersCA, setBestPlayersCA] = useState(null);
-    const [blockedPlayersCount, setBlockedPlayersCount] = useState(0);
-    const [playersOver20Count, setPlayersOver20Count] = useState(0);
-    const [filterPlayersOver20ByRegister, setFilterPlayersOver20ByRegister] = useState(0);
-    const [filterPlayersByRegister, setFilterPlayersByRegister] = useState(0);
     const [errors, setErrors] = useState();
 
-    useEffect(() => {
-        getTeam();
-    }, []);
+    const [selectedPlayers, setSelectedPlayers] = useState([]); // Jugadores en la "caja"
+
+    const bestPlayersCA = players.length > 0
+        ? (players.slice().sort((a, b) => b.ca - a.ca).slice(0, 16).reduce((sum, p) => sum + p.ca, 0) / Math.min(players.length, 16)).toFixed(1)
+        : null;
+    const blockedPlayersCount = players.filter(p => p.status === "bloqueado").length;
+    const playersOver20Count = players.filter(p => p.age > 20).length;
+    const filterPlayersByRegister = players.filter(p => p.status === 'registrado').length;
+    const filterPlayersOver20ByRegister = players.filter(p => p.status === 'registrado' && p.age > 20).length;
 
     useEffect(() => {
-        getBestPlayersCA();
-        countBlockedPlayers();
-        countPlayersOver20();
-        countRegisterAndOver20();
-        countRegistered();
-    }, [players]);
-
-    useEffect(() => {
-        if (team) {
-            filterPlayersByTeam();
+        if (user && user.id) {
+            getTeam();
         }
-    }, [team]);
+    }, [user]);
 
-    const countBlockedPlayers = () => {
-        const blockedPlayers = players.filter((player) => player.status === "bloqueado");
-        setBlockedPlayersCount(blockedPlayers.length);
-    };
-
-    const countPlayersOver20 = () => {
-        const playersOver20 = players.filter((player) => player.age > 20);
-        setPlayersOver20Count(playersOver20.length);
-    };
-
-    const countRegisterAndOver20 = () => {
-        const filterPlayers = players.filter(p => p.status === 'registrado' && p.age > 20);
-        setFilterPlayersOver20ByRegister(filterPlayers.length);
-    };
-
-    const countRegistered = () => {
-        const filterPlayers = players.filter(p => p.status === 'registrado');
-        setFilterPlayersByRegister(filterPlayers.length);
-    };
+    useEffect(() => { if (team) filterPlayersByTeam(); }, [team]);
 
     const getTeam = async () => {
         setLoading(true);
         try {
             const response = await axiosClient.get('/teams?all=true');
-            const allTeams = response.data.data;
-            const filteredTeam = allTeams.find(team => {
-                return team.user && team.user.id === user.id;
-            });
+            const filteredTeam = response.data.data.find(t => t.user && t.user.id === user?.id);
             setTeam(filteredTeam);
         } catch (error) {
-            console.error();
-            setNotification('Error al obtener equipo:', error);
+            setErrors('Error al obtener equipo.');
         } finally {
             setLoading(false);
         }
     };
 
     const filterPlayersByTeam = async () => {
-        if (team) {
-            try {
-                setLoading(true);
-                const response = await axiosClient.get('/players?all=true');
-                const filteredPlayers = response.data.data.filter(player => player.id_team ? player.id_team.id === team.id : '');
-                setPlayers(filteredPlayers);
-            } catch (error) {
-                console.error('Error al obtener jugadores:', error);
-            } finally {
-                setLoading(false);
+        setLoading(true);
+        try {
+            const response = await axiosClient.get('/players?all=true');
+            const filteredPlayers = response.data.data.filter(player => player.id_team?.id === team.id);
+            setPlayers(filteredPlayers);
+        } catch (error) {
+            setErrors('Error al obtener jugadores.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDragStart = (e, player) => {
+        e.dataTransfer.setData("player", JSON.stringify(player));
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const playerData = e.dataTransfer.getData("player");
+        if (playerData) {
+            const player = JSON.parse(playerData);
+            if (!selectedPlayers.find(p => p.id === player.id)) {
+                setSelectedPlayers([...selectedPlayers, player]);
             }
         }
     };
 
-    const getBestPlayersCA = () => {
-        if (players.length > 0) {
-            const sortedPlayers = players.slice().sort((a, b) => b.ca - a.ca);
-            const bestPlayers = sortedPlayers.slice(0, 16);
-            const averageCA = bestPlayers.reduce((sum, player) => sum + player.ca, 0) / bestPlayers.length;
-            setBestPlayersCA(averageCA);
-        }
+    const handleDragOver = (e) => e.preventDefault();
+
+    const removeSelectedPlayer = (id) => {
+        setSelectedPlayers(selectedPlayers.filter(p => p.id !== id));
     };
 
-    const handleBlockPlayer = async (player) => {
+    const handleBulkAction = async (actionType) => {
+        if (selectedPlayers.length === 0) {
+            alert("No hay jugadores seleccionados en la caja.");
+            return;
+        }
+
+        const actionText = actionType === 'register' ? 'REGISTRAR' : actionType === 'release' ? 'LIBERAR' : 'BLOQUEAR';
+
+        if (!window.confirm(`¿Estás seguro de que deseas ${actionText} a estos ${selectedPlayers.length} jugadores?`)) return;
         setLoading(true);
+        setErrors();
         try {
-            await axiosClient.post(`/bloquear_jugador`, { id: player.id });
-            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "bloqueado" } : p));
-            countBlockedPlayers();
+            const totalBlockedPlayersCount = blockedPlayersCount + selectedPlayers.length;
+
+            const arrayDeIds = selectedPlayers.map(p => p.id);
+            let message = '';
+
+            // 1. BLOQUEAR
+            if (actionType === 'block') {
+                if (totalBlockedPlayersCount > 4) {
+                    setErrors('El límite máximo de jugadores bloqueados en el equipo es de 4.');
+                    setLoading(false);
+                    return;
+                }
+                const response = await axiosClient.post(`/bloquear_jugador`, { ids: arrayDeIds });
+                // Actualizamos estado y presupuesto
+                setPlayers(players.map(p => selectedPlayers.find(sp => sp.id === p.id) ? { ...p, status: 'bloqueado' } : p));
+                user.profits = response.data.nuevo_presupuesto;
+                message = response.data.message;
+            }
+
+            // 2. REGISTRAR
+            else if (actionType === 'register') {
+                const response = await axiosClient.post(`/registrar_jugador`, { ids: arrayDeIds });
+                setPlayers(players.map(p => selectedPlayers.find(sp => sp.id === p.id) ? { ...p, status: 'registrado' } : p));
+                message = response.data.message;
+            }
+
+            // 3. LIBERAR
+            else if (actionType === 'release') {
+                const response = await axiosClient.post(`/liberar_jugador`, { ids: arrayDeIds });
+                // OJO AQUÍ: En lugar de cambiar el status, los quitamos del arreglo local porque ya no son de nuestro equipo
+                setPlayers(players.filter(p => !selectedPlayers.find(sp => sp.id === p.id)));
+                message = response.data.message;
+            }
+
+            setNotification(`Jugadores procesados correctamente.`);
+            setSelectedPlayers([]);
         } catch (error) {
-            setErrors('Error al bloquear jugador: ' + error.response.data.error);
+            setErrors(`Error en la acción masiva: ${error.message}`);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleReleasePlayer = async (player) => {
-        setLoading(true);
-        try {
-            await axiosClient.post(`/liberar_jugador`, { id: player.id });
-            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "liberado" } : p));
-            countBlockedPlayers();
-        } catch (error) {
-            setNotification('Error al liberar jugador: ' + error);
-            console.error('Error al bloquear jugador:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleListPlayer = async (player) => {
-        setLoading(true);
-        try {
-            await axiosClient.post(`/registrar_jugador`, { id: player.id });
-            setPlayers((prevPlayers) => prevPlayers.map(p => p.id === player.id ? { ...p, status: "registrado" } : p));
-        } catch (error) {
-            console.error('Error al registrar jugador:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const availablePlayers = players.filter(p => !selectedPlayers.find(sp => sp.id === p.id));
 
     return (
-        <>
-            {errors &&
-                <div className="alert bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <p>
-                        {typeof errors === 'string'
-                            ? errors
-                            : Object.keys(errors).map(key => errors[key][0]).join(' ')}
-                    </p>
+        <div className="p-4 max-w-7xl mx-auto">
+            {/* ALERTAS */}
+            {errors && (
+                <div className="alert bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 shadow-lg">
+                    <p>{typeof errors === 'string' ? errors : Object.keys(errors).map(k => errors[k][0]).join(' ')}</p>
                 </div>
-            }
-            <div className="flex justify-between items-center flex-wrap mb-5">
-                <h1 className="text-2xl font-bold mb-4 text-center bg-black bg-opacity-70 rounded-lg text-white p-3">Plantel</h1>
-                <button className="btn btn-primary">
-                    <Link to={`/app/estadisticas/${team?.id}`} className="text-white no-underline">Ver Estadísticas</Link>
+            )}
+
+            {/* CABECERA */}
+            <div className="flex justify-between items-center flex-wrap mb-6">
+                <h1 className="text-3xl font-bold text-center bg-slate-800 rounded-lg text-white p-4 shadow-md w-full md:w-auto">
+                    Plantel de {team?.name || 'Cargando...'}
+                </h1>
+                <button className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-colors mt-4 md:mt-0 shadow-md">
+                    <Link to={`/app/estadisticas/${team?.id}`}>📊 Ver Estadísticas</Link>
                 </button>
             </div>
-            <div className="bg-slate-800 bg-opacity-70 p-4 rounded-lg shadow-md">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 mb-4 border-collapse">
-                        <thead className="bg-gray-100 text-left">
-                            <tr>
-                                <th className="py-1 px-1 border-b bg-black text-white">NOMBRE</th>
-                                <th className="py-1 px-1 border-b bg-black text-white">EDAD</th>
-                                <th className="py-1 px-1 border-b bg-black text-white">CA</th>
-                                <th className="py-1 px-1 border-b bg-black text-white">PA</th>
-                                <th className="py-1 px-1 border-b bg-black text-white">VALOR</th>
-                                <th className="py-1 px-1 border-b bg-black text-white">ESTADO</th>
-                                <th className="py-1 px-1 border-b bg-black text-white">ACCIONES</th>
-                            </tr>
-                        </thead>
-                        {loading &&
-                            <tbody>
+
+            {/* INTERFAZ DRAG & DROP (2 Columnas) */}
+            <div className="flex flex-col xl:flex-row gap-6">
+
+                {/* COLUMNA IZQUIERDA: Lista de Jugadores */}
+                <div className="flex-1 bg-slate-800 p-6 rounded-lg shadow-xl border border-slate-700">
+                    <h2 className="text-xl font-bold text-blue-400 mb-4">⬇️ Arrastra los jugadores desde aquí</h2>
+                    <div className="overflow-x-auto max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        <table className="min-w-full text-white text-sm">
+                            <thead className="bg-slate-900 sticky top-0 z-10 shadow-md text-black">
                                 <tr>
-                                    <td colSpan="8" className="text-center py-5 italic text-white">
-                                        CARGANDO...
-                                    </td>
+                                    <th className="py-3 px-4 text-left">NOMBRE</th>
+                                    <th className="py-3 px-2 text-center">EDAD</th>
+                                    <th className="py-3 px-2 text-center">CA</th>
+                                    <th className="py-3 px-2 text-center">PA</th>
+                                    <th className="py-3 px-2 text-center">VALOR</th>
+                                    <th className="py-3 px-4 text-left">ESTADO</th>
                                 </tr>
-                            </tbody>
-                        }
-                        {!loading &&
+                            </thead>
                             <tbody>
-                                {
-                                    team ? players.map(p => (
-                                        <tr key={p.id} className="border-b border-gray-300">
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.name}</td>
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.age}</td>
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.ca}</td>
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.pa}</td>
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.value}</td>
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">{p.status}</td>
-                                            <td className="border px-4 py-2 bg-black bg-opacity-70">
-                                                {p.status !== 'nada' && (
-                                                    <>
-                                                        {/* <button className="btn-edit mx-1" onClick={() => {
-                                                            if (window.confirm(`¿Estás seguro de que deseas bloquear a ${p.name}`)) {
-                                                                handleBlockPlayer(p);
-                                                            }
-                                                        }}>Bloquear</button>
-                                                        <button className="btn-delete mx-1" onClick={() => {
-                                                            if (window.confirm(`¿Estás seguro de que deseas liberar a ${p.name}`)) {
-                                                                handleReleasePlayer(p);
-                                                            }
-                                                        }}>Liberar</button> */}
-                                                        <button className="btn-add mx-1" onClick={() => {
-                                                            if (window.confirm(`¿Estás seguro de que deseas registrar a ${p.name} Una vez registrado no se puede quitar`)) {
-                                                                handleListPlayer(p);
-                                                            }
-                                                        }}>Registrar</button>
-                                                    </>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    )) :
-                                        <tr>
-                                            <td colSpan="8" className="text-center py-5 font-bold">
-                                                No tienes equipo asignado. Prueba presionando el botón Cargar plantel
-                                            </td>
-                                        </tr>
-                                }
+                                {loading && <tr><td colSpan="6" className="text-center py-8 text-gray-400 font-bold animate-pulse">Cargando datos...</td></tr>}
+                                {!loading && availablePlayers.length === 0 && <tr><td colSpan="6" className="text-center py-8 text-gray-400">No hay jugadores disponibles.</td></tr>}
+
+                                {!loading && availablePlayers.map(p => (
+                                    <tr
+                                        key={p.id}
+                                        draggable
+                                        onDragStart={(e) => handleDragStart(e, p)}
+                                        className="border-b border-slate-700 hover:bg-slate-700 cursor-grab active:cursor-grabbing transition-colors"
+                                    >
+                                        <td className="py-3 px-4 font-semibold">{p.name}</td>
+                                        <td className="py-3 px-2 text-center">{p.age}</td>
+                                        <td className="py-3 px-2 text-center">{p.ca}</td>
+                                        <td className="py-3 px-2 text-center">{p.pa}</td>
+                                        <td className="py-3 px-2 text-center">${p.value}</td>
+                                        <td className="py-3 px-4">
+                                            <span className={`px-2 py-1 rounded text-xs font-bold ${p.status === 'registrado' ? 'bg-green-600' : p.status === 'bloqueado' ? 'bg-red-600' : 'bg-gray-600'
+                                                }`}>
+                                                {/* Si p.status existe lo pone en mayúsculas, si es null pone 'SIN ESTADO' */}
+                                                {p.status ? p.status.toUpperCase() : 'SIN ESTADO'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
-                        }
-                    </table>
+                        </table>
+                    </div>
                 </div>
-                <div className="stats mt-5 leading-relaxed text-white">
-                    {bestPlayersCA !== null && (
-                        <p>Promedio de CA de los mejores 16 jugadores: <strong>{bestPlayersCA}</strong></p>
-                    )}
-                    <p>Cantidad de jugadores bloqueados: <strong>{blockedPlayersCount}</strong></p>
-                    <p>Cantidad de jugadores mayores a 20 años: <strong>{playersOver20Count}</strong></p>
-                    <p>Cantidad de mayores registrados mayores: <strong>{filterPlayersOver20ByRegister}</strong></p>
-                    <p>Cantidad de registrados: <strong>{filterPlayersByRegister}</strong></p>
-                    <p>Presupuesto: <strong>{user.profits}</strong></p>
+
+                {/* COLUMNA DERECHA: Dropzone y Acciones */}
+                <div className="xl:w-[450px] flex flex-col gap-6">
+
+                    {/* DROPZONE (La Caja) */}
+                    <div
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        className={`bg-slate-900 border-2 border-dashed rounded-xl p-6 flex flex-col transition-all min-h-[400px] shadow-xl
+                        ${selectedPlayers.length > 0 ? 'border-blue-500 bg-slate-800' : 'border-slate-600 hover:border-gray-400'}`}
+                    >
+                        <h2 className="text-xl font-bold text-white mb-2 flex items-center justify-between">
+                            <span>📦 Jugadores Seleccionados</span>
+                            <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{selectedPlayers.length}</span>
+                        </h2>
+
+                        {selectedPlayers.length === 0 ? (
+                            <div className="flex-1 flex flex-col items-center justify-center text-gray-500 opacity-70">
+                                <span className="text-6xl mb-4">📥</span>
+                                <p className="text-lg text-center font-medium">Suelta los jugadores aquí</p>
+                            </div>
+                        ) : (
+                            <ul className="flex-1 overflow-y-auto mt-4 space-y-2 pr-2 custom-scrollbar">
+                                {selectedPlayers.map(p => (
+                                    <li key={p.id} className="bg-slate-700 flex justify-between items-center p-3 rounded-lg shadow-sm">
+                                        <div>
+                                            <p className="font-bold text-white">{p.name}</p>
+                                            <p className="text-xs text-gray-400">CA: {p.ca} | Est: {p.status}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => removeSelectedPlayer(p.id)}
+                                            className="text-red-400 hover:text-red-300 hover:bg-red-900 hover:bg-opacity-50 p-2 rounded-full transition-colors"
+                                            title="Quitar de la lista"
+                                        >
+                                            ✖
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {/* BOTONES DE ACCIÓN */}
+                        <div className="mt-6 flex flex-col gap-3">
+                            <button
+                                onClick={() => handleBulkAction('register')}
+                                disabled={user.rol !== 'Admin' || selectedPlayers.length === 0}
+                                className="w-full bg-green-600 hover:bg-green-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
+                            >
+                                ✅ REGISTRAR SELECCIONADOS
+                            </button>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => handleBulkAction('release')}
+                                    disabled={selectedPlayers.length === 0}
+                                    className="flex-1 bg-yellow-600 hover:bg-yellow-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
+                                >
+                                    🔓 LIBERAR
+                                </button>
+                                <button
+                                    onClick={() => handleBulkAction('block')}
+                                    disabled={selectedPlayers.length === 0}
+                                    className="flex-1 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
+                                >
+                                    🚫 BLOQUEAR
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ESTADÍSTICAS */}
+                    <div className="bg-slate-800 p-6 rounded-lg shadow-xl border border-slate-700 text-gray-300 text-sm flex flex-col gap-2">
+                        <h3 className="text-lg font-bold text-blue-400 mb-2 border-b border-slate-700 pb-2">📈 Resumen del Plantel</h3>
+                        {bestPlayersCA !== null && (
+                            <p className="flex justify-between"><span>Promedio Top 16 (CA):</span> <strong className="text-white text-base">{bestPlayersCA}</strong></p>
+                        )}
+                        <p className="flex justify-between"><span>Jugadores Bloqueados:</span> <strong className="text-white text-base">{blockedPlayersCount}</strong></p>
+                        <p className="flex justify-between"><span>Jugadores Mayores (+20):</span> <strong className="text-white text-base">{playersOver20Count}</strong></p>
+                        <p className="flex justify-between text-green-400 font-semibold mt-2"><span>Mayores Registrados:</span> <strong className="text-base">{filterPlayersOver20ByRegister}</strong></p>
+                        <p className="flex justify-between text-green-400 font-semibold"><span>Total Registrados:</span> <strong className="text-base">{filterPlayersByRegister}</strong></p>
+                        <div className="mt-2 pt-3 border-t border-slate-700">
+                            <p className="flex justify-between text-yellow-400 text-lg"><span>Presupuesto:</span> <strong>${user.profits}</strong></p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </>
+        </div>
     );
 }

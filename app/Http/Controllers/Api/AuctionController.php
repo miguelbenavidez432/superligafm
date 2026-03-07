@@ -44,7 +44,18 @@ class AuctionController extends Controller
     {
         $data = $request->validated();
         $player = Player::find($data['id_player']);
-        $season = Season::find($data['id_season']);
+
+        if (empty($data['id_season'])) {
+            $activeSeason = Season::where('active', 'yes')->first() ?? Season::latest()->first();
+
+            if (!$activeSeason) {
+                return response()->json(['message' => 'No hay una temporada activa en el sistema.'], 404);
+            }
+            $data['id_season'] = $activeSeason->id;
+            $season = $activeSeason;
+        } else {
+            $season = Season::find($data['id_season']);
+        }
 
         $previousAuction = Auction::where('id_player', $data['id_player'])
             ->where('id_season', $data['id_season'])
@@ -85,7 +96,7 @@ class AuctionController extends Controller
                 // if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         } else {
-            if ($data['amount'] < $player->value/2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
