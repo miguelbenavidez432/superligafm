@@ -8,6 +8,7 @@ use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Rescission;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\Transfer;
 use App\Models\User;
@@ -136,8 +137,14 @@ class PlayerController extends Controller
 
     public function playerOffers($id)
     {
+        $activeSeasonId = Season::where('active', 'yes')->value('id') ?? Season::latest()->value('id');
+
         $player = Player::findOrFail($id);
-        $offers = Rescission::where('id_player', $id)->get();
+
+        $offers = Rescission::where('id_player', $id)
+            ->where('id_season', $activeSeasonId)
+            ->where('active', 'yes')
+            ->get();
 
         return response()->json([
             'player' => $player,
