@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Season;
 
 class StoreRescissionRequest extends FormRequest
 {
@@ -32,5 +33,16 @@ class StoreRescissionRequest extends FormRequest
             'other_players' => 'nullable',
             'id_season' => 'required|integer|nullable',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $activeSeason = Season::where('active', 'yes')->first() ?? Season::latest()->first();
+
+        // El método merge() sobrescribe el dato que envió React
+        // o lo crea si React no lo envió.
+        $this->merge([
+            'id_season' => $activeSeason->id,
+        ]);
     }
 }

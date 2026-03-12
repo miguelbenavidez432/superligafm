@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Season;
 
 class StoreAuctionRequest extends FormRequest
 {
@@ -29,5 +30,16 @@ class StoreAuctionRequest extends FormRequest
             'created_by' => 'required|integer',
             'id_season' => 'nullable|integer',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $activeSeason = Season::where('active', 'yes')->first() ?? Season::latest()->first();
+
+        // El método merge() sobrescribe el dato que envió React
+        // o lo crea si React no lo envió.
+        $this->merge([
+            'id_season' => $activeSeason->id,
+        ]);
     }
 }
