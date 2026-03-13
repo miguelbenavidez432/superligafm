@@ -96,7 +96,7 @@ class AuctionController extends Controller
                 // if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         } else {
-            if ($data['amount'] < $player->value) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value/2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -355,6 +355,7 @@ class AuctionController extends Controller
         $winner->save();
 
         $player->id_team = $request->input('id_team');
+        $player->status = 'bloqueado';
         $player->save();
 
         $auction->confirmed = 'yes';
