@@ -35,8 +35,8 @@ class ConfirmRescissionOffers extends Command
     {
         $this->info('Iniciando confirmación automática de ofertas de rescisión...');
 
-        // 1. Obtener la temporada activa
-        $activeSeason = Season::where('active', 'yes')->first();
+        // 1. Obtener la temporada activa (la más reciente con active = 'yes')
+        $activeSeason = Season::where('active', 'yes')->orderBy('id', 'desc')->first();
 
         if (!$activeSeason) {
             $this->error('No hay temporada activa.');
@@ -156,24 +156,28 @@ class ConfirmRescissionOffers extends Command
         $offer->active = 'no';
         $offer->save();
 
-        $userDiscord = DiscordUser::where('user_id', $buyerTeam->id_user)->first();
-        $mentionMessage = $userDiscord && $userDiscord->discord_id
-            ? '<@' . $userDiscord->discord_id . '> '
-            : $buyer->name;
+        try {
+            $userDiscord = DiscordUser::where('user_id', $buyerTeam->id_user)->first();
+            $mentionMessage = $userDiscord && $userDiscord->discord_id
+                ? '<@' . $userDiscord->discord_id . '> '
+                : $buyer->name;
 
-        $webhookUrl = env('DISCORD_WEBHOOK_URL');
-        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+            $webhookUrl = env('DISCORD_WEBHOOK_URL');
+            $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
-        WebhookCall::create()
-            ->url($webhookUrl)
-            ->payload([
-                'content' => "🔔 **HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada** 🔔
+            WebhookCall::create()
+                ->url($webhookUrl)
+                ->payload([
+                    'content' => "🔔 **HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada** 🔔
                 \n✅
                 \n📍 El jugador será transferido de **{$team->name}** a **{$buyerTeam->name}**.
                 \n💰 Monto de la transferencia: **\$ {$value}** pagado por {$mentionMessage}.\n",
-            ])
-            ->useSecret($webhookSecret)
-            ->dispatch();
+                ])
+                ->useSecret($webhookSecret)
+                ->dispatch();
+        } catch (\Exception $e) {
+            Log::warning("Webhook de Discord falló para oferta {$offer->id}: " . $e->getMessage());
+        }
 
         Log::info("Oferta de rescisión confirmada automáticamente", [
             'offer_id' => $offer->id,

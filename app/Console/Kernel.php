@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
 
         // Ejecutar todos los días a las 18:00 (6:00 PM)
         $schedule->command('rescissions:confirm')
-            ->dailyAt('18:15')
+            ->dailyAt('18:45')
             ->timezone('America/Argentina/Buenos_Aires');
     }
 
