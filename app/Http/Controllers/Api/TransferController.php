@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Player;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\Transfer;
 use App\Http\Requests\StoreTransferRequest;
@@ -102,6 +103,12 @@ class TransferController extends Controller
         // return response()->json(['message' => 'Datos actualizados correctamente']);
 
         $transferData = $request->input('data');
+
+        $activeSeason = Season::where('active', 'yes')->orderBy('id', 'desc')->first() ?? Season::latest()->first();
+        if (!$activeSeason) {
+            return response()->json(['message' => 'No hay temporadas disponibles para registrar la transferencia'], 422);
+        }
+
         $transfer = new Transfer();
 
         $transferredPlayers = explode(',', $transferData['transferred_players']);
@@ -113,7 +120,7 @@ class TransferController extends Controller
         $transfer->created_by = $transferData['created_by'];
         $transfer->buy_by = $transferData['buy_by'];
         $transfer->sold_by = $transferData['sold_by'];
-        $transfer->id_season = $transferData['id_season'];
+        $transfer->id_season = $activeSeason->id;
         $transfer->confirmed = 'no';
         $transfer->save();
 
