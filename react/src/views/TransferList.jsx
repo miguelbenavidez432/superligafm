@@ -201,11 +201,15 @@ export default function TransferList() {
                             {
                                 Array.isArray(transfers) && transfers.length > 0 ? (
                                     transfers.map(p => {
+                                        const teamFromName = p.team_from?.name ? p.team_from.name.substring(0, 10) : 'Sin equipo';
+                                        const teamToName = p.team_to?.name ? p.team_to.name.substring(0, 10) : 'Sin equipo';
+                                        const createdByName = p.created_by?.name || 'Usuario desconocido';
+
                                         return (
                                             <tr key={p.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.transferred_players}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.team_from.name.substring(0, 10)} - {p.team_to.name.substring(0, 10)}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.created_by.name}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{teamFromName} - {teamToName}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{createdByName}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.created_at}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.budget}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.confirmed}</td>
