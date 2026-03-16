@@ -78,6 +78,11 @@ export default function TransferForm() {
 
         const jugadorSeleccionado = players.find(jugador => jugador.id === parseInt(jugadorId));
 
+        if (!jugadorSeleccionado || !jugadorSeleccionado.id_team?.id) {
+            setNotification('El jugador seleccionado no tiene equipo asignado');
+            return;
+        }
+
         const datosJugadorEquipo = {
             id: jugadorSeleccionado.id,
             id_team: secondTeam,
@@ -194,7 +199,7 @@ export default function TransferForm() {
                         >
                             <option value="">Seleccione un jugador</option>
                             {players
-                                .filter(jugador => jugador.id_team.id === parseInt(selectedEquipo))
+                                .filter(jugador => jugador.id_team?.id === parseInt(selectedEquipo))
                                 .map((jugador, index) => (
                                     <option key={index} value={jugador.id}>{jugador.name}</option>
                                 ))}

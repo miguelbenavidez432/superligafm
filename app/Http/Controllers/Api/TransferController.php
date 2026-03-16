@@ -167,6 +167,10 @@ class TransferController extends Controller
         }
 
         $user = auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no autenticado'], 401);
+        }
+
         if ($user->id !== $transfer->buy_by && $user->id !== $transfer->sold_by) {
             return response()->json(['message' => 'No autorizado para confirmar esta transferencia'], 403);
         }
@@ -176,8 +180,8 @@ class TransferController extends Controller
         }
 
         if ($transfer->confirmed === 'si') {
-        return response()->json(['message' => 'Transferencia ya confirmada'], 403);
-    }
+            return response()->json(['message' => 'Transferencia ya confirmada'], 403);
+        }
 
         $buyUser = User::find($transfer->buy_by);
         $sellUser = User::find($transfer->sold_by);
@@ -193,7 +197,7 @@ class TransferController extends Controller
             $sellUser->save();
         }
 
-        $transferredPlayers = explode(',', $transfer['transferred_players']);
+        $transferredPlayers = array_values(array_filter(array_map('trim', explode(',', $transfer->transferred_players))));
         foreach ($transferredPlayers as $player) {
             $playersToMove = Player::where('name', $player)
                 ->whereIn('id_team', [$transfer->id_team_from, $transfer->id_team_to])
@@ -214,6 +218,9 @@ class TransferController extends Controller
 
         $teamFrom = Team::find($transfer->id_team_from);
         $teamTo = Team::find($transfer->id_team_to);
+        $buyerName = $buyUser?->name ?? 'usuario desconocido';
+        $teamFromName = $teamFrom?->name ?? 'equipo origen';
+        $teamToName = $teamTo?->name ?? 'equipo destino';
 
         $webhookUrl = env('DISCORD_WEBHOOK_TRANSFERS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
@@ -224,19 +231,19 @@ class TransferController extends Controller
                 ->payload([
                     'content' => "----TRATO HECHO----
                     \nLa oferta por {$transferredPlayers[0]} ha sido confirmada
-                    \nEl traspaso de {$teamFrom->name} a {$teamTo->name} ha sido completado
-                    \nEl monto de la transferencia es de $ {$transfer->budget} y pagado por {$buyUser->name}\n",
+                    \nEl traspaso de {$teamFromName} a {$teamToName} ha sido completado
+                    \nEl monto de la transferencia es de $ {$transfer->budget} y pagado por {$buyerName}\n",
                 ])
                 ->useSecret($webhookSecret)
                 ->dispatch();
-        } else if ($transferredPlayers > 1) {
+        } else if (count($transferredPlayers) > 1) {
             WebhookCall::create()
                 ->url($webhookUrl)
                 ->payload([
                     'content' => "----TRATO HECHO----
                     \nLas ofertas por los jugadores {$transfer['transferred_players']} han sido confirmadas
-                    \nEl traspaso entre {$teamFrom->name} y {$teamTo->name} ha sido completado
-                    \nEl monto de la transferencia es de $ {$transfer->budget} y pagado por {$buyUser->name}\n",
+                    \nEl traspaso entre {$teamFromName} y {$teamToName} ha sido completado
+                    \nEl monto de la transferencia es de $ {$transfer->budget} y pagado por {$buyerName}\n",
                 ])
                 ->useSecret($webhookSecret)
                 ->dispatch();
