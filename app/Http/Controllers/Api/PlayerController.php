@@ -23,7 +23,14 @@ class PlayerController extends Controller
     public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
-            return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->get());
+
+            $players = Player::select('id', 'name', 'ca', 'age', 'status', 'value', 'id_team', 'id_external')
+                ->with(['team:id,name,division'])
+                ->orderBy("ca", "desc")
+                ->get();
+
+            return PlayerResource::collection($players);
+
         } else {
             return PlayerResource::collection(Player::with(['team'])->orderBy("ca", "desc")->paginate(500));
         }
@@ -279,12 +286,18 @@ class PlayerController extends Controller
 
         $teamIdsArray = explode(',', $teamIds);
 
-        $players = Player::whereIn('id_team', $teamIdsArray)
+        $status = $request->query('status', 'registrado');
+
+        $playersQuery = Player::whereIn('id_team', $teamIdsArray)
             ->with('team')
-            ->where('status', 'registrado')
             ->orderBy('id_team')
-            ->orderBy('ca', 'desc')
-            ->get();
+            ->orderBy('ca', 'desc');
+
+        if ($status !== 'all' && $status !== 'todos') {
+            $playersQuery->where('status', $status);
+        }
+
+        $players = $playersQuery->get();
 
         return PlayerResource::collection($players);
     }

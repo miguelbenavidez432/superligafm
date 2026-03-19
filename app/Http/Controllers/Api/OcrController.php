@@ -35,7 +35,7 @@ class OcrController extends Controller
             );
 
             // El controlador no sabe que usa Gemini, solo usa la interfaz
-            $data = $this->ocrAnalyzer->analyzeMatchImage($request->file('image'), $context);
+            $data = $this->ocrAnalyzer->analyzeMatchImage($request->file('image'), $context, $request->input('home_team_id'), $request->input('away_team_id'));
 
             return response()->json([
                 'success' => true,
@@ -67,7 +67,7 @@ class OcrController extends Controller
 
         foreach ($request->file('images') as $image) {
             try {
-                $data = $this->ocrAnalyzer->analyzeMatchImage($image, $context);
+                $data = $this->ocrAnalyzer->analyzeMatchImage($image, $context, $request->input('home_team_id'), $request->input('away_team_id')    );
                 $results[] = [
                     'filename' => $image->getClientOriginalName(),
                     'success' => true,

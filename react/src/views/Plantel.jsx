@@ -48,9 +48,8 @@ export default function Plantel() {
     const filterPlayersByTeam = async () => {
         setLoading(true);
         try {
-            const response = await axiosClient.get('/players?all=true');
-            const filteredPlayers = response.data.data.filter(player => player.id_team?.id === team.id);
-            setPlayers(filteredPlayers);
+            const response = await axiosClient.get(`/players-teams?id_team=${team.id}&status=all`);
+            setPlayers(response.data.data || response.data);
         } catch (error) {
             setErrors('Error al obtener jugadores.');
         } finally {
@@ -161,7 +160,7 @@ export default function Plantel() {
                 {/* COLUMNA IZQUIERDA: Lista de Jugadores */}
                 <div className="flex-1 bg-slate-800 p-6 rounded-lg shadow-xl border border-slate-700">
                     <h2 className="text-xl font-bold text-blue-400 mb-4">⬇️ Arrastra los jugadores desde aquí</h2>
-                    <div className="overflow-x-auto max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="overflow-x-auto max-h-[450px] overflow-y-auto pr-2 custom-scrollbar lg:max-h-[650px]">
                         <table className="min-w-full text-white text-sm">
                             <thead className="bg-slate-900 sticky top-0 z-10 shadow-md text-black">
                                 <tr>
@@ -184,7 +183,14 @@ export default function Plantel() {
                                         onDragStart={(e) => handleDragStart(e, p)}
                                         className="border-b border-slate-700 hover:bg-slate-700 cursor-grab active:cursor-grabbing transition-colors"
                                     >
-                                        <td className="py-3 px-4 font-semibold">{p.name}</td>
+                                        <td className="py-3 px-4 font-semibold relative group">
+                                            <Link to={`/app/players/${p.id}`} className="hover:text-blue-400 transition-colors">
+                                                {p.name}
+                                            </Link>
+                                            <span className="absolute left-10 -top-8 bg-gray-900 text-white text-xs font-normal px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-lg">
+                                                Ver datos del jugador
+                                            </span>
+                                        </td>
                                         <td className="py-3 px-2 text-center">{p.age}</td>
                                         <td className="py-3 px-2 text-center">{p.ca}</td>
                                         <td className="py-3 px-2 text-center">{p.pa}</td>

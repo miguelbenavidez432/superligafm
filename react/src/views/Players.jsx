@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -10,14 +11,12 @@ export default function Players() {
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
     const { user, setNotification } = useStateContext();
-    const [team, setTeam] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchName, setSearchName] = useState('');
 
     useEffect(() => {
         getPlayers();
-        getTeam();
     }, [currentPage]);
 
     const getPlayers = () => {
@@ -33,29 +32,17 @@ export default function Players() {
             });
     };
 
-    const getTeam = () => {
-        setLoading(true);
-        axiosClient.get('/teams/public')
-            .then(({ data }) => {
-                setLoading(false);
-                setTeam(data.data);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    };
-
     const onDelete = (p) => {
-        if (!window.confirm('Estás seguro que quieres borrar este jugador??')) {
-            return
+        if (!window.confirm('¿Estás seguro que quieres borrar a este jugador?')) {
+            return;
         }
 
         axiosClient.delete(`/players/${p.id}`)
             .then(() => {
-                setNotification('Jugador eliminado satisfactoriamente')
-                getPlayers()
-            })
-    }
+                setNotification('Jugador eliminado satisfactoriamente');
+                getPlayers();
+            });
+    };
 
     const filterPlayersByTeamDivision = async () => {
         setLoading(true);
@@ -83,17 +70,9 @@ export default function Players() {
             });
     };
 
-    const handleNextPage = () => {
-        setCurrentPage((prevPage) => prevPage + 1);
-    };
-
-    const handlePrevPage = () => {
-        setCurrentPage((prevPage) => prevPage - 1);
-    };
-
-    const handleSearchChange = (e) => {
-        setSearchName(e.target.value);
-    };
+    const handleNextPage = () => setCurrentPage((prev) => prev + 1);
+    const handlePrevPage = () => setCurrentPage((prev) => prev - 1);
+    const handleSearchChange = (e) => setSearchName(e.target.value);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -101,151 +80,214 @@ export default function Players() {
         getPlayersName(searchName);
     };
 
+    // --- COMPONENTE DE ACCIONES (Para reutilizarlo en la tabla y en las tarjetas móviles) ---
+    const PlayerActions = ({ p }) => {
+        const isFirstOrSecond = p.id_team?.division === 'Primera' || p.id_team?.division === 'Segunda';
+
+        return (
+            <div className="flex items-center justify-end gap-2">
+                {user?.rol === 'Admin' && (
+                    <>
+                        <Link
+                            to={'/app/players/' + p.id}
+                            className="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg transition-colors flex items-center justify-center"
+                            title="Editar"
+                        >
+                            ✏️
+                        </Link>
+                        <button
+                            onClick={() => onDelete(p)}
+                            className="bg-red-900/50 hover:bg-red-600 text-red-200 hover:text-white p-2 rounded-lg transition-colors border border-red-800 flex items-center justify-center"
+                            title="Borrar"
+                        >
+                            🗑️
+                        </button>
+                    </>
+                )}
+                {!isFirstOrSecond ? (
+                    <Link
+                        to={'/app/crear_subasta/' + p.id}
+                        className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg text-white text-sm font-bold transition-colors shadow-md text-center"
+                    >
+                        Subastar
+                    </Link>
+                ) : (
+                    <Link
+                        to={'/app/clausula_rescision/' + p.id}
+                        className="bg-violet-600 hover:bg-violet-500 px-4 py-2 rounded-lg text-white text-sm font-bold transition-colors shadow-md text-center"
+                    >
+                        Cláusula
+                    </Link>
+                )}
+            </div>
+        );
+    };
+
     return (
-        <>
-            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                <div className="text-xl mt-2 font-semibold mb-2 text-center lg:text-left bg-black bg-opacity-70 rounded-lg text-white p-3">
-                    Jugadores
-                </div>
-                {user.rol === 'Admin' && (
-                    <Link to='/players/new' className="bg-green-600 hover:bg-green-800 p-3 rounded text-white">
-                        Agregar Jugador
+        <div className="max-w-7xl mx-auto p-2 sm:p-4 animate-fade-in-down">
+
+            {/* ENCABEZADO */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <h1 className="text-2xl font-bold text-white bg-slate-900 border border-slate-700 px-6 py-3 rounded-xl shadow-lg w-full sm:w-auto text-center">
+                    🏃‍♂️ Base de Datos
+                </h1>
+                {user?.rol === 'Admin' && (
+                    <Link
+                        to="/players/new"
+                        className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
+                    >
+                        ➕ Agregar Jugador
                     </Link>
                 )}
             </div>
 
-            {/* Buscador */}
-            <div className="bg-black bg-opacity-70 p-4 rounded-lg mb-4">
-                <form onSubmit={handleSearchSubmit} className="flex gap-3">
+            {/* PANEL DE CONTROLES (Responsivo) */}
+            <div className="bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-lg mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+                <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3 w-full lg:w-2/3">
                     <input
                         type="text"
                         value={searchName}
                         onChange={handleSearchChange}
-                        placeholder="Buscar por nombre"
-                        className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
+                        placeholder="Buscar jugador por nombre..."
+                        className="w-full p-3 border border-slate-600 rounded-lg text-white bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
                     />
-                    <button className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white" type="submit">
-                        Buscar
+                    <button className="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg text-white font-bold transition-colors shadow-md whitespace-nowrap" type="submit">
+                        🔍 Buscar
                     </button>
                 </form>
-            </div>
 
-            {/* Filtros */}
-            <div className="mb-4 flex gap-2 flex-wrap">
                 <button
-                    className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white"
+                    className="bg-slate-700 hover:bg-slate-600 px-4 py-3 rounded-lg text-white font-medium transition-colors border border-slate-500 w-full lg:w-auto whitespace-nowrap"
                     onClick={filterPlayersByTeamDivision}
                 >
-                    Filtrar equipos fuera de Primera/Segunda
+                    Filtro: Fuera de 1ra/2da
                 </button>
             </div>
 
-            {/* Paginación */}
-            <div className="mb-4 flex gap-2">
-                {currentPage > 1 && (
+            {/* PAGINACIÓN SUPERIOR */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-4 text-sm text-gray-400 font-medium px-2 gap-3">
+                <div className="bg-slate-900 px-4 py-2 rounded-lg border border-slate-700 w-full sm:w-auto text-center">
+                    Página <span className="text-white font-bold text-base">{currentPage}</span> de <span className="text-white font-bold text-base">{totalPages}</span>
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
                     <button
-                        className="bg-blue-600 hover:bg-blue-800 p-3 rounded text-white"
+                        className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-bold transition-colors ${currentPage > 1 ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-600' : 'bg-slate-900 text-slate-700 cursor-not-allowed border border-slate-800'}`}
                         onClick={handlePrevPage}
+                        disabled={currentPage === 1}
                     >
-                        Página anterior
+                        ◀ Anterior
                     </button>
-                )}
-                {currentPage < totalPages && (
                     <button
-                        className='bg-blue-600 hover:bg-blue-800 p-3 rounded text-white'
+                        className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-bold transition-colors ${currentPage < totalPages ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-600' : 'bg-slate-900 text-slate-700 cursor-not-allowed border border-slate-800'}`}
                         onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
                     >
-                        Página siguiente
+                        Siguiente ▶
                     </button>
-                )}
+                </div>
             </div>
 
-            {/* Tabla con estilo Teams.jsx */}
-            <div>
-                <table className="min-w-full bg-black bg-opacity-70 text-white border-gray-800 my-2">
-                    <thead>
-                        <tr>
-                            <th className="border px-4 py-2 bg-black text-white">NOMBRE</th>
-                            <th className="border px-4 py-2 bg-black text-white">EDAD</th>
-                            <th className="border px-4 py-2 bg-black text-white">CA</th>
-                            <th className="border px-4 py-2 bg-black text-white">PA</th>
-                            <th className="border px-4 py-2 bg-black text-white">EQUIPO</th>
-                            <th className="border px-4 py-2 bg-black text-white">VALOR</th>
-                            <th className="border px-4 py-2 bg-black text-white">ESTADO</th>
-                            {user.rol === 'Admin' && (
-                                <th className="border px-4 py-2 bg-black text-white">ACCIONES</th>
-                            )}
-                        </tr>
-                    </thead>
-                    {loading &&
-                        <tbody>
-                            <tr>
-                                <td colSpan="8" className="border px-4 py-2 text-center">
-                                    CARGANDO...
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
-                    {!loading &&
-                        <tbody>
-                            {players.map(p => (
-                                <tr key={p.id}>
-                                    <td className="border px-4 py-2">{p.name}</td>
-                                    <td className="border px-4 py-2">{p.age}</td>
-                                    <td className="border px-4 py-2">{p.ca}</td>
-                                    <td className="border px-4 py-2">{p.pa}</td>
-                                    <td className="border px-4 py-2">{p.id_team?.name}</td>
-                                    <td className="border px-4 py-2">{p.value}</td>
-                                    <td className="border px-4 py-2">{p.status}</td>
-                                    {user.rol === 'Admin' ? (
-                                        <td className="border px-4 py-2">
-                                            <div className="flex gap-2 flex-wrap">
-                                                <Link
-                                                    className="bg-green-600 hover:bg-green-800 p-2 rounded text-white text-sm"
-                                                    to={'/app/players/' + p.id}
-                                                >
-                                                    Editar
-                                                </Link>
-                                                <button
-                                                    onClick={() => onDelete(p)}
-                                                    className="bg-red-600 hover:bg-red-800 p-2 rounded text-white text-sm"
-                                                >
-                                                    Borrar
-                                                </button>
-                                                {p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda' ?
-                                                    <Link
-                                                        className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                        to={'/app/crear_subasta/' + p.id}
-                                                    >
-                                                        Ofertar
-                                                    </Link>
-                                                    : <Link
-                                                        className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                                        to={'/app/clausula_rescision/' + p.id}
-                                                    >
-                                                        Ofertar
-                                                    </Link>}
-                                            </div>
-                                        </td>
-                                    ) : (user && p.id_team?.division !== 'Primera' && p.id_team?.division !== 'Segunda' ?
-                                        <Link
-                                            className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                            to={'/app/crear_subasta/' + p.id}
-                                        >
-                                            Ofertar
-                                        </Link>
-                                        : <Link
-                                            className="bg-blue-600 hover:bg-blue-800 p-2 rounded text-white text-sm"
-                                            to={'/app/clausula_rescision/' + p.id}
-                                        >
-                                            Ofertar
-                                        </Link>)}
-                                </tr>
-                            ))}
-                        </tbody>
-                    }
-                </table>
-            </div>
-        </>
+            {/* ESTADOS DE CARGA / VACÍO */}
+            {loading && (
+                <div className="flex justify-center items-center py-20 bg-slate-900 border border-slate-700 rounded-xl shadow-lg mb-8">
+                    <p className="font-bold text-gray-400 animate-pulse text-lg">Cargando jugadores...</p>
+                </div>
+            )}
+
+            {!loading && players.length === 0 && (
+                <div className="text-center py-20 bg-slate-900 border border-slate-700 rounded-xl shadow-lg mb-8">
+                    <p className="text-gray-500 text-lg italic">No se encontraron jugadores.</p>
+                </div>
+            )}
+
+            {!loading && players.length > 0 && (
+                <>
+                    {/* VISTA MÓVIL: TARJETAS (Oculto en pantallas medianas y grandes) */}
+                    <div className="md:hidden flex flex-col gap-4 mb-8">
+                        {players.map(p => (
+                            <div key={p.id} className="bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-lg">
+                                <div className="flex justify-between items-start border-b border-slate-700/50 pb-3 mb-3">
+                                    <div>
+                                        <h3 className="font-bold text-white text-lg">{p.name}</h3>
+                                        <p className="text-sm text-gray-400 mt-1">
+                                            {p.id_team?.name || <span className="italic text-slate-500">Agente Libre</span>}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase inline-block mb-2 ${p.status === 'bloqueado' ? 'bg-red-900/50 text-red-400 border border-red-800' : 'bg-green-900/50 text-green-400 border border-green-800'}`}>
+                                            {p.status}
+                                        </span>
+                                        <p className="text-green-400 font-bold text-sm">
+                                            ${Number(p.value).toLocaleString()}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2 mb-4 bg-slate-800 p-2 rounded-lg text-center border border-slate-700">
+                                    <div>
+                                        <p className="text-xs text-gray-500 uppercase font-bold">Edad</p>
+                                        <p className="text-white font-medium">{p.age}</p>
+                                    </div>
+                                    <div className="border-x border-slate-700">
+                                        <p className="text-xs text-gray-500 uppercase font-bold">CA</p>
+                                        <p className="text-blue-400 font-bold">{p.ca}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 uppercase font-bold">PA</p>
+                                        <p className="text-purple-400 font-bold">{p.pa}</p>
+                                    </div>
+                                </div>
+
+                                <div className="pt-2">
+                                    <PlayerActions p={p} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* VISTA ESCRITORIO: TABLA (Oculto en celulares) */}
+                    <div className="hidden md:block bg-slate-900 border border-slate-700 rounded-xl shadow-xl overflow-hidden mb-8">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full text-sm text-left text-gray-300">
+                                <thead className="!bg-[#0f172a] text-gray-300 uppercase text-xs font-bold tracking-wider border-b-2 border-slate-700">
+                                    <tr>
+                                        <th className="px-6 py-4">Nombre</th>
+                                        <th className="px-4 py-4 text-center">Edad</th>
+                                        <th className="px-4 py-4 text-center">CA</th>
+                                        <th className="px-4 py-4 text-center">PA</th>
+                                        <th className="px-6 py-4">Equipo</th>
+                                        <th className="px-6 py-4 text-right">Valor</th>
+                                        <th className="px-4 py-4 text-center">Estado</th>
+                                        <th className="px-6 py-4 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-700/50">
+                                    {players.map(p => (
+                                        <tr key={p.id} className="hover:bg-slate-800/80 transition-colors group">
+                                            <td className="px-6 py-3 font-bold text-white whitespace-nowrap">{p.name}</td>
+                                            <td className="px-4 py-3 text-center">{p.age}</td>
+                                            <td className="px-4 py-3 text-center text-blue-400 font-bold bg-blue-900/10">{p.ca}</td>
+                                            <td className="px-4 py-3 text-center text-purple-400 font-bold bg-purple-900/10">{p.pa}</td>
+                                            <td className="px-6 py-3 font-medium text-gray-400">{p.id_team?.name || <span className="italic text-slate-500">Libre</span>}</td>
+                                            <td className="px-6 py-3 text-right text-green-400 font-medium">
+                                                ${Number(p.value).toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase ${p.status === 'bloqueado' ? 'bg-red-900/50 text-red-400 border border-red-800' : 'bg-green-900/50 text-green-400 border border-green-800'}`}>
+                                                    {p.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                <PlayerActions p={p} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
     );
 }

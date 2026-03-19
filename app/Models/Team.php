@@ -14,6 +14,15 @@ class Team extends Model
         'division',
         'id_user',
         'cdr',
+        'title_first_division',
+        'title_second_division',
+        'title_third_division',
+        'title_cup',
+        'title_ucl',
+        'title_uel',
+        'title_league_cup',
+        'title_champions_cup',
+        'title_super_cup',
     ];
 
     public function players()

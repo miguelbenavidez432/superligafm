@@ -6,16 +6,9 @@ import { useStateContext } from '../context/ContextProvider';
 export default function Matches() {
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [teamHomeId, setTeamHomeId] = useState('');
-    const [teamAwayId, setTeamAwayId] = useState('');
-    const [teams, setTeams] = useState([]);
     const [creating, setCreating] = useState(false);
     const { setNotification, user } = useStateContext();
     const [tournaments, setTournaments] = useState([]);
-    const [tournamentId, setTournamentId] = useState('');
-    const [stage, setStage] = useState('');
-    const [scoreHome, setScoreHome] = useState('');
-    const [scoreAway, setScoreAway] = useState('');
     const [message, setMessage] = useState(null);
 
     useEffect(() => {
@@ -23,24 +16,12 @@ export default function Matches() {
             .then(({ data }) => {
                 setMatches(data.data);
                 setLoading(false);
-                getTeams();
                 getTournaments();
             })
             .catch(() => {
                 setLoading(false);
             });
     }, [creating]);
-
-    const getTeams = () => {
-        axiosClient.get('/teams')
-            .then(({ data }) => {
-                const filteredTeams = data.data.filter(team => team.division === 'Primera' || team.division === 'Segunda');
-                setTeams(filteredTeams);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    };
 
     const getTournaments = () => {
         axiosClient.get('/tournaments')
@@ -52,77 +33,8 @@ export default function Matches() {
             });
     }
 
-    const handleCreateMatch = () => {
-        setMessage(null);
-        setCreating(true);
-        if (!stage) {
-            setNotification('Tienes que cargar Fecha o Ronda')
-            setCreating(false);
-            return;
-        }
-        if (!teamHomeId || !teamAwayId) {
-            setNotification('Tienes que cargar los equipos')
-            setCreating(false);
-            return;
-        }
-        if (!scoreAway || !scoreHome) {
-            setNotification('Tienes que cargar los goles')
-            setCreating(false);
-            return;
-        }
-        if (!tournamentId) {
-            setNotification('Tienes que cargar el torneo')
-            setCreating(false);
-            return;
-        }
-        if (teamHomeId && teamAwayId && scoreAway && scoreHome && tournamentId && stage) {
-            const homeTeamName = teams.find(team => team.id == parseInt(teamHomeId))?.name;
-            const awayTeamName = teams.find(team => team.id == parseInt(teamAwayId))?.name;
-            const userConfirmed = confirm(`¿Estás seguro de que quieres crear el partido entre ${homeTeamName} y ${awayTeamName} con resultado ${scoreHome} - ${scoreAway}?`);
-            setMessage(null);
-            if (!userConfirmed) {
-                setTeamHomeId('');
-                setTeamAwayId('');
-                setStage('');
-                setTournamentId('');
-                setScoreAway('');
-                setScoreHome('');
-                setNotification('Carga de partido cancelada');
-                setCreating(false);
-                return;
-            }
-            setNotification('Creando partido...') &&
-                setCreating(true);
-            axiosClient.post('/matches', {
-                team_home_id: teamHomeId,
-                team_away_id: teamAwayId,
-                tournament_id: tournamentId,
-                score_home: scoreHome,
-                score_away: scoreAway,
-                stage: stage
-            })
-                .then(({ data }) => {
-                    setMatches([...matches, data]);
-                    setTeamHomeId('');
-                    setTeamAwayId('');
-                    setStage('');
-                    setTournamentId('');
-                    setScoreAway('');
-                    setScoreHome('');
-                    setNotification('Partido creado correctamente');
-                    setCreating(false);
-                })
-                .catch((error) => {
-                    if (error && error.status === 422) {
-                        setMessage(error.response.data.message)
-                    }
-                    setCreating(false);
-                });
-        }
-    };
-
     const onUpdate = (match) => {
-        if (!window.confirm('Estás seguro que quieres editar este partido??')) {
+        if (!window.confirm('¿Estás seguro que quieres habilitar la edición de este partido?')) {
             return
         }
 
@@ -151,7 +63,7 @@ export default function Matches() {
                 case 15: return "Cuartos de Final";
                 case 16: return "Semifinal";
                 case 17: return "Final";
-                default: return currentStage;
+                default: return `Fecha ${currentStage}`;
             }
         }
 
@@ -160,7 +72,7 @@ export default function Matches() {
                 case 14: return "Cuartos de Final";
                 case 15: return "Semifinal";
                 case 18: return "Final";
-                default: return currentStage;
+                default: return `Fecha ${currentStage}`;
             }
         }
 
@@ -170,7 +82,7 @@ export default function Matches() {
                 case 5: return "Semifinal";
                 case 6: return "Semifinal";
                 case 7: return "Final";
-                default: return currentStage;
+                default: return `Fecha ${currentStage}`;
             }
         }
 
@@ -180,7 +92,7 @@ export default function Matches() {
                 case 2: return "Cuartos de Final";
                 case 3: return "Semifinal";
                 case 4: return "Final";
-                default: return currentStage;
+                default: return `Ronda ${currentStage}`;
             }
         }
 
@@ -191,143 +103,161 @@ export default function Matches() {
                 case 3: return "Cuartos de Final";
                 case 4: return "Semifinal";
                 case 5: return "Final";
-                default: return currentStage;
+                default: return `Ronda ${currentStage}`;
             }
         }
+
+        return currentStage;
     };
 
     return (
-        <div className="container mx-auto p-4">
-            {loading && <p className="text-gray-500">Cargando...</p>}
-            {!loading && (
-                <>
-                    {message &&
-                        <div className="alert">
-                            <p>{message}</p>
-                        </div>
-                    }
-                    <div className="-mt-2 bg-black bg-opacity-70 p-5 rounded-lg">
-                        <h2 className="text-xl font-semibold mb-2 text-white">Crear un nuevo partido</h2>
-                        <div className="mb-4 flex flex-wrap -mx-2">
-                            <div className="w-full md:w-1/2 px-2 mb-4 md:mb-0">
-                                <select
-                                    className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
-                                    value={teamHomeId}
-                                    onChange={(e) => setTeamHomeId(e.target.value)}
-                                >
-                                    <option value="">Selecciona el equipo local</option>
-                                    {teams.map(team => (
-                                        <option key={team.id} value={team.id}>
-                                            {team.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="w-full md:w-1/2 px-2">
-                                <select
-                                    className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
-                                    value={teamAwayId}
-                                    onChange={(e) => setTeamAwayId(e.target.value)}
-                                >
-                                    <option value="">Selecciona el equipo visitante</option>
-                                    {teams.map(team => (
-                                        <option key={team.id} value={team.id}>
-                                            {team.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div className="mb-4 flex flex-wrap -mx-2">
-                            <div className="w-full md:w-1/2 px-2 mb-4 md:mb-0">
-                                <input
-                                    type="number"
-                                    className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
-                                    placeholder='Cantidad de goles del local'
-                                    value={scoreHome}
-                                    onChange={(e) => setScoreHome(e.target.value)}
-                                />
-                            </div>
-                            <div className="w-full md:w-1/2 px-2">
-                                <input
-                                    type="number"
-                                    className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
-                                    placeholder='Cantidad de goles del visitante'
-                                    value={scoreAway}
-                                    onChange={(e) => setScoreAway(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className="mb-4">
-                            <select
-                                className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
-                                value={tournamentId}
-                                onChange={(e) => setTournamentId(e.target.value)}
-                            >
-                                <option value="">Selecciona el torneo</option>
-                                {tournaments.map(t => (
-                                    <option key={t.id} value={t.id}>
-                                        {t.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="mb-4">
-                            <input
-                                type="number"
-                                className="block w-full p-2 border border-blue-700 rounded text-white bg-slate-950"
-                                placeholder='Fecha o número de ronda (1,2,3, etc)'
-                                value={stage}
-                                onChange={(e) => setStage(e.target.value)}
-                            />
-                        </div>
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={handleCreateMatch} disabled={creating}>
-                            {creating ? 'Creando...' : 'Crear Partido'}
-                        </button>
-                    </div>
-                    <br />
-                    <h1 className="text-2xl font-bold mb-4 bg-black bg-opacity-70 p-5 rounded-lg text-white text-center">Partidos</h1>
+        <div className="max-w-7xl mx-auto p-2 sm:p-4 animate-fade-in-down">
+
+            {/* ENCABEZADO */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <h1 className="text-2xl font-bold text-white bg-slate-900/80 backdrop-blur-md border border-slate-700 px-6 py-3 rounded-xl shadow-lg w-full sm:w-auto text-center">
+                    ⚽ Calendario y Resultados
+                </h1>
+
+                <Link
+                    to="/app/cargar-imagenes"
+                    className="bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
+                >
+                    ➕ Crear Nuevo Partido
+                </Link>
+            </div>
+
+            {/* ALERTAS */}
+            {message && (
+                <div className="bg-red-900/50 backdrop-blur-md border border-red-500 text-red-200 p-4 rounded-xl mb-6 shadow-lg text-sm">
+                    {Object.keys(message).map(key => (
+                        <p key={key}>• {message[key][0]}</p>
+                    ))}
+                </div>
+            )}
+
+            {/* CONTENIDO */}
+            {loading ? (
+                <div className="flex justify-center items-center py-20 bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-xl shadow-lg">
+                    <p className="font-bold text-gray-400 animate-pulse text-lg">Cargando partidos...</p>
+                </div>
+            ) : (
+                <div className="space-y-4">
                     {tournaments.map(tournament => {
-                        const tournamentMatches = matches
-                            .filter(match => match.tournament?.id == tournament.id)
-                            .sort((a, b) => b.stage - a.stage);
+                        // 1. Obtenemos todos los partidos del torneo
+                        const tournamentMatches = matches.filter(match => match.tournament?.id == tournament.id);
+
+                        // 2. Agrupamos los partidos por etapa (stage)
+                        const groupedByStage = tournamentMatches.reduce((acc, match) => {
+                            if (!acc[match.stage]) acc[match.stage] = [];
+                            acc[match.stage].push(match);
+                            return acc;
+                        }, {});
+
+                        // 3. Ordenamos las etapas de mayor a menor (para ver la fecha más reciente primero)
+                        const sortedStages = Object.keys(groupedByStage).sort((a, b) => b - a);
 
                         return (
-                            <details key={tournament.id} className="mb-4">
-                                <summary className="cursor-pointer text-lg font-semibold bg-black bg-opacity-70 p-2 rounded-lg text-white">
-                                    {tournament.name}
+                            <details key={tournament.id} className="group/tour bg-slate-900/70 backdrop-blur-md border border-slate-700 rounded-xl shadow-lg overflow-hidden transition-all duration-300">
+                                {/* CABECERA DEL ACORDEÓN PRINCIPAL (TORNEO) */}
+                                <summary className="cursor-pointer list-none p-4 flex justify-between items-center bg-slate-800/80 hover:bg-slate-700/80 transition-colors">
+                                    <h2 className="text-lg sm:text-xl font-bold text-blue-400 flex items-center gap-2">
+                                        🏆 {tournament.name}
+                                    </h2>
+                                    <div className="text-slate-400 group-open/tour:rotate-180 transition-transform duration-300 bg-slate-900 border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center text-xs">
+                                        ▼
+                                    </div>
                                 </summary>
-                                <ul className="list-disc pl-5 mt-1 bg-black bg-opacity-70 p-5 rounded-lg text-white">
-                                    {tournamentMatches.length > 0 ? (
-                                        tournamentMatches.map(match => (
-                                            <li key={match.id} className="mb-2">
-                                                {match.team_home?.name} vs {match.team_away?.name} - Ronda {formatStage(Number(match.stage), tournament.format)} -{' '}
-                                                {match.status === 'completed' ? (
-                                                    <Link className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-800" to={`/app/partidos/${match.id}`}>
-                                                        <span className='font-semibold'> Resultado: {' '}
-                                                            {match.score_home} - {match.score_away}
-                                                        </span>
-                                                    </Link>
-                                                ) : (
-                                                    <Link className="bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-700" to={`/app/partidos/${match.id}`}>
-                                                        Cargar datos
-                                                    </Link>
-                                                )}
-                                                {user.rol === 'Admin' && (
-                                                    <button className='bg-red-500 text-white px-1 py-1 rounded hover:bg-red-700 ml-4' onClick={() => onUpdate(match.id)}>
-                                                        Habilitar edición
-                                                    </button>
-                                                )}
-                                            </li>
+
+                                <div className="p-3 sm:p-5 bg-slate-950/50 border-t border-slate-700 flex flex-col gap-3">
+                                    {sortedStages.length > 0 ? (
+                                        sortedStages.map((stage, index) => (
+                                            /* ACORDEÓN SECUNDARIO (POR FECHA/ETAPA) */
+                                            /* Abrimos solo la primera fecha (la más reciente) por defecto */
+                                            <details key={stage} className="group/stage bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden" open={index === 0}>
+
+                                                <summary className="cursor-pointer list-none px-4 py-2.5 flex justify-between items-center bg-slate-800 hover:bg-slate-700 transition-colors border-b border-slate-700/50">
+                                                    <span className="text-gray-300 font-bold text-sm tracking-wider uppercase">
+                                                        📅 {formatStage(Number(stage), tournament.format)}
+                                                    </span>
+                                                    <span className="text-slate-500 group-open/stage:rotate-180 transition-transform duration-200 text-xs">
+                                                        ▼
+                                                    </span>
+                                                </summary>
+
+                                                <div className="p-2 sm:p-3 flex flex-col gap-2">
+                                                    {groupedByStage[stage].map(match => (
+
+                                                        /* TARJETA DE PARTIDO COMPACTA */
+                                                        <div key={match.id} className="bg-slate-900/80 hover:bg-slate-800 transition-colors border border-slate-700 rounded-lg p-2.5 flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm">
+
+                                                            {/* EQUIPOS Y MARCADOR */}
+                                                            <div className="flex-1 flex items-center justify-center md:justify-start w-full gap-2 sm:gap-4">
+                                                                <div className="flex-1 text-right text-white font-bold text-xs sm:text-sm truncate">
+                                                                    {match.team_home?.name}
+                                                                </div>
+
+                                                                <div className="shrink-0 bg-slate-950 border border-slate-600 px-3 py-1.5 rounded-lg text-center shadow-inner min-w-[70px]">
+                                                                    {match.status === 'completed' ? (
+                                                                        <span className="text-yellow-400 font-black text-sm tracking-widest">
+                                                                            {match.score_home} - {match.score_away}
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="text-gray-500 font-black text-xs tracking-widest uppercase">
+                                                                            VS
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="flex-1 text-left text-white font-bold text-xs sm:text-sm truncate">
+                                                                    {match.team_away?.name}
+                                                                </div>
+                                                            </div>
+
+                                                            {/* BOTONES DE ACCIÓN COMPACTOS */}
+                                                            <div className="w-full md:w-auto flex justify-center gap-2 shrink-0">
+                                                                {match.status === 'completed' ? (
+                                                                    <Link
+                                                                        className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-md text-xs font-bold shadow transition-colors flex-1 md:flex-none text-center"
+                                                                        to={`/app/partidos/${match.id}`}
+                                                                    >
+                                                                        👁️ Ver
+                                                                    </Link>
+                                                                ) : (
+                                                                    <Link
+                                                                        className="bg-orange-500 hover:bg-orange-400 text-white px-3 py-1.5 rounded-md text-xs font-bold shadow transition-colors flex-1 md:flex-none text-center"
+                                                                        to={`/app/partidos/${match.id}`}
+                                                                    >
+                                                                        📝 Cargar
+                                                                    </Link>
+                                                                )}
+
+                                                                {user?.rol === 'Admin' && (
+                                                                    <button
+                                                                        className="bg-slate-800 hover:bg-red-600 text-red-400 hover:text-white border border-red-800 hover:border-red-600 px-2 py-1.5 rounded-md text-xs font-bold shadow transition-colors flex items-center justify-center"
+                                                                        onClick={() => onUpdate(match.id)}
+                                                                        title="Habilitar Edición"
+                                                                    >
+                                                                        🔓
+                                                                    </button>
+                                                                )}
+                                                            </div>
+
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </details>
                                         ))
                                     ) : (
-                                        <p className="bg-black bg-opacity-70 p-5 rounded-lg text-white">No hay partidos disponibles para este torneo.</p>
+                                        <div className="text-center py-6">
+                                            <p className="text-slate-500 italic text-sm">No hay partidos disponibles para este torneo.</p>
+                                        </div>
                                     )}
-                                </ul>
+                                </div>
                             </details>
                         );
                     })}
-                </>
+                </div>
             )}
         </div>
     );

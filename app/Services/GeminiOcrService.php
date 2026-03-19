@@ -12,7 +12,7 @@ use GuzzleHttp\Client;
 
 class GeminiOcrService implements OcrAnalyzerInterface
 {
-    public function analyzeMatchImage(UploadedFile $image, array $context): array
+    public function analyzeMatchImage(UploadedFile $image, array $context, int $homeId, int $awayId): array
     {
         $imagePath = $image->getPathname();
         $rawMimeType = $image->getMimeType();
@@ -28,7 +28,7 @@ class GeminiOcrService implements OcrAnalyzerInterface
             default => MimeType::IMAGE_JPEG,
         };
 
-        $prompt = $this->buildPrompt($playersContext);
+        $prompt = $this->buildPrompt($playersContext, $homeId, $awayId);
 
         $client = \Gemini::factory()
             ->withApiKey(config('services.gemini.api_key'))
@@ -48,42 +48,37 @@ class GeminiOcrService implements OcrAnalyzerInterface
         $data = json_decode(trim($jsonText), true);
 
         if (!$data) {
-            throw new Exception('No se pudo generar un JSON válido desde la imagen.');
+            throw new Exception('No se pudo generar un JSON válido desde la imagen. Respuesta cruda: ' . $result->text());
         }
 
         return $data;
     }
 
-    private function buildPrompt(string $context): string
+    private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Eres un analista experto en Football Manager. Tu objetivo es mapear los datos de la imagen con la lista de jugadores oficial que te proporciono.
+        Eres un analista experto en Football Manager. Tu objetivo es extraer las estadísticas de los jugadores de la imagen y devolverlas en formato JSON.
 
-        ESTA ES LA LISTA OFICIAL DE JUGADORES (CONTEXTO):
+        INFORMACIÓN DEL PARTIDO (CRÍTICO):
+        - EQUIPO LOCAL (ID: $homeId): Sus jugadores aparecen en la tabla de la MITAD IZQUIERDA de la imagen.
+        - EQUIPO VISITANTE (ID: $awayId): Sus jugadores aparecen en la tabla de la MITAD DERECHA de la imagen.
+
+        LISTA OFICIAL DE JUGADORES (CONTEXTO):
         $context
 
         REGLAS CRÍTICAS DE EXTRACCIÓN:
-        1. IDENTIFICACIÓN DE ICONOS:
-           - BALÓN CON CRUZ ROJA: Es un GOL ANULADO. No lo cuentes como gol.
-           - RECUADRO ROJO CON CRUZ TRANSPARENTE: Es una LESIÓN (is_injured: true). NO es tarjeta roja.
-           - TARJETA ROJA: Es un rectángulo rojo sólido sin cruces.
-           - TARJETA AMARILLA: Es un rectángulo amarillo sólido sin cruces.
-
-        2. COBERTURA TOTAL DE JUGADORES:
-           - Debes devolver TODOS los jugadores que aparecen en la 'LISTA OFICIAL' arriba mencionada.
-           - Si un jugador de la lista oficial NO aparece en la imagen o no tiene estadísticas, devuélvelo con rating 0, goles 0, asistencias 0, etc.
-           - Los jugadores que SÍ aparecen en la imagen deben tener sus estadísticas extraídas fielmente.
-           - Analiza la sección central de la imagen donde dice 'Encuentros'. Ignora los goles y céntrate exclusivamente en identificar:
-                Tarjetas Amarillas: Icono de rectángulo amarillo.
-                Lesiones: Icono de cruz roja (como el de P. Porro 39').
-                Tarjetas Rojas: Icono de rectángulo rojo.
-                Para cada jugador en esta lista central, marca en el JSON: amarillas: 1, is_injured: true, o rojas: 1 según corresponda. Cruza estos nombres con la lista general de jugadores para asegurar la consistencia.
-
-        3. FORMATO DE SALIDA:
-           - Devuelve los nombres del jugador y del equipo tal cual aparecen en la lista oficial.
-           - Ordena la lista de jugadores por nombre de equipo.
-           - El jugador con mejor rating debe tener el campo 'mvp' marcado como true.
-           - Un jugador puede tener tarjeta amarilla y luego roja en la misma imagen, en ese caso debe reflejar ambas cosas (yellow_cards: 1, red_cards: 1).
+        1. COBERTURA TOTAL: Debes extraer a TODOS los jugadores de la tabla izquierda y TODOS los de la tabla derecha, sin importar las siglas que aparezcan arriba de las tablas.
+        2. ASIGNACIÓN DE EQUIPO:
+           - Si el jugador está en la tabla izquierda, asigna estrictamente 'id_team': $homeId.
+           - Si el jugador está en la tabla derecha, asigna estrictamente 'id_team': $awayId.
+        3. IDENTIFICACIÓN DE EVENTOS (Sección central 'Encuentros'):
+           - BALÓN CON CRUZ ROJA: Gol anulado (ignorar).
+           - RECUADRO ROJO CON CRUZ TRANSPARENTE: Lesión (is_injured: true). NO es tarjeta.
+           - TARJETA ROJA: Rectángulo rojo sólido (rojas: 1).
+           - TARJETA AMARILLA: Rectángulo amarillo sólido (amarillas: 1).
+           - Cruza los nombres de esta sección central con la lista general para marcar las tarjetas o lesiones.
+        4. Cruza los nombres de la imagen con la LISTA OFICIAL de contexto. Devuelve el nombre exactamente como aparece en la lista oficial. Si un jugador de la lista oficial no aparece en la imagen, devuélvelo con rating 0 y goles 0.
+        5. El jugador con mejor rating debe tener el campo 'mvp' marcado como true.
 
         RESPUESTA JSON ESPERADA:
         {
@@ -92,17 +87,19 @@ class GeminiOcrService implements OcrAnalyzerInterface
           \"players\": [
             {
               \"player_name\": \"Nombre del Jugador\",
-              \"team_name\": \"Nombre del Equipo\",
+              \"team_name\": \"Nombre del Equipo Oficial\",
+              \"id_team\": $homeId,
               \"rating\": 6.7,
               \"goals\": 0,
               \"assists\": 0,
               \"amarillas\": 0,
               \"rojas\": 0,
-              \"is_injured\": false
+              \"is_injured\": false,
+              \"mvp\": false
             }
           ]
         }
         No incluyas markdown, solo el JSON puro.
-    ";
+        ";
     }
 }
