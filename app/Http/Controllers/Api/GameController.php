@@ -328,7 +328,10 @@ class GameController extends Controller
                             'mvp' => $player['mvp'] ?? false,
                             'tournament_id' => $validated['tournament_id'],
                             'user_id' => auth()->id(),
-                            'team_id' => $player['team_id'] ?? null,
+                            'team_id' => $player['id_team']
+                                ?? $player['team_id']
+                                ?? optional($dbPlayers->firstWhere('id', $bestMatchId))->id_team
+                                ?? null,
                         ]);
                     }
                 }
