@@ -22,10 +22,18 @@ class UpdateTeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-                'name' => 'string',
-                'id_user' => 'integer|nullable',
-                'division' => 'string|nullable',
-                'cdr' => 'integer|nullable',
+            'name' => 'required|string|max:255',
+            'division' => 'nullable|string',
+            'id_user' => 'nullable|integer|exists:users,id',
+            'title_first_division' => 'nullable|integer',
+            'title_second_division' => 'nullable|integer',
+            'title_third_division' => 'nullable|integer',
+            'title_cup' => 'nullable|integer',
+            'title_ucl' => 'nullable|integer',
+            'title_uel' => 'nullable|integer',
+            'title_league_cup' => 'nullable|integer',
+            'title_champions_cup' => 'nullable|integer',
+            'title_super_cup' => 'nullable|integer',
         ];
     }
 }

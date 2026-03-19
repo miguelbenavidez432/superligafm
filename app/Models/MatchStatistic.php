@@ -23,6 +23,7 @@ class MatchStatistic extends Model
         'serious_injuries',
         'mvp',
         'rating',
+        'team_id',
     ];
 
     protected $casts = [
@@ -47,5 +48,10 @@ class MatchStatistic extends Model
     public function match()
     {
         return $this->belongsTo(Game::class, 'match_id');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 }

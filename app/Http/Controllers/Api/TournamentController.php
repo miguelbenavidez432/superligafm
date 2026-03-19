@@ -16,17 +16,30 @@ class TournamentController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->query('all') == 'true') {
-            return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])
-            ->where('status', '=', 'active')
-            ->orderBy('created_at', 'desc')
-            ->get());
-        } else {
-            return TournamentResource::collection(Tournament::with(['matches', 'season', 'standings'])
-            ->where('status', '=', 'active')
-            ->orderBy('created_at', 'desc')
-            ->paginate(100));
+        // 1. Armamos la consulta base (DRY)
+        $query = Tournament::with(['matches', 'season', 'standings'])
+            ->orderBy('created_at', 'desc');
+
+        // 2. Lógica del Filtro de Estado Dinámico
+        // Leemos qué estado pide el frontend. Si no pide nada, por defecto es 'active'.
+        $requestedStatus = $request->query('status', 'active');
+
+        // Si el frontend nos pide 'all', saltamos el where. Si no, filtramos por el estado pedido.
+        if ($requestedStatus !== 'all') {
+            $query->where('status', $requestedStatus);
         }
+
+        // 3. Opcional: Si en el futuro quieres filtrar torneos por temporada desde la BD
+        if ($request->has('season_id')) {
+            $query->where('season_id', $request->query('season_id'));
+        }
+
+        // 4. Resolvemos cómo devolver los datos (Paginados o Todos)
+        if ($request->query('all') == 'true') {
+            return TournamentResource::collection($query->get());
+        }
+
+        return TournamentResource::collection($query->paginate(100));
     }
 
     /**

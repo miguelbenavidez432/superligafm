@@ -16,13 +16,13 @@ class SeasonController extends Controller
      */
     public function index(Request $request)
     {
-        // if ($request->has("all") && $request->query("all") == true) {
-        //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->get());
-        // } else {
-        //     return SeasonResource::collection(Season::query()->orderBy("name", "desc")->paginate(50));
-        // }
-        // ;
-        return SeasonResource::collection(Season::query()->where('active', 'yes')->orderBy("id", "asc")->get());
+        if ($request->has("all") && $request->query("all") == true) {
+            return SeasonResource::collection(Season::query()->orderBy("id", "desc")->limit(10)->get());
+        } else {
+            return SeasonResource::collection(Season::query()->where('active', 'yes')->orderBy("id", "asc")->get());
+        }
+        ;
+        //return SeasonResource::collection(Season::query()->where('active', 'yes')->orderBy("id", "asc")->get());
     }
 
     /**

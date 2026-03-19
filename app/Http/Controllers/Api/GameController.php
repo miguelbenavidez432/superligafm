@@ -327,7 +327,8 @@ class GameController extends Controller
                             'serious_injuries' => $player['is_injured'] ?? false,
                             'mvp' => $player['mvp'] ?? false,
                             'tournament_id' => $validated['tournament_id'],
-                            'user_id' => auth()->id()
+                            'user_id' => auth()->id(),
+                            'team_id' => $player['team_id'] ?? null,
                         ]);
                     }
                 }

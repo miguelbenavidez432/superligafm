@@ -121,6 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('match-statistics', MatchStatisticController::class);
     Route::get('/match-statistics/team/{id_team}', [MatchStatisticController::class, 'getStatistics']);
     Route::get('/yellow-statistics/team/{id_team}', [MatchStatisticController::class, 'getTotalYellowCard']);
+    Route::get('/players/{playerId}/stats', [MatchStatisticController::class, 'getPlayerStats']);
 
     Route::get('/user/notifications', function () {
         return auth()->user()->unreadNotifications;

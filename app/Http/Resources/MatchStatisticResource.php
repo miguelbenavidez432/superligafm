@@ -31,6 +31,8 @@ class MatchStatisticResource extends JsonResource
             'max_stage' => $this->max_stage,
             'stage' => $this->stage,
             'direct_red' => $this->direct_red,
+            'team_id' => $this->team_id,
+            'rating' => $this->rating,
         ];
     }
 }

@@ -9,5 +9,5 @@ interface OcrAnalyzerInterface
     /**
      * Analiza una imagen y devuelve los datos estructurados del partido.
      */
-    public function analyzeMatchImage(UploadedFile $image, array $context): array;
+    public function analyzeMatchImage(UploadedFile $image, array $context, int $homeTeam, int $awayTeam): array;
 }

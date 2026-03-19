@@ -11,9 +11,17 @@ use App\Http\Requests\UpdateMatchStatisticRequest;
 use App\Models\Player;
 use App\Models\Tournament;
 use Illuminate\Http\Request;
+use App\Models\Season;
+use App\Services\MatchStatisticService;
 
 class MatchStatisticController extends Controller
 {
+    protected $matchStatisticService;
+
+    public function __construct(MatchStatisticService $matchStatisticService)
+    {
+        $this->matchStatisticService = $matchStatisticService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -22,54 +30,39 @@ class MatchStatisticController extends Controller
         $tournamentId = $request->query('tournament_id');
         $matchId = $request->query('match_id');
 
+        $query = MatchStatistic::with(['player.team', 'tournament', 'user', 'match']);
+        $selects = [
+            'player_id',
+            'team_id',
+            'SUM(goals) as goals',
+            'SUM(assists) as assists',
+            'SUM(yellow_cards) as yellow_cards',
+            'SUM(red_cards) as red_cards',
+            'SUM(simple_injuries) as simple_injuries',
+            'SUM(serious_injuries) as serious_injuries',
+            'MAX(rating) as rating',
+        ];
+
+        $groups = [
+            'player_id',
+            'team_id'
+        ];
+
         if ($matchId) {
-            $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
-                ->selectRaw('
-            player_id,
-            match_id,
-            SUM(goals) as goals,
-            SUM(assists) as assists,
-            SUM(yellow_cards) as yellow_cards,
-            SUM(red_cards) as red_cards,
-            SUM(simple_injuries) as simple_injuries,
-            SUM(serious_injuries) as serious_injuries,
-            SUM(mvp) as mvp
-        ')
-                ->groupBy(
-                    'player_id',
-                    'match_id',
-                )
-                ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
-        } else {
-            $query = MatchStatistic::with(['player', 'tournament', 'user', 'match'])
-                ->selectRaw('
-            player_id,
-            tournament_id,
-            SUM(goals) as goals,
-            SUM(assists) as assists,
-            SUM(yellow_cards) as yellow_cards,
-            SUM(red_cards) as red_cards,
-            SUM(simple_injuries) as simple_injuries,
-            SUM(serious_injuries) as serious_injuries,
-            SUM(mvp) as mvp
-        ')
-                ->groupBy(
-                    'player_id',
-                    'tournament_id',
-                )
-                ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
+            $selects[] = 'match_id';
+            $groups[] = 'match_id';
+            $query->where('match_id', $matchId);
         }
 
-        $query->where(function ($q) use ($tournamentId, $matchId) {
-            if ($matchId && $tournamentId) {
-                $q->where('tournament_id', $tournamentId)
-                    ->where('match_id', $matchId);
-            } elseif ($matchId) {
-                $q->where('match_id', $matchId);
-            } elseif ($tournamentId) {
-                $q->where('tournament_id', $tournamentId);
-            }
-        });
+        if ($tournamentId) {
+            $selects[] = 'tournament_id';
+            $groups[] = 'tournament_id';
+            $query->where('tournament_id', $tournamentId);
+        }
+
+        $query->selectRaw(implode(', ', $selects))
+            ->groupBy($groups)
+            ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');
 
         return MatchStatisticResource::collection($query->get());
     }
@@ -81,34 +74,9 @@ class MatchStatisticController extends Controller
     {
         $statistics = $request->input('statistics');
 
-        foreach ($statistics as $statistic) {
-            $filteredData = [];
+        $this->matchStatisticService->processMatchStatistics($statistics);
 
-            foreach ($statistic as $key => $value) {
-                if (!($value === 0 || $value === null || $value === false) || in_array($key, ['user_id', 'tournament_id', 'player_id', 'match_id'])) {
-                    $filteredData[$key] = $value;
-                }
-            }
-
-            $relevantStats = ['goals', 'assists', 'yellow_cards', 'red_cards', 'simple_injuries', 'serious_injuries', 'mvp'];
-            $allZeroOrNull = true;
-            foreach ($relevantStats as $stat) {
-                if (isset($filteredData[$stat]) && $filteredData[$stat] !== 0 && $filteredData[$stat] !== null && $filteredData[$stat] !== false) {
-                    $allZeroOrNull = false;
-                    break;
-                }
-            }
-
-            if (!$allZeroOrNull) {
-                MatchStatistic::create($filteredData);
-            }
-        }
-
-        $matachId = $request->input('statistics')[0]['match_id'];
-        $match = Game::find($matachId);
-        $match->update(['status' => 'completed']);
-
-        return response()->json(['message' => 'Estadísticas guardadas correctamente'], 201);
+        return response()->json(['message' => 'Estadísticas procesadas y guardadas correctamente'], 201);
     }
 
     /**
@@ -200,26 +168,50 @@ class MatchStatisticController extends Controller
 
 
         return MatchStatisticResource::collection($query->get());
+    }
 
-        //otra opción
+    public function getPlayerStats($playerId, Request $request)
+    {
+        $seasonId = $request->query('season_id');
+        $tournamentId = $request->query('tournament_id');
 
-        // $id_player = Player::where('id_team', $id_team)->pluck('id');
+        if (!$seasonId) {
+            $seasonId = Season::where('active', 'yes')->value('id') ?? Season::latest()->value('id');
+        }
 
-        // $query = MatchStatistic::query()
-        //     ->selectRaw('
-        //     match_statistics.player_id,
-        //     match_statistics.tournament_id,
-        //     SUM(match_statistics.yellow_cards) as total_yellow_cards,
-        //     MAX(games.stage) as max_stage,
-        //     tournaments.format
-        // ')
-        //     ->join('games', 'match_statistics.match_id', '=', 'games.id')
-        //     ->join('tournaments', 'match_statistics.tournament_id', '=', 'tournaments.id')
-        //     ->whereIn('match_statistics.player_id', $id_player)
-        //     ->groupBy('match_statistics.player_id', 'match_statistics.tournament_id', 'tournaments.format')
-        //     ->orderByDesc('total_yellow_cards')
-        //     ->with(['player', 'tournament']);
+        $stats = MatchStatistic::where('player_id', $playerId)
+            ->whereHas('tournament', function ($query) use ($seasonId, $tournamentId) {
+                $query->where('season_id', $seasonId);
 
-        // return MatchStatisticResource::collection($query->get());
+                if ($tournamentId) {
+                    $query->where('id', $tournamentId);
+                }
+            })
+            ->selectRaw('
+                COUNT(DISTINCT match_id) as matches_played,
+                SUM(goals) as goals,
+                SUM(assists) as assists,
+                SUM(yellow_cards) as yellow_cards,
+                SUM(red_cards) as red_cards,
+                SUM(simple_injuries) as simple_injuries,
+                SUM(serious_injuries) as serious_injuries,
+                SUM(mvp) as mvp_count,
+                ROUND(AVG(rating), 2) as average_rating
+            ')
+            ->first();
+
+        return response()->json([
+            'data' => [
+                'matches_played' => $stats->matches_played ?? 0,
+                'goals' => $stats->goals ?? 0,
+                'assists' => $stats->assists ?? 0,
+                'yellow_cards' => $stats->yellow_cards ?? 0,
+                'red_cards' => $stats->red_cards ?? 0,
+                'simple_injuries' => $stats->simple_injuries ?? 0,
+                'serious_injuries' => $stats->serious_injuries ?? 0,
+                'mvp_count' => $stats->mvp_count ?? 0,
+                'average_rating' => $stats->average_rating ?? 0,
+            ]
+        ]);
     }
 }

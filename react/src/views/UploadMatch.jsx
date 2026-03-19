@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-// filepath: src/views/UploadMatch.jsx
 import { useEffect, useState } from 'react';
 import axiosClient from '../axios';
 import { useMatchData } from '../hooks/useMatchData';
@@ -19,7 +18,6 @@ export default function UploadMatch() {
         }
     }, [ocrProcessor.statusMessage]);
 
-    // Función para disparar la petición a Gemini
     const handleProcessClick = async () => {
         if (!matchData.selectedHomeTeam || !matchData.selectedAwayTeam || !matchData.selectedTournament || !matchData.stage) {
             alert("Completa todos los datos del partido y sube las imágenes.");
@@ -32,15 +30,12 @@ export default function UploadMatch() {
         }
     };
 
-    // Función para guardar el partido en Laravel
     const handleSaveMatch = async () => {
         if (!confirm("¿Estás seguro que los datos son correctos? Se guardará el partido y se actualizará la tabla de posiciones.")) return;
 
         try {
-            // Reemplazamos el "payload" JSON por un objeto FormData para poder adjuntar imágenes
             const formData = new FormData();
 
-            // Adjuntamos los datos básicos
             formData.append('tournament_id', matchData.selectedTournament);
             formData.append('home_team_id', matchData.selectedHomeTeam);
             formData.append('away_team_id', matchData.selectedAwayTeam);
@@ -49,27 +44,43 @@ export default function UploadMatch() {
             formData.append('score_home', ocrProcessor.mergedData.score.home);
             formData.append('score_away', ocrProcessor.mergedData.score.away);
 
-            // Adjuntamos los penales solo si el tipo de resultado es 'penalties'
             if (outcomeType === 'penalties') {
                 formData.append('penalties_home', penalties.home);
                 formData.append('penalties_away', penalties.away);
             }
 
-            // Los jugadores deben enviarse como un string JSON dentro del formulario
-            formData.append('players', JSON.stringify(ocrProcessor.mergedData.players));
+            const homeNameOficial = homeTeamName.toLowerCase();
+            const awayNameOficial = awayTeamName.toLowerCase();
 
-            // Iteramos sobre las imágenes que subió el usuario y las adjuntamos una por una
+            const playersWithTeamId = ocrProcessor.mergedData.players.map(player => {
+                const iaTeamName = (player.team_name || '').toLowerCase();
+
+                let assignedTeamId = null;
+
+                if (iaTeamName.includes(homeNameOficial) || homeNameOficial.includes(iaTeamName)) {
+                    assignedTeamId = matchData.selectedHomeTeam;
+                }
+                else if (iaTeamName.includes(awayNameOficial) || awayNameOficial.includes(iaTeamName)) {
+                    assignedTeamId = matchData.selectedAwayTeam;
+                }
+
+                return {
+                    ...player,
+                    team_id: assignedTeamId
+                };
+            });
+
+            formData.append('players', JSON.stringify(playersWithTeamId));
+
             if (ocrProcessor.files && ocrProcessor.files.length > 0) {
                 ocrProcessor.files.forEach((file) => {
                     formData.append('images[]', file);
                 });
             }
 
-            // Enviamos la petición indicando que es un formulario 'multipart/form-data'
             const response = await axiosClient.post('/games/store-from-ocr', formData);
 
             alert("¡Partido guardado exitosamente!");
-            // Redirigir a la vista de partidos (ajusta la ruta según tu app)
             window.location.href = '/app/partidos';
 
         } catch (error) {
@@ -89,25 +100,38 @@ export default function UploadMatch() {
     const homeTeamName = matchData.teams.find(t => t.id == matchData.selectedHomeTeam)?.name || 'Local';
     const awayTeamName = matchData.teams.find(t => t.id == matchData.selectedAwayTeam)?.name || 'Visitante';
 
-    if (matchData.loadingData) return <div className="text-white text-center mt-10 text-xl font-bold">Cargando datos...</div>;
+    if (matchData.loadingData) return (
+        <div className="flex justify-center items-center py-20">
+            <p className="font-bold text-gray-800 animate-pulse text-xl">Cargando datos del sistema...</p>
+        </div>
+    );
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6 text-center text-white">Cargar Nuevo Partido con imágenes</h2>
+        <div className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in-down">
+
+            {/* ENCABEZADO */}
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white bg-slate-900/80 backdrop-blur-md border border-slate-700 px-6 py-4 rounded-xl shadow-lg text-center">
+                    Registrar Partido con captura de pantalla
+                </h1>
+            </div>
 
             {ocrProcessor.statusMessage && (
-                <div className={`p-4 rounded-lg mb-4 text-center font-bold ${ocrProcessor.statusMessage.includes('✅') ? 'bg-green-600' : 'bg-red-600 text-white'
-                    }`}>
+                <div className={`p-4 rounded-xl mb-6 text-center font-bold shadow-lg backdrop-blur-md border ${
+                    ocrProcessor.statusMessage.includes('✅')
+                    ? 'bg-green-900/80 text-green-300 border-green-600'
+                    : 'bg-red-900/80 text-red-200 border-red-600'
+                }`}>
                     {ocrProcessor.statusMessage}
                 </div>
             )}
 
-            {/* SECCIÓN 1: Selección */}
-            <div className="bg-slate-800 text-white rounded-lg shadow-md p-6 mb-6">
-                <div className="mb-4">
-                    <label className="block text-sm mb-1 font-semibold">🏆 Torneo</label>
+            {/* SECCIÓN 1: Selección de Torneo y Equipos */}
+            <div className="bg-slate-900/70 backdrop-blur-md border border-slate-700 text-white rounded-xl shadow-xl p-6 mb-6">
+                <div className="mb-6">
+                    <label className="block text-sm mb-2 font-bold text-blue-400 uppercase tracking-wider">🏆 Torneo</label>
                     <select
-                        className="w-full p-2 rounded text-black bg-white"
+                        className="w-full p-3 rounded-lg text-white bg-slate-800 border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
                         value={matchData.selectedTournament}
                         onChange={(e) => matchData.setSelectedTournament(e.target.value)}
                     >
@@ -116,11 +140,11 @@ export default function UploadMatch() {
                     </select>
                 </div>
 
-                <div className="flex gap-4 justify-center items-center mt-4">
-                    <div className="flex-1">
-                        <label className="block text-sm mb-1 font-semibold">🏠 Equipo Local</label>
+                <div className="flex flex-col md:flex-row gap-6 justify-center items-center mt-4">
+                    <div className="flex-1 w-full">
+                        <label className="block text-sm mb-2 font-bold text-gray-300 uppercase tracking-wider">🏠 Equipo Local</label>
                         <select
-                            className="w-full p-2 rounded text-black bg-white"
+                            className="w-full p-3 rounded-lg text-white bg-slate-800 border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
                             value={matchData.selectedHomeTeam}
                             onChange={(e) => matchData.setSelectedHomeTeam(e.target.value)}
                         >
@@ -128,11 +152,13 @@ export default function UploadMatch() {
                             {matchData.teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                         </select>
                     </div>
-                    <div className="text-2xl font-bold text-gray-400 px-4">VS</div>
-                    <div className="flex-1">
-                        <label className="block text-sm mb-1 font-semibold">✈️ Equipo Visitante</label>
+
+                    <div className="text-3xl font-black text-slate-500 px-4 italic">VS</div>
+
+                    <div className="flex-1 w-full">
+                        <label className="block text-sm mb-2 font-bold text-gray-300 uppercase tracking-wider">✈️ Equipo Visitante</label>
                         <select
-                            className="w-full p-2 rounded text-black bg-white"
+                            className="w-full p-3 rounded-lg text-white bg-slate-800 border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
                             value={matchData.selectedAwayTeam}
                             onChange={(e) => matchData.setSelectedAwayTeam(e.target.value)}
                         >
@@ -141,59 +167,66 @@ export default function UploadMatch() {
                         </select>
                     </div>
                 </div>
-                <div>
-                    <label htmlFor="">Fecha o Ronda</label>
+
+                <div className="mt-6">
+                    <label className="block text-sm mb-2 font-bold text-gray-300 uppercase tracking-wider">📅 Fecha o Ronda</label>
                     <input
-                        type="text"
-                        className="w-full p-2 rounded text-black bg-white mt-2"
+                        type="number"
+                        placeholder="Ej: 1, 2, 14..."
+                        className="w-full md:w-1/3 p-3 rounded-lg text-white bg-slate-800 border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
                         value={matchData.stage}
-                        onChange={(e) => matchData.setStage(e.target.value)} />
+                        onChange={(e) => matchData.setStage(e.target.value)}
+                    />
                 </div>
             </div>
-            <div className="bg-slate-800 text-white rounded-lg shadow-md p-6 mb-6">
-                <label className="block text-sm mb-2 font-semibold">⚙️ Tipo de Definición del Partido</label>
+
+            {/* SECCIÓN 2: Tipo de Definición */}
+            <div className="bg-slate-900/70 backdrop-blur-md border border-slate-700 text-white rounded-xl shadow-xl p-6 mb-6">
+                <label className="block text-sm mb-3 font-bold text-purple-400 uppercase tracking-wider">⚙️ Tipo de Definición del Partido</label>
                 <select
-                    className="w-full p-3 rounded text-black bg-white font-medium"
+                    className="w-full p-3 rounded-lg text-white bg-slate-800 border border-slate-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-colors font-medium"
                     value={outcomeType}
                     onChange={(e) => setOutcomeType(e.target.value)}
                 >
-                    <option value="normal">Normal (Carga con IA o Manual)</option>
+                    <option value="normal">Normal (Carga con imagen o Manual)</option>
                     <option value="penalties">Definición por Penales</option>
                     <option value="administrative">Victoria por Escritorio</option>
                     <option value="unplayed">Partido No Jugado (Suma PJ, pero 0 puntos)</option>
                 </select>
 
-                {/* Aparece mágicamente SOLO si seleccionó Penales */}
+                {/* PENALES */}
                 {outcomeType === 'penalties' && (
-                    <div className="flex gap-6 items-center justify-center bg-slate-700 p-4 rounded-lg mt-4 shadow-inner">
+                    <div className="flex gap-6 items-center justify-center bg-slate-800/80 border border-slate-600 p-6 rounded-xl mt-6 shadow-inner">
                         <div className="flex flex-col items-center">
-                            <label className="text-sm font-bold text-blue-300 mb-1">Penales {homeTeamName}</label>
+                            <label className="text-sm font-bold text-blue-300 mb-2">Penales Local</label>
                             <input
                                 type="number" min="0"
-                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                className="w-24 p-3 text-center text-2xl font-black text-white bg-slate-950 border border-slate-600 rounded-lg focus:border-blue-500 outline-none"
                                 value={penalties.home}
                                 onChange={(e) => setPenalties({ ...penalties, home: parseInt(e.target.value) || 0 })}
                             />
                         </div>
-                        <span className="text-3xl font-black text-gray-400">-</span>
+                        <span className="text-4xl font-black text-slate-600">-</span>
                         <div className="flex flex-col items-center">
-                            <label className="text-sm font-bold text-blue-300 mb-1">Penales {awayTeamName}</label>
+                            <label className="text-sm font-bold text-blue-300 mb-2">Penales Visitante</label>
                             <input
                                 type="number" min="0"
-                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                className="w-24 p-3 text-center text-2xl font-black text-white bg-slate-950 border border-slate-600 rounded-lg focus:border-blue-500 outline-none"
                                 value={penalties.away}
                                 onChange={(e) => setPenalties({ ...penalties, away: parseInt(e.target.value) || 0 })}
                             />
                         </div>
                     </div>
                 )}
+
+                {/* ESCRITORIO */}
                 {outcomeType === 'administrative' && (
-                    <div className="flex gap-6 items-center justify-center bg-slate-700 p-4 rounded-lg mt-4 shadow-inner">
+                    <div className="flex gap-6 items-center justify-center bg-slate-800/80 border border-slate-600 p-6 rounded-xl mt-6 shadow-inner">
                         <div className="flex flex-col items-center">
-                            <label className="text-sm font-bold text-blue-300 mb-1">Goles {homeTeamName}</label>
+                            <label className="text-sm font-bold text-red-400 mb-2">Goles Local</label>
                             <input
                                 type="number" min="0"
-                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                className="w-24 p-3 text-center text-2xl font-black text-white bg-slate-950 border border-slate-600 rounded-lg focus:border-red-500 outline-none"
                                 value={ocrProcessor.mergedData.score.home}
                                 onChange={(e) => ocrProcessor.setMergedData(prev => ({
                                     ...prev,
@@ -201,12 +234,12 @@ export default function UploadMatch() {
                                 }))}
                             />
                         </div>
-                        <span className="text-3xl font-black text-gray-400">-</span>
+                        <span className="text-4xl font-black text-slate-600">-</span>
                         <div className="flex flex-col items-center">
-                            <label className="text-sm font-bold text-blue-300 mb-1">Goles {awayTeamName}</label>
+                            <label className="text-sm font-bold text-red-400 mb-2">Goles Visitante</label>
                             <input
                                 type="number" min="0"
-                                className="w-24 p-2 text-center text-xl font-bold text-black rounded"
+                                className="w-24 p-3 text-center text-2xl font-black text-white bg-slate-950 border border-slate-600 rounded-lg focus:border-red-500 outline-none"
                                 value={ocrProcessor.mergedData.score.away}
                                 onChange={(e) => ocrProcessor.setMergedData(prev => ({
                                     ...prev,
@@ -218,74 +251,77 @@ export default function UploadMatch() {
                 )}
             </div>
 
-            {/* SECCIÓN 2: Imágenes */}
-            <div className={`text-white bg-slate-900 rounded-lg shadow-md p-6 mb-6 space-y-2 ${(!matchData.selectedHomeTeam || !matchData.selectedAwayTeam || !matchData.selectedTournament) ? 'opacity-50 pointer-events-none' : ''}`}>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2">📸 Sube las capturas de pantalla</label>
+            {/* SECCIÓN 3: Carga de Imágenes */}
+            <div className={`bg-slate-900/70 backdrop-blur-md border border-slate-700 text-white rounded-xl shadow-xl p-6 mb-8 space-y-4 ${(!matchData.selectedHomeTeam || !matchData.selectedAwayTeam || !matchData.selectedTournament) ? 'opacity-50 pointer-events-none' : ''}`}>
+                <div className="mb-2">
+                    <label className="block text-sm font-bold mb-3 text-green-400 uppercase tracking-wider">📸 Subir Capturas de Pantalla</label>
                     <input
+                        id="file-input"
                         type="file" multiple accept="image/*"
                         onChange={(e) => ocrProcessor.setFiles(Array.from(e.target.files))}
-                        className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white cursor-pointer"
+                        className="block w-full text-sm text-slate-300
+                        file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0
+                        file:text-sm file:font-bold file:bg-slate-800 file:text-white
+                        hover:file:bg-slate-700 cursor-pointer file:transition-colors
+                        border border-slate-700 rounded-lg bg-slate-900"
                     />
                 </div>
 
-                <button
-                    onClick={handleProcessClick}
-                    disabled={ocrProcessor.loadingOcr || ocrProcessor.files.length === 0}
-                    className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 px-6 py-3 rounded-lg font-bold transition-colors flex items-center justify-center"
-                >
-                    {ocrProcessor.loadingOcr ? (
-                        <>
-                            <div className="loader"></div>
-                            <span>IA Analizando... (esto puede tardar unos minutos)</span>
-                        </>
-                    ) : (
-                        `🔍 Procesar ${ocrProcessor.files.length} imagen(es)`
-                    )}
-                </button>
-                {(ocrProcessor.files.length > 0 || ocrProcessor.mergedData.players.length > 0) && (
+                <div className="flex flex-col sm:flex-row gap-4 pt-2">
                     <button
-                        onClick={handleReset}
-                        className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition-colors"
+                        onClick={handleProcessClick}
+                        disabled={ocrProcessor.loadingOcr || ocrProcessor.files.length === 0}
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 px-6 py-3.5 rounded-lg font-bold transition-colors shadow-lg flex items-center justify-center"
                     >
-                        🗑️ Limpiar Todo
+                        {ocrProcessor.loadingOcr ? (
+                            <>
+                                <div className="loader mr-3 border-2 border-white/20 border-t-white w-5 h-5 rounded-full animate-spin"></div>
+                                <span>IA Analizando... (puede tardar)</span>
+                            </>
+                        ) : (
+                            `🔍 Procesar ${ocrProcessor.files.length > 0 ? ocrProcessor.files.length : '0'} imagen(es)`
+                        )}
                     </button>
-                )}
+
+                    {(ocrProcessor.files.length > 0 || ocrProcessor.mergedData.players.length > 0) && (
+                        <button
+                            onClick={handleReset}
+                            className="bg-red-900/80 hover:bg-red-600 text-red-200 hover:text-white border border-red-700 px-6 py-3.5 rounded-lg font-bold transition-colors shadow-lg flex items-center justify-center"
+                        >
+                            🗑️ Limpiar
+                        </button>
+                    )}
+                </div>
             </div>
 
+            {/* SECCIÓN 4: Resultado Final */}
             {ocrProcessor.mergedData.players.length > 0 && (
-                <div className="bg-slate-800 text-white rounded-lg shadow-xl p-6 mb-6 flex flex-col items-center border border-slate-700">
-                    <h3 className="text-xl font-bold mb-4 text-blue-400">⚽ Resultado Final</h3>
+                <div className="bg-slate-900/80 backdrop-blur-md text-white rounded-xl shadow-2xl p-6 mb-8 flex flex-col items-center border border-slate-700">
+                    <h3 className="text-xl font-bold mb-6 text-yellow-400 uppercase tracking-widest">⚽ Marcador Final ⚽</h3>
 
-                    <div className="flex items-center gap-8 text-3xl font-black">
-                        {/* Equipo Local */}
-                        <div className="flex flex-col items-center">
-                            <span className="text-sm mb-2 font-semibold text-gray-300">{homeTeamName}</span>
+                    <div className="flex items-center gap-4 sm:gap-10 text-3xl font-black bg-slate-950 p-6 rounded-2xl border border-slate-700 shadow-inner w-full max-w-md justify-center">
+                        <div className="flex flex-col items-center w-1/3">
+                            <span className="text-xs sm:text-sm mb-3 font-bold text-gray-400 uppercase tracking-wide truncate w-full text-center" title={homeTeamName}>{homeTeamName}</span>
                             <input
-                                type="number"
-                                min="0"
-                                className="w-24 text-center p-3 rounded-lg text-black border-2 border-transparent focus:border-blue-500 focus:outline-none"
+                                type="number" min="0"
+                                className="w-16 sm:w-20 text-center p-3 rounded-xl text-white bg-slate-800 border border-slate-600 focus:border-yellow-400 outline-none shadow-md transition-colors"
                                 value={ocrProcessor.mergedData.score.home}
                                 onChange={(e) => ocrProcessor.setMergedData(prev => ({
-                                    ...prev,
-                                    score: { ...prev.score, home: parseInt(e.target.value) || 0 }
+                                    ...prev, score: { ...prev.score, home: parseInt(e.target.value) || 0 }
                                 }))}
                             />
                         </div>
 
-                        <div className="text-gray-500">-</div>
+                        <div className="text-slate-600 text-4xl shrink-0">-</div>
 
-                        {/* Equipo Visitante */}
-                        <div className="flex flex-col items-center">
-                            <span className="text-sm mb-2 font-semibold text-gray-300">{awayTeamName}</span>
+                        <div className="flex flex-col items-center w-1/3">
+                            <span className="text-xs sm:text-sm mb-3 font-bold text-gray-400 uppercase tracking-wide truncate w-full text-center" title={awayTeamName}>{awayTeamName}</span>
                             <input
-                                type="number"
-                                min="0"
-                                className="w-24 text-center p-3 rounded-lg text-black border-2 border-transparent focus:border-blue-500 focus:outline-none"
+                                type="number" min="0"
+                                className="w-16 sm:w-20 text-center p-3 rounded-xl text-white bg-slate-800 border border-slate-600 focus:border-yellow-400 outline-none shadow-md transition-colors"
                                 value={ocrProcessor.mergedData.score.away}
                                 onChange={(e) => ocrProcessor.setMergedData(prev => ({
-                                    ...prev,
-                                    score: { ...prev.score, away: parseInt(e.target.value) || 0 }
+                                    ...prev, score: { ...prev.score, away: parseInt(e.target.value) || 0 }
                                 }))}
                             />
                         </div>
@@ -293,110 +329,112 @@ export default function UploadMatch() {
                 </div>
             )}
 
-            {/* SECCIÓN 3: Tabla Editable */}
+            {/* SECCIÓN 5: Tabla Editable */}
             {ocrProcessor.mergedData.players.length > 0 && (
-                <div className="bg-white text-black rounded-lg overflow-hidden shadow-2xl">
-                    <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-800 text-black">
-                            <tr>
-                                <th className="px-3 py-3 text-left">Jugador</th>
-                                <th className="px-3 py-3 text-center">Equipo</th>
-                                <th className="px-3 py-3 text-center">Rating</th>
-                                <th className="px-3 py-3 text-center">Goles</th>
-                                <th className="px-3 py-3 text-center">Asist.</th>
-                                <th className="px-3 py-3 text-center">Amarillas</th>
-                                <th className="px-3 py-3 text-center">Rojas</th>
-                                <th className="px-3 py-3 text-center">Lesión</th>
-                                <th className="px-3 py-3 text-center">MVP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {ocrProcessor.mergedData.players.map((player, index) => (
-                                <tr key={index} className="border-b hover:bg-gray-100">
-                                    <td className="p-3 font-bold">{player.player_name}</td>
-                                    <td className="p-3 text-gray-600">{player.team_name}</td>
-                                    <td className="p-3 text-center">
-                                        <input
-                                            type="number" step="0.1"
-                                            value={player.rating || 0}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'rating', e.target.value)}
-                                            className="w-16 border text-center p-1 rounded"
-                                        />
-                                    </td>
-                                    <td className="p-3 text-center">
-                                        <input
-                                            type="number"
-                                            value={player.goals || 0}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'goals', e.target.value)}
-                                            className="w-16 border text-center p-1 rounded"
-                                        />
-                                    </td>
-                                    <td className="p-3 text-center">
-                                        <input
-                                            type="number"
-                                            value={player.assists || 0}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'assists', e.target.value)}
-                                            className="w-16 border text-center p-1 rounded"
-                                        />
-                                    </td>
-                                    {/* AMARILLAS */}
-                                    <td className="px-3 py-2 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={player.amarillas > 0}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'amarillas', e.target.checked ? 1 : 0)}
-                                            className="w-5 h-5 accent-yellow-400 cursor-pointer"
-                                        />
-                                    </td>
-
-                                    {/* ROJAS */}
-                                    <td className="px-3 py-2 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={player.rojas > 0}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'rojas', e.target.checked ? 1 : 0)}
-                                            className="w-5 h-5 accent-red-600 cursor-pointer"
-                                        />
-                                    </td>
-
-                                    {/* LESIONES */}
-                                    <td className="px-3 py-2 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={player.is_injured}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'is_injured', e.target.checked)}
-                                            className="w-5 h-5 accent-red-600 cursor-pointer"
-                                        />
-                                    </td>
-                                    <td className="px-3 py-2 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={player.mvp}
-                                            onChange={(e) => ocrProcessor.updatePlayerStat(index, 'mvp', e.target.checked)}
-                                            className="w-5 h-5 accent-red-600 cursor-pointer"
-                                        />
-                                    </td>
+                <div className="bg-slate-900/80 backdrop-blur-md rounded-xl overflow-hidden shadow-2xl border border-slate-700 mb-8">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-slate-300 text-sm">
+                            <thead className="!bg-[#0f172a] uppercase text-xs font-bold tracking-wider border-b-2 border-slate-700">
+                                <tr>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-4 py-4 text-left border-b-2 border-slate-700 min-w-[150px]">Jugador</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-3 py-4 text-center border-b-2 border-slate-700">Equipo</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700">Rating</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700 text-green-400">Goles</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700 text-blue-400">Asist.</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700 text-yellow-400">Amarillas</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700 text-red-500">Rojas</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700">Lesión</th>
+                                    <th style={{ backgroundColor: '#020617', color: '#cbd5e1' }} className="px-2 py-4 text-center border-b-2 border-slate-700 text-yellow-300">MVP</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-700/50">
+                                {ocrProcessor.mergedData.players.map((player, index) => (
+                                    <tr key={index} className="hover:bg-slate-800/80 transition-colors">
+                                        <td className="px-4 py-3 font-bold text-white whitespace-nowrap">{player.player_name}</td>
+                                        <td className="px-3 py-3 text-center text-slate-400 text-xs">{player.team_name}</td>
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="number" step="0.1"
+                                                value={player.rating || 0}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'rating', e.target.value)}
+                                                className="w-14 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-blue-500 outline-none"
+                                            />
+                                        </td>
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="number" min="0"
+                                                value={player.goals || 0}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'goals', e.target.value)}
+                                                className="w-12 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-green-500 outline-none"
+                                            />
+                                        </td>
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="number" min="0"
+                                                value={player.assists || 0}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'assists', e.target.value)}
+                                                className="w-12 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-blue-500 outline-none"
+                                            />
+                                        </td>
+
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={player.amarillas > 0}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'amarillas', e.target.checked ? 1 : 0)}
+                                                className="w-5 h-5 accent-yellow-400 cursor-pointer rounded bg-slate-800 border-slate-600"
+                                            />
+                                        </td>
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={player.rojas > 0}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'rojas', e.target.checked ? 1 : 0)}
+                                                className="w-5 h-5 accent-red-600 cursor-pointer rounded bg-slate-800 border-slate-600"
+                                            />
+                                        </td>
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={player.is_injured}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'is_injured', e.target.checked)}
+                                                className="w-5 h-5 accent-red-600 cursor-pointer rounded bg-slate-800 border-slate-600"
+                                            />
+                                        </td>
+                                        <td className="px-2 py-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={player.mvp}
+                                                onChange={(e) => ocrProcessor.updatePlayerStat(index, 'mvp', e.target.checked)}
+                                                className="w-5 h-5 accent-yellow-400 cursor-pointer rounded bg-slate-800 border-slate-600"
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
-            {/* BOTÓN DE GUARDADO FINAL */}
-            <div className="flex justify-end gap-4 p-4">
-                <button onClick={() => window.location.reload()} className="bg-slate-700 px-6 py-3 rounded-lg font-bold">Cancelar</button>
+
+            {/* BOTONES FINALES */}
+            <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
+                <button
+                    onClick={() => window.location.reload()}
+                    className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold border border-slate-600 transition-colors shadow-lg"
+                >
+                    Cancelar / Volver
+                </button>
                 <button
                     onClick={handleSaveMatch}
-                    // NUEVA LÓGICA: Se deshabilita si está cargando la IA, O si es un partido 'normal' o 'penales' y no hay jugadores cargados.
-                    // Si es 'unplayed' o 'administrative', SÍ te deja guardar aunque no haya jugadores.
                     disabled={
                         ocrProcessor.loadingOcr ||
                         ((outcomeType === 'normal' || outcomeType === 'penalties') && ocrProcessor.mergedData.players.length === 0)
                     }
-                    className={`px-10 py-3 rounded-lg font-black text-lg shadow-xl transition-all
+                    className={`px-10 py-4 rounded-xl font-black text-lg shadow-xl transition-all flex items-center justify-center gap-2
                     ${(ocrProcessor.loadingOcr || ((outcomeType === 'normal' || outcomeType === 'penalties') && ocrProcessor.mergedData.players.length === 0))
-                            ? 'bg-gray-600 opacity-50 cursor-not-allowed'
-                            : 'bg-green-600 hover:bg-green-500 animate-pulse cursor-pointer'
+                            ? 'bg-slate-700 text-slate-500 cursor-not-allowed border border-slate-600'
+                            : 'bg-green-600 hover:bg-green-500 text-white cursor-pointer border border-green-500 shadow-green-900/50 hover:-translate-y-1'
                         }`}
                 >
                     {ocrProcessor.loadingOcr ? '⏳ PROCESANDO...' : '💾 GUARDAR PARTIDO'}
