@@ -162,7 +162,7 @@ export default function Plantel() {
                     <h2 className="text-xl font-bold text-blue-400 mb-4">⬇️ Arrastra los jugadores desde aquí</h2>
                     <div className="overflow-x-auto max-h-[450px] overflow-y-auto pr-2 custom-scrollbar lg:max-h-[650px]">
                         <table className="min-w-full text-white text-sm">
-                            <thead className="bg-slate-900 sticky top-0 z-10 shadow-md text-black">
+                            <thead className="bg-slate-900 sticky top-0 z-10 shadow-md text-white">
                                 <tr>
                                     <th className="py-3 px-4 text-left">NOMBRE</th>
                                     <th className="py-3 px-2 text-center">EDAD</th>

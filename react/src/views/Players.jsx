@@ -93,7 +93,7 @@ export default function Players() {
                             className="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg transition-colors flex items-center justify-center"
                             title="Editar"
                         >
-                            ✏️
+                            👁
                         </Link>
                         <button
                             onClick={() => onDelete(p)}

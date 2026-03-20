@@ -116,16 +116,6 @@ export default function UploadMatch() {
                 </h1>
             </div>
 
-            {ocrProcessor.statusMessage && (
-                <div className={`p-4 rounded-xl mb-6 text-center font-bold shadow-lg backdrop-blur-md border ${
-                    ocrProcessor.statusMessage.includes('✅')
-                    ? 'bg-green-900/80 text-green-300 border-green-600'
-                    : 'bg-red-900/80 text-red-200 border-red-600'
-                }`}>
-                    {ocrProcessor.statusMessage}
-                </div>
-            )}
-
             {/* SECCIÓN 1: Selección de Torneo y Equipos */}
             <div className="bg-slate-900/70 backdrop-blur-md border border-slate-700 text-white rounded-xl shadow-xl p-6 mb-6">
                 <div className="mb-6">
@@ -251,6 +241,17 @@ export default function UploadMatch() {
                 )}
             </div>
 
+            {ocrProcessor.statusMessage && (
+                <div className={`p-4 rounded-xl mb-6 text-center font-bold shadow-lg backdrop-blur-md border ${
+                    ocrProcessor.statusMessage.includes('✅')
+                    ? 'bg-green-900/80 text-green-300 border-green-600'
+                    : 'bg-red-900/80 text-red-200 border-red-600'
+                }`}>
+                    {ocrProcessor.statusMessage}
+                </div>
+            )}
+
+
             {/* SECCIÓN 3: Carga de Imágenes */}
             <div className={`bg-slate-900/70 backdrop-blur-md border border-slate-700 text-white rounded-xl shadow-xl p-6 mb-8 space-y-4 ${(!matchData.selectedHomeTeam || !matchData.selectedAwayTeam || !matchData.selectedTournament) ? 'opacity-50 pointer-events-none' : ''}`}>
                 <div className="mb-2">
@@ -352,32 +353,32 @@ export default function UploadMatch() {
                                     <tr key={index} className="hover:bg-slate-800/80 transition-colors">
                                         <td className="px-4 py-3 font-bold text-white whitespace-nowrap">{player.player_name}</td>
                                         <td className="px-3 py-3 text-center text-slate-400 text-xs">{player.team_name}</td>
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="number" step="0.1"
                                                 value={player.rating || 0}
                                                 onChange={(e) => ocrProcessor.updatePlayerStat(index, 'rating', e.target.value)}
-                                                className="w-14 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-blue-500 outline-none"
+                                                className="w-28 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-blue-500 outline-none"
                                             />
                                         </td>
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="number" min="0"
                                                 value={player.goals || 0}
                                                 onChange={(e) => ocrProcessor.updatePlayerStat(index, 'goals', e.target.value)}
-                                                className="w-12 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-green-500 outline-none"
+                                                className="w-28 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-green-500 outline-none"
                                             />
                                         </td>
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="number" min="0"
                                                 value={player.assists || 0}
                                                 onChange={(e) => ocrProcessor.updatePlayerStat(index, 'assists', e.target.value)}
-                                                className="w-12 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-blue-500 outline-none"
+                                                className="w-28 bg-slate-800 border border-slate-600 text-white text-center py-1 rounded focus:border-blue-500 outline-none"
                                             />
                                         </td>
 
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={player.amarillas > 0}
@@ -385,7 +386,7 @@ export default function UploadMatch() {
                                                 className="w-5 h-5 accent-yellow-400 cursor-pointer rounded bg-slate-800 border-slate-600"
                                             />
                                         </td>
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={player.rojas > 0}
@@ -393,7 +394,7 @@ export default function UploadMatch() {
                                                 className="w-5 h-5 accent-red-600 cursor-pointer rounded bg-slate-800 border-slate-600"
                                             />
                                         </td>
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={player.is_injured}
@@ -401,7 +402,7 @@ export default function UploadMatch() {
                                                 className="w-5 h-5 accent-red-600 cursor-pointer rounded bg-slate-800 border-slate-600"
                                             />
                                         </td>
-                                        <td className="px-2 py-2 text-center">
+                                        <td className="px-4 py-4 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={player.mvp}
