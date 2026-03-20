@@ -22,6 +22,8 @@ use App\Http\Controllers\Api\TournamentController;
 use App\Http\Controllers\Api\DiscordUserController;
 use App\Http\Controllers\Api\MatchStatisticController;
 use App\Http\Controllers\Api\RuleController;
+use App\Http\Controllers\Api\PenaltyCancellationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -133,6 +135,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/games/store-from-ocr', [GameController::class, 'storeFromOcr']);
     Route::get('/rules', [RuleController::class, 'index']);
     Route::post('/rules/update', [RuleController::class, 'updateAll']);
+
+    Route::get('/penalty-costs', [PenaltyCancellationController::class, 'indexCosts']);
+    Route::post('/penalty-cancellations', [PenaltyCancellationController::class, 'store']);
 
 });
 
