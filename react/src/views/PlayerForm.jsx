@@ -293,7 +293,7 @@ export default function PlayerForm() {
                                         <select
                                             value={selectedTournament}
                                             onChange={(e) => setSelectedTournament(e.target.value)}
-                                            className="p-2 w-full sm:w-auto border border-slate-600 rounded bg-slate-800 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                            className="p-2 flex-1 sm:flex-none sm:w-40 border border-slate-600 rounded bg-slate-800 text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                         >
                                             <option value="">Todas las competiciones</option>
                                             {filteredTournaments.map(t => (

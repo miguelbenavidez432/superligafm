@@ -81,6 +81,8 @@ class GeminiOcrService implements OcrAnalyzerInterface
                  a) Si el evento se ve como \"minuto - jugador1 - jugador2\" => jugador1 = GOL, jugador2 = ASISTENCIA.
                  b) Si el evento se ve como \"jugador1 - jugador2 - minuto\" => jugador1 = ASISTENCIA, jugador2 = GOL.
                  c) Estas reglas aplican SOLO a goles válidos (sin balón con cruz roja).
+                 d) Si el evento se ve como \"minuto - jugador1\" => jugador1 = GOL.
+                 e) Si el evento se ve como \"jugador1 - minuto\" => jugador1 = GOL.
                - Si el evento muestra \"minuto + un solo jugador\" con icono de autogol/gol anulado, NO marcar lesión y NO registrar asistencia.
               - Si ves un botón rojo con recuadro blanco en forma de arco (penal fallado/similar), ignóralo: no es gol, asistencia, lesión ni tarjeta.
               - Cruza los nombres de esta sección central con la lista general para marcar correctamente goles, asistencias, tarjetas o lesión.
