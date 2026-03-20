@@ -42,8 +42,8 @@ class PenaltyCancellationService
 
     private function notifyDiscord($team, $rivalTeam, $player, $penaltyCost)
     {
-        $managerDiscord = DiscordUser::where('user_id', $team->user_id)->first();
-        $rivalDiscord = DiscordUser::where('user_id', $rivalTeam->user_id)->first();
+        $managerDiscord = DiscordUser::where('user_id', $team->user->id)->first();
+        $rivalDiscord = DiscordUser::where('user_id', $rivalTeam->user->id)->first();
 
         $mentionManager = $managerDiscord ? "<@{$managerDiscord->discord_id}>" : "**{$team->name}**";
         $mentionRival = $rivalDiscord ? "<@{$rivalDiscord->discord_id}>" : "**{$rivalTeam->name}**";
