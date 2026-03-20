@@ -58,6 +58,7 @@ import Login from './views/Login';
 import Signup from './views/Signup';
 
 import PlayersList from './views/PlayersList';
+import CancelSuspensionForm from './views/CancelSuspensionForm';
 
 const router = createBrowserRouter([
     // --- RUTAS PÚBLICAS ---
@@ -138,6 +139,7 @@ const router = createBrowserRouter([
             { path: '/app/crear-premios', element: <CreatePrizes /> },
             { path: '/app/cargar-imagenes', element: <UploadMatch /> },
             { path: '/app/reverse-offer', element: <ReverseOffer /> },
+            { path: '/app/levantar-sancion', element: <CancelSuspensionForm /> },
         ]
     },
 

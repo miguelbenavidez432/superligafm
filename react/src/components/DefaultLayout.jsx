@@ -52,6 +52,7 @@ export default function DefaultLayout() {
                         <div className="absolute left-0 hidden w-full bg-gray-800 group-hover:block">
                             <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/fixture_primera'>Fixture Primera</Link>
                             <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/fixture_segunda'>Fixture Segunda</Link>
+                            <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/levantar-sancion'>Apelación de sanciones</Link>
                         </div>
                     </div>
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/plantel'>Plantel</Link>
