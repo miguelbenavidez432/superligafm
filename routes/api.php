@@ -18,10 +18,10 @@ use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\PlayerBetController;
 use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\RescissionController;
-
 use App\Http\Controllers\Api\TournamentController;
 use App\Http\Controllers\Api\DiscordUserController;
 use App\Http\Controllers\Api\MatchStatisticController;
+use App\Http\Controllers\Api\RuleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +131,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/ocr/process-multiple', [OcrController::class, 'processMultipleImages']);
     Route::put('/games/{id}/enable-edit', [GameController::class, 'enableEdit']);
     Route::post('/games/store-from-ocr', [GameController::class, 'storeFromOcr']);
+    Route::get('/rules', [RuleController::class, 'index']);
+    Route::post('/rules/update', [RuleController::class, 'updateAll']);
 
 });
 
