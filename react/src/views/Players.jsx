@@ -208,9 +208,14 @@ export default function Players() {
                             <div key={p.id} className="bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-lg">
                                 <div className="flex justify-between items-start border-b border-slate-700/50 pb-3 mb-3">
                                     <div>
-                                        <h3 className="font-bold text-white text-lg">{p.name}</h3>
+                                        <h3 className="font-bold text-white text-lg">
+                                            <Link to={`/app/players/${p.id}`}>{p.name}</Link>
+                                            <span className="absolute left-10 -top-8 bg-gray-900 text-white text-xs font-normal px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-lg">
+                                                Ver datos del jugador
+                                            </span>
+                                        </h3>
                                         <p className="text-sm text-gray-400 mt-1">
-                                            {p.id_team?.name || <span className="italic text-slate-500">Agente Libre</span>}
+                                            {p.id_team?.name || <span className="italic text-slate-500">Libre</span>}
                                         </p>
                                     </div>
                                     <div className="text-right">
@@ -264,7 +269,14 @@ export default function Players() {
                                 <tbody className="divide-y divide-slate-700/50">
                                     {players.map(p => (
                                         <tr key={p.id} className="hover:bg-slate-800/80 transition-colors group">
-                                            <td className="px-6 py-3 font-bold text-white whitespace-nowrap">{p.name}</td>
+                                            <td className="px-6 py-3 font-bold text-white whitespace-nowrap relative group">
+                                                <Link to={`/app/players/${p.id}`} className="hover:text-blue-400 transition-colors">
+                                                    {p.name}
+                                                </Link>
+                                                <span className="absolute left-10 -top-8 bg-gray-900 text-white text-xs font-normal px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-lg">
+                                                    Ver datos del jugador
+                                                </span>
+                                            </td>
                                             <td className="px-4 py-3 text-center">{p.age}</td>
                                             <td className="px-4 py-3 text-center text-blue-400 font-bold bg-blue-900/10">{p.ca}</td>
                                             <td className="px-4 py-3 text-center text-purple-400 font-bold bg-purple-900/10">{p.pa}</td>

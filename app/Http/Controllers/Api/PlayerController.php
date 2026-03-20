@@ -14,6 +14,10 @@ use App\Models\Transfer;
 use App\Models\User;
 use App\Services\PlayerManagementService;
 use Illuminate\Http\Request;
+use App\Services\PlayerHistoryService;
+use App\Services\Movements\AuctionMovementProvider;
+use App\Services\Movements\RescissionMovementProvider;
+use App\Services\Movements\TransferMovementProvider;
 
 class PlayerController extends Controller
 {
@@ -300,6 +304,22 @@ class PlayerController extends Controller
         $players = $playersQuery->get();
 
         return PlayerResource::collection($players);
+    }
+
+    public function getTransfers($id)
+    {
+        $service = new PlayerHistoryService([
+            new AuctionMovementProvider(),
+            new RescissionMovementProvider(),
+            new TransferMovementProvider()
+        ]);
+
+        $history = $service->getFullHistory($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $history
+        ]);
     }
 
 }

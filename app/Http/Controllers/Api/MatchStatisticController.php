@@ -41,6 +41,7 @@ class MatchStatisticController extends Controller
             'SUM(simple_injuries) as simple_injuries',
             'SUM(serious_injuries) as serious_injuries',
             'MAX(rating) as rating',
+            'SUM(mvp) as mvp',
         ];
 
         $groups = [
