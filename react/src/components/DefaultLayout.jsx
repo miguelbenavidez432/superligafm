@@ -98,6 +98,7 @@ export default function DefaultLayout() {
                     {user.rol === 'Admin' && (
                         <>
                         <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/premios'>Premios</Link>
+                        <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/jugadores-registrados'>Jugadores Registrados</Link>
                         </>
                     )}
                     <Link className="block py-2.5 px-4 hover:bg-gray-700" to='/app/about'>Nosotros</Link>

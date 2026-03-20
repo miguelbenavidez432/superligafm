@@ -14,7 +14,8 @@ class Tournament extends Model
         'start_date',
         'end_date',
         'season_id',
-        'format'
+        'format',
+        'type',
     ];
 
     public function matches()
