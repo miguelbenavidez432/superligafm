@@ -78,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/players/filter-by-division', [PlayerController::class, 'filterPlayersByTeamDivision']);
     Route::apiResource('/players', PlayerController::class);
     Route::get('/players-teams', [PlayerController::class, 'getPlayersByTeams']);
+    Route::get('/players/{id}/transfers', [PlayerController::class, 'getTransfers']);
 
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/teams', TeamController::class);

@@ -50,4 +50,9 @@ class Auction extends Model
     {
         return $this->belongsTo(Team::class, 'id_team');
     }
+
+    public function toTeam()
+    {
+        return $this->belongsTo(Team::class, 'to_team_id');
+    }
 }

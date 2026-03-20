@@ -44,4 +44,9 @@ class Rescission extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function toTeam()
+    {
+        return $this->belongsTo(Team::class, 'to_team_id');
+    }
+
 }
