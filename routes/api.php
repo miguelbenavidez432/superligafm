@@ -118,6 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/chat', [ChatbotController::class, 'handleMessage']);
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
+    Route::get('/chatbot/models', [ChatbotController::class, 'listModels']);
 
     Route::apiResource('prizes', PrizeController::class);
     Route::apiResource('standings', StandingController::class);
@@ -140,6 +141,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/penalty-cancellations', [PenaltyCancellationController::class, 'store']);
 
 });
-
-
-
