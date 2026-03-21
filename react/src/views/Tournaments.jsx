@@ -36,7 +36,7 @@ export default function TournamentForm() {
         }
 
         setLoading(true);
-        axiosClient.post('/tournaments/public', tournament)
+        axiosClient.post('/tournaments', tournament)
             .then(() => {
                 setLoading(false);
                 setNotification('🏆 Torneo creado correctamente');
