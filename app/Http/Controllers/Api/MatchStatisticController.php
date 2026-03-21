@@ -29,8 +29,11 @@ class MatchStatisticController extends Controller
     {
         $tournamentId = $request->query('tournament_id');
         $matchId = $request->query('match_id');
+        $seasonId = $request->query('season_id');
 
         $query = MatchStatistic::with(['player.team', 'tournament', 'user', 'match']);
+
+        // 1. Columnas base (🔥 Restauramos team_id y rating para que SingleMatch funcione)
         $selects = [
             'player_id',
             'team_id',
@@ -44,23 +47,43 @@ class MatchStatisticController extends Controller
             'SUM(mvp) as mvp',
         ];
 
+        // 2. Agrupaciones base
         $groups = [
             'player_id',
             'team_id'
         ];
 
+        // 3. Si es la vista de un solo partido (SingleMatch)
         if ($matchId) {
             $selects[] = 'match_id';
             $groups[] = 'match_id';
             $query->where('match_id', $matchId);
         }
 
+        // 4. Si se filtra por torneo específico
         if ($tournamentId) {
             $selects[] = 'tournament_id';
             $groups[] = 'tournament_id';
             $query->where('tournament_id', $tournamentId);
         }
 
+        // 5. LÓGICA DE TEMPORADAS (El seguro de vida)
+        if ($seasonId) {
+            // Si el frontend manda la temporada (vista Statistics)
+            $query->whereHas('tournament', function ($q) use ($seasonId) {
+                $q->where('season_id', $seasonId);
+            });
+        } elseif (!$matchId) {
+            // Si NO manda temporada y NO es un partido único,
+            // forzamos a que solo devuelva la temporada activa por defecto.
+            $activeSeasonId = \App\Models\Season::where('active', 'yes')->value('id') ?? \App\Models\Season::latest()->value('id');
+
+            $query->whereHas('tournament', function ($q) use ($activeSeasonId) {
+                $q->where('season_id', $activeSeasonId);
+            });
+        }
+
+        // 6. Ejecutamos la consulta dinámica
         $query->selectRaw(implode(', ', $selects))
             ->groupBy($groups)
             ->orderByRaw('SUM(goals) DESC, SUM(assists) DESC, SUM(mvp) DESC');

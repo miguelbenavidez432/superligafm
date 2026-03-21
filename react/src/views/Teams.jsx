@@ -116,7 +116,7 @@ export default function Teams() {
                                                     to={`/app/teams/${t.id}`}
                                                     className="inline-block px-4 py-2 font-bold bg-slate-700 text-white hover:bg-violet-600 rounded-lg transition-all shadow-md group-hover:shadow-violet-900/50"
                                                 >
-                                                    Ver Eqquipo
+                                                   🔎 Ver Equipo
                                                 </Link>
                                             </td>
                                         </tr>
