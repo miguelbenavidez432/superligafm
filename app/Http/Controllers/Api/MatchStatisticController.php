@@ -130,7 +130,9 @@ class MatchStatisticController extends Controller
             END as direct_red
         ')
             ->join('games', 'match_statistics.match_id', '=', 'games.id')
+            ->join('tournaments', 'match_statistics.tournament_id', '=', 'tournaments.id')
             ->whereIn('player_id', $id_player)
+            ->where('tournaments.season_id', Season::where('active', 'yes')->value('id') ?? Season::latest()->value('id'))
             ->groupBy(
                 'player_id',
                 'match_statistics.tournament_id',

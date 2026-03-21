@@ -253,7 +253,7 @@ export default function Plantel() {
                         <div className="mt-6 flex flex-col gap-3">
                             <button
                                 onClick={() => handleBulkAction('register')}
-                                disabled={selectedPlayers.length === 0 /*|| user.rol !== 'Admin'*/}
+                                disabled={selectedPlayers.length === 0 || user.rol !== 'Admin'}
                                 className="w-full bg-green-600 hover:bg-green-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
                             >
                                 ✅ REGISTRAR SELECCIONADOS
