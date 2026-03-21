@@ -4,7 +4,7 @@ import axiosClient from '../axios';
 const Chatbot = () => {
     // Iniciamos con un mensaje de bienvenida por defecto
     const [messages, setMessages] = useState([
-        { text: "¡Hola! Soy el asistente virtual de la Superliga. Pregúntame lo que necesites sobre el reglamento (sanciones, formato, mercado, etc).", user: 'bot' }
+        { text: "¡Hola! Soy Alvarito, el asistente virtual de la Superliga. Pregúntame lo que necesites sobre el reglamento (sanciones, formato, mercado, etc).", user: 'bot' }
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
