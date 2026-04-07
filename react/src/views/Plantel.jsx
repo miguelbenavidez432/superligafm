@@ -234,7 +234,7 @@ export default function Plantel() {
                                 {selectedPlayers.map(p => (
                                     <li key={p.id} className="bg-slate-700 flex justify-between items-center p-3 rounded-lg shadow-sm">
                                         <div>
-                                            <p className="font-bold text-white">{p.name}</p>
+                                            <p className="font-bold text-white"><Link to={`app/players/${p.id}`}>{p.name}</Link></p>
                                             <p className="text-xs text-gray-400">CA: {p.ca} | Est: {p.status}</p>
                                         </div>
                                         <button

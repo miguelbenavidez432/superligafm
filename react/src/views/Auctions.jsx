@@ -146,29 +146,6 @@ const Auctions = () => {
             });
     };
 
-    // Función para iniciar el countdown usando FormKit Tempo
-    // const startCountdown = (endTime) => {
-    //     const countdown = new Tempo({
-    //         target: new Date(parseInt(endTime)), // Hora de finalización de la subasta
-    //         interval: 1000,  // Actualiza cada segundo
-    //         onUpdate: (time) => {
-    //             const countdownElement = document.getElementById('countdown');
-    //             if (countdownElement) {
-    //                 countdownElement.innerHTML = `${time.hours}h ${time.minutes}m ${time.seconds}s`;
-    //             }
-    //         },
-    //         onFinish: () => {
-    //             const countdownElement = document.getElementById('countdown');
-    //             if (countdownElement) {
-    //                 countdownElement.innerHTML = "Subasta finalizada";
-    //             }
-    //             // Remover el tiempo de finalización de localStorage cuando termina la subasta
-    //             localStorage.removeItem('auctionEndTime');
-    //         }
-    //     });
-    //     countdown.start();
-    // };
-
     return (
         <div className=" p-6 bg-gray-900 shadow-md rounded-md">
             {playerId && (

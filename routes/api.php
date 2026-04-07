@@ -108,6 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/apuesta/usuario/{betId}/{userId}', [BetController::class, 'updateBetUserConfirmed']);
     Route::put('/apuesta/jugador/{betId}/{userId}', [PlayerBetController::class, 'updateConfirmed']);
     Route::get('/transferencia_pendiente', [TransferController::class, 'getPendingTransfers']);
+    Route::get('/transferencia_confirmada', [TransferController::class, 'getConfirmedTransfers']);
     Route::post('/transferencia_confirmada/{id}', [TransferController::class, 'confirmTransfer']);
 
     Route::apiResource('tournaments', TournamentController::class);

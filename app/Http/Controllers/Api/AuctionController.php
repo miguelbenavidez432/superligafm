@@ -28,11 +28,16 @@ class AuctionController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->query("all") == 'true') {
+        $query = Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])
+            ->when($request->query('season'), function ($q, $seasonId) {
+                return $q->where('id_season', $seasonId);
+            })
+            ->orderBy("id", "desc");
 
-            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("id", "desc")->get());
+        if ($request->query("all") == 'true') {
+            return AuctionResource::collection($query->get());
         } else {
-            return AuctionResource::collection(Auction::with(['creator', 'auctioneer', 'player', 'team', 'season'])->orderBy("id", "desc")->paginate(50));
+            return AuctionResource::collection($query->paginate(50));
         }
         ;
     }
@@ -253,7 +258,7 @@ class AuctionController extends Controller
 
         $auction = Auction::create($data);
 
-        return response(new AuctionResource($auction, 201));
+        return (new AuctionResource($auction))->toResponse($request)->setStatusCode(201);
     }
 
     public function filteredAuctions($playerId)

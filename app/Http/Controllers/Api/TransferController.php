@@ -42,7 +42,7 @@ class TransferController extends Controller
     {
         $data = $request->validated();
         $player = Transfer::create($data);
-        return response(new TransferResource($player), 201);
+        return (new TransferResource($player))->toResponse($request)->setStatusCode(201);
     }
 
     /**
@@ -252,9 +252,10 @@ class TransferController extends Controller
         return response()->json(['message' => 'Transferencia confirmada correctamente']);
     }
 
-    public function getPendingTransfers()
+    public function getPendingTransfers(Request $request)
     {
         $user = auth()->user(); // auth()->user() siempre estará definido si el middleware lo permite
+        $seasonId = $request->query('season');
 
         try {
             // Depurar el usuario
@@ -267,6 +268,9 @@ class TransferController extends Controller
                 })
                 ->where('confirmed_by', null)
                 ->where('created_by', '!=', $user->id)
+                ->when($seasonId, function ($query, $seasonId) {
+                    return $query->where('id_season', $seasonId);
+                })
                 ->get();
 
             \Log::info('Transferencias pendientes: ', ['transfers' => $transfers]);
@@ -274,6 +278,32 @@ class TransferController extends Controller
             return response()->json($transfers);
         } catch (\Exception $e) {
             \Log::error('Error en getPendingTransfers: ' . $e->getMessage());
+            return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function getConfirmedTransfers(Request $request)
+    {
+        $user = auth()->user();
+        $seasonId = $request->query('season');
+
+        try {
+            $transfers = Transfer::where('confirmed', 'si')
+                ->where(function ($query) use ($user) {
+                    $query->where('buy_by', $user->id)
+                        ->orWhere('sold_by', $user->id)
+                        ->orWhere('created_by', $user->id);
+                })
+                ->when($seasonId, function ($query, $seasonId) {
+                    return $query->where('id_season', $seasonId);
+                })
+                ->with(['teamFrom', 'teamTo', 'creator', 'buyer', 'seller', 'confirmer', 'season'])
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            return response()->json($transfers);
+        } catch (\Exception $e) {
+            \Log::error('Error en getConfirmedTransfers: ' . $e->getMessage());
             return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
     }

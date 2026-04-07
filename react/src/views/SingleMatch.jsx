@@ -51,7 +51,7 @@ export default function SingleMatch() {
 
     // Verificamos si hubo penales
     const hasPenalties = match.penalties_home !== null && match.penalties_home !== undefined &&
-                         match.penalties_away !== null && match.penalties_away !== undefined;
+        match.penalties_away !== null && match.penalties_away !== undefined;
 
     return (
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in-down pb-20">
@@ -121,7 +121,7 @@ export default function SingleMatch() {
 
                             {/* Local */}
                             <div className="flex-1 text-center md:text-right w-full">
-                                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white truncate drop-shadow-lg tracking-tight">
+                                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white truncate drop-shadow-lg tracking-tight">
                                     {match.team_home?.name}
                                 </h2>
                             </div>
@@ -147,7 +147,7 @@ export default function SingleMatch() {
 
                             {/* Visitante */}
                             <div className="flex-1 text-center md:text-left w-full">
-                                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white truncate drop-shadow-lg tracking-tight">
+                                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white truncate drop-shadow-lg tracking-tight">
                                     {match.team_away?.name}
                                 </h2>
                             </div>
@@ -210,25 +210,28 @@ export default function SingleMatch() {
                                             statsHome.map((stat, index) => {
                                                 const isMVP = maxRating > 0 && Number(stat.rating) === maxRating;
                                                 return (
-                                                <tr key={stat.id || index} className={`hover:bg-slate-800/60 transition-colors group ${isMVP ? 'bg-yellow-900/10' : ''}`}>
-                                                    <td className={`py-3 px-4 font-bold text-base transition-colors ${isMVP ? 'text-yellow-400' : 'text-white group-hover:text-blue-300'}`}>
-                                                        {stat.player_id?.name}
-                                                    </td>
-                                                    <td className="py-3 px-2 text-center font-black text-green-400 text-base">{stat.goals > 0 ? stat.goals : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center font-black text-blue-400 text-base">{stat.assists > 0 ? stat.assists : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center text-lg">{stat.yellow_cards > 0 ? '🟨' : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center text-lg">{stat.red_cards > 0 ? '🟥' : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center text-lg">{stat.serious_injuries > 0 ? '🚑' : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-4 text-center font-black text-yellow-400 text-base">
-                                                        {stat.rating > 0 ? (
-                                                            <div className="flex items-center justify-center gap-1.5 bg-slate-950/50 px-2 py-1 rounded-lg border border-slate-700">
-                                                                <span>{stat.rating}</span>
-                                                                {isMVP && <span className="animate-pulse drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" title="Mejor Jugador del Partido">⭐</span>}
-                                                            </div>
-                                                        ) : <span className="text-slate-700">-</span>}
-                                                    </td>
-                                                </tr>
-                                            )})
+                                                    <tr key={stat.id || index} className={`hover:bg-slate-800/60 transition-colors group ${isMVP ? 'bg-yellow-900/10' : ''}`}>
+                                                        <td className={`py-3 px-4 font-bold text-base transition-colors ${isMVP ? 'text-yellow-400' : 'text-white group-hover:text-blue-300'}`}>
+                                                            <Link to={`/app/players/${stat.player_id?.id}`} className={`py-3 px-4 font-bold text-base transition-colors ${isMVP ? 'text-yellow-400' : 'text-white group-hover:text-blue-300'}`}>
+                                                                {stat.player_id?.name}
+                                                            </Link>
+                                                        </td>
+                                                        <td className="py-3 px-2 text-center font-black text-green-400 text-base">{stat.goals > 0 ? stat.goals : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center font-black text-blue-400 text-base">{stat.assists > 0 ? stat.assists : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center text-lg">{stat.yellow_cards > 0 ? '🟨' : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center text-lg">{stat.red_cards > 0 ? '🟥' : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center text-lg">{stat.serious_injuries > 0 ? '🚑' : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-4 text-center font-black text-yellow-400 text-base">
+                                                            {stat.rating > 0 ? (
+                                                                <div className="flex items-center justify-center gap-1.5 bg-slate-950/50 px-2 py-1 rounded-lg border border-slate-700">
+                                                                    <span>{stat.rating}</span>
+                                                                    {isMVP && <span className="animate-pulse drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" title="Mejor Jugador del Partido">⭐</span>}
+                                                                </div>
+                                                            ) : <span className="text-slate-700">-</span>}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
                                         )}
                                     </tbody>
                                 </table>
@@ -261,25 +264,28 @@ export default function SingleMatch() {
                                             statsAway.map((stat, index) => {
                                                 const isMVP = maxRating > 0 && Number(stat.rating) === maxRating;
                                                 return (
-                                                <tr key={stat.id || index} className={`hover:bg-slate-800/60 transition-colors group ${isMVP ? 'bg-yellow-900/10' : ''}`}>
-                                                    <td className={`py-3 px-4 font-bold text-base transition-colors ${isMVP ? 'text-yellow-400' : 'text-white group-hover:text-blue-300'}`}>
-                                                        {stat.player_id?.name}
-                                                    </td>
-                                                    <td className="py-3 px-2 text-center font-black text-green-400 text-base">{stat.goals > 0 ? stat.goals : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center font-black text-blue-400 text-base">{stat.assists > 0 ? stat.assists : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center text-lg">{stat.yellow_cards > 0 ? '🟨' : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center text-lg">{stat.red_cards > 0 ? '🟥' : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-2 text-center text-lg">{stat.serious_injuries > 0 ? '🚑' : <span className="text-slate-700">-</span>}</td>
-                                                    <td className="py-3 px-4 text-center font-black text-yellow-400 text-base">
-                                                        {stat.rating > 0 ? (
-                                                            <div className="flex items-center justify-center gap-1.5 bg-slate-950/50 px-2 py-1 rounded-lg border border-slate-700">
-                                                                <span>{stat.rating}</span>
-                                                                {isMVP && <span className="animate-pulse drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" title="Mejor Jugador del Partido">⭐</span>}
-                                                            </div>
-                                                        ) : <span className="text-slate-700">-</span>}
-                                                    </td>
-                                                </tr>
-                                            )})
+                                                    <tr key={stat.id || index} className={`hover:bg-slate-800/60 transition-colors group ${isMVP ? 'bg-yellow-900/10' : ''}`}>
+                                                        <td className={`py-3 px-4 font-bold text-base transition-colors ${isMVP ? 'text-yellow-400' : 'text-white group-hover:text-blue-300'}`}>
+                                                            <Link to={`/app/players/${stat.player_id?.id}`}>
+                                                                {stat.player_id?.name}
+                                                            </Link>
+                                                        </td>
+                                                        <td className="py-3 px-2 text-center font-black text-green-400 text-base">{stat.goals > 0 ? stat.goals : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center font-black text-blue-400 text-base">{stat.assists > 0 ? stat.assists : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center text-lg">{stat.yellow_cards > 0 ? '🟨' : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center text-lg">{stat.red_cards > 0 ? '🟥' : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-2 text-center text-lg">{stat.serious_injuries > 0 ? '🚑' : <span className="text-slate-700">-</span>}</td>
+                                                        <td className="py-3 px-4 text-center font-black text-yellow-400 text-base">
+                                                            {stat.rating > 0 ? (
+                                                                <div className="flex items-center justify-center gap-1.5 bg-slate-950/50 px-2 py-1 rounded-lg border border-slate-700">
+                                                                    <span>{stat.rating}</span>
+                                                                    {isMVP && <span className="animate-pulse drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" title="Mejor Jugador del Partido">⭐</span>}
+                                                                </div>
+                                                            ) : <span className="text-slate-700">-</span>}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
                                         )}
                                     </tbody>
                                 </table>

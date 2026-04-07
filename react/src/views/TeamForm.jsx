@@ -347,12 +347,14 @@ export default function TeamForm() {
                                 <tbody className="divide-y divide-slate-700/50">
                                     {players.map(p => (
                                         <tr key={p.id} className="hover:bg-slate-800/80 transition-colors">
-                                            <td className="px-6 py-4 font-bold text-white">{p.name}</td>
+                                            <td className="px-6 py-4 font-bold text-white"><Link to={`/app/players/${p.id}`}>
+                                                {p.name}
+                                            </Link></td>
                                             <td className="px-6 py-4 text-center text-blue-400 font-bold bg-blue-900/10">{p.ca}</td>
                                             <td className="px-6 py-4 text-center">{p.age}</td>
                                             <td className="px-6 py-4 text-center">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${p.status === 'bloqueado' ? 'bg-red-900/50 text-red-400 border border-red-800' : 'bg-green-900/50 text-green-400 border border-green-800'}`}>
-                                                    {p.status.toUpperCase()}
+                                                    {p.status ? p.status.toUpperCase() : 'SIN ESTADO'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right text-green-300 font-medium">
