@@ -59,6 +59,7 @@ import Signup from './views/Signup';
 
 import PlayersList from './views/PlayersList';
 import CancelSuspensionForm from './views/CancelSuspensionForm';
+import PublicMatches from './views/PublicMatches';
 
 const router = createBrowserRouter([
     // --- RUTAS PÚBLICAS ---
@@ -71,7 +72,8 @@ const router = createBrowserRouter([
             { path: '/public/players', element: <Players /> },
             { path: '/public/standings', element: <Standings /> },
             { path: '/public/statistics', element: <Statistics /> },
-            { path: '/public/rules', element: <Rules /> }
+            { path: '/public/rules', element: <Rules /> },
+            { path: '/public/matches', element: <PublicMatches /> }
         ]
     },
 

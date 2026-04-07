@@ -17,9 +17,9 @@ class TeamController extends Controller
     public function index(Request $request)
     {
         if ($request->query('all') == 'true') {
-            return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->get());
+            return TeamResource::collection(Team::with(['user.discordUser'])->orderBy("id", "asc")->get());
         } else {
-            return TeamResource::collection(Team::with(['user'])->orderBy("id", "asc")->paginate(280));
+            return TeamResource::collection(Team::with(['user.discordUser'])->orderBy("id", "asc")->paginate(280));
         }
     }
 
@@ -31,7 +31,7 @@ class TeamController extends Controller
         $data = $request->validated();
         $team = Team::create($data);
 
-        return response(new TeamResource($team->load('user')), 201);
+        return (new TeamResource($team->load('user.discordUser')))->toResponse($request)->setStatusCode(201);
 
     }
 
@@ -40,7 +40,7 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
-        return new TeamResource($team->load('user'));
+        return new TeamResource($team->load('user.discordUser'));
     }
 
     /**
@@ -50,7 +50,7 @@ class TeamController extends Controller
     {
         $data = $request->validated();
         $team->update($data);
-        return new TeamResource($team->load('user'));
+        return new TeamResource($team->load('user.discordUser'));
     }
 
     /**

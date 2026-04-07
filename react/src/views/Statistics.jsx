@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axiosClient from '../axios';
 import { useStateContext } from '../context/ContextProvider';
+import { Link } from 'react-router-dom';
 
 // --- MINI COMPONENTE REUTILIZABLE PARA LAS TABLAS DE TOP ---
 const StatTable = ({ title, icon, data, statKey, colorClass, highlightColor }) => {
@@ -34,7 +35,9 @@ const StatTable = ({ title, icon, data, statKey, colorClass, highlightColor }) =
                                         {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : <span className="text-slate-500 text-sm">{index + 1}</span>}
                                     </td>
                                     <td className="px-6 py-3 font-bold text-white group-hover:text-blue-300 transition-colors text-base">
-                                        {stat.player_id?.name || 'Desconocido'}
+                                        <Link to={`/app/players/${stat.player_id?.id}`}>
+                                            {stat.player_id?.name || 'Desconocido'}
+                                        </Link>
                                     </td>
                                     <td className={`px-6 py-3 text-center font-black text-xl ${highlightColor}`}>
                                         {stat[statKey]}

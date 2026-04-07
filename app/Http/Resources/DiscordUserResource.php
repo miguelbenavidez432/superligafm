@@ -17,6 +17,7 @@ class DiscordUserResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => new UserResource($this->whenLoaded('user')),
+            'discord_id' => $this->discord_id,
             'discord_username' => $this->discord_username,
         ];
     }

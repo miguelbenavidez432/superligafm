@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import axiosClient from '../axios';
 import { useStateContext } from '../context/ContextProvider';
 import * as XLSX from 'xlsx';
+import { Link } from 'react-router-dom';
 
 export default function PlayersList() {
     const [players, setPlayers] = useState([]);
@@ -135,7 +136,9 @@ export default function PlayersList() {
                                 filteredPlayers.map((player) => (
                                     <tr key={player.id} className="hover:bg-slate-800/80 transition-colors group">
                                         <td className="py-3 px-6 font-bold text-white group-hover:text-blue-300 transition-colors">
-                                            {player.name}
+                                            <Link to={`/app/players/${player.id}`}>
+                                                {player.name}
+                                            </Link>
                                         </td>
                                         <td className="py-3 px-4 text-center font-medium">
                                             {player.age || '-'}
