@@ -36,7 +36,7 @@ class GeminiOcrService implements OcrAnalyzerInterface
             ->make();
 
         // Usamos nuestro nuevo cliente relajado en lugar de la Facade por defecto
-        $result = $client->generativeModel('gemini-2.5-flash')->generateContent([
+        $result = $client->generativeModel('gemini-2.0-flash-lite-001')->generateContent([
             $prompt,
             new \Gemini\Data\Blob(
                 mimeType: $geminiMimeType,
