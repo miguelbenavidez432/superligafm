@@ -60,38 +60,52 @@ class OpenAIOcrService implements OcrAnalyzerInterface
     private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Eres un analista de datos experto. Tu tarea principal NO es solo leer la imagen, sino TOMAR LA LISTA OFICIAL DE JUGADORES provista y ACTUALIZAR sus estadísticas basándote en la captura de pantalla del Football Manager.
+        Eres un sistema de procesamiento de datos OCR estricto. Tu tarea NO es adivinar, tu tarea es mapear una base de datos contra una imagen. Tienes terminantemente prohibido omitir datos.
 
-        INFORMACIÓN DEL PARTIDO:
-        - EQUIPO LOCAL (ID: $homeId): Sus jugadores aparecen en la tabla del extremo IZQUIERDO.
-        - EQUIPO VISITANTE (ID: $awayId): Sus jugadores aparecen en la tabla del extremo DERECHO.
+        INFORMACIÓN:
+        - LOCAL (ID: $homeId): Aparecen en la tabla IZQUIERDA.
+        - VISITANTE (ID: $awayId): Aparecen en la tabla DERECHA.
 
-        LISTA OFICIAL DE JUGADORES (CONTEXTO MASTER):
+        CONTEXTO OBLIGATORIO (TU BASE DE DATOS):
         $context
 
-        REGLAS CRÍTICAS DE MAPEO (¡LEER ATENTAMENTE!):
-        1. LA LISTA ES LA LEY: Tu respuesta JSON debe contener a TODOS Y CADA UNO de los jugadores presentes en la 'LISTA OFICIAL DE JUGADORES' que te pasé arriba. ¡NO PUEDES OMITIR A NINGÚN JUGADOR DEL CONTEXTO!
-        2. REGLA DEL JUGADOR NO VISIBLE/SIN DATOS: Si buscas a un jugador del contexto en la imagen y no lo encuentras, o no tiene una calificación (rating) visible, DEBES incluirlo en el JSON final obligatoriamente con estos valores por defecto: \"rating\": 0, \"goals\": 0, \"assists\": 0, \"amarillas\": 0, \"rojas\": 0, \"is_injured\": false, \"mvp\": false.
-        3. NOMBRES INTACTOS: El campo 'player_name' debe devolver el nombre EXACTAMENTE igual a como está escrito en el contexto master, no como aparece abreviado en la imagen.
-        4. EXTRACCIÓN VISUAL:
-           - Calificación (Cal): Es el número verde o rojo en la columna derecha de cada tabla lateral (ej. 7.4, 6.5).
-           - Goles, Asistencias y Tarjetas: Revisa OBLIGATORIAMENTE el panel central 'Eventos del partido' para confirmarlos.
-        5. LECTURA DEL PANEL CENTRAL (EVENTOS):
-           - BALÓN CON CRUZ ROJA: Gol anulado/en contra. NO suma goles ni asistencias.
-           - PATRÓN GOL/ASISTENCIA: 'minuto - jugador1 - jugador2' => jugador1 = GOL, jugador2 = ASISTENCIA.
-           - PATRÓN INVERSO: 'jugador1 - jugador2 - minuto' => jugador1 = ASISTENCIA, jugador2 = GOL.
-           - TARJETAS: Rectángulo amarillo = 1 amarilla. Rectángulo rojo = 1 roja.
-        6. MVP: Busca en las tablas laterales de ambos equipos el número de 'rating' más alto. Solo ese jugador debe tener 'mvp': true.
+        REGLA DE ORO (CRÍTICA):
+        Tu array 'players' DEBE tener EXACTAMENTE la misma longitud que el CONTEXTO OBLIGATORIO. Debes iterar cada jugador del contexto uno por uno. SI HAY 35 JUGADORES EN EL CONTEXTO, DEBE HABER 35 JUGADORES EN TU RESPUESTA JSON.
 
-        RESPUESTA JSON ESPERADA:
+        INSTRUCCIONES DE MAPEO PARA CADA JUGADOR DEL CONTEXTO:
+        1. Copia su 'id', 'player_name' y 'team_name' EXACTAMENTE como aparecen en el contexto.
+        2. Asigna el 'id_team' ($homeId si pertenece al local, $awayId si pertenece al visitante).
+        3. Busca visualmente a ese jugador en la imagen (Ojo: la imagen usa nombres cortos como 'C. Romero' o 'Júnior R.').
+        4. SI LO ENCUENTRAS EN LA IMAGEN:
+           - rating: El número de la columna 'Cal'.
+           - goals: Revisa el panel central 'Eventos del partido'. Patrón 'minuto - jugador' o si sale segundo en 'min - jugador1 - jugador2'.
+           - assists: Revisa el panel central. El que sale primero en 'min - jugador1 - jugador2'.
+           - amarillas/rojas: Verifica si tiene un rectángulo amarillo o rojo a su lado.
+        5. SI NO LO ENCUENTRAS EN LA IMAGEN O NO TIENE CALIFICACIÓN:
+           - Asigna OBLIGATORIAMENTE: rating: 0, goals: 0, assists: 0, amarillas: 0, rojas: 0, is_injured: false.
+        6. El único jugador de toda la imagen con el 'rating' más alto lleva 'mvp': true. El resto en false.
+
+        FORMATO JSON REQUERIDO (RESPETA ESTOS CAMPOS ESTRICTAMENTE):
         {
           \"score\": { \"home\": 0, \"away\": 0 },
           \"statistics\": [],
           \"players\": [
-            // RECUERDA: AQUÍ DEBEN ESTAR EL 100% DE LOS JUGADORES DEL CONTEXTO, tengan datos visuales o no.
+            {
+              \"id\": 123,
+              \"player_name\": \"Nombre del Jugador\",
+              \"team_name\": \"Nombre del Equipo\",
+              \"id_team\": $homeId,
+              \"rating\": 7.4,
+              \"goals\": 0,
+              \"assists\": 0,
+              \"amarillas\": 0,
+              \"rojas\": 0,
+              \"is_injured\": false,
+              \"mvp\": false
+            }
           ]
         }
-        Devuelve ÚNICAMENTE el JSON puro, sin bloques de código markdown ni texto adicional.
+        NO incluyas markdown (```json). Devuelve SOLO el texto JSON válido.
         ";
     }
 }
