@@ -1,6 +1,4 @@
 <?php
-// filepath: app/Http/Controllers/Api/OcrController.php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -11,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\GeminiOcrService;
 use App\Services\OpenAIOcrService;
+use App\Services\OpenRouterOcrService;
 
 class OcrController extends Controller
 {
@@ -20,6 +19,7 @@ class OcrController extends Controller
         private MatchContextService $contextService,
         private GeminiOcrService $geminiAnalyzer,
         private OpenAIOcrService $openAiAnalyzer,
+        private OpenRouterOcrService $openRouterAnalyzer,
     ) {
     }
 
@@ -78,7 +78,7 @@ class OcrController extends Controller
 
         foreach ($request->file('images') as $image) {
             try {
-                // 🔥 AHORA SÍ: Usamos la función de Fallback para múltiples imágenes
+                // Usamos la función de Fallback para múltiples imágenes
                 $data = $this->executeOcrWithFallback(
                     $image,
                     $context,
@@ -91,7 +91,7 @@ class OcrController extends Controller
                     'success' => true,
                     'data' => $data
                 ];
-                // 🔥 \Throwable nos protege de todo
+                // \Throwable nos protege de todo
             } catch (\Throwable $e) {
                 $results[] = [
                     'filename' => $image->getClientOriginalName(),
@@ -111,10 +111,10 @@ class OcrController extends Controller
             return $this->geminiAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
         } catch (\Exception $e) {
             // GEMINI FALLÓ (High Demand, etc). Lo anotamos en el log para saberlo nosotros.
-            Log::warning('Gemini falló: ' . $e->getMessage() . '. Pasando a OpenAI...');
+            Log::warning('Gemini falló: ' . $e->getMessage() . '. Pasando a OpenRouter...');
 
-            // INTENTO 2: OPENAI (El usuario no se entera del fallo de Gemini)
-            return $this->openAiAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
+            // INTENTO 2: OPENROUTER (El usuario no se entera del fallo de Gemini)
+            return $this->openRouterAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
         }
     }
 }
