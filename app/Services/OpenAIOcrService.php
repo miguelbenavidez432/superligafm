@@ -37,7 +37,8 @@ class OpenAIOcrService implements OcrAnalyzerInterface
                             ['type' => 'image_url', 'image_url' => ['url' => "data:{$rawMimeType};base64,{$imageBase64}"]]
                         ]
                     ]
-                ]
+                ],
+                'max_tokens' => 4000,
             ]);
 
         if (!$response->successful()) {
