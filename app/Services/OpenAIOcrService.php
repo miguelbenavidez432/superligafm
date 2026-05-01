@@ -26,7 +26,7 @@ class OpenAIOcrService implements OcrAnalyzerInterface
         // La URL de Groq es idéntica a OpenAI
         ->post('https://api.groq.com/openai/v1/chat/completions', [
             // Este modelo en Groq vuela y siempre está activo
-            'model' => 'llama-3.2-90b-vision-preview',
+            'model' => 'llama-3.2-90b-vision-instruct',
             'response_format' => [ "type" => "json_object" ],
             'messages' => [
                 [
