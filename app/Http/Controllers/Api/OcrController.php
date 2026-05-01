@@ -114,7 +114,7 @@ class OcrController extends Controller
             Log::warning('Gemini falló: ' . $e->getMessage() . '. Pasando a OpenRouter...');
 
             // INTENTO 2: OPENROUTER (El usuario no se entera del fallo de Gemini)
-            return $this->openRouterAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
+            return $this->openAiAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
         }
     }
 }

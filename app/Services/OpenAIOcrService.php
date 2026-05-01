@@ -19,29 +19,24 @@ class OpenAIOcrService implements OcrAnalyzerInterface
 
         // Llamada a OpenAI (GPT-4o-mini es baratísimo y rapidísimo para visión)
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+            'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
             'Content-Type' => 'application/json',
         ])
         ->timeout(120)
-        ->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-4o-mini',
-            'response_format' => [ "type" => "json_object" ], // Forzamos que devuelva JSON puro
+        // La URL de Groq es idéntica a OpenAI
+        ->post('https://api.groq.com/openai/v1/chat/completions', [
+            // Este modelo en Groq vuela y siempre está activo
+            'model' => 'llama-3.2-90b-vision-preview',
+            'response_format' => [ "type" => "json_object" ],
             'messages' => [
                 [
                     'role' => 'user',
                     'content' => [
                         ['type' => 'text', 'text' => $prompt],
-                        [
-                            'type' => 'image_url',
-                            'image_url' => [
-                                'url' => "data:{$rawMimeType};base64,{$imageBase64}",
-                                'detail' => 'high'
-                            ]
-                        ]
+                        ['type' => 'image_url', 'image_url' => ['url' => "data:{$rawMimeType};base64,{$imageBase64}"]]
                     ]
                 ]
-            ],
-            'max_tokens' => 1500,
+            ]
         ]);
 
         if (!$response->successful()) {
