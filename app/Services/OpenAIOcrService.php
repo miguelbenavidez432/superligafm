@@ -22,22 +22,23 @@ class OpenAIOcrService implements OcrAnalyzerInterface
             'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
             'Content-Type' => 'application/json',
         ])
-        ->timeout(120)
-        // La URL de Groq es idéntica a OpenAI
-        ->post('https://api.groq.com/openai/v1/chat/completions', [
-            // Este modelo en Groq vuela y siempre está activo
-            'model' => 'llama-3.2-90b-vision-instruct',
-            'response_format' => [ "type" => "json_object" ],
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => [
-                        ['type' => 'text', 'text' => $prompt],
-                        ['type' => 'image_url', 'image_url' => ['url' => "data:{$rawMimeType};base64,{$imageBase64}"]]
+            ->timeout(120)
+            // La URL de Groq es idéntica a OpenAI
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                // Este modelo en Groq vuela y siempre está activo
+                // Reemplaza la línea vieja por esta:
+                'model' => 'meta-llama/llama-4-scout-17b-16e-instruct',
+                'response_format' => ["type" => "json_object"],
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => [
+                            ['type' => 'text', 'text' => $prompt],
+                            ['type' => 'image_url', 'image_url' => ['url' => "data:{$rawMimeType};base64,{$imageBase64}"]]
+                        ]
                     ]
                 ]
-            ]
-        ]);
+            ]);
 
         if (!$response->successful()) {
             throw new Exception("OpenAI falló: " . $response->body());
