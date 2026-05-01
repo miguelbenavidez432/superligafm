@@ -29,7 +29,7 @@ class OpenRouterOcrService implements OcrAnalyzerInterface
         ->timeout(120)
         ->post('https://openrouter.ai/api/v1/chat/completions', [
             // Usamos el modelo de visión de Meta que es gratuito en OpenRouter
-            'model' => 'meta-llama/llama-3.2-90b-vision-instruct:free',
+            'model' => 'google/gemini-3.1-flash-image-preview',
             // También podrías usar: 'google/gemini-2.0-flash-lite-preview-02-05:free'
 
             'response_format' => [ "type" => "json_object" ],
