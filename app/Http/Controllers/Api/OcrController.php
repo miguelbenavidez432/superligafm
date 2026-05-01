@@ -78,13 +78,21 @@ class OcrController extends Controller
 
         foreach ($request->file('images') as $image) {
             try {
-                $data = $this->ocrAnalyzer->analyzeMatchImage($image, $context, $request->input('home_team_id'), $request->input('away_team_id'));
+                // 🔥 AHORA SÍ: Usamos la función de Fallback para múltiples imágenes
+                $data = $this->executeOcrWithFallback(
+                    $image,
+                    $context,
+                    $request->input('home_team_id'),
+                    $request->input('away_team_id')
+                );
+
                 $results[] = [
                     'filename' => $image->getClientOriginalName(),
                     'success' => true,
                     'data' => $data
                 ];
-            } catch (\Exception $e) {
+                // 🔥 \Throwable nos protege de todo
+            } catch (\Throwable $e) {
                 $results[] = [
                     'filename' => $image->getClientOriginalName(),
                     'success' => false,
