@@ -93,7 +93,8 @@ class OpenAIOcrService implements OcrAnalyzerInterface
           5. VALIDACIÓN FINAL OBLIGATORIA:
               - Revisa que no haya jugadores con lesión por eventos que en realidad son autogol o gol anulado.
               - Revisa que el patrón de goles/asistencias esté aplicado correctamente antes de responder.
-              - Devuelve la lista de todos los jugadores que aparecen en la imagen, incluso si no tienen eventos. Si un jugador no tiene rating visible, pon rating 0. Si no tiene goles visibles, pon goles 0.
+              - Devuelve la lista de todos los jugadores que aparecen en la imagen, incluso si no tienen eventos. Si un jugador no tiene rating visible, pon rating 0. Si no tiene goles visibles, pon goles 0. Incluir LISTA OFICIAL DE JUGADORES (CONTEXTO) en la respuesta aunque no aparezcan en la imagen, pero con rating 0 y goles 0.
+
           6. El jugador con mejor rating debe tener el campo 'mvp' marcado como true.
 
         RESPUESTA JSON ESPERADA:
