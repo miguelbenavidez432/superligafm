@@ -76,12 +76,18 @@ class OpenAIOcrService implements OcrAnalyzerInterface
         3. CALIFICACIÓN (rating): Es el número en la columna 'Cal' (ej: 7.8, 6.5). Si el jugador no tiene número, su rating es 0.
 
         4. GOLES Y ASISTENCIAS (¡CRÍTICO: EL ORDEN CAMBIA SEGÚN EL EQUIPO!):
-           - Ve a la sección central 'Eventos del partido'.
+           - Ve a la sección central '> Encuentros'.
            - PARA EVENTOS DEL EQUIPO LOCAL (Alineados a la izquierda): Se leen como '[Minuto] [Jugador 1] [Jugador 2]'. El PRIMER nombre que lees es el GOL. El SEGUNDO nombre es la ASISTENCIA.
            - PARA EVENTOS DEL EQUIPO VISITANTE (Alineados a la derecha): El diseño está espejado. El PRIMER nombre que lees (el que está más a la izquierda en ese bloque) es la ASISTENCIA. El SEGUNDO nombre es el GOL.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo), ese jugador es el autor del GOL.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un balón después del minuto, ese jugador es el autor del GOL.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado amarillo, ese jugador tiene amarilla.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado rojo, ese jugador tiene roja.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado verde, ese jugador tiene gol de penal (gol).
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado blanco con un balón tachado, ese jugador tiene un penal errado y no cuenta como estadística.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y sale repetido en la misma línea, ese jugador tiene un gol errado y no cuenta para estadísticas.
 
-        5. TARJETAS: Rectángulo amarillo junto al nombre = 1 amarilla. Rectángulo rojo = 1 roja.
+        5. TARJETAS: Rectángulo amarillo junto al nombre = 1 amarilla. Rectángulo rojo = 1 roja. Unjugador puede tener una tarjeta amarilla y luego una roja. En ese caso ambas estadísticas van anotadas (amarillas: 1, rojas: 1).
+           - Si un jugador tiene una tarjeta roja, NO asumas que tiene amarilla a menos que haya un rectángulo amarillo explícito junto a su nombre. Solo cuenta lo que ves, no asumas nada.
 
         6. REGLA DEL MVP (CÁLCULO MATEMÁTICO OBLIGATORIO):
            - Al finalizar la extracción, revisa todos los 'rating' que encontraste en AMBOS equipos.

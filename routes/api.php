@@ -122,6 +122,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/chatbot/models', [ChatbotController::class, 'listModels']);
 
     Route::apiResource('prizes', PrizeController::class);
+    Route::post('/prizes/assign', [PrizeController::class, 'assign']);
     Route::apiResource('standings', StandingController::class);
     Route::apiResource('match-statistics', MatchStatisticController::class);
     Route::get('/match-statistics/team/{id_team}', [MatchStatisticController::class, 'getStatistics']);
