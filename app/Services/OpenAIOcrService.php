@@ -19,30 +19,27 @@ class OpenAIOcrService implements OcrAnalyzerInterface
 
         // Llamada a OpenAI (GPT-4o-mini es baratísimo y rapidísimo para visión)
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+            'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
             'Content-Type' => 'application/json',
         ])
-        ->timeout(120)
-        ->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-4o-mini',
-            'response_format' => [ "type" => "json_object" ], // Forzamos que devuelva JSON puro
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => [
-                        ['type' => 'text', 'text' => $prompt],
-                        [
-                            'type' => 'image_url',
-                            'image_url' => [
-                                'url' => "data:{$rawMimeType};base64,{$imageBase64}",
-                                'detail' => 'high'
-                            ]
+            ->timeout(120)
+            // La URL de Groq es idéntica a OpenAI
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                // Este modelo en Groq vuela y siempre está activo
+                // Reemplaza la línea vieja por esta:
+                'model' => 'meta-llama/llama-4-scout-17b-16e-instruct',
+                'response_format' => ["type" => "json_object"],
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => [
+                            ['type' => 'text', 'text' => $prompt],
+                            ['type' => 'image_url', 'image_url' => ['url' => "data:{$rawMimeType};base64,{$imageBase64}"]]
                         ]
                     ]
-                ]
-            ],
-            'max_tokens' => 1500,
-        ]);
+                ],
+                'max_tokens' => 4000,
+            ]);
 
         if (!$response->successful()) {
             throw new Exception("OpenAI falló: " . $response->body());
@@ -64,61 +61,60 @@ class OpenAIOcrService implements OcrAnalyzerInterface
     private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Eres un analista experto en Football Manager. Tu objetivo es extraer las estadísticas de los jugadores de la imagen y devolverlas en formato JSON.
+        Eres un sistema avanzado de OCR experto en extraer datos estadísticos de imágenes deportivas del juego Football Manager.
 
-        INFORMACIÓN DEL PARTIDO (CRÍTICO):
-        - EQUIPO LOCAL (ID: $homeId): Sus jugadores aparecen en la tabla de la MITAD IZQUIERDA de la imagen.
-        - EQUIPO VISITANTE (ID: $awayId): Sus jugadores aparecen en la tabla de la MITAD DERECHA de la imagen.
+        INFORMACIÓN DEL PARTIDO:
+        - EQUIPO LOCAL (ID: $homeId): Aparecen en la lista del extremo IZQUIERDO.
+        - EQUIPO VISITANTE (ID: $awayId): Aparecen en la lista del extremo DERECHO.
 
-        LISTA OFICIAL DE JUGADORES (CONTEXTO):
+        BASE DE DATOS OFICIAL:
         $context
 
-        REGLAS CRÍTICAS DE EXTRACCIÓN:
-        1. COBERTURA TOTAL: Debes extraer a TODOS los jugadores de la tabla izquierda y TODOS los de la tabla derecha, sin importar las siglas que aparezcan arriba de las tablas.
-        2. ASIGNACIÓN DE EQUIPO:
-           - Si el jugador está en la tabla izquierda, asigna estrictamente 'id_team': $homeId.
-           - Si el jugador está en la tabla derecha, asigna estrictamente 'id_team': $awayId.
-        3. IDENTIFICACIÓN DE EVENTOS (Sección central 'Encuentros'):
-              - IMPORTANTE: La sección central se usa para eventos. NO deduzcas lesiones desde iconos ambiguos si el evento corresponde a gol/autogol/gol anulado.
-              - BALÓN CON CRUZ ROJA: Gol anulado o gol en contra. NO sumar goles ni asistencias y NO marcar lesión.
-              - TARJETA ROJA: Rectángulo rojo sólido (rojas: 1).
-              - TARJETA AMARILLA: Rectángulo amarillo sólido (amarillas: 1).
-              - LESIÓN: Solo marcar is_injured=true si aparece explícitamente un icono inequívoco de lesión y NO hay indicador de gol/autogol/gol anulado en esa jugada.
-              - PATRÓN DE ORDEN (CRÍTICO PARA GOLES):
-                 a) Si el evento se ve como \"minuto - jugador1 - jugador2\" => jugador1 = GOL, jugador2 = ASISTENCIA.
-                 b) Si el evento se ve como \"jugador1 - jugador2 - minuto\" => jugador1 = ASISTENCIA, jugador2 = GOL.
-                 c) Estas reglas aplican SOLO a goles válidos (sin balón con cruz roja).
-                 d) Si el evento se ve como \"minuto - jugador1\" => jugador1 = GOL.
-                 e) Si el evento se ve como \"jugador1 - minuto\" => jugador1 = GOL.
-               - Si el evento muestra \"minuto + un solo jugador\" con icono de autogol/gol anulado, NO marcar lesión y NO registrar asistencia.
-              - Si ves un botón rojo con recuadro blanco en forma de arco (penal fallado/similar), ignóralo: no es gol, asistencia, lesión ni tarjeta.
-              - Cruza los nombres de esta sección central con la lista general para marcar correctamente goles, asistencias, tarjetas o lesión.
-        4. Cruza los nombres de la imagen con la LISTA OFICIAL de contexto. Devuelve el nombre exactamente como aparece en la lista oficial. Si un jugador de la lista oficial no aparece en la imagen, devuélvelo con rating 0 y goles 0.
-          5. VALIDACIÓN FINAL OBLIGATORIA:
-              - Revisa que no haya jugadores con lesión por eventos que en realidad son autogol o gol anulado.
-              - Revisa que el patrón de goles/asistencias esté aplicado correctamente antes de responder.
-          6. El jugador con mejor rating debe tener el campo 'mvp' marcado como true.
+        REGLAS DE EXTRACCIÓN Y LÓGICA ESTRICTA:
+        1. SOLO JUGADORES VISIBLES: Lee los nombres en las tablas izquierda y derecha de la imagen. Búscalos en la 'BASE DE DATOS OFICIAL' y usa el 'id', 'player_name' y 'team_name' exactos de la base de datos.
+        2. ASIGNACIÓN DE EQUIPO: Si está en la tabla izquierda => 'id_team': $homeId. Si está en la derecha => 'id_team': $awayId.
+        3. CALIFICACIÓN (rating): Es el número en la columna 'Cal' (ej: 7.8, 6.5). Si el jugador no tiene número, su rating es 0.
 
-        RESPUESTA JSON ESPERADA:
+        4. GOLES Y ASISTENCIAS (¡CRÍTICO: EL ORDEN CAMBIA SEGÚN EL EQUIPO!):
+           - Ve a la sección central '> Encuentros'.
+           - PARA EVENTOS DEL EQUIPO LOCAL (Alineados a la izquierda): Se leen como '[Minuto] [Jugador 1] [Jugador 2]'. El PRIMER nombre que lees es el GOL. El SEGUNDO nombre es la ASISTENCIA.
+           - PARA EVENTOS DEL EQUIPO VISITANTE (Alineados a la derecha): El diseño está espejado. El PRIMER nombre que lees (el que está más a la izquierda en ese bloque) es la ASISTENCIA. El SEGUNDO nombre es el GOL.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un balón después del minuto, ese jugador es el autor del GOL.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado amarillo, ese jugador tiene amarilla.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado rojo, ese jugador tiene roja.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado verde, ese jugador tiene gol de penal (gol).
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado blanco con un balón tachado, ese jugador tiene un penal errado y no cuenta como estadística.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y sale repetido en la misma línea, ese jugador tiene un gol errado y no cuenta para estadísticas.
+
+        5. TARJETAS: Rectángulo amarillo junto al nombre = 1 amarilla. Rectángulo rojo = 1 roja. Unjugador puede tener una tarjeta amarilla y luego una roja. En ese caso ambas estadísticas van anotadas (amarillas: 1, rojas: 1).
+           - Si un jugador tiene una tarjeta roja, NO asumas que tiene amarilla a menos que haya un rectángulo amarillo explícito junto a su nombre. Solo cuenta lo que ves, no asumas nada.
+
+        6. REGLA DEL MVP (CÁLCULO MATEMÁTICO OBLIGATORIO):
+           - Al finalizar la extracción, revisa todos los 'rating' que encontraste en AMBOS equipos.
+           - Compara los números matemáticamente (Ejemplo: 7.8 es mayor que 7.2 y mayor que 7.5).
+           - ÚNICAMENTE el jugador con el número más alto absoluto recibe 'mvp': true. Absolutamente todos los demás reciben 'mvp': false.
+
+        FORMATO JSON REQUERIDO:
         {
           \"score\": { \"home\": 0, \"away\": 0 },
           \"statistics\": [],
           \"players\": [
             {
-              \"player_name\": \"Nombre del Jugador\",
-              \"team_name\": \"Nombre del Equipo Oficial\",
+              \"id\": 123,
+              \"player_name\": \"Nombre Exacto del Contexto\",
+              \"team_name\": \"Nombre del Equipo\",
               \"id_team\": $homeId,
-              \"rating\": 6.7,
+              \"rating\": 7.8,
               \"goals\": 0,
-              \"assists\": 0,
+              \"assists\": 1,
               \"amarillas\": 0,
               \"rojas\": 0,
               \"is_injured\": false,
-              \"mvp\": false
+              \"mvp\": true
             }
           ]
         }
-        No incluyas markdown, solo el JSON puro.
+        Devuelve SOLO el texto JSON válido, sin markdown ni comillas invertidas.
         ";
     }
 }

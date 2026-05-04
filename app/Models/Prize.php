@@ -27,4 +27,9 @@ class Prize extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function scopePending($query)
+    {
+        return $query->whereNull('team_id')->where('status', 'pendiente');
+    }
 }
