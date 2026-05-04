@@ -64,35 +64,34 @@ class OpenAIOcrService implements OcrAnalyzerInterface
         Eres un sistema avanzado de OCR experto en extraer datos estadísticos de imágenes deportivas del juego Football Manager.
 
         INFORMACIÓN DEL PARTIDO:
-        - EQUIPO LOCAL (ID: $homeId): Aparecen en la lista del extremo IZQUIERDO.
-        - EQUIPO VISITANTE (ID: $awayId): Aparecen en la lista del extremo DERECHO.
+        - EQUIPO LOCAL (ID: $homeId): Tabla lateral IZQUIERDA.
+        - EQUIPO VISITANTE (ID: $awayId): Tabla lateral DERECHA.
 
         BASE DE DATOS OFICIAL:
         $context
 
-        REGLAS DE EXTRACCIÓN Y LÓGICA ESTRICTA:
-        1. SOLO JUGADORES VISIBLES: Lee los nombres en las tablas izquierda y derecha de la imagen. Búscalos en la 'BASE DE DATOS OFICIAL' y usa el 'id', 'player_name' y 'team_name' exactos de la base de datos.
-        2. ASIGNACIÓN DE EQUIPO: Si está en la tabla izquierda => 'id_team': $homeId. Si está en la derecha => 'id_team': $awayId.
-        3. CALIFICACIÓN (rating): Es el número en la columna 'Cal' (ej: 7.8, 6.5). Si el jugador no tiene número, su rating es 0.
+        REGLAS DE EXTRACCIÓN Y LÓGICA ESTRICTA (¡SÍGUELAS AL PIE DE LA LETRA!):
+        1. COBERTURA TOTAL OBLIGATORIA: Lee TODOS los nombres en las tablas izquierda y derecha. Búscalos en la 'BASE DE DATOS OFICIAL' y usa el 'id', 'player_name' y 'team_name' exactos. ¡Tus resultados DEBEN incluir a todo jugador que tenga una calificación (Cal) o algún evento (tarjeta, gol, asistencia), aunque haya entrado de suplente (como Dimarco o Luiz Henrique)!
+        2. ASIGNACIÓN DE EQUIPO: Tabla izquierda => 'id_team': $homeId. Tabla derecha => 'id_team': $awayId.
+        3. CALIFICACIÓN (rating): Es el número en la columna 'Cal'. Si es un guion o está vacío, su rating es 0.
 
-        4. GOLES Y ASISTENCIAS (¡CRÍTICO: EL ORDEN CAMBIA SEGÚN EL EQUIPO!):
-           - Ve a la sección central '> Encuentros'.
-           - PARA EVENTOS DEL EQUIPO LOCAL (Alineados a la izquierda): Se leen como '[Minuto] [Jugador 1] [Jugador 2]'. El PRIMER nombre que lees es el GOL. El SEGUNDO nombre es la ASISTENCIA.
-           - PARA EVENTOS DEL EQUIPO VISITANTE (Alineados a la derecha): El diseño está espejado. El PRIMER nombre que lees (el que está más a la izquierda en ese bloque) es la ASISTENCIA. El SEGUNDO nombre es el GOL.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un balón después del minuto, ese jugador es el autor del GOL.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado amarillo, ese jugador tiene amarilla.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado rojo, ese jugador tiene roja.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado verde, ese jugador tiene gol de penal (gol).
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado blanco con un balón tachado, ese jugador tiene un penal errado y no cuenta como estadística.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y sale repetido en la misma línea, ese jugador tiene un gol errado y no cuenta para estadísticas.
+        4. GOLES Y ASISTENCIAS (¡EXTRAER SOLO DE LAS TABLAS LATERALES!):
+           - IGNORA el panel central '> Encuentros' para buscar goles y asistencias.
+           - Ve directamente a las columnas 'Gol' y 'Asis' en las TABLAS LATERALES de cada equipo.
+           - Columna 'Gol': Si ves un ícono de balón pequeño con  un número, es la cantidad de goles. Si ves un número, son esos goles. Si ves un guion (-), es 0.
+           - Columna 'Asis': Si ves un ícono de bota/zapato, es asistencia. Si ves un número (ej. 2), son esas asistencias. Si ves un guion (-), es 0.
 
-        5. TARJETAS: Rectángulo amarillo junto al nombre = 1 amarilla. Rectángulo rojo = 1 roja. Unjugador puede tener una tarjeta amarilla y luego una roja. En ese caso ambas estadísticas van anotadas (amarillas: 1, rojas: 1).
-           - Si un jugador tiene una tarjeta roja, NO asumas que tiene amarilla a menos que haya un rectángulo amarillo explícito junto a su nombre. Solo cuenta lo que ves, no asumas nada.
+        5. TARJETAS (¡EXTRAER SOLO DEL PANEL CENTRAL '> Encuentros'!):
+           - El panel central SOLO sirve para buscar tarjetas. Escanéalo línea por línea.
+           - EQUIPO LOCAL (Alineados a la izquierda): Busca un CUADRADO AMARILLO o ROJO al INICIO de la línea (antes del minuto). Ej: '[Cuadrado Amarillo] 58' F. Dimarco'. Dimarco suma 1 amarilla.
+           - EQUIPO VISITANTE (Alineados a la derecha): Busca un CUADRADO AMARILLO o ROJO al FINAL de la línea (después del minuto). Ej: 'Luiz Henrique 38' [Cuadrado Amarillo]'. Luiz Henrique suma 1 amarilla.
+           - Si un jugador tiene tarjeta roja, anótala (rojas: 1). NO asumas tarjeta amarilla previa a menos que también veas el cuadrado amarillo.
+           - Si un jugador tiene un icono con una cruz roja, es una lesión. Anótalo como 'is_injured': true. No confundir con un balón con cruz roja (gol anulado o gol en contra).
 
         6. REGLA DEL MVP (CÁLCULO MATEMÁTICO OBLIGATORIO):
-           - Al finalizar la extracción, revisa todos los 'rating' que encontraste en AMBOS equipos.
-           - Compara los números matemáticamente (Ejemplo: 7.8 es mayor que 7.2 y mayor que 7.5).
-           - ÚNICAMENTE el jugador con el número más alto absoluto recibe 'mvp': true. Absolutamente todos los demás reciben 'mvp': false.
+           - Revisa todos los 'rating' extraídos de AMBOS equipos.
+           - Encuentra matemáticamente el número más alto absoluto.
+           - ÚNICAMENTE el jugador con ese número más alto absoluto recibe 'mvp': true. Absolutamente todos los demás reciben 'mvp': false.
 
         FORMATO JSON REQUERIDO:
         {
