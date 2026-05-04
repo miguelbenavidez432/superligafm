@@ -71,22 +71,24 @@ class OpenAIOcrService implements OcrAnalyzerInterface
         $context
 
         REGLAS DE EXTRACCIÓN Y LÓGICA ESTRICTA (¡SÍGUELAS AL PIE DE LA LETRA!):
-        1. COBERTURA TOTAL OBLIGATORIA: Lee TODOS los nombres en las tablas izquierda y derecha. Búscalos en la 'BASE DE DATOS OFICIAL' y usa el 'id', 'player_name' y 'team_name' exactos. ¡Tus resultados DEBEN incluir a todo jugador que tenga una calificación (Cal) o algún evento (tarjeta, gol, asistencia), aunque haya entrado de suplente (como Dimarco o Luiz Henrique)!
+        1. COBERTURA TOTAL OBLIGATORIA: Lee TODOS los nombres en las tablas izquierda y derecha. Búscalos en la 'BASE DE DATOS OFICIAL' y usa el 'id', 'player_name' y 'team_name' exactos. ¡Tus resultados DEBEN incluir a todo jugador que tenga una calificación (Cal) o algún evento (tarjeta, gol, asistencia, lesión), aunque haya entrado de suplente (como Dimarco o Luiz Henrique)!
         2. ASIGNACIÓN DE EQUIPO: Tabla izquierda => 'id_team': $homeId. Tabla derecha => 'id_team': $awayId.
         3. CALIFICACIÓN (rating): Es el número en la columna 'Cal'. Si es un guion o está vacío, su rating es 0.
 
         4. GOLES Y ASISTENCIAS (¡EXTRAER SOLO DE LAS TABLAS LATERALES!):
            - IGNORA el panel central '> Encuentros' para buscar goles y asistencias.
            - Ve directamente a las columnas 'Gol' y 'Asis' en las TABLAS LATERALES de cada equipo.
-           - Columna 'Gol': Si ves un ícono de balón pequeño con  un número, es la cantidad de goles. Si ves un número, son esos goles. Si ves un guion (-), es 0.
-           - Columna 'Asis': Si ves un ícono de bota/zapato, es asistencia. Si ves un número (ej. 2), son esas asistencias. Si ves un guion (-), es 0.
+           - ¡CUIDADO CON LA DESALINEACIÓN VISUAL!: El orden es: Nombre -> Flecha/Minuto de Sustitución -> Gol -> Asis -> Cal.
+           - IGNORA COMPLETAMENTE las flechas de cambio (<- o ->) y los minutos (ej. 75'). NUNCA los leas como goles o asistencias.
+           - Columna 'Gol': Si ves SOLO un ícono de balón pequeño, es gol. Si ves un número (ej. 2), son esos goles. Si ves un guion (-), es 0.
+           - Columna 'Asis': Si ves SOLO un ícono de bota/zapato, es asistencia. Si ves un número (ej. 2), son esas asistencias. Si ves un guion (-), es 0.
 
-        5. TARJETAS (¡EXTRAER SOLO DEL PANEL CENTRAL '> Encuentros'!):
-           - El panel central SOLO sirve para buscar tarjetas. Escanéalo línea por línea.
-           - EQUIPO LOCAL (Alineados a la izquierda): Busca un CUADRADO AMARILLO o ROJO al INICIO de la línea (antes del minuto). Ej: '[Cuadrado Amarillo] 58' F. Dimarco'. Dimarco suma 1 amarilla.
-           - EQUIPO VISITANTE (Alineados a la derecha): Busca un CUADRADO AMARILLO o ROJO al FINAL de la línea (después del minuto). Ej: 'Luiz Henrique 38' [Cuadrado Amarillo]'. Luiz Henrique suma 1 amarilla.
-           - Si un jugador tiene tarjeta roja, anótala (rojas: 1). NO asumas tarjeta amarilla previa a menos que también veas el cuadrado amarillo.
-           - Si un jugador tiene un icono con una cruz roja, es una lesión. Anótalo como 'is_injured': true. No confundir con un balón con cruz roja (gol anulado o gol en contra).
+        5. TARJETAS Y LESIONES (¡EXTRAER SOLO DEL PANEL CENTRAL '> Encuentros'!):
+           - El panel central SOLO sirve para buscar tarjetas y lesiones. Escanéalo línea por línea.
+           - EQUIPO LOCAL (Alineados a la izquierda): Busca un CUADRADO AMARILLO o ROJO al INICIO de la línea (antes del minuto).
+           - EQUIPO VISITANTE (Alineados a la derecha): Busca un CUADRADO AMARILLO o ROJO al FINAL de la línea (después del minuto).
+           - Si un jugador tiene tarjeta roja, anótala (rojas: 1). NO asumas tarjeta amarilla previa a menos que veas el cuadrado amarillo.
+           - LESIONES: Si un jugador tiene un ícono con una CRUZ ROJA (o cruz blanca en círculo rojo) junto a su nombre en este panel, es una lesión. Anótalo como 'is_injured': true. No confundir con un balón con cruz roja (gol anulado).
 
         6. REGLA DEL MVP (CÁLCULO MATEMÁTICO OBLIGATORIO):
            - Revisa todos los 'rating' extraídos de AMBOS equipos.
