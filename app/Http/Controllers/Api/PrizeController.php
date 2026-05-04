@@ -9,12 +9,18 @@ use App\Http\Requests\StorePrizeRequest;
 use App\Http\Requests\UpdatePrizeRequest;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Contracts\PrizeAssignmentInterface;
 
 class PrizeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function __construct(
+        private PrizeAssignmentInterface $prizeAssignmentService
+    ) {}
+
     public function index()
     {
         $prizes = Prize::with(['tournament', 'team'])->get();
@@ -22,25 +28,51 @@ class PrizeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * FASE 1: CREAR PLANTILLA DE PREMIOS
+     * Ahora solo crea los registros base. Nada de sumar dinero aquí.
      */
     public function store(StorePrizeRequest $request)
     {
         $data = $request->validated();
 
-        foreach ($data['prizes'] as $prize) {
-            $createdPrize = Prize::create($prize);
-            $team = Team::find($prize['team_id']);
-            if ($team && $team->id_user) {
-                $user = User::find($team->id_user);
-                if($user){
-                    $user->profits += $prize['amount'];
-                    $user->save();
-                }
-            }
+        foreach ($data['prizes'] as $prizeData) {
+            Prize::create([
+                'tournament_id' => $prizeData['tournament_id'],
+                'position'      => $prizeData['position'],
+                'amount'        => $prizeData['amount'],
+                'description'   => $prizeData['description'] ?? "Premio por posición {$prizeData['position']}",
+                'team_id'       => null, // Empieza sin equipo asignado
+                'status'        => 'pendiente' // Estado inicial
+            ]);
         }
 
-        return response()->json(['message' => 'Premios creados correctamente'], 201);
+        return response()->json(['message' => 'Plantilla de premios creada correctamente'], 201);
+    }
+
+    /**
+     * FASE 2: ASIGNAR PREMIOS (NUEVO ENDPOINT)
+     * Recibe el torneo y qué equipo quedó en qué posición.
+     */
+    public function assign(Request $request)
+    {
+        $request->validate([
+            'tournament_id' => 'required|exists:tournaments,id',
+            // Esperamos un array clave-valor: [ "1" => 15, "2" => 8, "3" => 12 ] (posición => team_id)
+            'assignments'   => 'required|array',
+        ]);
+
+        try {
+            // Delegamos la lógica transaccional a nuestro servicio SOLID
+            $this->prizeAssignmentService->assignTournamentPrizes(
+                $request->tournament_id,
+                $request->assignments
+            );
+
+            return response()->json(['message' => 'Premios asignados y presupuestos actualizados correctamente'], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     /**

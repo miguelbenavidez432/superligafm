@@ -1,21 +1,27 @@
 <?php
-// filepath: app/Http/Controllers/Api/OcrController.php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Contracts\OcrAnalyzerInterface;
 use App\Services\MatchContextService;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\GeminiOcrService;
+use App\Services\OpenAIOcrService;
+use App\Services\OpenRouterOcrService;
 
 class OcrController extends Controller
 {
     // Inyección de dependencias (DIP)
     public function __construct(
         private OcrAnalyzerInterface $ocrAnalyzer,
-        private MatchContextService $contextService
-    ) {}
+        private MatchContextService $contextService,
+        private GeminiOcrService $geminiAnalyzer,
+        private OpenAIOcrService $openAiAnalyzer,
+        private OpenRouterOcrService $openRouterAnalyzer,
+    ) {
+    }
 
     public function processImage(Request $request)
     {
@@ -34,8 +40,13 @@ class OcrController extends Controller
                 $request->input('away_team_id')
             );
 
-            // El controlador no sabe que usa Gemini, solo usa la interfaz
-            $data = $this->ocrAnalyzer->analyzeMatchImage($request->file('image'), $context, $request->input('home_team_id'), $request->input('away_team_id'));
+            // Intentamos extraer la data usando nuestra nueva función con Fallback
+            $data = $this->executeOcrWithFallback(
+                $request->file('image'),
+                $context,
+                $request->input('home_team_id'),
+                $request->input('away_team_id')
+            );
 
             return response()->json([
                 'success' => true,
@@ -43,8 +54,8 @@ class OcrController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('OCR Error: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error('OCR Error Crítico: ' . $e->getMessage());
+            return response()->json(['error' => 'Nuestras IAs están saturadas. Intenta en un minuto.'], 500);
         }
     }
 
@@ -67,13 +78,21 @@ class OcrController extends Controller
 
         foreach ($request->file('images') as $image) {
             try {
-                $data = $this->ocrAnalyzer->analyzeMatchImage($image, $context, $request->input('home_team_id'), $request->input('away_team_id')    );
+                // Usamos la función de Fallback para múltiples imágenes
+                $data = $this->executeOcrWithFallback(
+                    $image,
+                    $context,
+                    $request->input('home_team_id'),
+                    $request->input('away_team_id')
+                );
+
                 $results[] = [
                     'filename' => $image->getClientOriginalName(),
                     'success' => true,
                     'data' => $data
                 ];
-            } catch (\Exception $e) {
+                // \Throwable nos protege de todo
+            } catch (\Throwable $e) {
                 $results[] = [
                     'filename' => $image->getClientOriginalName(),
                     'success' => false,
@@ -83,5 +102,19 @@ class OcrController extends Controller
         }
 
         return response()->json(['success' => true, 'results' => $results]);
+    }
+
+    private function executeOcrWithFallback($image, $context, $homeId, $awayId)
+    {
+        try {
+            // INTENTO 1: GEMINI
+            return $this->geminiAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
+        } catch (\Exception $e) {
+            // GEMINI FALLÓ (High Demand, etc). Lo anotamos en el log para saberlo nosotros.
+            Log::warning('Gemini falló: ' . $e->getMessage() . '. Pasando a OpenRouter...');
+
+            // INTENTO 2: OPENROUTER (El usuario no se entera del fallo de Gemini)
+            return $this->openAiAnalyzer->analyzeMatchImage($image, $context, $homeId, $awayId);
+        }
     }
 }
