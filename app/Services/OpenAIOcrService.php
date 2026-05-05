@@ -64,36 +64,46 @@ class OpenAIOcrService implements OcrAnalyzerInterface
         Eres un sistema avanzado de OCR experto en extraer datos estadísticos de imágenes deportivas del juego Football Manager.
 
         INFORMACIÓN DEL PARTIDO:
-        - EQUIPO LOCAL (ID: $homeId): Tabla lateral IZQUIERDA.
-        - EQUIPO VISITANTE (ID: $awayId): Tabla lateral DERECHA.
+        - EQUIPO LOCAL (ID: $homeId): Tabla lateral IZQUIERDA. Panel central alineado a la izquierda.
+        - EQUIPO VISITANTE (ID: $awayId): Tabla lateral DERECHA. Panel central alineado a la derecha.
 
         BASE DE DATOS OFICIAL:
         $context
 
-        REGLAS DE EXTRACCIÓN Y LÓGICA ESTRICTA (¡SÍGUELAS AL PIE DE LA LETRA!):
-        1. COBERTURA TOTAL OBLIGATORIA: Lee TODOS los nombres en las tablas izquierda y derecha. Búscalos en la 'BASE DE DATOS OFICIAL' y usa el 'id', 'player_name' y 'team_name' exactos. ¡Tus resultados DEBEN incluir a todo jugador que tenga una calificación (Cal) o algún evento (tarjeta, gol, asistencia, lesión), aunque haya entrado de suplente (como Dimarco o Luiz Henrique)!
-        2. ASIGNACIÓN DE EQUIPO: Tabla izquierda => 'id_team': $homeId. Tabla derecha => 'id_team': $awayId.
-        3. CALIFICACIÓN (rating): Es el número en la columna 'Cal'. Si es un guion o está vacío, su rating es 0.
+        SISTEMA DE EXTRACCIÓN DE 2 PASOS (¡EJECUTA EN ESTE ORDEN ESTRICTO!):
 
-        4. GOLES Y ASISTENCIAS (¡EXTRAER SOLO DE LAS TABLAS LATERALES!):
-           - IGNORA el panel central '> Encuentros' para buscar goles y asistencias.
-           - Ve directamente a las columnas 'Gol' y 'Asis' en las TABLAS LATERALES de cada equipo.
-           - ¡CUIDADO CON LA DESALINEACIÓN VISUAL!: El orden es: Nombre -> Flecha/Minuto de Sustitución -> Gol -> Asis -> Cal.
-           - IGNORA COMPLETAMENTE las flechas de cambio (<- o ->) y los minutos (ej. 75'). NUNCA los leas como goles o asistencias.
-           - Columna 'Gol': Si ves SOLO un ícono de balón pequeño, es gol. Si ves un número (ej. 2), son esos goles. Si ves un guion (-), es 0.
-           - Columna 'Asis': Si ves SOLO un ícono de bota/zapato, es asistencia. Si ves un número (ej. 2), son esas asistencias. Si ves un guion (-), es 0.
+        === PASO 1: LECTURA BASE (TABLAS LATERALES) ===
+        - OBJETIVO: Armar la lista de jugadores y sus calificaciones.
+        - Lee TODOS los nombres de las tablas laterales. Como están abreviados (Ej: 'Nico', 'G. Jesus'), emparéjalos lógicamente con los nombres completos de la 'BASE DE DATOS OFICIAL'.
+        - Extrae el 'rating' (Columna 'Cal'). Si es un guion, es 0.
+        - Haz un pre-conteo de goles (ícono de balón) y asistencias (ícono de bota) mirando las tablas.
+        - ¡PELIGRO VISUAL!: Al leer las tablas, IGNORA por completo las flechas de cambio (<- o ->) y los números a su lado (ej. 75'). NUNCA los cuentes como goles o asistencias.
 
-        5. TARJETAS Y LESIONES (¡EXTRAER SOLO DEL PANEL CENTRAL '> Encuentros'!):
-           - El panel central SOLO sirve para buscar tarjetas y lesiones. Escanéalo línea por línea.
-           - EQUIPO LOCAL (Alineados a la izquierda): Busca un CUADRADO AMARILLO o ROJO al INICIO de la línea (antes del minuto).
-           - EQUIPO VISITANTE (Alineados a la derecha): Busca un CUADRADO AMARILLO o ROJO al FINAL de la línea (después del minuto).
-           - Si un jugador tiene tarjeta roja, anótala (rojas: 1). NO asumas tarjeta amarilla previa a menos que veas el cuadrado amarillo.
-           - LESIONES: Si un jugador tiene un ícono con una CRUZ ROJA (o cruz blanca en círculo rojo) junto a su nombre en este panel, es una lesión. Anótalo como 'is_injured': true. No confundir con un balón con cruz roja (gol anulado).
+        === PASO 2: AUDITORÍA Y CORRECCIÓN (PANEL CENTRAL '> Encuentros') ===
+        - OBJETIVO: Confirmar los autores reales de los goles/asistencias y detectar tarjetas/lesiones. El panel central es la VERDAD ABSOLUTA si hay dudas con los nombres abreviados del Paso 1.
+        - Escanea el panel central línea por línea:
+           * EQUIPO LOCAL (Izquierda): El formato es \"[Minuto]' [GOL] [ASISTENCIA]\". Ej: '83' Nico González Matheus Nunes' -> Gol: Nico González, Asistencia: Matheus Nunes.
+           * EQUIPO VISITANTE (Derecha): El formato es \"[ASISTENCIA] [GOL] [Minuto]'\". Ej: 'E. N'Dicka F. Wirtz 51'' -> Gol: F. Wirtz, Asistencia: E. N'Dicka.
+        - CORRECCIÓN ESTRICTA: Si la tabla lateral decía que 'Matheus N.' tenía gol, pero el panel central dice claramente que el gol fue de 'Nico González', CORRIGE el dato y hazle caso al panel central.
+          - PARA EVENTOS DEL EQUIPO LOCAL (Alineados a la izquierda): Se leen como '[Minuto] [Jugador 1] [Jugador 2]'. El PRIMER nombre que lees es el GOL. El SEGUNDO nombre es la ASISTENCIA.
 
-        6. REGLA DEL MVP (CÁLCULO MATEMÁTICO OBLIGATORIO):
-           - Revisa todos los 'rating' extraídos de AMBOS equipos.
-           - Encuentra matemáticamente el número más alto absoluto.
-           - ÚNICAMENTE el jugador con ese número más alto absoluto recibe 'mvp': true. Absolutamente todos los demás reciben 'mvp': false.
+           - PARA EVENTOS DEL EQUIPO VISITANTE (Alineados a la derecha): El diseño está espejado. El PRIMER nombre que lees (el que está más a la izquierda en ese bloque) es la ASISTENCIA. El SEGUNDO nombre es el GOL.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un balón después del minuto, ese jugador es el autor del GOL.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado amarillo, ese jugador tiene amarilla.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado rojo, ese jugador tiene roja.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado verde, ese jugador tiene gol de penal (gol).
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado blanco con un balón tachado, ese jugador tiene un penal errado y no cuenta como estadística.
+           - Si solo hay un jugador listado en el evento (de cualquier equipo) y sale repetido en la misma línea, ese jugador tiene un gol errado y no cuenta para estadísticas.
+
+        === PASO 3: EVENTOS ESPECIALES ===
+        - TARJETAS: Cuadrado amarillo = 1 amarilla. Cuadrado rojo liso = 1 roja. (Alineado al inicio para Locales, al final para Visitantes).
+        - PENAL ERRADO: Cuadrado blanco con cruz roja sobre un balón (Ej: Gabriel Jesus). NO es tarjeta roja, NO es gol. Ignora esa línea para estadísticas ofensivas.
+        - LESIONES: Círculo rojo con cruz blanca = 'is_injured': true.
+
+        === PASO 4: CÁLCULO DEL MVP ===
+        - Revisa todos los 'rating' reales extraídos en el Paso 1 de AMBOS equipos.
+        - Encuentra matemáticamente cuál es el número más alto absoluto del partido.
+        - ÚNICAMENTE al jugador con ese número exacto asígnale 'mvp': true. A TODOS LOS DEMÁS asígnales 'mvp': false sin excepción.
 
         FORMATO JSON REQUERIDO:
         {
