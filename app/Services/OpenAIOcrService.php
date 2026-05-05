@@ -61,7 +61,7 @@ class OpenAIOcrService implements OcrAnalyzerInterface
     private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Eres un sistema avanzado de OCR experto en extraer datos estadísticos de imágenes deportivas del juego Football Manager.
+       Eres un sistema avanzado de OCR experto en extraer datos estadísticos de imágenes deportivas del juego Football Manager.
 
         INFORMACIÓN DEL PARTIDO:
         - EQUIPO LOCAL (ID: $homeId): Tabla lateral IZQUIERDA. Panel central alineado a la izquierda.
@@ -72,35 +72,29 @@ class OpenAIOcrService implements OcrAnalyzerInterface
 
         SISTEMA DE EXTRACCIÓN DE 2 PASOS (¡EJECUTA EN ESTE ORDEN ESTRICTO!):
 
-        === PASO 1: LECTURA BASE (TABLAS LATERALES) ===
-        - OBJETIVO: Armar la lista de jugadores y sus calificaciones.
-        - Lee TODOS los nombres de las tablas laterales DE ARRIBA HACIA ABAJO. ¡PROHIBIDO OMITIR LA ÚLTIMA FILA! Asegúrate de incluir a los jugadores al final de la lista (como Haaland, Diao, etc.).
-        - Emparéjalos lógicamente con los nombres de la 'BASE DE DATOS OFICIAL'.
+        === PASO 1: LECTURA BASE POR POSICIONES (TABLAS LATERALES) ===
+        - OBJETIVO: Armar la lista completa SIN OMITIR A NADIE y SIN INVENTAR JUGADORES.
+        - TÉCNICA DE ANCLAJE: Para no saltarte filas ni omitir el final de la tabla, lee guiándote por la sigla de posición (POR, DF, MC, DL, S1, S2, S3...). Extrae CADA fila que tenga una posición hasta llegar a la última.
+        - PROHIBIDO ALUCINAR: NO inventes jugadores que no estén explícitamente escritos en la imagen. Solo usa los nombres que ves y emparéjalos con la 'BASE DE DATOS OFICIAL'.
         - Extrae el 'rating' (Columna 'Cal'). Si es un guion, es 0.
-        - Haz un pre-conteo de goles (ícono de balón) y asistencias (ícono de bota) mirando las tablas.
-        - ¡PELIGRO VISUAL!: Al leer las tablas, IGNORA por completo las flechas de cambio (<- o ->) y los números a su lado (ej. 75', 46'). NUNCA los cuentes como goles o asistencias.
+        - ¡ELIMINACIÓN DE MINUTOS DE CAMBIO!: La IA confunde los minutos con goles. REGLA ESTRICTA: Cualquier número acompañado de una flecha (<- o ->) o de un apóstrofe de minutos (Ej: 46', 75') DEBE SER IGNORADO POR COMPLETO. No es un gol, no es asistencia. Bórralo de tu análisis.
+        - Haz un pre-conteo de goles (ícono de balón) y asistencias (ícono de bota) mirando solo lo que quedó en las tablas.
 
         === PASO 2: AUDITORÍA Y CORRECCIÓN (PANEL CENTRAL '> Encuentros') ===
         - OBJETIVO: Confirmar autores de goles/asistencias.
         - Escanea el panel central línea por línea.
            * EQUIPO LOCAL (Izquierda): El formato es \"[Minuto]' [GOL] [ASISTENCIA]\". (Ej: '14' Vinícius Júnior A. Hakimi' -> Gol: Vinícius, Asis: Hakimi). Si hay 1 solo nombre tras el minuto, es GOL suyo.
            * EQUIPO VISITANTE (Derecha): El formato es \"[ASISTENCIA] [GOL] [Minuto]'\". El GOL es el jugador pegado al minuto. La ASISTENCIA es el primer nombre. Si hay 1 solo nombre antes del minuto, es GOL.
-        - Si la tabla lateral y el panel central no coinciden, LA VERDAD ABSOLUTA LA TIENE LA TABLA.
-         - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un balón después del minuto, ese jugador es el autor del GOL.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado amarillo, ese jugador tiene amarilla.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado rojo, ese jugador tiene roja.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado verde, ese jugador tiene gol de penal (gol).
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y tiene un cuadrado blanco con un balón tachado, ese jugador tiene un penal errado y no cuenta como estadística.
-           - Si solo hay un jugador listado en el evento (de cualquier equipo) y sale repetido en la misma línea, ese jugador tiene un gol errado y no cuenta para estadísticas.
+        - Si la tabla lateral y el panel central no coinciden, LA VERDAD ABSOLUTA LA TIENE EL PANEL CENTRAL.
 
         === PASO 3: EVENTOS ESPECIALES (TARJETAS, LESIONES Y PENALES) ===
-        Escanea el panel central buscando estrictamente estos íconos junto a los nombres. SON CAMPOS INDEPENDIENTES:
-        - AMARILLAS: Cuadrado amarillo liso. Asigna 'amarillas': 1.
-        - ROJAS: Cuadrado rojo liso. Asigna 'rojas': 1.
-        - AMBAS TARJETAS: Si un jugador tiene un cuadrado amarillo en una línea y un cuadrado rojo en otra (Ej: Lewis-Skelly), DEBES asignar 'amarillas': 1 Y 'rojas': 1 en su JSON final. No sobrescribas un valor con el otro.
-        - GOL DE PENAL: Cuadrado verde con balón blanco (Ej: B. Saka al 41'). Esto es un GOL. Suma 1 a la estadística de 'goals'. NUNCA lo confundas con una lesión.
-        - PENAL ERRADO: Cuadrado blanco con cruz roja sobre un balón. NO es tarjeta, NO es gol. Ignóralo para las estadísticas.
-        - LESIONES: Ícono explícito de cruz médica roja/blanca. Solo en este caso asigna 'is_injured': true.
+        Escanea el panel central buscando estrictamente estos íconos junto a los nombres. SON CAMPOS INDEPENDIENTES Y ACUMULABLES:
+        - AMARILLAS: Cuadrado amarillo liso = 'amarillas': 1.
+        - ROJAS: Cuadrado rojo liso = 'rojas': 1.
+        - JUGADOR CON DOS TARJETAS DIFERENTES: Si el mismo jugador aparece en dos líneas distintas (Ej: una línea con amarillo al 45+1' y otra con rojo al 49'), TIENES QUE ASIGNAR 'amarillas': 1 Y ADEMÁS 'rojas': 1.
+        - GOL DE PENAL: Cuadrado verde con balón blanco. Esto es un GOL, suma 1 a 'goals'.
+        - PENAL ERRADO: Cuadrado blanco con cruz roja sobre un balón. NO es tarjeta, NO es gol.
+        - LESIONES: Ícono de cruz médica. Solo aquí asigna 'is_injured': true.
 
         === PASO 4: CÁLCULO DEL MVP ===
         - Revisa todos los 'rating' reales extraídos en el Paso 1 de AMBOS equipos.
