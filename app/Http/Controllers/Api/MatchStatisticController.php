@@ -78,7 +78,7 @@ class MatchStatisticController extends Controller
                 // 🔥 EL TRUCO MAGICO: Forzamos a que MySQL devuelva el ID del torneo
                 // que el usuario clickeó. Así sumamos todo en una sola fila y
                 // tu MatchStatisticResource no se rompe al intentar cargar la relación.
-                $selects[] = DB::raw("{$tournamentId} as tournament_id");
+                $selects[] = "{$tournamentId} as tournament_id";
 
             } else {
                 // Comportamiento normal si el torneo no tiene "format"
