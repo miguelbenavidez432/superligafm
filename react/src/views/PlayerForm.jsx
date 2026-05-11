@@ -357,7 +357,7 @@ export default function PlayerForm() {
                                     <StatCard icon="🟥" title="Rojas" value={stats.red_cards} colorClass="border-red-600" />
 
                                     <div className="col-span-1 sm:col-span-1 xl:col-span-3 grid grid-cols-1 gap-4">
-                                        <StatCard icon="🩹" title="Lesiones" value={stats.simple_injuries} colorClass="border-orange-500" />
+                                        <StatCard icon="🩹" title="Lesiones" value={stats.serious_injuries} colorClass="border-orange-500" />
                                     </div>
                                 </div>
                             )}

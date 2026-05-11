@@ -13,6 +13,7 @@ use App\Models\Tournament;
 use Illuminate\Http\Request;
 use App\Models\Season;
 use App\Services\MatchStatisticService;
+use Illuminate\Support\Facades\DB;
 
 class MatchStatisticController extends Controller
 {
@@ -62,9 +63,29 @@ class MatchStatisticController extends Controller
 
         // 4. Si se filtra por torneo específico
         if ($tournamentId) {
-            $selects[] = 'tournament_id';
-            $groups[] = 'tournament_id';
-            $query->where('tournament_id', $tournamentId);
+            $tournament = Tournament::find($tournamentId);
+
+            // Si el torneo tiene un "format" (ej. UCL), arrastramos el historial
+            if ($tournament && $tournament->format == 'UCL') {
+
+                // Buscamos todos los torneos hermanos (mismo formato y misma temporada)
+                $relatedTournamentIds = Tournament::where('format', $tournament->format)
+                    ->where('season_id', $tournament->season_id)
+                    ->pluck('id');
+
+                $query->whereIn('tournament_id', $relatedTournamentIds);
+
+                // 🔥 EL TRUCO MAGICO: Forzamos a que MySQL devuelva el ID del torneo
+                // que el usuario clickeó. Así sumamos todo en una sola fila y
+                // tu MatchStatisticResource no se rompe al intentar cargar la relación.
+                $selects[] = DB::raw("{$tournamentId} as tournament_id");
+
+            } else {
+                // Comportamiento normal si el torneo no tiene "format"
+                $selects[] = 'tournament_id';
+                $groups[] = 'tournament_id';
+                $query->where('tournament_id', $tournamentId);
+            }
         }
 
         // 5. LÓGICA DE TEMPORADAS (El seguro de vida)
@@ -210,7 +231,15 @@ class MatchStatisticController extends Controller
                 $query->where('season_id', $seasonId);
 
                 if ($tournamentId) {
-                    $query->where('id', $tournamentId);
+                    $tournament = Tournament::find($tournamentId);
+
+                    // Si tiene formato, filtramos por todos los de ese formato
+                    if ($tournament && $tournament->format == 'UCL') {
+                        $query->where('format', $tournament->format);
+                    } else {
+                        // Filtro clásico por ID
+                        $query->where('tournaments.id', $tournamentId);
+                    }
                 }
             })
             ->selectRaw('

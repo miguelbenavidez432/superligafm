@@ -13,9 +13,15 @@ use App\Http\Resources\TransferResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\WebhookServer\WebhookCall;
+use App\Services\BudgetManagerService;
 
 class TransferController extends Controller
 {
+    public function __construct(
+        private BudgetManagerService $budgetManager
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -183,19 +189,26 @@ class TransferController extends Controller
             return response()->json(['message' => 'Transferencia ya confirmada'], 403);
         }
 
-        $buyUser = User::find($transfer->buy_by);
-        $sellUser = User::find($transfer->sold_by);
         $transferValue = $transfer->budget;
 
-        if ($buyUser) {
-            $buyUser->profits -= $transferValue;
-            $buyUser->save();
+        try {
+            // 1. Cobramos al comprador
+            $this->budgetManager->deductFunds(
+                $transfer->buy_by,
+                (float) $transferValue,
+                "Pago por traspaso de jugador(es): {$transfer->transferred_players}",
+                $transfer->id_team_to
+            );
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        if ($sellUser) {
-            $sellUser->profits += $transferValue;
-            $sellUser->save();
-        }
+        // 2. Pagamos al vendedor
+        $this->budgetManager->addFunds(
+            $transfer->id_team_from,
+            (float) $transferValue,
+            "Venta de jugador(es): {$transfer->transferred_players}"
+        );
 
         $transferredPlayers = array_values(array_filter(array_map('trim', explode(',', $transfer->transferred_players))));
         foreach ($transferredPlayers as $player) {
@@ -216,8 +229,10 @@ class TransferController extends Controller
         $transfer->confirmed_by = $user->id;
         $transfer->save();
 
+        $buyUser = User::find($transfer->buy_by);
         $teamFrom = Team::find($transfer->id_team_from);
         $teamTo = Team::find($transfer->id_team_to);
+
         $buyerName = $buyUser?->name ?? 'usuario desconocido';
         $teamFromName = $teamFrom?->name ?? 'equipo origen';
         $teamToName = $teamTo?->name ?? 'equipo destino';

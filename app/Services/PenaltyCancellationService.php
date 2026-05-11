@@ -6,7 +6,7 @@ use App\Models\Team;
 use App\Models\Player;
 use App\Models\PenaltyCost;
 use App\Models\PenaltyCancellation;
-use App\Models\DiscordUser; // 🔥 Importante importar esto
+use App\Models\DiscordUser;
 use Log;
 use Spatie\WebhookServer\WebhookCall;
 use Exception;

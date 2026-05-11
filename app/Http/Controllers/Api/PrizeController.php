@@ -19,11 +19,12 @@ class PrizeController extends Controller
      */
     public function __construct(
         private PrizeAssignmentInterface $prizeAssignmentService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
-        $prizes = Prize::with(['tournament', 'team'])->get();
+        $prizes = Prize::all();
         return PrizeResource::collection($prizes);
     }
 
@@ -38,11 +39,8 @@ class PrizeController extends Controller
         foreach ($data['prizes'] as $prizeData) {
             Prize::create([
                 'tournament_id' => $prizeData['tournament_id'],
-                'position'      => $prizeData['position'],
-                'amount'        => $prizeData['amount'],
-                'description'   => $prizeData['description'] ?? "Premio por posición {$prizeData['position']}",
-                'team_id'       => null, // Empieza sin equipo asignado
-                'status'        => 'pendiente' // Estado inicial
+                'amount' => $prizeData['amount'],
+                'description' => $prizeData['description'] ?? "Premio por posición {$prizeData['position']}",
             ]);
         }
 
@@ -58,7 +56,7 @@ class PrizeController extends Controller
         $request->validate([
             'tournament_id' => 'required|exists:tournaments,id',
             // Esperamos un array clave-valor: [ "1" => 15, "2" => 8, "3" => 12 ] (posición => team_id)
-            'assignments'   => 'required|array',
+            'assignments' => 'required|array',
         ]);
 
         try {

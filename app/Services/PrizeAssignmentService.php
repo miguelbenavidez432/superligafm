@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Contracts\PrizeAssignmentInterface;
 use App\Models\Prize;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class PrizeAssignmentService implements PrizeAssignmentInterface
@@ -15,39 +16,45 @@ class PrizeAssignmentService implements PrizeAssignmentInterface
         private BudgetManagerService $budgetManager
     ) {}
 
-    public function assignTournamentPrizes(int $tournamentId, array $positionTeamMap): void
+    /**
+     * Asigna premios a múltiples equipos y procesa los pagos.
+     * * @param int $tournamentId
+     * @param array $assignments Formato: [ prizeId => [teamId1, teamId2] ]
+     */
+    public function assignTournamentPrizes(int $tournamentId, array $assignments): void
     {
-        DB::transaction(function () use ($tournamentId, $positionTeamMap) {
+        DB::transaction(function () use ($tournamentId, $assignments) {
 
-            // Obtenemos todos los premios pendientes para este torneo, indexados por 'position'
-            $prizes = Prize::where('tournament_id', $tournamentId)
-                           ->pending()
-                           ->get()
-                           ->keyBy('position');
+            foreach ($assignments as $prizeId => $teamIds) {
+                // Buscamos el premio en el catálogo
+                $prize = Prize::find($prizeId);
 
-            if ($prizes->isEmpty()) {
-                throw new Exception("No se encontraron premios pendientes configurados para el torneo #{$tournamentId}.");
-            }
-
-            foreach ($positionTeamMap as $position => $teamId) {
-                // Si el admin no configuró un premio para esta posición (ej. puesto 14), lo saltamos
-                if (!$prizes->has($position)) {
+                if (!$prize) {
+                    Log::warning("Se intentó asignar el premio ID {$prizeId}, pero no existe.");
                     continue;
                 }
 
-                $prize = $prizes->get($position);
+                // Medida de seguridad: Verificar que el premio corresponda al torneo que estamos cerrando
+                if ($prize->tournament_id != $tournamentId) {
+                    Log::warning("El premio ID {$prizeId} no pertenece al torneo {$tournamentId}.");
+                    continue;
+                }
 
-                // 1. Asignamos el premio al equipo y cambiamos el estado
-                $prize->update([
-                    'team_id' => $teamId,
-                    'status' => 'pagado'
-                ]);
+                // Iteramos sobre todos los equipos que ganaron este premio en particular
+                foreach ($teamIds as $teamId) {
 
-                // 2. Aplicamos el monto al presupuesto del equipo
-                // Delegamos esta responsabilidad al BudgetManagerService
-                $description = "Premio Torneo #{$tournamentId} - Posición {$position}: {$prize->description}";
-                $this->budgetManager->addFunds($teamId, $prize->amount, $description);
+                    // 1. Registramos la ganancia en la tabla intermedia (prize_team)
+                    // Usamos syncWithoutDetaching para no duplicar si el admin le da click 2 veces por error
+                    $prize->teams()->syncWithoutDetaching([
+                        $teamId => ['status' => 'Pagado']
+                    ]);
+
+                    // 2. Aplicamos el monto al presupuesto del equipo usando BudgetManagerService
+                    $description = "Premio Torneo #{$tournamentId}: {$prize->description}";
+                    $this->budgetManager->addFunds($teamId, $prize->amount, $description);
+                }
             }
+
         });
     }
 }
