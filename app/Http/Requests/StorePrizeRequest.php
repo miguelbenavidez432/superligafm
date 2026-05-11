@@ -24,11 +24,8 @@ class StorePrizeRequest extends FormRequest
         return [
             'prizes' => 'required|array',
             'prizes.*.tournament_id' => 'required|integer|exists:tournaments,id',
-            'prizes.*.team_id' => 'required|integer|exists:teams,id',
             'prizes.*.amount' => 'required|numeric',
-            'prizes.*.position' => 'required|string',
             'prizes.*.description' => 'nullable|string',
-            'prizes.*.status' => 'nullable|string'
         ];
     }
 }

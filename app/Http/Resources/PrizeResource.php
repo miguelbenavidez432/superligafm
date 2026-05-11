@@ -16,12 +16,9 @@ class PrizeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'tournament' => new TournamentResource($this->whenLoaded('tournament')),
-            'team' => new TeamResource($this->whenLoaded('team')),
+            'tournament' => $this->tournament->id,
             'amount' => $this->amount,
-            'position' => $this->position,
             'description' => $this->description,
-            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

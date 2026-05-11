@@ -11,11 +11,8 @@ class Prize extends Model
 
     protected $fillable = [
         'tournament_id',
-        'team_id',
         'amount',
-        'position',
         'description',
-        'status'
     ];
 
     public function tournament()
@@ -23,9 +20,9 @@ class Prize extends Model
         return $this->belongsTo(Tournament::class);
     }
 
-    public function team()
+    public function teams()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsToMany(Team::class)->withPivot('status')->withTimestamps();
     }
 
     public function scopePending($query)

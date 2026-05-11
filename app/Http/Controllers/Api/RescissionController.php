@@ -14,9 +14,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\WebhookServer\WebhookCall;
+use App\Services\BudgetManagerService;
 
 class RescissionController extends Controller
 {
+    public function __construct(
+        private BudgetManagerService $budgetManager
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -150,21 +156,30 @@ class RescissionController extends Controller
                 'status' => $playerData['status']
             ]);
 
-            $user = User::findOrFail($offer['created_by']);
             $userDiscord = DiscordUser::where('user_id', $teamTo->id_user)->first();
+            $buyer = User::findOrFail($offer['created_by']);
 
-            $user->profits -= $value;
-            $user->save();
+            try {
+                // Cobramos al que ejecuta la cláusula
+                $this->budgetManager->deductFunds(
+                    $buyer->id,
+                    (float) $value,
+                    "Ejecución de cláusula de rescisión: {$player->name}",
+                    $playerData['id_team']
+                );
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
 
             $mentionMessage = '';
             if ($userDiscord && $userDiscord->discord_id) {
                 $mentionMessage = '<@' . $userDiscord->discord_id . '> ';
             } else {
-                $mentionMessage .= $user->name;
+                $mentionMessage .= $buyer->name;
             }
 
-            $receiver->profits += $value;
-            $receiver->save();
+            // Pagamos al equipo que pierde al jugador
+            $this->budgetManager->addFunds($team->id, (float) $value, "Compensación por rescisión: {$player->name}");
 
             $offerId->confirmed = 'yes';
             $offerId->save();
@@ -254,12 +269,9 @@ class RescissionController extends Controller
                 'status' => 'registrado'
             ]);
 
-            // 5. Revertir presupuestos
-            $buyer->profits += $value;
-            $buyer->save();
-
-            $seller->profits -= $value;
-            $seller->save();
+            // 5. Revertir presupuestos usando el servicio
+            $this->budgetManager->addFunds($originalTeam->id, (float) $value, "Reversión (Admin): Devolución de pago por rescisión de {$player->name}");
+            $this->budgetManager->deductFunds($buyer->id, (float) $value, "Reversión (Admin): Reintegro de fondos por rescisión cancelada de {$player->name}");
 
             // 6. Revertir el estado de la oferta
             $offer->update([
