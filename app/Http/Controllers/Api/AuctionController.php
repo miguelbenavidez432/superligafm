@@ -19,9 +19,14 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Spatie\WebhookServer\WebhookCall;
+use App\Services\BudgetManagerService;
 
 class AuctionController extends Controller
 {
+    public function __construct(
+        private BudgetManagerService $budgetManager
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -101,7 +106,7 @@ class AuctionController extends Controller
                 // if ($userDiscord && !in_array($userDiscord->discord_id, $idDiscord)) $idDiscord[] = $userDiscord->discord_id;
             }
         } else {
-            if ($data['amount'] < $player->value/2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -247,7 +252,7 @@ class AuctionController extends Controller
         } else {
             $player = Player::find($data['id_player']);
 
-            if ($data['amount'] < $player->value/2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
+            if ($data['amount'] < $player->value / 2) { // agregar /2 para que sea la mitad del valor del jugador en las subastas extras
                 return response()->json([
                     'message' => 'La oferta inicial debe ser al menos igual al valor del jugador.'
                 ], 422);
@@ -356,8 +361,17 @@ class AuctionController extends Controller
             return response()->json(['error' => 'Datos del jugador o usuario no válidos.'], 400);
         }
 
-        $winner->profits -= $auction->amount;
-        $winner->save();
+        try {
+            // Usamos el servicio para cobrar y auditar
+            $this->budgetManager->deductFunds(
+                $winner->id,
+                (float) $auction->amount,
+                "Pago por subasta de jugador: {$player->name}",
+                $auction->id_team
+            );
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
 
         $player->id_team = $request->input('id_team');
         $player->status = 'bloqueado';

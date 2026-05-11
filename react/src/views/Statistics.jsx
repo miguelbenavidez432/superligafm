@@ -137,8 +137,8 @@ const Statistics = () => {
         .slice(0, 20);
 
     const topLesionados = [...statistics]
-        .filter(s => s.simple_injuries > 0)
-        .sort((a, b) => b.simple_injuries - a.simple_injuries)
+        .filter(s => s.serious_injuries > 0)
+        .sort((a, b) => b.serious_injuries - a.serious_injuries)
         .slice(0, 20);
 
     return (
@@ -223,7 +223,7 @@ const Statistics = () => {
                         title="Lesiones"
                         icon="🩹"
                         data={topLesionados}
-                        statKey="simple_injuries"
+                        statKey="serious_injuries"
                         colorClass="border-t-orange-500"
                         highlightColor="text-orange-400 drop-shadow-[0_0_5px_rgba(251,146,60,0.5)]"
                     />

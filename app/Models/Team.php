@@ -57,4 +57,9 @@ class Team extends Model
     {
         return $this->hasMany(Game::class, 'team_away_id');
     }
+
+    public function prizes()
+    {
+        return $this->belongsToMany(Prize::class)->withPivot('status')->withTimestamps();
+    }
 }

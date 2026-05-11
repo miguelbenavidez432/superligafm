@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Transaction;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Services\BudgetManagerService;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private BudgetManagerService $budgetManager
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -28,7 +35,7 @@ class UserController extends Controller
         $data = $request->validated();
         $data['password'] = bcrypt($data['password']);
         $user = User::create($data);
-        return response (new UserResource($user), 201);
+        return response(new UserResource($user), 201);
     }
 
     /**
@@ -45,9 +52,17 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $data = $request->Validated();
-        if(isset($data['password'])){
+
+        if (isset($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         }
+
+        // Si vienen profits en el request, el servicio se encarga de la auditoría
+        if (isset($data['profits'])) {
+            $this->budgetManager->adjustManualFunds($user, (float) $data['profits'], 'Ajuste manual desde el panel de administración');
+            unset($data['profits']);
+        }
+
         $user->update($data);
 
         return new UserResource($user);

@@ -52,8 +52,6 @@ import CreatePrizes from './views/CreatePrizes';
 import UploadMatch from './views/UploadMatch';
 import ReverseOffer from './views/ReverseOffer';
 import NotFound from './views/NotFound';
-
-// Auth
 import Login from './views/Login';
 import Signup from './views/Signup';
 
