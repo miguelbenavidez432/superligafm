@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\DiscordUserController;
 use App\Http\Controllers\Api\MatchStatisticController;
 use App\Http\Controllers\Api\RuleController;
 use App\Http\Controllers\Api\PenaltyCancellationController;
+use App\Http\Controllers\Api\AgentController;
 
 
 /*
@@ -54,7 +55,7 @@ Route::get('/traspasos/public', [TransferController::class, 'index']);
 Route::get('/clausula_rescision/public', [RescissionController::class, 'index']);
 Route::get('/auctions/public', [AuctionController::class, 'index']);
 Route::get('/bets/public', [BetController::class, 'index']);
-
+Route::get('/chatbot/models', [ChatbotController::class, 'listModels']);
 
 
 // ============================================
@@ -120,7 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/chat', [ChatbotController::class, 'handleMessage']);
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
-    Route::get('/chatbot/models', [ChatbotController::class, 'listModels']);
+    Route::get('/agent/scout/{playerId}', [AgentController::class, 'getScoutReport']);
 
     Route::apiResource('prizes', PrizeController::class);
     Route::post('/prizes/assign', [PrizeController::class, 'assign']);
