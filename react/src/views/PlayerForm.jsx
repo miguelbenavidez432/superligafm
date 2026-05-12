@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios";
+import AgentReport from '../components/AgentReport';
 
 // --- MINI COMPONENTE REUTILIZABLE (SRP) ---
 const StatCard = ({ icon, title, value, colorClass }) => (
@@ -164,7 +165,7 @@ export default function PlayerForm() {
         <div className="max-w-7xl mx-auto p-4 animate-fade-in-down pb-12">
 
             {/* ENCABEZADO */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-700 gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-700 gap-4">
                 <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
                     <span className="bg-blue-600/20 text-blue-400 p-2 rounded-xl border border-blue-500/30 shadow-inner">👤</span>
                     {players.id ? `Perfil: ${players.name}` : 'Nuevo Jugador'}
@@ -187,6 +188,11 @@ export default function PlayerForm() {
                         </div>
                     </div>
                 )}
+            </div>
+
+            <div className="mb-4">
+                {/* ¡Aquí entra la magia! */}
+                <AgentReport  playerId={players.id} playerName={players.name} />
             </div>
 
             {errors && (
@@ -250,7 +256,7 @@ export default function PlayerForm() {
                                             className="w-full p-2.5 border border-slate-600 rounded-lg bg-slate-800/80 text-white font-bold text-center disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-500 outline-none shadow-inner" />
                                     </div>
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 text-center text-green-400">Valor ($)</label>
+                                        <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-center text-green-400">Valor ($)</label>
                                         <input value={players.value} onChange={e => setPlayers({ ...players, value: parseInt(e.target.value) })} type="number" disabled={!isAdmin}
                                             className="w-full p-2.5 border border-green-800/50 rounded-lg bg-slate-800/80 text-green-300 font-bold text-center disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-green-500 outline-none shadow-inner" />
                                     </div>
@@ -258,12 +264,12 @@ export default function PlayerForm() {
 
                                 <div className="grid grid-cols-3 gap-3">
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 text-center text-blue-300">CA</label>
+                                        <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-center text-blue-300">CA</label>
                                         <input value={players.ca} onChange={e => setPlayers({ ...players, ca: parseInt(e.target.value) })} type="number" disabled={!isAdmin}
                                             className="w-full p-2.5 border border-blue-800/50 rounded-lg bg-blue-900/20 text-blue-300 font-bold text-center disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-500 outline-none shadow-inner" />
                                     </div>
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 text-center text-purple-300">PA</label>
+                                        <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-center text-purple-300">PA</label>
                                         <input value={players.pa} onChange={e => setPlayers({ ...players, pa: parseInt(e.target.value) })} type="number" disabled={!isAdmin}
                                             className="w-full p-2.5 border border-purple-800/50 rounded-lg bg-purple-900/20 text-purple-300 font-bold text-center disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-purple-500 outline-none shadow-inner" />
                                     </div>
