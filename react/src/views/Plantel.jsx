@@ -84,18 +84,21 @@ export default function Plantel() {
             return;
         }
 
-        const actionText = actionType === 'register' ? 'REGISTRAR' : actionType === 'release' ? 'LIBERAR' : 'BLOQUEAR';
+        const actionText =
+            actionType === 'register' ? 'REGISTRAR' :
+                actionType === 'release' ? 'LIBERAR' :
+                    actionType === 'block' ? 'BLOQUEAR' : 'PONER EN TRANSFERIBLES';
 
         if (!window.confirm(`¿Estás seguro de que deseas ${actionText} a estos ${selectedPlayers.length} jugadores?`)) return;
+
         setLoading(true);
         setErrors();
+
         try {
             const totalBlockedPlayersCount = blockedPlayersCount + selectedPlayers.length;
-
             const arrayDeIds = selectedPlayers.map(p => p.id);
             let message = '';
 
-            // 1. BLOQUEAR
             if (actionType === 'block') {
                 if (totalBlockedPlayersCount > 4) {
                     setErrors('El límite máximo de jugadores bloqueados en el equipo es de 4.');
@@ -103,28 +106,25 @@ export default function Plantel() {
                     return;
                 }
                 const response = await axiosClient.post(`/bloquear_jugador`, { ids: arrayDeIds });
-                // Actualizamos estado y presupuesto
                 setPlayers(players.map(p => selectedPlayers.find(sp => sp.id === p.id) ? { ...p, status: 'bloqueado' } : p));
                 user.profits = response.data.nuevo_presupuesto;
                 message = response.data.message;
-            }
-
-            // 2. REGISTRAR
-            else if (actionType === 'register') {
+            } else if (actionType === 'register') {
                 const response = await axiosClient.post(`/registrar_jugador`, { ids: arrayDeIds });
                 setPlayers(players.map(p => selectedPlayers.find(sp => sp.id === p.id) ? { ...p, status: 'registrado' } : p));
                 message = response.data.message;
-            }
-
-            // 3. LIBERAR
-            else if (actionType === 'release') {
+            } else if (actionType === 'release') {
                 const response = await axiosClient.post(`/liberar_jugador`, { ids: arrayDeIds });
-                // OJO AQUÍ: En lugar de cambiar el status, los quitamos del arreglo local porque ya no son de nuestro equipo
                 setPlayers(players.filter(p => !selectedPlayers.find(sp => sp.id === p.id)));
+                message = response.data.message;
+            } else if (actionType === 'transfer') {
+                // NUEVO BLOQUE: Transferibles
+                const response = await axiosClient.post(`/transferir_jugador`, { ids: arrayDeIds });
+                setPlayers(players.map(p => selectedPlayers.find(sp => sp.id === p.id) ? { ...p, status: 'transferible' } : p));
                 message = response.data.message;
             }
 
-            setNotification(`Jugadores procesados correctamente.`);
+            setNotification(message || `Jugadores procesados correctamente.`);
             setSelectedPlayers([]);
         } catch (error) {
             setErrors(`Error en la acción masiva: ${error.message}`);
@@ -258,17 +258,27 @@ export default function Plantel() {
                             >
                                 ✅ REGISTRAR SELECCIONADOS
                             </button>
+
+                            {/* NUEVO BOTÓN PARA TRANSFERIBLES */}
+                            <button
+                                onClick={() => handleBulkAction('transfer')}
+                                disabled={selectedPlayers.length === 0}
+                                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
+                            >
+                                📑 PONER EN TRANSFERIBLES
+                            </button>
+
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => handleBulkAction('release')}
-                                    disabled={selectedPlayers.length === 0 || user.rol !== 'Admin'}
+                                    disabled={selectedPlayers.length === 0}
                                     className="flex-1 bg-yellow-600 hover:bg-yellow-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
                                 >
                                     🔓 LIBERAR
                                 </button>
                                 <button
                                     onClick={() => handleBulkAction('block')}
-                                    disabled={selectedPlayers.length === 0 || user.rol !== 'Admin'}
+                                    disabled={selectedPlayers.length === 0}
                                     className="flex-1 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
                                 >
                                     🚫 BLOQUEAR

@@ -5,6 +5,7 @@ use App\Models\Player;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Services\PlayerActions\PlayerMassiveActionInterface;
 
 class PlayerManagementService
 {
@@ -173,6 +174,72 @@ class PlayerManagementService
             return [
                 'success' => true,
                 'message' => $players->count() . ' jugadores registrados exitosamente.'
+            ];
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function processMassiveAction(User $manager, array $playerIds, PlayerMassiveActionInterface $action)
+    {
+        DB::beginTransaction();
+
+        try {
+            $players = Player::whereIn('id', $playerIds)->get();
+
+            if ($players->isEmpty()) {
+                throw new Exception('No se encontraron los jugadores.');
+            }
+
+            $team = $players->first()->team;
+
+            if (!$team || $team->id_user !== $manager->id) {
+                throw new Exception('No tienes permisos para gestionar estos jugadores.');
+            }
+
+            // Delegamos la lógica específica a la clase inyectada
+            $result = $action->execute($manager, $players, $team);
+
+            DB::commit();
+
+            return $result;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function transferPlayersMassively(User $manager, array $playerIds)
+    {
+        DB::beginTransaction();
+
+        try {
+            $players = Player::whereIn('id', $playerIds)->get();
+
+            if ($players->isEmpty()) {
+                throw new Exception('No se encontraron los jugadores.');
+            }
+
+            foreach ($players as $jugador) {
+                // Validación de propiedad del equipo
+                $team = $jugador->team;
+                if (!$team || $team->id_user !== $manager->id) {
+                    throw new Exception("No tienes permisos para transferir a {$jugador->name}.");
+                }
+
+                // Cambiamos el estado
+                $jugador->status = 'transferible';
+                $jugador->save();
+            }
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => $players->count() . ' jugadores puestos en lista de transferibles.'
             ];
 
         } catch (Exception $e) {
