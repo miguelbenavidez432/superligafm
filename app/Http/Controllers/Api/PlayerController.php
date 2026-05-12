@@ -322,4 +322,25 @@ class PlayerController extends Controller
         ]);
     }
 
+    public function transferMassively(Request $request, PlayerManagementService $service)
+    {
+        // Validamos que envíen un arreglo de IDs válido
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:players,id'
+        ]);
+
+        try {
+            $result = $service->transferPlayersMassively($request->user(), $request->input('ids'));
+
+            return response()->json($result, 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
 }
