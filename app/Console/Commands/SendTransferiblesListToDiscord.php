@@ -117,16 +117,17 @@ class SendTransferiblesListToDiscord extends Command
     private function enviarDiscord($mensaje)
     {
         $webhookUrl = env('DISCORD_WEBHOOK_TRANSFERIBLES');
-        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
         if (!$webhookUrl) {
             throw new \Exception('No está configurada la variable DISCORD_WEBHOOK_TRANSFERIBLES');
         }
 
-        WebhookCall::create()
-            ->url($webhookUrl)
-            ->payload(['content' => $mensaje])
-            ->useSecret($webhookSecret)
-            ->dispatch();
+        $response = \Illuminate\Support\Facades\Http::post($webhookUrl, [
+            'content' => $mensaje,
+        ]);
+
+        if (!$response->successful()) {
+            throw new \Exception('Discord respondió con error: ' . $response->status() . ' - ' . $response->body());
+        }
     }
 }
