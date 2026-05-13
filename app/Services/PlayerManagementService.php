@@ -230,6 +230,10 @@ class PlayerManagementService
                     throw new Exception("No tienes permisos para transferir a {$jugador->name}.");
                 }
 
+                if($jugador->status === 'bloqueado') {
+                    throw new Exception("El jugador {$jugador->name} ya está en lista de bloqueados.");
+                }
+
                 // Cambiamos el estado
                 $jugador->status = 'transferible';
                 $jugador->save();
