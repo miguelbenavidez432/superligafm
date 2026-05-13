@@ -257,14 +257,11 @@ class PlayerController extends Controller
 
         $teams = Team::whereNull('division')->orWhere('division', '')->get();
 
-        \Log::info('Equipos encontrados:', $teams->toArray());
-
         if ($teams->isEmpty()) {
             return response()->json(['error' => 'No se encontraron equipos con división vacía o nula'], 404);
         }
 
         $teamIds = $teams->pluck('id')->toArray();
-        \Log::info('IDs de equipos:', $teamIds);
 
         $players = Player::whereIn('id_team', $teamIds)
             ->with('team')

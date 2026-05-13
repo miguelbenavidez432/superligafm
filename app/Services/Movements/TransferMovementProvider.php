@@ -24,7 +24,7 @@ class TransferMovementProvider implements MovementProviderInterface
         // coincidan con los métodos en tu modelo Transfer.
         $transfers = Transfer::with(['teamFrom', 'teamTo', 'season'])
             ->where('transferred_players', 'like', '%' . $player->name . '%')
-            ->where('confirmed', 'si') // Tu confirmación específica
+            ->where('confirmed', 'si')
             ->get();
 
         // 3. Mapeamos al DTO estándar
