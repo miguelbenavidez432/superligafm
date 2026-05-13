@@ -3,34 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Models\Player;
-use App\Models\Team;
-use App\Models\DiscordUser;
 use Illuminate\Console\Command;
-use Spatie\WebhookServer\WebhookCall;
+use Illuminate\Support\Facades\Http;
 
 class SendTransferiblesListToDiscord extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'transferibles:send-discord';
-
-    /**
-     * The command description.
-     *
-     * @var string
-     */
     protected $description = 'Envía la lista de todos los jugadores transferibles a un canal de Discord cada 3 horas';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         try {
-            // 1. Obtener todos los jugadores transferibles con sus equipos
             $transferibles = Player::where('status', 'transferible')
                 ->with('team')
                 ->orderBy('value', 'desc')
@@ -41,69 +24,89 @@ class SendTransferiblesListToDiscord extends Command
                 return;
             }
 
-            // 2. Agrupar por equipo para mejor presentación
             $jugadoresPorEquipo = $transferibles->groupBy(function ($jugador) {
                 return $jugador->team?->name ?? 'Sin equipo';
             });
 
-            // 3. Construir el mensaje para Discord
-            $mensaje = $this->construirMensajeDiscord($jugadoresPorEquipo, $transferibles->count());
+            $ahora = now('America/Argentina/Buenos_Aires')->format('d/m/Y H:i');
 
-            // 4. Enviar el webhook a Discord
-            $this->enviarDiscord($mensaje);
+            // Mensaje de cabecera
+            $cabecera  = "📋 **LISTA DE JUGADORES TRANSFERIBLES** 📋\n";
+            $cabecera .= "🕐 Actualizado: **{$ahora}**\n";
+            $cabecera .= "👥 Total: **{$transferibles->count()} jugadores**";
+            $this->enviarDiscord($cabecera);
+
+            $posicion = 1;
+
+            // Un mensaje por equipo
+            foreach ($jugadoresPorEquipo as $equipo => $jugadores) {
+                $bloque  = "⚽ **{$equipo}**\n";
+                $bloque .= "```\n";
+
+                foreach ($jugadores as $jugador) {
+                    $valor  = $this->formatearValor($jugador->value);
+                    $nombre = substr($jugador->name, 0, 25);
+                    $linea  = sprintf(
+                        "%2d. %-25s | CA:%2d | PA:%2d | $%s\n",
+                        $posicion++,
+                        $nombre,
+                        $jugador->ca,
+                        $jugador->pa,
+                        $valor
+                    );
+                    $bloque .= $linea;
+                }
+
+                $bloque .= "```";
+
+                // Si el bloque supera 2000 chars, lo parte en chunks
+                foreach ($this->chunkMensaje($bloque) as $chunk) {
+                    $this->enviarDiscord($chunk);
+                }
+            }
 
             $this->info('✅ Lista de transferibles enviada a Discord correctamente');
             $this->info('Total de jugadores: ' . $transferibles->count());
 
         } catch (\Exception $e) {
-            $this->error('❌ Error al enviar la lista de transferibles: ' . $e->getMessage());
+            $this->error('❌ Error: ' . $e->getMessage());
         }
     }
 
     /**
-     * Construir el mensaje formateado para Discord
+     * Divide un mensaje largo en partes de máx 1900 chars (margen de seguridad)
      */
-    private function construirMensajeDiscord($jugadoresPorEquipo, $totalJugadores)
+    private function chunkMensaje(string $mensaje, int $limite = 1900): array
     {
-        $ahora = now('America/Argentina/Buenos_Aires')->format('d/m/Y H:i');
-
-        $mensaje = "📋 **LISTA DE JUGADORES TRANSFERIBLES** 📋\n";
-        $mensaje .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        $mensaje .= "🕐 Actualizado: **{$ahora}**\n";
-        $mensaje .= "👥 Total: **{$totalJugadores} jugadores**\n\n";
-
-        $posicion = 1;
-
-        foreach ($jugadoresPorEquipo as $equipo => $jugadores) {
-            $mensaje .= "⚽ **{$equipo}** ({$jugadores->count()} jugadores)\n";
-            $mensaje .= "```\n";
-
-            foreach ($jugadores as $jugador) {
-                $valor = $this->formatearValor($jugador->value);
-                // Limitar largo de línea
-                $nombre = substr($jugador->name, 0, 25);
-                $mensaje .= sprintf(
-                    "%2d. %-25s | CA:%2d | PA:%2d | $%s\n",
-                    $posicion++,
-                    $nombre,
-                    $jugador->ca,
-                    $jugador->pa,
-                    $valor
-                );
-            }
-            $mensaje .= "```\n";
+        if (mb_strlen($mensaje) <= $limite) {
+            return [$mensaje];
         }
 
-        $mensaje .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        $mensaje .= "💡 **Reaccioná o comenta si te interesa alguno**\n";
+        $chunks = [];
+        $lineas = explode("\n", $mensaje);
+        $actual = '';
 
-        return $mensaje;
+        foreach ($lineas as $linea) {
+            $candidato = $actual === '' ? $linea : $actual . "\n" . $linea;
+
+            if (mb_strlen($candidato) > $limite) {
+                if ($actual !== '') {
+                    $chunks[] = $actual . "\n```"; // cerrar bloque de código
+                }
+                $actual = "```\n" . $linea;        // abrir nuevo bloque
+            } else {
+                $actual = $candidato;
+            }
+        }
+
+        if ($actual !== '') {
+            $chunks[] = $actual;
+        }
+
+        return $chunks;
     }
 
-    /**
-     * Formatear valor del jugador (para mejor legibilidad)
-     */
-    private function formatearValor($valor)
+    private function formatearValor($valor): string
     {
         if ($valor >= 1000000) {
             return number_format($valor / 1000000, 1, ',', '.') . 'M';
@@ -111,22 +114,23 @@ class SendTransferiblesListToDiscord extends Command
         return number_format($valor, 0, ',', '.');
     }
 
-    /**
-     * Enviar el webhook a Discord
-     */
-    private function enviarDiscord($mensaje)
+    private function enviarDiscord(string $mensaje): void
     {
         $webhookUrl = env('DISCORD_WEBHOOK_TRANSFERIBLES');
-        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
         if (!$webhookUrl) {
             throw new \Exception('No está configurada la variable DISCORD_WEBHOOK_TRANSFERIBLES');
         }
 
-        WebhookCall::create()
-            ->url($webhookUrl)
-            ->payload(['content' => $mensaje])
-            ->useSecret($webhookSecret)
-            ->dispatch();
+        $response = Http::post($webhookUrl, [
+            'content' => $mensaje,
+        ]);
+
+        if (!$response->successful()) {
+            throw new \Exception('Discord error: ' . $response->status() . ' - ' . $response->body());
+        }
+
+        // Pequeña pausa para no saturar el webhook de Discord
+        usleep(500000); // 0.5 segundos entre mensajes
     }
 }

@@ -271,14 +271,14 @@ export default function Plantel() {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => handleBulkAction('release')}
-                                    disabled={selectedPlayers.length === 0}
+                                    disabled={selectedPlayers.length === 0 || user.rol !== 'Admin'}
                                     className="flex-1 bg-yellow-600 hover:bg-yellow-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
                                 >
                                     🔓 LIBERAR
                                 </button>
                                 <button
                                     onClick={() => handleBulkAction('block')}
-                                    disabled={selectedPlayers.length === 0}
+                                    disabled={selectedPlayers.length === 0 || user.rol !== 'Admin'}
                                     className="flex-1 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md transition-all disabled:opacity-50"
                                 >
                                     🚫 BLOQUEAR

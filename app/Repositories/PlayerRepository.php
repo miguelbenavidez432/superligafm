@@ -36,7 +36,6 @@ class PlayerRepository
 
         // 2. Guardamos en el log la consulta SQL y los DATOS en formato JSON
         Log::info('--- QUERY RENTABLES ---');
-        Log::info('SQL: ' . $query->toSql());
         Log::info('DATA JSON: ' . $profitablePlayers->toJson());
 
         return $profitablePlayers;

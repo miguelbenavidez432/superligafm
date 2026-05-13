@@ -13,6 +13,7 @@ class RescissionMovementProvider implements MovementProviderInterface
     {
         $rescissions = Rescission::with(['team', 'toTeam', 'season',])
             ->where('id_player', $playerId)
+            ->where('confirmed', 'yes')
             ->get();
 
         return $rescissions->map(function ($rescission) {

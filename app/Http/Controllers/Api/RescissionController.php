@@ -89,6 +89,7 @@ class RescissionController extends Controller
 
         if ($existingOffersForPlayer == 0) {
             $team->cdr += 1;
+            $team->save();
         }
 
         $webhookUrl = env('DISCORD_WEBHOOK_URL');
@@ -153,7 +154,7 @@ class RescissionController extends Controller
 
             $player->update([
                 'id_team' => $playerData['id_team'],
-                'status' => $playerData['status']
+                'status' => 'bloqueado'
             ]);
 
             $userDiscord = DiscordUser::where('user_id', $teamTo->id_user)->first();
@@ -182,8 +183,6 @@ class RescissionController extends Controller
             $this->budgetManager->addFunds($team->id, (float) $value, "Compensación por rescisión: {$player->name}");
 
             $offerId->confirmed = 'yes';
-            $offerId->save();
-
             $offerId->active = 'no';
             $offerId->save();
 

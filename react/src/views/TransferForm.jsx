@@ -23,7 +23,6 @@ export default function TransferForm() {
         created_by: '',
         buy_by: '',
         sold_by: '',
-        id_season: 60,
     })
     const { user, setNotification } = useStateContext();
     const navigate = useNavigate();

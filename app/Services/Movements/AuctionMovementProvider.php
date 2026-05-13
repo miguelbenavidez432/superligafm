@@ -13,6 +13,7 @@ class AuctionMovementProvider implements MovementProviderInterface
     {
         $auctions = Auction::with(['team', 'toTeam', 'season',])
             ->where('id_player', $playerId)
+            ->where('confirmed', 'yes')
             ->get();
 
         return $auctions->map(function ($auction) {

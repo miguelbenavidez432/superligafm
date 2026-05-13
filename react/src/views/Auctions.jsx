@@ -65,7 +65,6 @@ const Auctions = () => {
                 auctioned_by: user.id,
                 created_by: user.id,
                 active: 'yes',
-                id_season: 60
             });
 
             if (player.id_team) {

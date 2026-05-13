@@ -190,19 +190,9 @@ class StandingController extends Controller
 
                 if ($hasChanges) {
                     $existingStanding->update($calculatedData);
-                    \Log::info('Standing actualizado:', [
-                        'tournament_id' => $tournamentId,
-                        'team_id' => $teamId,
-                        'changes' => $calculatedData
-                    ]);
                 }
             } else {
                 Standing::create($calculatedData);
-                \Log::info('Standing creado:', [
-                    'tournament_id' => $tournamentId,
-                    'team_id' => $teamId,
-                    'data' => $calculatedData
-                ]);
             }
         }
     }
