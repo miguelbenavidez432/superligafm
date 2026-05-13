@@ -31,6 +31,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('transferibles:send-discord')
             ->everyThreeHours()
             ->timezone('America/Argentina/Buenos_Aires');
+
+        $schedule->call(function () {
+            \Log::info('CRON TEST OK: ' . now());
+        })->everyMinute();
+
     }
 
     /**
@@ -38,7 +43,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
