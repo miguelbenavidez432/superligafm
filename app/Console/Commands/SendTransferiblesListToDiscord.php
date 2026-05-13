@@ -68,14 +68,13 @@ class SendTransferiblesListToDiscord extends Command
         $ahora = now('America/Argentina/Buenos_Aires')->format('d/m/Y H:i');
 
         $mensaje = "📋 **LISTA DE JUGADORES TRANSFERIBLES** 📋\n";
-        $mensaje .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
         $mensaje .= "🕐 Actualizado: **{$ahora}**\n";
         $mensaje .= "👥 Total: **{$totalJugadores} jugadores**\n\n";
 
         $posicion = 1;
 
         foreach ($jugadoresPorEquipo as $equipo => $jugadores) {
-            $mensaje .= "⚽ **{$equipo}** ({$jugadores->count()} jugadores)\n";
+            $mensaje .= "⚽ **{$equipo}**\n";
             $mensaje .= "```\n";
 
             foreach ($jugadores as $jugador) {
@@ -93,9 +92,6 @@ class SendTransferiblesListToDiscord extends Command
             }
             $mensaje .= "```\n";
         }
-
-        $mensaje .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        $mensaje .= "💡 **Reaccioná o comenta si te interesa alguno**\n";
 
         return $mensaje;
     }
