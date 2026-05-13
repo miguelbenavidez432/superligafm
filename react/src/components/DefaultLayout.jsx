@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
-
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import { useEffect, useState } from "react";
@@ -143,6 +142,7 @@ export default function DefaultLayout() {
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/subastas'>Lista de Subastas</Link>
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/clausula_rescision'>Claúsula de rescisión</Link>
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/transfer'>Transferencia</Link>
+                            <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/chatbot'>El bot del Mercado</Link>
                             {user.rol === 'Admin' && (
                                 <>
                                     <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-emerald-400 hover:text-emerald-300 transition-colors" to='/app/ofertas-confirmadas'>Traspasos confirmados</Link>

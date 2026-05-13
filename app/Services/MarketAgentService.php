@@ -27,15 +27,15 @@ class MarketAgentService
         Log::info('-------------------------------');
         // 🔥 FIN DEL LOG 🔥
 
-        $systemPrompt = "Eres el Asesor de Mercado de la Superliga. Tu objetivo es recomendar fichajes a los managers
-        basándote en datos reales de los jugadores. Analiza los siguientes DATOS y responde a la consulta del usuario de forma
-        clara y directa. Además de recomendar jugadores específicos, da consejos generales sobre qué jugador sería ideal para fichar según esta información
-        pero sin tomar siempre el jugador con mayor sea o mejor promedio de estadísticas.
+        $systemPrompt = "Eres el Asesor de Mercado de la Superliga. Tu objetivo es recomendar fichajes a los managers basándote en datos reales de los jugadores.
+        Analiza los siguientes DATOS y responde a la consulta del usuario de forma clara y directa. Además de recomendar jugadores específicos,
+        da consejos generales sobre qué jugador sería ideal para fichar según esta información pero sin tomar siempre el jugador con mayor ca o mejor promedio de estadísticas.
         USAR SOLO ESTOS DATOS PARA RESPONDER, NO INVENTES NADA:
         Filtros del usuario: " . json_encode($filters) . ".
         DATOS:
         Transferibles: {$profitable->toJson()}. Top CA: " . json_encode($opportunities['top_ca']) . ". Top Rating: " . json_encode($opportunities['top_rating']) . ".
-        Sujetate a estos datos para aconsejar fichajes. Basate en ellos para responder a la consulta del usuario: {$userMessage} y dar una respuesta coherente y útil. Si no hay jugadores que cumplan los filtros, sugiere qué tipo de jugador sería ideal fichar según los datos que tienes.";
+        Sujetate a estos datos para aconsejar fichajes. Basate en ellos para responder a la consulta del usuario: {$userMessage} y dar una respuesta coherente y útil. Si no hay jugadores que cumplan los filtros, sugiere qué tipo de jugador sería ideal fichar según los datos que tienes.
+        Al final alista los jugadores con su valoración para los de mejor estadísticas y los de mejor CA, pero sin repetir jugadores. ";
 
         // 2. Preparar payload OpenRouter (formato OpenAI)
         $messages = [['role' => 'system', 'content' => $systemPrompt]];

@@ -210,19 +210,34 @@ class TransferController extends Controller
             "Venta de jugador(es): {$transfer->transferred_players}"
         );
 
-        $transferredPlayers = array_values(array_filter(array_map('trim', explode(',', $transfer->transferred_players))));
-        foreach ($transferredPlayers as $player) {
-            $playersToMove = Player::where('name', $player)
-                ->whereIn('id_team', [$transfer->id_team_from, $transfer->id_team_to])
-                ->get();
+        $transferredPlayersNames = array_map('trim', explode(',', $transfer->transferred_players));
+        $transferredPlayersNames = array_filter($transferredPlayersNames);
 
-            foreach ($playersToMove as $playerToMove) {
-                if ($playerToMove->id_team == $transfer->id_team_from) {
-                    $playerToMove->id_team = $transfer->id_team_to;
-                    $playerToMove->status = 'bloqueado';
-                    $playerToMove->save();
-                }
+        // 2. Buscamos a TODOS los jugadores que estén en el equipo A o en el equipo B
+        $playersToMove = Player::whereIn('name', $transferredPlayersNames)
+            ->whereIn('id_team', [$transfer->id_team_from, $transfer->id_team_to])
+            ->get();
+
+        // 3. Los cruzamos de equipo
+        foreach ($playersToMove as $playerToMove) {
+
+            // Si estaba en el equipo de origen, va al destino
+            if ($playerToMove->id_team == $transfer->id_team_from) {
+                $playerToMove->id_team = $transfer->id_team_to;
             }
+            // Si estaba en el equipo de destino, va al origen (Trueque)
+            elseif ($playerToMove->id_team == $transfer->id_team_to) {
+                $playerToMove->id_team = $transfer->id_team_from;
+            }
+
+            // A ambos se les aplica el mismo estado al ser transferidos
+            $playerToMove->status = 'bloqueado';
+            $playerToMove->save();
+        }
+
+        // Opcional para depuración
+        if ($playersToMove->count() !== count($transferredPlayersNames)) {
+            \Illuminate\Support\Facades\Log::warning("Atención en Trueque: Se intentaron transferir " . count($transferredPlayersNames) . " jugadores, pero solo se encontraron y movieron " . $playersToMove->count());
         }
 
         $transfer->confirmed = 'si';
@@ -240,18 +255,18 @@ class TransferController extends Controller
         $webhookUrl = env('DISCORD_WEBHOOK_TRANSFERS');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
 
-        if (count($transferredPlayers) == 1) {
+        if (count($playersToMove) == 1) {
             WebhookCall::create()
                 ->url($webhookUrl)
                 ->payload([
                     'content' => "----TRATO HECHO----
-                    \nLa oferta por {$transferredPlayers[0]} ha sido confirmada
+                    \nLa oferta por {$playersToMove[0]} ha sido confirmada
                     \nEl traspaso de {$teamFromName} a {$teamToName} ha sido completado
                     \nEl monto de la transferencia es de $ {$transfer->budget} y pagado por {$buyerName}\n",
                 ])
                 ->useSecret($webhookSecret)
                 ->dispatch();
-        } else if (count($transferredPlayers) > 1) {
+        } else if (count($playersToMove) > 1) {
             WebhookCall::create()
                 ->url($webhookUrl)
                 ->payload([
@@ -269,13 +284,10 @@ class TransferController extends Controller
 
     public function getPendingTransfers(Request $request)
     {
-        $user = auth()->user(); // auth()->user() siempre estará definido si el middleware lo permite
+        $user = auth()->user();
         $seasonId = $request->query('season');
 
         try {
-            // Depurar el usuario
-            \Log::info('Usuario autenticado: ', ['id' => $user->id]);
-
             $transfers = Transfer::where('confirmed', 'no')
                 ->where(function ($query) use ($user) {
                     $query->where('buy_by', $user->id)
@@ -288,11 +300,8 @@ class TransferController extends Controller
                 })
                 ->get();
 
-            \Log::info('Transferencias pendientes: ', ['transfers' => $transfers]);
-
             return response()->json($transfers);
         } catch (\Exception $e) {
-            \Log::error('Error en getPendingTransfers: ' . $e->getMessage());
             return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
     }
@@ -318,7 +327,6 @@ class TransferController extends Controller
 
             return response()->json($transfers);
         } catch (\Exception $e) {
-            \Log::error('Error en getConfirmedTransfers: ' . $e->getMessage());
             return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
     }

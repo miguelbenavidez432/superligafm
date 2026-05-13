@@ -30,7 +30,7 @@ class StoreTransferRequest extends FormRequest
             'created_by' => 'integer|required',
             'buy_by' => 'integer|required',
             'sold_by' => 'integer|required',
-            'id_season' => 'integer|nullable',
+            'id_season' => 'required|integer|nullable',
         ];
     }
 
