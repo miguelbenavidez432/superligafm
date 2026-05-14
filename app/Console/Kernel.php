@@ -14,17 +14,17 @@ class Kernel extends ConsoleKernel
     {
         // Ejecutar todos los días a las 01:00 AM
         $schedule->command('rescissions:confirm')
-            ->dailyAt('01:15')
+            ->dailyAt('01:01')
             ->timezone('America/Argentina/Buenos_Aires');
 
         // Ejecutar todos los días a las 10:00 AM
         $schedule->command('rescissions:confirm')
-            ->dailyAt('10:15')
+            ->dailyAt('10:01')
             ->timezone('America/Argentina/Buenos_Aires');
 
         // Ejecutar todos los días a las 18:00 (6:00 PM)
         $schedule->command('rescissions:confirm')
-            ->dailyAt('18:15')
+            ->dailyAt('18:01')
             ->timezone('America/Argentina/Buenos_Aires');
 
         // Enviar lista de transferibles cada 3 horas a Discord
