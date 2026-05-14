@@ -216,7 +216,7 @@ const OffersList = () => {
 
                                                         {/* BOTÓN ELIMINAR (Solo Admin) */}
                                                         {/* Asegúrate de que tu context devuelva el rol del usuario para validar aquí. Ej: user?.role === 'Admin' */}
-                                                        {user && (user.role === 'Admin' || user.role === 'admin') && (
+                                                        {user && (user.rol === 'Admin' || user.rol === 'admin') && (
                                                             <button
                                                                 onClick={() => handleDelete(oferta.id)}
                                                                 className="bg-red-900/30 text-red-400 border border-red-800/50 p-1.5 rounded-lg hover:bg-red-600 hover:text-white transition-all"

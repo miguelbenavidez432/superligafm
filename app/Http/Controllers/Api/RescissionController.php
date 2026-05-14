@@ -81,16 +81,16 @@ class RescissionController extends Controller
             return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
         }
 
-        $offer = Rescission::create($data);
-
-        $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
-        $player = Player::where('id', $data['id_player'])->get()
-            ->first();
+        $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])
+            ->where('id_season', $data['id_season'])
+            ->count();
 
         if ($existingOffersForPlayer == 0) {
             $team->cdr += 1;
             $team->save();
         }
+
+        $offer = Rescission::create($data);
 
         $webhookUrl = env('DISCORD_WEBHOOK_URL');
         $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
@@ -98,7 +98,7 @@ class RescissionController extends Controller
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
-                'content' => "{$mentionMessage}\nLa oferta por {$player->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
+                'content' => "{$mentionMessage}\nLa oferta por {$offer->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();
@@ -184,7 +184,16 @@ class RescissionController extends Controller
 
             $offerId->confirmed = 'yes';
             $offerId->active = 'no';
-            $offerId->save();
+            if (!$offerId->save()) {
+                throw new \Exception('Error al guardar la oferta.');
+            } else {
+                Rescission::where('id_player', $offerId->id_player)
+                    ->where('id_season', $offerId->id_season)
+                    ->where('id', '!=', $offerId->id)
+                    ->update([
+                        'active' => 'no'
+                    ]);
+            }
 
             $webhookUrl = env('DISCORD_WEBHOOK_URL');
             $webhookSecret = env('DISCORD_WEBHOOK_SECRET');

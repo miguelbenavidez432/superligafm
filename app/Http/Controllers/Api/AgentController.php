@@ -20,7 +20,7 @@ class AgentController extends Controller
         try {
             // 1. Buscamos al jugador
             $player = Player::findOrFail($playerId);
-
+            $request->merge(['scout' => true]); // Aseguramos que el player_id esté en la request para el MatchStatisticController
             // 2. Obtenemos sus estadísticas (Reutilizando tu lógica existente)
             $statsResponse = $statController->getPlayerStats($playerId, $request);
             $playerStats = $statsResponse->getData()->data;

@@ -260,7 +260,7 @@ class TransferController extends Controller
                 ->url($webhookUrl)
                 ->payload([
                     'content' => "----TRATO HECHO----
-                    \nLa oferta por {$playersToMove[0]} ha sido confirmada
+                    \nLa oferta por {$playersToMove[0]->name} ha sido confirmada
                     \nEl traspaso de {$teamFromName} a {$teamToName} ha sido completado
                     \nEl monto de la transferencia es de $ {$transfer->budget} y pagado por {$buyerName}\n",
                 ])
