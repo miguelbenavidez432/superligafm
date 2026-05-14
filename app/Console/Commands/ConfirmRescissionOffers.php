@@ -64,6 +64,10 @@ class ConfirmRescissionOffers extends Command
 
         // 3. Por cada jugador, obtener la oferta con el total_value más alto
         foreach ($offers as $playerId => $playerOffers) {
+            // Obtener el nombre del jugador
+            $player = Player::find($playerId);
+            $playerName = $player ? $player->name : "Jugador {$playerId}";
+
             // Ordenar ofertas por total_value descendente
             $sortedOffers = $playerOffers->sortByDesc('total_value')->values();
 
@@ -71,16 +75,17 @@ class ConfirmRescissionOffers extends Command
             $highestValue = $highestOffer->total_value;
 
             // ✅ Verificar si hay empate: contar cuántas ofertas tienen el mismo valor más alto
-            $offersWithHighestValue = $sortedOffers->filter(function($offer) use ($highestValue) {
+            $offersWithHighestValue = $sortedOffers->filter(function ($offer) use ($highestValue) {
                 return $offer->total_value == $highestValue;
             });
 
             if ($offersWithHighestValue->count() > 1) {
-                // ❌ HAY EMPATE - No confirmar nada
-                $this->warn("⚠ Jugador ID {$playerId} - EMPATE detectado con {$offersWithHighestValue->count()} ofertas de \${$highestValue}. NO se confirmará.");
+                // HAY EMPATE - No confirmar nada
+                $this->warn("Jugador {$playerName} - EMPATE detectado con {$offersWithHighestValue->count()} ofertas de \${$highestValue}. NO se confirmará.");
 
-                Log::warning("Empate en ofertas de rescisión para jugador {$playerId}", [
+                Log::warning("Empate en ofertas de rescisión para jugador {$playerName}", [
                     'player_id' => $playerId,
+                    'player_name' => $playerName,
                     'highest_value' => $highestValue,
                     'tied_offers_count' => $offersWithHighestValue->count(),
                     'offer_ids' => $offersWithHighestValue->pluck('id')->toArray()
@@ -90,16 +95,16 @@ class ConfirmRescissionOffers extends Command
                 continue; // Saltar este jugador
             }
 
-            // ✅ NO HAY EMPATE - Confirmar la oferta más alta
-            $this->info("Procesando jugador ID {$playerId} - Oferta más alta: \${$highestOffer->total_value} (ID: {$highestOffer->id})");
+            // NO HAY EMPATE - Confirmar la oferta más alta
+            $this->info("Procesando {$playerName} - Oferta más alta: \${$highestOffer->total_value} (ID: {$highestOffer->id})");
 
             try {
                 // 4. Confirmar la oferta usando la misma lógica de confirmOffer()
                 $this->confirmOffer($highestOffer);
                 $confirmedCount++;
-                $this->info("✓ Oferta {$highestOffer->id} confirmada exitosamente.");
+                $this->info(" Oferta {$highestOffer->id} confirmada exitosamente.");
             } catch (\Exception $e) {
-                $this->error("✗ Error al confirmar oferta {$highestOffer->id}: {$e->getMessage()}");
+                $this->error(" Error al confirmar oferta {$highestOffer->id}: {$e->getMessage()}");
                 Log::error("Error al confirmar rescisión {$highestOffer->id}: {$e->getMessage()}");
             }
         }
@@ -154,7 +159,16 @@ class ConfirmRescissionOffers extends Command
 
         $offer->confirmed = 'yes';
         $offer->active = 'no';
-        $offer->save();
+        if (!$offer->save()) {
+            throw new \Exception('Error al guardar la oferta.');
+        } else {
+            Rescission::where('id_player', $offer->id_player)
+                ->where('id_season', $offer->id_season)
+                ->where('id', '!=', $offer->id)
+                ->update([
+                    'active' => 'no'
+                ]);
+        }
 
         try {
             $userDiscord = DiscordUser::where('user_id', $buyerTeam->id_user)->first();
@@ -168,9 +182,8 @@ class ConfirmRescissionOffers extends Command
             WebhookCall::create()
                 ->url($webhookUrl)
                 ->payload([
-                    'content' => "🔔 **HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada** 🔔
-                \n✅
-                \n📍 El jugador será transferido de **{$team->name}** a **{$buyerTeam->name}**.
+                    'content' => "**HERE WE GO (? \nLa oferta por {$player->name} ha sido confirmada**
+                \nEl jugador será transferido de **{$team->name}** a **{$buyerTeam->name}**.
                 \n💰 Monto de la transferencia: **\$ {$value}** pagado por {$mentionMessage}.\n",
                 ])
                 ->useSecret($webhookSecret)
