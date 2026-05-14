@@ -81,10 +81,9 @@ class RescissionController extends Controller
             return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
         }
 
-
-        $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])->count();
-        $player = Player::where('id', $data['id_player'])->get()
-            ->first();
+        $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])
+            ->where('id_season', $data['id_season'])
+            ->count();
 
         if ($existingOffersForPlayer == 0) {
             $team->cdr += 1;
@@ -99,7 +98,7 @@ class RescissionController extends Controller
         WebhookCall::create()
             ->url($webhookUrl)
             ->payload([
-                'content' => "{$mentionMessage}\nLa oferta por {$player->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
+                'content' => "{$mentionMessage}\nLa oferta por {$offer->name} ha sido realizada. El jugador pertenece al equipo {$team->name}.\n",
             ])
             ->useSecret($webhookSecret)
             ->dispatch();
