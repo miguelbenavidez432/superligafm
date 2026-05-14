@@ -42,9 +42,9 @@ class BudgetManagerService
         $user = User::findOrFail($userId);
         $previousBalance = (float) $user->profits;
 
-        if ($previousBalance < $amount) {
-            throw new Exception("Fondos insuficientes. El usuario {$user->name} tiene \${$previousBalance} y necesita \${$amount}.");
-        }
+        // if ($previousBalance < $amount) {
+        //     throw new Exception("Fondos insuficientes. El usuario {$user->name} tiene \${$previousBalance} y necesita \${$amount}.");
+        // }
 
         // Descontamos del saldo global del usuario
         $user->decrement('profits', $amount);
