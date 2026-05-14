@@ -221,11 +221,13 @@ class MatchStatisticController extends Controller
     {
         $seasonId = $request->query('season_id');
         $tournamentId = $request->query('tournament_id');
+        $scout = $request->query('scout', false);
 
         if (!$seasonId) {
             $seasonId = Season::where('active', 'yes')->value('id') ?? Season::latest()->value('id');
         }
 
+        if($scout) $seasonId = $seasonId - 1; // Para el scout, siempre mostramos la temporada pasada (histórica)
         $stats = MatchStatistic::where('player_id', $playerId)
             ->whereHas('tournament', function ($query) use ($seasonId, $tournamentId) {
                 $query->where('season_id', $seasonId);
