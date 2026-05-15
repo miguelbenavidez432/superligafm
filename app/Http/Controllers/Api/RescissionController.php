@@ -77,13 +77,13 @@ class RescissionController extends Controller
             }
         }
 
-        if ($team->cdr >= 4) {
-            return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
-        }
-
         $existingOffersForPlayer = Rescission::where('id_player', $data['id_player'])
             ->where('id_season', $data['id_season'])
             ->count();
+
+        if ($team->cdr >= 4 && $existingOffersForPlayer == 0) {
+            return response()->json(['error' => 'El equipo ya tiene ofertas por 4 jugadores. No se pueden realizar más ofertas.'], 403);
+        }
 
         if ($existingOffersForPlayer == 0) {
             $team->cdr += 1;
