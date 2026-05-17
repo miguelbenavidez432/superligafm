@@ -17,8 +17,8 @@ class FixtureService
             $query->where('id_season', $filters['id_season']);
         }
 
-        if (isset($filters['tournament_id']) && $filters['tournament_id'] !== '') {
-            $query->where('tournament_id', $filters['tournament_id']);
+        if (isset($filters['id_tournament']) && $filters['id_tournament'] !== '') {
+            $query->where('id_tournament', $filters['id_tournament']);
         }
 
         if (isset($filters['matchday']) && $filters['matchday'] !== '') {
