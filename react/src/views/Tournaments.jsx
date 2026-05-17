@@ -9,9 +9,9 @@ export default function TournamentForm() {
         name: '',
         start_date: '',
         end_date: '',
-        season_id: '',
         format: '',
         type: '',
+        season_id: '',
     });
     const [seasons, setSeasons] = useState([]);
     const [loading, setLoading] = useState(false);
