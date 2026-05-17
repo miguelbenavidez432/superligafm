@@ -64,10 +64,18 @@ export default function FixturesList() {
             const response = await axiosClient.get('/tournaments', {
                 params: { id_season: seasonId }
             });
-            const fetchedTournaments = response.data.data || [];
+
+            let fetchedTournaments = response.data.data || [];
+
+            // 1. FILTRAR DUPLICADOS: Usamos un Map para quedarnos solo con un torneo por cada 'id'
+            fetchedTournaments = Array.from(new Map(fetchedTournaments.map(t => [t.id, t])).values());
+
+            // 2. ORDENAR: Los ordenamos por ID de forma ascendente (orden en que fueron creados)
+            fetchedTournaments.sort((a, b) => a.id - b.id);
+
             setTournaments(fetchedTournaments);
 
-            // Auto-seleccionar el primer torneo de la lista si hay disponibles
+            // Auto-seleccionar el primer torneo de la lista limpia si hay disponibles
             if (fetchedTournaments.length > 0) {
                 setSelectedTournament(fetchedTournaments[0].id);
             } else {
@@ -193,11 +201,10 @@ export default function FixturesList() {
                             <button
                                 key={tournament.id}
                                 onClick={() => setSelectedTournament(tournament.id)}
-                                className={`px-6 sm:px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${
-                                    selectedTournament === tournament.id
-                                    ? 'bg-indigo-600 text-white shadow-md'
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                                }`}
+                                className={`px-6 sm:px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${selectedTournament === tournament.id
+                                        ? 'bg-indigo-600 text-white shadow-md'
+                                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                                    }`}
                             >
                                 {tournament.name}
                             </button>
@@ -243,7 +250,7 @@ export default function FixturesList() {
                                             {fixture.home_team?.name || 'Equipo Local'}
                                         </span>
                                         <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-600 font-bold text-slate-400 flex-shrink-0">
-                                            {fixture.home_team?.name?.substring(0,3).toUpperCase() || 'LOC'}
+                                            {fixture.home_team?.name?.substring(0, 3).toUpperCase() || 'LOC'}
                                         </div>
                                     </div>
 
@@ -255,7 +262,7 @@ export default function FixturesList() {
                                     {/* EQUIPO VISITANTE */}
                                     <div className="flex-1 flex justify-start items-center gap-4 text-left">
                                         <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-600 font-bold text-slate-400 flex-shrink-0">
-                                            {fixture.away_team?.name?.substring(0,3).toUpperCase() || 'VIS'}
+                                            {fixture.away_team?.name?.substring(0, 3).toUpperCase() || 'VIS'}
                                         </div>
                                         <span className="font-bold text-white text-sm md:text-base hidden sm:block">
                                             {fixture.away_team?.name || 'Equipo Visitante'}
