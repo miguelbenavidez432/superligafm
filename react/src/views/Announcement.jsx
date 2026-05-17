@@ -206,7 +206,8 @@ export default function Announcement() {
                 navigate('/app/offers');
             })
             .catch(error => {
-                setErrors(error.response?.data.errors || "Error al enviar la cláusula de rescisión.");
+                console.log(error);
+                setErrors(error.response?.data.error );
             });
     };
 
@@ -215,6 +216,12 @@ export default function Announcement() {
             <div className="flex justify-between items-center mb-4">
                 <div className="text-lg font-bold bg-slate-900 text-white rounded-md p-2">Ejecución de cláusula de rescisión</div>
             </div>
+            {/* ALERTAS */}
+            {errors && (
+                <div className="alert bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 shadow-lg">
+                    <p>{typeof errors === 'string' ? errors : Object.keys(errors).map(k => errors[k][0]).join(' ')}</p>
+                </div>
+            )}
             {playerId && (
                 <div className="mb-4 p-4 bg-blue-800 border-l-4 border-blue-400 rounded-md">
                     <p className="text-white font-medium">

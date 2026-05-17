@@ -118,7 +118,9 @@ export default function AuctionsList() {
 
                                                 {/* Jugador */}
                                                 <td className="px-6 py-4 text-sm font-medium text-white">
-                                                    {auction.player ? auction.player.name : <span className="text-slate-500 italic">Desconocido</span>}
+                                                    <Link to={`/app/players/${auction.player?.id}`}>
+                                                        {auction.player ? auction.player.name : <span className="text-slate-500 italic">Desconocido</span>}
+                                                    </Link>
                                                 </td>
 
                                                 {/* Valor Actual */}

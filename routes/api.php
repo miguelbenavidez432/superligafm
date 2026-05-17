@@ -24,7 +24,7 @@ use App\Http\Controllers\Api\MatchStatisticController;
 use App\Http\Controllers\Api\RuleController;
 use App\Http\Controllers\Api\PenaltyCancellationController;
 use App\Http\Controllers\Api\AgentController;
-
+use App\Http\Controllers\Api\FixtureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -143,5 +143,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/penalty-costs', [PenaltyCancellationController::class, 'indexCosts']);
     Route::post('/penalty-cancellations', [PenaltyCancellationController::class, 'store']);
+
+    Route::apiResource('/fixtures', FixtureController::class);
 
 });

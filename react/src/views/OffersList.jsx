@@ -33,7 +33,7 @@ const OffersList = () => {
             setOffers(response.data.data);
         } catch (error) {
             console.error('Error al obtener ofertas:', error);
-            setNotification({ message: 'Error al cargar las ofertas', type: 'error' });
+            setNotification("Error al cargar las ofertas"); //
         } finally {
             setLoading(false);
         }
@@ -52,18 +52,18 @@ const OffersList = () => {
     };
 
     // Función para que los Admins eliminen la oferta
-    const handleDelete = async (id) => {
+    const handleDelete = async (oferta) => {
         if (!window.confirm("¿Estás seguro de que deseas eliminar esta oferta de rescisión? Esta acción no se puede deshacer.")) {
             return;
         }
 
         try {
-            await axiosClient.delete(`/clausula_rescision/${id}`);
-            setNotification({ message: "Oferta eliminada correctamente", type: "success" });
-            getOffers(); // Recargamos la tabla
+            await axiosClient.delete(`/clausula_rescision/${oferta.id}`);
+            setNotification("Oferta eliminada correctamente");
+            getOffers();
         } catch (error) {
             console.error("Error al eliminar:", error);
-            setNotification({ message: "Error al eliminar la oferta", type: "error" });
+            setNotification("Error al eliminar la oferta");
         }
     };
 
@@ -218,7 +218,7 @@ const OffersList = () => {
                                                         {/* Asegúrate de que tu context devuelva el rol del usuario para validar aquí. Ej: user?.role === 'Admin' */}
                                                         {user && (user.rol === 'Admin' || user.rol === 'admin') && (
                                                             <button
-                                                                onClick={() => handleDelete(oferta.id)}
+                                                                onClick={() => handleDelete(oferta)}
                                                                 className="bg-red-900/30 text-red-400 border border-red-800/50 p-1.5 rounded-lg hover:bg-red-600 hover:text-white transition-all"
                                                                 title="Eliminar Oferta"
                                                             >
