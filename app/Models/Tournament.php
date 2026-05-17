@@ -13,9 +13,10 @@ class Tournament extends Model
         'name',
         'start_date',
         'end_date',
-        'season_id',
         'format',
         'type',
+        'season_id',
+        'status',
     ];
 
     public function matches()
@@ -35,5 +36,10 @@ class Tournament extends Model
     public function matchStatistics()
     {
         return $this->hasMany(MatchStatistic::class);
+    }
+
+    public function fixtures()
+    {
+        return $this->hasMany(Fixture::class);
     }
 }

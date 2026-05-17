@@ -25,9 +25,9 @@ class StoreTournamentRequest extends FormRequest
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'season_id' => 'required|exists:seasons,id',
             'format' => 'required|string|max:50',
             'type' => 'required|in:league,cup',
+            'season_id' => 'required|exists:seasons,id',
         ];
     }
 }

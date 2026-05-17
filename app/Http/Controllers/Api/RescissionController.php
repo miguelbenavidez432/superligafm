@@ -28,13 +28,18 @@ class RescissionController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Rescission::with(['player', 'season', 'team', 'user'])
+                    ->orderBy("id", "desc");
+
+        if ($request->filled('season')) {
+            $query->where('id_season', $request->query('season'));
+        }
 
         if ($request->query("all") == 'true') {
-            return RescissionResource::collection(Rescission::with(['player', 'season', 'team', 'user'])->orderBy("id", "desc")->get());
+            return RescissionResource::collection($query->get());
         } else {
-            return RescissionResource::collection(Rescission::with(['player', 'season', 'team', 'user'])->orderBy("id", "desc")->paginate(200));
+            return RescissionResource::collection($query->paginate(200));
         }
-        ;
     }
 
     /**
