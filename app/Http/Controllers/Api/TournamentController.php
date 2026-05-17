@@ -18,7 +18,7 @@ class TournamentController extends Controller
     {
         // 1. Armamos la consulta base (DRY)
         $query = Tournament::with(['matches', 'season', 'standings'])
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'asc');
 
         // 2. Lógica del Filtro de Estado Dinámico
         // Leemos qué estado pide el frontend. Si no pide nada, por defecto es 'active'.
