@@ -48,7 +48,7 @@ class ScoutAgentService
             ])
             ->post($openRouterUrl, [
                 // Usamos un modelo de Llama 3 (Meta) que es excelente, rapidísimo y tiene tier gratuito en OpenRouter
-                'model' => 'qwen/qwen3.5-plus-20260420',
+                'model' => 'deepseek/deepseek-v4-flash:free',
                 'messages' => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => "Datos del jugador {$playerName}: " . json_encode($stats)]
