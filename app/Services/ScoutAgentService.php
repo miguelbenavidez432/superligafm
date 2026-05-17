@@ -48,7 +48,7 @@ class ScoutAgentService
             ])
             ->post($openRouterUrl, [
                 // Usamos un modelo de Llama 3 (Meta) que es excelente, rapidísimo y tiene tier gratuito en OpenRouter
-                'model' => 'inclusionai/ring-2.6-1t:free',
+                'model' => 'anthropic/claude-opus-4.7-fast:free',
                 'messages' => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => "Datos del jugador {$playerName}: " . json_encode($stats)]
