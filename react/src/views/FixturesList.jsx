@@ -9,10 +9,10 @@ import moment from "moment";
 export default function FixturesList() {
     const [fixtures, setFixtures] = useState([]);
     const [seasons, setSeasons] = useState([]);
-    const [tournaments, setTournaments] = useState([]); // Nuevo estado para los torneos
+    const [tournaments, setTournaments] = useState([]);
 
     const [selectedSeason, setSelectedSeason] = useState('');
-    const [selectedTournament, setSelectedTournament] = useState(''); // Reemplaza a selectedDivision
+    const [selectedTournament, setSelectedTournament] = useState('');
     const [loading, setLoading] = useState(false);
 
     const { user, setNotification } = useStateContext();
