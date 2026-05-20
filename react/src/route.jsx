@@ -58,6 +58,7 @@ import Fixture from './views/FixturesList';
 import PlayersList from './views/PlayersList';
 import CancelSuspensionForm from './views/CancelSuspensionForm';
 import PublicMatches from './views/PublicMatches';
+import FixtureCreate from './views/FixtureCreate';
 
 const router = createBrowserRouter([
     // --- RUTAS PÚBLICAS ---
@@ -141,6 +142,7 @@ const router = createBrowserRouter([
             { path: '/app/reverse-offer', element: <ReverseOffer /> },
             { path: '/app/levantar-sancion', element: <CancelSuspensionForm /> },
             { path: '/app/fixture', element: <Fixture /> },
+            { path: '/app/fixture/create', element: <FixtureCreate /> },
         ]
     },
 

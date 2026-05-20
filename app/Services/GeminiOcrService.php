@@ -9,6 +9,7 @@ use Gemini\Laravel\Facades\Gemini;
 use Gemini\Enums\MimeType;
 use Exception;
 use GuzzleHttp\Client;
+use Log;
 
 class GeminiOcrService implements OcrAnalyzerInterface
 {
@@ -46,7 +47,7 @@ class GeminiOcrService implements OcrAnalyzerInterface
 
         $jsonText = str_replace(['```json', '```'], '', $result->text());
         $data = json_decode(trim($jsonText), true);
-
+        Log::info('Respuesta cruda de Gemini: ' . $result->text());
         if (!$data) {
             throw new Exception('No se pudo generar un JSON válido desde la imagen. Respuesta cruda: ' . $result->text());
         }
