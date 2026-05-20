@@ -54,10 +54,11 @@ import ReverseOffer from './views/ReverseOffer';
 import NotFound from './views/NotFound';
 import Login from './views/Login';
 import Signup from './views/Signup';
-
+import Fixture from './views/FixturesList';
 import PlayersList from './views/PlayersList';
 import CancelSuspensionForm from './views/CancelSuspensionForm';
 import PublicMatches from './views/PublicMatches';
+import FixtureCreate from './views/FixtureCreate';
 
 const router = createBrowserRouter([
     // --- RUTAS PÚBLICAS ---
@@ -140,6 +141,8 @@ const router = createBrowserRouter([
             { path: '/app/cargar-imagenes', element: <UploadMatch /> },
             { path: '/app/reverse-offer', element: <ReverseOffer /> },
             { path: '/app/levantar-sancion', element: <CancelSuspensionForm /> },
+            { path: '/app/fixture', element: <Fixture /> },
+            { path: '/app/fixture/create', element: <FixtureCreate /> },
         ]
     },
 
