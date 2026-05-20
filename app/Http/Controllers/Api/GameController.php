@@ -242,6 +242,7 @@ class GameController extends Controller
             'statistics' => 'nullable|array',
             'players' => 'nullable',
             'images.*' => 'nullable|image|max:5120',
+            'fixture_id' => 'nullable|integer', // <-- 1. AÑADIDO PARA RECIBIR EL ID DEL FIXTURE
         ]);
 
         $outcomeType = $request->input('outcome_type', 'normal');
@@ -265,7 +266,6 @@ class GameController extends Controller
 
             $date = new \DateTime(now());
 
-            // 1. Crear el partido
             $game = Game::create([
                 'tournament_id' => $validated['tournament_id'],
                 'team_home_id' => $validated['home_team_id'],
@@ -282,27 +282,24 @@ class GameController extends Controller
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    // Se guardan en storage/app/public/matches/ID_PARTIDO
                     $path = $image->store('matches/' . $game->id, 'public');
                     $game->images()->create(['image_path' => $path]);
                 }
             }
 
-            // 2. Lógica de Standings (Sin cambios, está perfecta)
             $this->standingService->updateStandings($game);
 
             $playersArray = [];
             if (!empty($validated['players']) && $validated['players'] !== '[]') {
                 $playersArray = is_string($validated['players']) ? json_decode($validated['players'], true) : $validated['players'];
             }
-            // 3. Lógica de Estadísticas con mapeo de Nombres a IDs
+
             if ($playersArray && $outcomeType !== 'unplayed') {
                 foreach ($playersArray as $player) {
 
                     $bestMatchId = null;
                     $highestSimilarity = 0;
 
-                    // Buscamos el ID cruzando el nombre del payload con el de la BD
                     foreach ($dbPlayers as $dbPlayer) {
                         similar_text(strtolower($dbPlayer->name), strtolower($player['player_name']), $percent);
 
@@ -337,6 +334,12 @@ class GameController extends Controller
                 }
             }
 
+            if (!empty($validated['fixture_id'])) {
+                \App\Models\Fixture::where('id', $validated['fixture_id'])->update([
+                    'status' => 'jugado'
+                ]);
+            }
+
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Partido procesado por IA guardado con éxito', 'data' => new GameResource($game)]);
 
@@ -346,9 +349,8 @@ class GameController extends Controller
                 'success' => false,
                 'message' => 'Error al guardar.',
                 'error' => $e->getMessage(),
-                'line' => $e->getLine() // Esto nos ayudará si hay otro error en el futuro
+                'line' => $e->getLine()
             ], 500);
         }
     }
-
 }
