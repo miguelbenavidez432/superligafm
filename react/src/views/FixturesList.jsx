@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import axiosClient from "../axios";
 import { useStateContext } from "../context/ContextProvider";
 import moment from "moment";
-import 'moment/locale/es'; // Para que los días salgan en español
+import 'moment/locale/es';
 
 moment.locale('es');
 
@@ -19,7 +19,7 @@ export default function FixturesList() {
     const [loading, setLoading] = useState(false);
 
     const { user, setNotification } = useStateContext();
-    const isAdmin = user && (user.role === 'Admin' || user.role === 'admin');
+    const isAdmin = user && (user.role === 'Admin' || user.role === 'admin' || user.rol === 'Admin'); // Asegurando compatibilidad con role/rol
 
     useEffect(() => {
         getSeasons();
@@ -65,8 +65,6 @@ export default function FixturesList() {
             });
 
             let fetchedTournaments = response.data.data || [];
-
-            // Limpieza de duplicados y orden estricto ascendente por ID
             fetchedTournaments = Array.from(new Map(fetchedTournaments.map(t => [t.id, t])).values());
             fetchedTournaments.sort((a, b) => a.id - b.id);
 
@@ -101,7 +99,6 @@ export default function FixturesList() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("¿Estás seguro de que deseas eliminar este partido?")) return;
-
         try {
             await axiosClient.delete(`/fixtures/${id}`);
             setNotification("Partido eliminado correctamente");
@@ -111,7 +108,6 @@ export default function FixturesList() {
         }
     };
 
-    // AGRUPACIÓN: Primero agrupamos por Jornada (matchday)
     const groupedFixtures = fixtures.reduce((acc, fixture) => {
         const matchday = fixture.matchday || 'Sin Fecha';
         if (!acc[matchday]) acc[matchday] = [];
@@ -125,9 +121,8 @@ export default function FixturesList() {
                 <div className="flex flex-col items-center justify-center px-4">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Final</span>
                     <div className="bg-slate-950 border border-slate-700 rounded-lg px-4 py-1.5 flex items-center gap-3 shadow-inner">
-                        <span className="text-xl font-black text-white">{fixture.home_goals ?? '-'}</span>
-                        <span className="text-slate-600 font-bold">-</span>
-                        <span className="text-xl font-black text-white">{fixture.away_goals ?? '-'}</span>
+                        {/* Se eliminaron home_goals y away_goals, aquí deberías traer el resultado desde Game si lo necesitas, o dejar un check */}
+                        <span className="text-sm font-bold text-emerald-400">JUGADO</span>
                     </div>
                 </div>
             );
@@ -151,60 +146,68 @@ export default function FixturesList() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto p-4 sm:p-8 animate-fade-in-down pb-20">
+        <div className="max-w-6xl mx-auto p-4 sm:p-8 animate-fade-in-down pb-20">
 
-            {/* ENCABEZADO */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-slate-900/80 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-700">
-                <div className="flex flex-col mb-4 md:mb-0 text-center md:text-left">
-                    <h1 className="font-black text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 uppercase tracking-widest mb-1">
-                        Fixture y Resultados
+            {/* ENCABEZADO UNIFICADO: Título, Temporada, Torneo y Botón */}
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end mb-8 bg-slate-900/40 p-6 sm:p-8 rounded-3xl border border-slate-700/50 gap-6">
+
+                {/* Izquierda: Título y Temporada */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 w-full xl:w-auto">
+                    <h1 className="text-3xl font-black text-indigo-400 tracking-widest uppercase pb-1">
+                        Fixture
                     </h1>
+
+                    <div className="flex flex-col w-full sm:w-48 mt-4 sm:mt-0">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">
+                            Temporada
+                        </label>
+                        <select
+                            value={selectedSeason}
+                            onChange={(e) => setSelectedSeason(e.target.value)}
+                            className="w-full py-2.5 px-4 rounded-lg bg-[#0a0f1d] border border-slate-700 text-white font-bold text-sm outline-none focus:border-indigo-500 transition-colors appearance-none"
+                        >
+                            <option value="">Seleccionar...</option>
+                            {Array.isArray(seasons) && seasons.map(season => (
+                                <option key={season.id} value={season.id}>{season.name}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-                    <select
-                        value={selectedSeason}
-                        onChange={(e) => setSelectedSeason(e.target.value)}
-                        className="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-slate-200 outline-none focus:border-blue-500 transition-colors"
-                    >
-                        <option value="">Seleccionar temporada</option>
-                        {Array.isArray(seasons) && seasons.map(season => (
-                            <option key={season.id} value={season.id}>{season.name}</option>
-                        ))}
-                    </select>
+                {/* Derecha: Torneo y Botón Crear */}
+                <div className="flex flex-col sm:flex-row items-end gap-4 w-full xl:w-auto">
+
+                    {tournaments.length > 0 && (
+                        <div className="flex flex-col w-full sm:w-64">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">
+                                Torneo
+                            </label>
+                            <select
+                                value={selectedTournament || ''}
+                                onChange={(e) => setSelectedTournament(Number(e.target.value))}
+                                className="w-full py-2.5 px-4 rounded-lg bg-[#0a0f1d] border border-slate-700 text-white font-bold text-sm outline-none focus:border-indigo-500 transition-colors appearance-none"
+                            >
+                                <option value="">Seleccione...</option>
+                                {tournaments.map(tournament => (
+                                    <option key={tournament.id} value={tournament.id}>
+                                        {tournament.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
                     {isAdmin && (
                         <Link
-                            to={`/app/fixtures/create`}
-                            className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2"
+                            to={`/app/fixture/create`}
+                            className="w-full sm:w-auto py-2.5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-lg transition-colors shadow-lg flex items-center justify-center gap-2 whitespace-nowrap"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
                             Programar Partido
                         </Link>
                     )}
                 </div>
             </div>
-
-            {/* PESTAÑAS DE TORNEOS */}
-            {tournaments.length > 0 && (
-                <div className="flex justify-center mb-8 overflow-x-auto pb-2 scrollbar-hide">
-                    <div className="bg-slate-900/80 p-1 rounded-2xl flex gap-1 border border-slate-700/50 shadow-lg min-w-max">
-                        {tournaments.map(tournament => (
-                            <button
-                                key={tournament.id}
-                                onClick={() => setSelectedTournament(tournament.id)}
-                                className={`px-6 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${
-                                    selectedTournament === tournament.id
-                                    ? 'bg-blue-600 text-white shadow-md'
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                                }`}
-                            >
-                                {tournament.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
 
             {/* CONTENIDO DEL FIXTURE */}
             <div className="bg-transparent">
@@ -253,7 +256,7 @@ export default function FixturesList() {
                                                         {fixture.home_team?.name || 'Local'}
                                                     </span>
                                                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-600 font-bold text-slate-400 text-xs sm:text-sm flex-shrink-0">
-                                                        {fixture.home_team?.name?.substring(0,3).toUpperCase() || 'LOC'}
+                                                        {fixture.home_team?.name?.substring(0, 3).toUpperCase() || 'LOC'}
                                                     </div>
                                                 </div>
 
@@ -265,7 +268,7 @@ export default function FixturesList() {
                                                 {/* Visitante */}
                                                 <div className="flex-1 flex justify-start items-center gap-3">
                                                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-600 font-bold text-slate-400 text-xs sm:text-sm flex-shrink-0">
-                                                        {fixture.away_team?.name?.substring(0,3).toUpperCase() || 'VIS'}
+                                                        {fixture.away_team?.name?.substring(0, 3).toUpperCase() || 'VIS'}
                                                     </div>
                                                     <span className="font-bold text-white text-sm sm:text-base text-left">
                                                         {fixture.away_team?.name || 'Visitante'}
@@ -273,7 +276,7 @@ export default function FixturesList() {
                                                 </div>
                                             </div>
 
-                                            {/* ACCIONES (Derecha, visibles al pasar el ratón) */}
+                                            {/* ACCIONES (Derecha) */}
                                             {isAdmin && (
                                                 <div className="w-full sm:w-1/4 flex justify-center sm:justify-end gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity mt-2 sm:mt-0">
                                                     <Link

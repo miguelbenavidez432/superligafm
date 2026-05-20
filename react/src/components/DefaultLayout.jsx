@@ -95,8 +95,7 @@ export default function DefaultLayout() {
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div className="hidden group-hover:block bg-slate-950 border-y border-slate-800">
-                            <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/fixture_primera'>Fixture Primera</Link>
-                            <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/fixture_segunda'>Fixture Segunda</Link>
+                            <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/fixture'>Fixture</Link>
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/levantar-sancion'>Apelación de sanciones</Link>
                         </div>
                     </div>
@@ -115,18 +114,11 @@ export default function DefaultLayout() {
                         <div className="hidden group-hover:block bg-slate-950 border-y border-slate-800">
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/apuestas'>Apuestas</Link>
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/apuestas/new'>Crear apuestas</Link>
-                            {user.rol === 'Admin' && (
-                                <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-emerald-400 hover:text-emerald-300 transition-colors" to='/app/apuestas/usuarios'>Confirmar apuestas ganadas</Link>
-                            )}
                         </div>
                     </div>
 
                     <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-blue-400 font-medium transition-colors" to='/app/reglamento'>Reglamento</Link>
                     <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-blue-400 font-medium transition-colors" to='/app/partidos'>Partidos</Link>
-
-                    {user.rol === 'Admin' && (
-                        <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 font-medium transition-colors text-emerald-500" to='/app/torneos'>Cargar Torneo</Link>
-                    )}
 
                     {/* DROPDOWN MERCADO */}
                     <div className="group relative">
@@ -143,20 +135,28 @@ export default function DefaultLayout() {
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/clausula_rescision'>Claúsula de rescisión</Link>
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/transfer'>Transferencia</Link>
                             <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm hover:text-blue-400 transition-colors" to='/app/chatbot'>El bot del Mercado</Link>
-                            {user.rol === 'Admin' && (
-                                <>
-                                    <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-emerald-400 hover:text-emerald-300 transition-colors" to='/app/ofertas-confirmadas'>Traspasos confirmados</Link>
-                                    <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-red-400 hover:text-red-300 transition-colors" to='/app/reverse-offer'>Revertir Oferta</Link>
-                                </>
-                            )}
+
                         </div>
                     </div>
-
                     {user.rol === 'Admin' && (
-                        <>
-                        <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 text-emerald-500 font-medium transition-colors" to='/app/premios'>Premios</Link>
-                        <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 text-emerald-500 font-medium transition-colors" to='/app/jugadores-registrados'>Jugadores Registrados</Link>
-                        </>
+                        <div className="group relative">
+                            <button className="flex w-full items-center justify-between py-3 px-6 hover:bg-slate-800 hover:text-blue-400 font-medium transition-colors">
+                                <span>Administración</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div className="hidden group-hover:block bg-slate-950 border-y border-slate-800">
+                                <>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 font-medium transition-colors text-emerald-500" to='/app/torneos'>Crear Torneo</Link>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 font-medium transition-colors text-emerald-500" to='/app/fixture/create'>Crear Partidos</Link>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 text-emerald-500 font-medium transition-colors" to='/app/premios'>Premios</Link>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-emerald-400 text-emerald-500 font-medium transition-colors" to='/app/jugadores-registrados'>Jugadores Registrados</Link>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-emerald-400 hover:text-emerald-300 transition-colors" to='/app/ofertas-confirmadas'>Traspasos confirmados</Link>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-red-400 hover:text-red-300 transition-colors" to='/app/reverse-offer'>Revertir Oferta</Link>
+                                    <Link onClick={closeSidebarOnMobile} className="block py-2.5 pl-10 pr-4 text-sm text-emerald-400 hover:text-emerald-300 transition-colors" to='/app/apuestas/usuarios'>Confirmar apuestas ganadas</Link>
+                                </>
+
+                            </div>
+                        </div>
                     )}
 
                     <Link onClick={closeSidebarOnMobile} className="block py-3 px-6 hover:bg-slate-800 hover:text-blue-400 font-medium transition-colors" to='/app/about'>Nosotros</Link>
