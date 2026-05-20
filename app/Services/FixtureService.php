@@ -25,6 +25,10 @@ class FixtureService
             $query->where('matchday', $filters['matchday']);
         }
 
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
         // Ordenamos por vencimiento (los más próximos a vencer primero)
         return $query->orderBy('due_date', 'asc')->get();
     }
