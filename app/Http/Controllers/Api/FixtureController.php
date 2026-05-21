@@ -7,11 +7,17 @@ use App\Http\Requests\StoreFixtureRequest;
 use App\Http\Requests\UpdateFixtureRequest;
 use Illuminate\Http\Request;
 use App\Services\FixtureService;
+use App\Services\FixtureAlertService;
+use Illuminate\Http\JsonResponse;
 
 class FixtureController extends Controller
 {
     // Inyección del servicio de negocio
-    public function __construct(private FixtureService $fixtureService) {}
+    public function __construct(
+        private FixtureService $fixtureService,
+        private FixtureAlertService $alertService
+    ) {
+    }
 
     public function index(Request $request)
     {
@@ -69,5 +75,14 @@ class FixtureController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al eliminar el partido: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function getUserAlerts(): JsonResponse
+    {
+        $userId = auth()->id();
+
+        $alerts = $this->alertService->getExpiringFixturesForUser($userId);
+
+        return response()->json(['data' => $alerts]);
     }
 }
