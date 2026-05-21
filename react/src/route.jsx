@@ -191,6 +191,8 @@ const router = createBrowserRouter([
     { path: '/premios', element: <Navigate to='/app/premios' /> },
     { path: '/crear-premios', element: <Navigate to='/app/crear-premios' /> },
     { path: '/cargar-imagenes', element: <Navigate to='/app/cargar-imagenes' /> },
+    { path: '/fixture', element: <Navigate to='/app/fixture' /> },
+    { path: '/fixture/create', element: <Navigate to='/app/fixture/create' /> },
     { path: '*', element: <NotFound /> },
 ]);
 
