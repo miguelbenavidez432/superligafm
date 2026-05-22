@@ -6,92 +6,85 @@ use Illuminate\Console\Command;
 use App\Models\Fixture;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
-use App\Events\FixtureExpiringAlert;
-use Illuminate\Support\Facades\Log;
 
 class NotifyExpiringFixtures extends Command
 {
     protected $signature = 'fixtures:notify-discord';
-    protected $description = 'Envía alertas a Discord de partidos por vencer (18h, 12h, 6h)';
+    protected $description = 'Envía alertas a Discord de partidos por vencer (36h, 24h, 18h, 12h, 6h)';
 
     public function handle()
     {
-        // Tu URL de Webhook de Discord (La sacas de Ajustes del Canal -> Integraciones)
         $webhookUrl = env('DISCORD_WEBHOOK_NOTIFICATIONS_URL');
 
         if (!$webhookUrl) {
             $this->error('Falta configurar DISCORD_WEBHOOK_NOTIFICATIONS_URL en el .env');
             return;
         }
-        // Las ventanas de horas que queremos avisar
-        $alertHours = [36, 24, 18, 12, 6];
 
-        foreach ($alertHours as $hoursLeft) {
-            // EL SECRETO ESTÁ AQUÍ:
-            // Creamos una ventana exacta de 1 hora.
-            // Ej: Si $hoursLeft es 6, busca partidos que venzan entre (ahora + 5h) y (ahora + 6h).
-            $targetTimeStart = now()->addHours($hoursLeft - 1);
-            $targetTimeEnd = now()->addHours($hoursLeft);
+        // 1. Una sola consulta a la base de datos (eliminamos el foreach externo)
+        // Agregamos 'homeTeam.user' y 'awayTeam.user' para poder acceder a los datos del usuario si ahí tienes su Discord ID
+        $fixtures = Fixture::with(['homeTeam.user', 'awayTeam.user', 'tournament'])
+            ->whereIn('status', ['pendiente', 'aplazado'])
+            ->whereNotNull('due_date')
+            ->where('due_date', '<=', now()->addHours(36))
+            ->where('due_date', '>', now())
+            ->get();
 
-            $fixtures = Fixture::with(['homeTeam', 'awayTeam', 'tournament'])
-                ->whereIn('status', ['pendiente', 'aplazado'])
-                ->whereNotNull('due_date')
-                ->where('due_date', '<=', now()->addHours(36))
-                ->where('due_date', '>', now())
-                ->get();
-            \Log::info("Alerta de {$hoursLeft}h | Rango: {$targetTimeStart} a {$targetTimeEnd} | Partidos encontrados: " . $fixtures->toJson());
-            // Logeamos solo si encontramos algo para no ensuciar el log vacío
-            if ($fixtures->isEmpty()) {
-                \Log::info("Cron ejecutado. No hay partidos próximos a vencer en las próximas 36h.");
-                return;
-            }
+        if ($fixtures->isEmpty()) {
+            \Log::info("Cron ejecutado. No hay partidos próximos a vencer en las próximas 36h.");
+            return;
+        }
 
-            $milestones = [
-                35 => 36, // Cron a las 12:00 del día anterior -> Faltan 35h 59m
-                23 => 24, // Cron a las 00:00 del mismo día -> Faltan 23h 59m
-                17 => 18, // Cron a las 06:00 del mismo día -> Faltan 17h 59m
-                11 => 12, // Cron a las 12:00 del mismo día -> Faltan 11h 59m
-                5 => 6   // Cron a las 18:00 del mismo día -> Faltan 5h 59m
-            ];
+        $milestones = [
+            35 => 36, // Faltan 35h 59m -> Alerta 36h
+            23 => 24, // Faltan 23h 59m -> Alerta 24h
+            17 => 18, // Faltan 17h 59m -> Alerta 18h
+            11 => 12, // Faltan 11h 59m -> Alerta 12h
+            5  => 6   // Faltan 5h 59m  -> Alerta 6h
+        ];
 
-            foreach ($fixtures as $fixture) {
+        // 2. Iteramos solo sobre los partidos encontrados
+        foreach ($fixtures as $fixture) {
+            $diffInHours = now()->diffInHours(Carbon::parse($fixture->due_date));
 
-                $diffInHours = now()->diffInHours(Carbon::parse($fixture->due_date));
+            if (array_key_exists($diffInHours, $milestones)) {
+                $alertHour = $milestones[$diffInHours]; // Obtenemos la hora real para la alerta
 
-                if (array_key_exists($diffInHours, $milestones)) {
-                    $alertHour = $milestones[$diffInHours];
+                \Log::info("Disparando alerta de {$alertHour}h para el partido {$fixture->id}");
 
-                    \Log::info("Disparando alerta de {$alertHour}h para el partido {$fixture->id}");
-                    // $homeUserId = $fixture->homeTeam->user_id;
-                    // $awayUserId = $fixture->awayTeam->user_id;
-
-                    // Avisamos al Local
-                    // if ($homeUserId) {
-                    //     FixtureExpiringAlert::dispatch($fixture, $homeUserId);
-                    // }
-
-                    // Avisamos al Visitante
-                    // if ($awayUserId) {
-                    //     FixtureExpiringAlert::dispatch($fixture, $awayUserId);
-                    // }
-
-                    $this->sendDiscordMessage($fixture, $webhookUrl, $hoursLeft);
-                }
+                $this->sendDiscordMessage($fixture, $webhookUrl, $alertHour);
             }
         }
     }
 
-    private function sendDiscordMessage($fixture, $webhookUrl, $hoursLeft)
+    private function sendDiscordMessage($fixture, $webhookUrl, $alertHour)
     {
-        $color = $hoursLeft == 6 ? 16711680 : ($hoursLeft == 12 ? 16753920 : 65280);
+        $color = $alertHour <= 6 ? 16711680 : ($alertHour <= 12 ? 16753920 : 65280);
 
-        $idRol = 862915468401442856;
+        // EXTRAEMOS LOS IDS DE DISCORD
+        // Asumiendo que el ID de Discord está en el modelo User asociado al equipo.
+        // Si lo tienes en otro lugar de tu estructura existente, simplemente ajusta esta ruta.
+        $homeDiscordId = $fixture->homeTeam->user->discord_id ?? null; 
+        $awayDiscordId = $fixture->awayTeam->user->discord_id ?? null;
+
+        $mentions = [];
+        if ($homeDiscordId) {
+            $mentions[] = "<@{$homeDiscordId}>"; // Sin el '&'
+        }
+        if ($awayDiscordId) {
+            $mentions[] = "<@{$awayDiscordId}>"; // Sin el '&'
+        }
+
+        // Armamos el mensaje de contenido dependiendo de si encontramos IDs o no
+        $contentMessage = count($mentions) > 0 
+            ? implode(" ", $mentions) . " ⏰ ¡Su partido está por vencer en {$alertHour} horas!"
+            : "⏰ ¡Un partido está por vencer en {$alertHour} horas!";
 
         $payload = [
-            'content' => "<@&" . $idRol . ">",
+            'content' => $contentMessage,
             'embeds' => [
                 [
-                    'title' => "Partido por Vencer en {$hoursLeft} Horas",
+                    'title' => "Alerta de Vencimiento",
                     'description' => "**{$fixture->homeTeam->name}** vs **{$fixture->awayTeam->name}**",
                     'color' => $color,
                     'fields' => [
@@ -101,8 +94,6 @@ class NotifyExpiringFixtures extends Command
                 ]
             ]
         ];
-
-        \Log::info("Enviando webhook a Discord para el partido: " . $fixture->id);
 
         Http::post($webhookUrl, $payload);
     }
