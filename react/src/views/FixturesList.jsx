@@ -280,7 +280,7 @@ export default function FixturesList() {
                                             {isAdmin && (
                                                 <div className="w-full sm:w-1/4 flex justify-center sm:justify-end gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity mt-2 sm:mt-0">
                                                     <Link
-                                                        to={`/app/fixtures/edit/${fixture.id}`}
+                                                        to={`/app/fixture/edit/${fixture.id}`}
                                                         className="p-2 bg-blue-900/40 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg transition-colors"
                                                         title="Editar Partido"
                                                     >
