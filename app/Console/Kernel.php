@@ -36,7 +36,13 @@ class Kernel extends ConsoleKernel
         //     \Log::info('CRON TEST OK: ' . now());
         // })->everyMinute();
 
-        $schedule->command('fixtures:notify-discord')->hourly()->timezone('America/Argentina/Buenos_Aires');
+        $schedule->command('fixtures:notify-discord')
+            ->twiceDaily(0, 12) // Corre a las 00:00 y a las 12:00
+            ->timezone('America/Argentina/Buenos_Aires');
+
+        $schedule->command('fixtures:notify-discord')
+            ->twiceDaily(6, 18) // Corre a las 06:00 y a las 18:00
+            ->timezone('America/Argentina/Buenos_Aires');
 
     }
 
