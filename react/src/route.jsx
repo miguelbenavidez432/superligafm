@@ -59,6 +59,7 @@ import PlayersList from './views/PlayersList';
 import CancelSuspensionForm from './views/CancelSuspensionForm';
 import PublicMatches from './views/PublicMatches';
 import FixtureCreate from './views/FixtureCreate';
+import FixtureEdit from './views/EditFixture';
 
 const router = createBrowserRouter([
     // --- RUTAS PÚBLICAS ---
@@ -143,6 +144,7 @@ const router = createBrowserRouter([
             { path: '/app/levantar-sancion', element: <CancelSuspensionForm /> },
             { path: '/app/fixture', element: <Fixture /> },
             { path: '/app/fixture/create', element: <FixtureCreate /> },
+            { path: '/app/fixture/edit/:id', element: <FixtureEdit /> },
         ]
     },
 
@@ -193,6 +195,7 @@ const router = createBrowserRouter([
     { path: '/cargar-imagenes', element: <Navigate to='/app/cargar-imagenes' /> },
     { path: '/fixture', element: <Navigate to='/app/fixture' /> },
     { path: '/fixture/create', element: <Navigate to='/app/fixture/create' /> },
+    { path: '/fixture/edit/:id', element: <Navigate to='/app/fixture/edit/:id' /> },
     { path: '*', element: <NotFound /> },
 ]);
 

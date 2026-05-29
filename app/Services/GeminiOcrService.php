@@ -58,7 +58,8 @@ class GeminiOcrService implements OcrAnalyzerInterface
     private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Eres un analista experto en Football Manager. Tu objetivo es extraer las estadísticas de los jugadores de la imagen y devolverlas en formato JSON.
+        Eres un analista experto en Football Manager. Tu objetivo es extraer las estadísticas de los jugadores de la imagen y
+        devolverlas en formato JSON.
 
         INFORMACIÓN DEL PARTIDO (CRÍTICO):
         - EQUIPO LOCAL (ID: $homeId): Sus jugadores aparecen en la tabla de la MITAD IZQUIERDA de la imagen.
@@ -79,11 +80,13 @@ class GeminiOcrService implements OcrAnalyzerInterface
               - TARJETA AMARILLA: Rectángulo amarillo sólido (amarillas: 1).
               - LESIÓN: Solo marcar is_injured=true si aparece explícitamente un icono inequívoco de lesión y NO hay indicador de gol/autogol/gol anulado en esa jugada.
               - PATRÓN DE ORDEN (CRÍTICO PARA GOLES):
-                 a) Si el evento se ve como \"minuto - jugador1 - jugador2\" => jugador1 = GOL, jugador2 = ASISTENCIA.
-                 b) Si el evento se ve como \"jugador1 - jugador2 - minuto\" => jugador1 = ASISTENCIA, jugador2 = GOL.
+                 a) Si el evento se ve como \"minuto - jugador1 - jugador2\" => jugador1 = GOL, jugador2 = ASISTENCIA. Inicia el texto desde la izquierda a la derecha, el primer jugador que aparezca después del minuto es el goleador, el segundo jugador es el asistente.
+                    Se debe observa algo así: \"23' - J. Pérez - Carlos Gómez\" con un icono de balón sin cruz roja => Juan Pérez = GOL, Carlos Gómez = ASISTENCIA.
+                 b) Si el evento se ve como \"jugador1 - jugador2 - minuto\" => jugador1 = ASISTENCIA, jugador2 = GOL. Inicia el texto desde el centro a la derecha, el primer jugador que aparezca antes del minuto es el asistente, el segundo jugador es el goleador.
+                    Se debe observa algo así: \"J. Pérez - Carlos Gómez - 23'\" con un icono de balón sin cruz roja => Juan Pérez = ASISTENCIA, Carlos Gómez = GOL.
                  c) Estas reglas aplican SOLO a goles válidos (sin balón con cruz roja).
-                 d) Si el evento se ve como \"minuto - jugador1\" => jugador1 = GOL.
-                 e) Si el evento se ve como \"jugador1 - minuto\" => jugador1 = GOL.
+                 d) Si el evento se ve como \"minuto - jugador1\" pero con el ícono de balón => jugador1 = GOL.
+                 e) Si el evento se ve como \"jugador1 - minuto\" pero con el ícono de balón => jugador1 = GOL.
                - Si el evento muestra \"minuto + un solo jugador\" con icono de autogol/gol anulado, NO marcar lesión y NO registrar asistencia.
               - Si ves un botón rojo con recuadro blanco en forma de arco (penal fallado/similar), ignóralo: no es gol, asistencia, lesión ni tarjeta.
               - Cruza los nombres de esta sección central con la lista general para marcar correctamente goles, asistencias, tarjetas o lesión.

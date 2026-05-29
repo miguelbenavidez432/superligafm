@@ -36,6 +36,7 @@ export default function EditFixture() {
             const formattedDate = fixtureData.due_date
                 ? moment(fixtureData.due_date).format('YYYY-MM-DDTHH:mm')
                 : '';
+            console.log("Fecha formateada:", fixtureData);
 
             setFixture({
                 matchday: fixtureData.matchday || '',
@@ -48,7 +49,8 @@ export default function EditFixture() {
             // Si traes todos, usa '/teams'. Ajusta la URL según tu backend.
             const teamsResponse = await axiosClient.get('/teams');
             const teamsData = teamsResponse.data.data || teamsResponse.data || [];
-            const filteredTeams = teamsData.filter(t => t.division === "Primera División" || t.division === "Segunda División");
+            console.log("Equipos obtenidos:", teamsData);
+            const filteredTeams = teamsData.filter(t => t.division === "Primera" || t.division === "Segunda");
             setTeams(filteredTeams);
         } catch (error) {
             console.error("Error cargando datos:", error);
@@ -194,7 +196,7 @@ export default function EditFixture() {
                 {/* VENCIMIENTO */}
                 <div className="flex flex-col w-full md:w-1/2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
-                        Fecha Límite / Programación (Opcional)
+                        Fecha Límite
                     </label>
                     <input
                         type="datetime-local"
