@@ -58,41 +58,34 @@ class GeminiOcrService implements OcrAnalyzerInterface
     private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Eres un analista experto en Football Manager. Tu objetivo es extraer las estadísticas de los jugadores de la imagen y devolverlas en formato JSON.
+        Actúa como un experto en análisis de datos deportivos y visión artificial. Tu tarea es extraer la información de los jugadores y las estadísticas del partido de la imagen adjunta, estructurándola estrictamente en el formato JSON proporcionado.
 
-            INFORMACIÓN DEL PARTIDO (CRÍTICO):
-            - EQUIPO LOCAL (ID: $homeId): Sus jugadores aparecen en la tabla de la MITAD IZQUIERDA de la imagen.
-            - EQUIPO VISITANTE (ID: $awayId): Sus jugadores aparecen en la tabla de la MITAD DERECHA de la imagen.
+Las imágenes de aplicaciones de resultados deportivos tienen elementos visuales pequeños que son cruciales. Para evitar alucinaciones o errores de asignación, debes aplicar obligatoriamente las siguientes reglas paso a paso:
 
-            LISTA OFICIAL DE JUGADORES (CONTEXTO):
-            $context
+1. Anclaje Visual de Íconos (Estadísticas Individuales):
+Escanea cuidadosamente la fila de cada jugador buscando íconos minúsculos al lado o debajo de su nombre/calificación:
 
-            REGLAS CRÍTICAS DE EXTRACCIÓN:
-            1. COBERTURA TOTAL: Debes extraer a TODOS los jugadores de la tabla izquierda y TODOS los de la tabla derecha.
-            2. ASIGNACIÓN DE EQUIPO:
-            - Tabla izquierda = id_team: $homeId.
-            - Tabla derecha = id_team: $awayId.
+Balón de fútbol: Suma 1 a goals.
 
-            3. LECTURA ESTRICTA DE GOLES Y ASISTENCIAS (TABLAS LATERALES):
-            - ESTÁ ESTRICTAMENTE PROHIBIDO mirar la caja central Encuentros para deducir goles o asistencias.
-            - Todo se lee bajo los encabezados laterales: Nombre, Gol, Asis, Cal.
-            - ANCLAJE VISUAL (CRÍTICO): Si un jugador entró de cambio, verás unas flechas de sustitución y el minuto (ejemplo: 45). El número o ícono de balón que aparece INMEDIATAMENTE a la derecha de ese minuto es OBLIGATORIAMENTE la columna GOL.
-            - EJEMPLO 1 (Titular): Pedri - sin goles ni asistencias -> Goles: 0, Asistencias: 0.
-            - EJEMPLO 2 (Suplente con goles): Soule 45 con icono balon 2 -> Goles: 2, Asistencias: 0.
-            - EJEMPLO 3 (Suplente con asistencia): Beier 45 con un guion y luego un 1 -> Goles: 0, Asistencias: 1.
-            - Si ves el ícono de un balón de fútbol pequeño, el número que lo acompaña es la cantidad de GOLES.
+Bota de fútbol (o ícono de asistencia): Suma 1 a assists.
 
-            4. EXTRACCIÓN DE TARJETAS Y LESIONES (SECCIÓN CENTRAL ENCUENTROS):
-            - Usa la caja central SOLO y EXCLUSIVAMENTE para extraer tarjetas rojas, tarjetas amarillas y lesiones.
-            - TARJETA ROJA: Rectángulo rojo sólido junto al nombre (rojas: 1).
-            - TARJETA AMARILLA: Rectángulo amarillo sólido junto al nombre (amarillas: 1).
-            - LESIÓN: Solo marcar is_injured=true si aparece un ícono médico de lesión (cruz roja) y no corresponde a un gol anulado.
+Tarjeta roja / amarilla: Asigna 1 a rojas o amarillas según corresponda.
 
-            5. CRUCE DE DATOS Y MVP:
-            - Cruza los nombres de la imagen con la LISTA OFICIAL de contexto. Devuelve el nombre exactamente como aparece en la lista oficial.
-            - Si un jugador de la lista oficial no aparece en la imagen, devuélvelo con rating 0 y goles 0.
-            - El jugador de TODO EL PARTIDO (ambos equipos) con el número más alto en la columna Cal (rating) debe tener el campo mvp marcado como true (solo uno en todo el JSON).
+Estrella o calificación más alta (ej. 8.5): Asigna true a mvp (solo puede haber un MVP en todo el partido).
 
+2. Cruce de Información (La Caja Central):
+No confíes solo en la lista de jugadores. Lee la línea de tiempo o caja central de eventos del partido (donde se listan los goles y tarjetas por minuto). Si dice que un jugador (ej. Barrios) recibió una roja o alguien (ej. Musiala) hizo un gol, búscalo en la lista de jugadores y asegúrate de que su JSON tenga ese evento registrado.
+
+3. Filtro de Jugadores sin Minutos:
+Revisa la columna derecha de calificaciones. Si un jugador no tiene una calificación numérica (aparece un guion, está en gris, o no tiene número), significa que no jugó. A estos jugadores debes asignarles estrictamente rating: 0 y ceros en goles, asistencias y tarjetas. ¡No les inventes calificaciones!
+
+4. Control de Calidad Final:
+
+Verifica que no haya ningún jugador duplicado en el JSON.
+
+Asegúrate de que los IDs de los equipos correspondan correctamente (home vs away).
+
+Devuelve ÚNICAMENTE el JSON válido con esta estructura (sin texto adicional ni formato markdown fuera del bloque JSON):
             RESPUESTA JSON ESPERADA:
             {
                 \"score\": { \"home\": 0, \"away\": 0 },
