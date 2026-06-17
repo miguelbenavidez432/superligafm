@@ -56,7 +56,7 @@ class DiscordNotificationService
 
     public function sendGameCreatedAlert(Game $game): void
     {
-        $game->loadMissing(['tournament', 'teamHome.user.discordUser', 'teamAway.user.discordUser']);
+        $game->loadMissing(['tournament', 'teamHome.user.discordUser', 'teamAway.user.discordUser', 'images']);
 
         $webhookUrl = $this->resolveWebhookUrl($game->tournament, 'notifications');
 
@@ -84,24 +84,28 @@ class DiscordNotificationService
 
         $stage = $game->stage ? " • {$game->stage}" : '';
 
-        $payload = [
-            'content' => $contentMessage,
-            'embeds' => [
-                [
-                    'title' => '⚽ Nuevo Resultado Registrado',
-                    'description' => "**{$game->teamHome->name}** {$score} **{$game->teamAway->name}**",
-                    'color' => 3447003,
-                    'fields' => [
-                        ['name' => '🏆 Torneo', 'value' => $game->tournament->name, 'inline' => true],
-                        ['name' => '📅 Fecha', 'value' => Carbon::parse($game->match_date)->format('d/m/Y H:i'), 'inline' => true],
-                    ],
-                ],
+        $embed = [
+            'title' => '⚽ Nuevo Resultado Registrado',
+            'description' => "**{$game->teamHome->name}** {$score} **{$game->teamAway->name}**",
+            'color' => 3447003,
+            'fields' => [
+                ['name' => '🏆 Torneo', 'value' => $game->tournament->name, 'inline' => true],
+                ['name' => '📅 Fecha', 'value' => Carbon::parse($game->match_date)->format('d/m/Y H:i'), 'inline' => true],
             ],
         ];
 
         if ($stage) {
-            $payload['embeds'][0]['fields'][] = ['name' => '🎯 Etapa', 'value' => trim($stage, ' •'), 'inline' => true];
+            $embed['fields'][] = ['name' => '🎯 Etapa', 'value' => trim($stage, ' •'), 'inline' => true];
         }
+
+        if ($game->images->isNotEmpty()) {
+            $embed['image'] = ['url' => $game->images->first()->url];
+        }
+
+        $payload = [
+            'content' => $contentMessage,
+            'embeds' => [$embed],
+        ];
 
         Http::post($webhookUrl, $payload);
     }
