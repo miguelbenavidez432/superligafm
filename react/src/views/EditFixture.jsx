@@ -55,7 +55,7 @@ export default function EditFixture() {
         } catch (error) {
             console.error("Error cargando datos:", error);
             setNotification("Error al cargar la información del partido");
-            navigate('/app/partidos'); // Volver si hay error
+            navigate('/app/fixture'); // Volver si hay error
         } finally {
             setLoading(false);
         }
@@ -83,7 +83,7 @@ export default function EditFixture() {
 
             await axiosClient.put(`/fixtures/${id}`, payload);
             setNotification("Partido actualizado correctamente");
-            navigate('/app/partidos'); // Redirigir a tu lista de fixtures
+            //navigate('/app/fixture'); // Redirigir a tu lista de fixtures
         } catch (error) {
             console.error(error);
             setNotification("Hubo un error al actualizar el partido");
