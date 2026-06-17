@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "../axios";
@@ -92,7 +93,7 @@ export default function FixtureCreate() {
         try {
             await axiosClient.post('/fixtures', formData);
             setNotification("Partido programado con éxito");
-            navigate('/app/fixtures'); // Ajusta a la ruta donde tienes tu FixturesList
+            //navigate('/app/fixture'); // Ajusta a la ruta donde tienes tu FixturesList
         } catch (error) {
             setNotification(error.response?.data?.message || "Error al programar el partido");
         } finally {

@@ -15,12 +15,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Services\DiscordNotificationService;
 use App\Services\StandingService;
 
 class GameController extends Controller
 {
-    public function __construct(private StandingService $standingService)
-    {
+    public function __construct(
+        private StandingService $standingService,
+        private DiscordNotificationService $discordService,
+    ) {
     }
     /**
      * Display a listing of the resource.
@@ -123,6 +126,9 @@ class GameController extends Controller
         }
 
         $game = Game::create($data);
+
+        $this->discordService->sendGameCreatedAlert($game);
+
         return response(new GameResource($game), 201);
     }
 
@@ -341,6 +347,9 @@ class GameController extends Controller
             }
 
             DB::commit();
+
+            $this->discordService->sendGameCreatedAlert($game);
+
             return response()->json(['success' => true, 'message' => 'Partido procesado por IA guardado con éxito', 'data' => new GameResource($game)]);
 
         } catch (\Exception $e) {
