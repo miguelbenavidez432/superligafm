@@ -60,32 +60,45 @@ class GeminiOcrService implements OcrAnalyzerInterface
         return "
         Actúa como un experto en análisis de datos deportivos y visión artificial. Tu tarea es extraer la información de los jugadores y las estadísticas del partido de la imagen adjunta, estructurándola estrictamente en el formato JSON proporcionado.
 
-Las imágenes de aplicaciones de resultados deportivos tienen elementos visuales pequeños que son cruciales. Para evitar alucinaciones o errores de asignación, debes aplicar obligatoriamente las siguientes reglas paso a paso:
+Para evitar errores y omisiones de estadísticas (como goles perdidos o tarjetas no asignadas), DEBES basar la extracción de eventos EXCLUSIVAMENTE en la caja central titulada Encuentros.
 
-1. Anclaje Visual de Íconos (Estadísticas Individuales):
-Escanea cuidadosamente la fila de cada jugador buscando íconos minúsculos al lado o debajo de su nombre/calificación:
+Sigue estas reglas estrictas para leer la caja central, diferenciando el equipo local (izquierda) del visitante (derecha):
 
-Balón de fútbol: Suma 1 a goals.
+1. Reglas para el Equipo Local (Mitad Izquierda del centro):
+La lectura de eventos es [Ícono] [Minuto] [Nombre 1] [Nombre 2].
 
-Bota de fútbol (o ícono de asistencia): Suma 1 a assists.
+Gol (Balón de fútbol normal): El [Nombre 1] es el goleador (+1 goals). El [Nombre 2] es el asistente (+1 assists).
 
-Tarjeta roja / amarilla: Asigna 1 a rojas o amarillas según corresponda.
+Gol Anulado / Penal Errado (Balón con punto rojo o marca): Ignora esta estadística. NO sumes goles ni asistencias.
 
-Estrella o calificación más alta (ej. 8.5): Asigna true a mvp (solo puede haber un MVP en todo el partido).
+Tarjeta Amarilla (Rectángulo amarillo): Suma 1 a amarillas del jugador nombrado.
 
-2. Cruce de Información (La Caja Central):
-No confíes solo en la lista de jugadores. Lee la línea de tiempo o caja central de eventos del partido (donde se listan los goles y tarjetas por minuto). Si dice que un jugador (ej. Barrios) recibió una roja o alguien (ej. Musiala) hizo un gol, búscalo en la lista de jugadores y asegúrate de que su JSON tenga ese evento registrado.
+Tarjeta Roja (Rectángulo rojo): Suma 1 a rojas del jugador nombrado.
 
-3. Filtro de Jugadores sin Minutos:
-Revisa la columna derecha de calificaciones. Si un jugador no tiene una calificación numérica (aparece un guion, está en gris, o no tiene número), significa que no jugó. A estos jugadores debes asignarles estrictamente rating: 0 y ceros en goles, asistencias y tarjetas. ¡No les inventes calificaciones!
+Lesión (Cruz roja): Marca is_injured: true al jugador nombrado.
 
-4. Control de Calidad Final:
+2. Reglas para el Equipo Visitante (Mitad Derecha del centro):
+La lectura de eventos es INVERSA: [Nombre 1] [Nombre 2] [Minuto] [Ícono].
 
-Verifica que no haya ningún jugador duplicado en el JSON.
+Gol (Balón de fútbol normal): El [Nombre 1] es el asistente (+1 assists). El [Nombre 2] (el que está pegado al minuto) es el goleador (+1 goals).
 
-Asegúrate de que los IDs de los equipos correspondan correctamente (home vs away).
+Gol Anulado / Penal Errado (Balón con punto rojo o marca): Ignora esta estadística.
 
-Devuelve ÚNICAMENTE el JSON válido con esta estructura (sin texto adicional ni formato markdown fuera del bloque JSON):
+Tarjeta Amarilla (Rectángulo amarillo): Suma 1 a amarillas del jugador nombrado.
+
+Tarjeta Roja (Rectángulo rojo): Suma 1 a rojas del jugador nombrado.
+
+Lesión (Cruz roja): Marca is_injured: true al jugador nombrado.
+
+3. Consolidación de Datos:
+
+Una vez extraídos todos los eventos de la caja Encuentros, busca a esos jugadores en las tablas laterales para obtener sus calificaciones (rating).
+
+El MVP (mvp: true) es el jugador con la calificación más alta de todo el partido en las listas laterales.
+
+Si un jugador en la lista lateral no tiene calificación numérica (guion o vacío), asigna rating: 0 y ceros en todas sus estadísticas.
+
+Devuelve ÚNICAMENTE el JSON válido con esta estructura, sin texto adicional:
             RESPUESTA JSON ESPERADA:
             {
                 \"score\": { \"home\": 0, \"away\": 0 },
