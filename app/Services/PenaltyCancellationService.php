@@ -50,8 +50,13 @@ class PenaltyCancellationService
 
         $costFormatted = number_format($penaltyCost->cost, 0, ',', '.');
 
-        $webhookUrl = env('DISCORD_WEBHOOK_SANCTIONS');
-        $webhookSecret = env('DISCORD_WEBHOOK_SECRET');
+        $webhookUrl = config('discord.webhooks.sanctions.default');
+        $webhookSecret = config('discord.secret');
+
+        if (!$webhookUrl) {
+            Log::warning("PenaltyCancellation: no Discord webhook configured for sanctions");
+            return;
+        }
 
         $message = "⚖️ **¡APELACIÓN DE SANCIÓN!** ⚖️\n\n";
         $message .= "El manager {$mentionManager} ha abonado **$ {$costFormatted}** para cancelar la suspensión de **{$player->name}**.\n";
