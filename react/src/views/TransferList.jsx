@@ -92,7 +92,59 @@ export default function TransferList() {
 
             {/* CAJA DE LA TABLA */}
             <div className="bg-slate-900/80 backdrop-blur-md shadow-2xl rounded-3xl border border-slate-700 overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* CARDS MOBILE */}
+                {!loading && (
+                    <div className="md:hidden divide-y divide-slate-800/50">
+                        {Array.isArray(transfers) && transfers.length > 0 ? (
+                            transfers.map(p => {
+                                const teamFromName = p.team_from?.name ? p.team_from.name.substring(0, 15) : 'Sin equipo';
+                                const teamToName = p.team_to?.name ? p.team_to.name.substring(0, 15) : 'Sin equipo';
+                                const createdByName = p.created_by?.name || 'Desconocido';
+                                const formattedDate = moment(p.created_at).format('DD/MM/YYYY HH:mm');
+                                const isConfirmed = p.confirmed?.toLowerCase() === 'si';
+
+                                return (
+                                    <div key={p.id} className="p-4 hover:bg-slate-800/30 transition-colors">
+                                        <div className="font-medium text-white text-sm mb-2 leading-snug">
+                                            {p.transferred_players}
+                                        </div>
+                                        <div className="flex items-center gap-1.5 text-xs text-slate-300 mb-2">
+                                            <span className="truncate max-w-[100px]">{teamFromName}</span>
+                                            <svg className="w-3 h-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                            <span className="truncate max-w-[100px] font-bold text-white">{teamToName}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                {p.budget > 0 ? (
+                                                    <span className="bg-emerald-900/30 border border-emerald-800/50 text-emerald-400 px-2 py-0.5 rounded-full text-xs font-black">
+                                                        $ {new Intl.NumberFormat('es-AR').format(p.budget)}
+                                                    </span>
+                                                ) : (
+                                                    <span className="bg-slate-800 border border-slate-600 text-slate-400 px-2 py-0.5 rounded-full text-xs font-bold">
+                                                        Gratis / Trueque
+                                                    </span>
+                                                )}
+                                                <span className="text-xs text-slate-500">{formattedDate}</span>
+                                            </div>
+                                            {isConfirmed ? (
+                                                <span className="bg-blue-900/30 border border-blue-800/50 text-blue-400 px-2 py-0.5 rounded text-xs font-bold">Confirmada</span>
+                                            ) : (
+                                                <span className="bg-amber-900/30 border border-amber-800/50 text-amber-400 px-2 py-0.5 rounded text-xs font-bold">Pendiente</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        ) : (
+                            <div className="px-6 py-12 text-center text-slate-500">
+                                <p>No se encontraron transferencias en esta temporada.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* TABLA DESKTOP */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-950 border-b border-slate-700">
@@ -189,19 +241,19 @@ export default function TransferList() {
                             </tbody>
                         )}
                     </table>
-
-                    {/* ESTADO DE CARGA ANIMADO */}
-                    {loading && (
-                        <div className="flex justify-center items-center py-12 border-t border-slate-800/50">
-                            <div className="flex gap-2 items-center">
-                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
-                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                                <span className="ml-2 text-slate-400 font-medium text-sm">Cargando traspasos...</span>
-                            </div>
-                        </div>
-                    )}
                 </div>
+
+                {/* ESTADO DE CARGA ANIMADO */}
+                {loading && (
+                    <div className="flex justify-center items-center py-12 border-t border-slate-800/50">
+                        <div className="flex gap-2 items-center">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                            <span className="ml-2 text-slate-400 font-medium text-sm">Cargando traspasos...</span>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

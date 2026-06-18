@@ -94,7 +94,53 @@ export default function AuctionsList() {
 
             {/* CAJA DE LA TABLA */}
             <div className="bg-slate-900/80 backdrop-blur-md shadow-2xl rounded-3xl border border-slate-700 overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* CARDS MOBILE */}
+                {!loading && (
+                    <div className="md:hidden divide-y divide-slate-800/50">
+                        {Array.isArray(auctions) && auctions.length > 0 ? (
+                            auctions.map(auction => {
+                                const lastBidderName = auction.auctioned_by?.name || auction.auctioneer?.name || 'Precio Base';
+
+                                return (
+                                    <div key={auction.id} className="p-4 hover:bg-slate-800/30 transition-colors">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <Link to={`/app/players/${auction.player?.id}`} className="font-medium text-white text-sm truncate">
+                                                {auction.player ? auction.player.name : <span className="text-slate-500 italic">Desconocido</span>}
+                                            </Link>
+                                            <span className="bg-emerald-900/30 border border-emerald-800/50 text-emerald-400 px-2 py-0.5 rounded-full text-xs font-black shrink-0 ml-2">
+                                                $ {new Intl.NumberFormat('es-AR').format(auction.amount)}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white uppercase ${lastBidderName === 'Precio Base' ? 'bg-slate-700' : 'bg-indigo-600'}`}>
+                                                    {lastBidderName === 'Precio Base' ? '-' : lastBidderName.charAt(0)}
+                                                </div>
+                                                <span className={`text-xs ${lastBidderName === 'Precio Base' ? 'text-slate-500 italic' : 'font-semibold text-indigo-300'}`}>
+                                                    {lastBidderName}
+                                                </span>
+                                            </div>
+                                            <Link
+                                                to={`/app/subastas/${auction.id_player}`}
+                                                className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+                                            >
+                                                Pujar
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        ) : (
+                            <div className="px-6 py-12 text-center text-slate-500">
+                                <p className="text-lg font-medium text-slate-400">No hay subastas activas</p>
+                                <p className="text-sm mt-1">Selecciona otra temporada o espera a que se inicie un nuevo periodo de pujas.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* TABLA DESKTOP */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-950 border-b border-slate-700">
@@ -110,7 +156,6 @@ export default function AuctionsList() {
                             <tbody className="divide-y divide-slate-800/50">
                                 {Array.isArray(auctions) && auctions.length > 0 ? (
                                     auctions.map(auction => {
-                                        // Intentamos buscar el nombre del mánager en diferentes posibles relaciones del backend
                                         const lastBidderName = auction.auctioned_by?.name || auction.auctioneer?.name || 'Precio Base';
 
                                         return (
@@ -130,7 +175,7 @@ export default function AuctionsList() {
                                                     </span>
                                                 </td>
 
-                                                {/* Último Postor (El Manager) */}
+                                                {/* Último Postor */}
                                                 <td className="px-6 py-4 text-sm text-slate-300">
                                                     <div className="flex items-center gap-2">
                                                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white uppercase flex-shrink-0 ${lastBidderName === 'Precio Base' ? 'bg-slate-700' : 'bg-indigo-600'}`}>
@@ -177,19 +222,19 @@ export default function AuctionsList() {
                             </tbody>
                         )}
                     </table>
-
-                    {/* ESTADO DE CARGA ANIMADO */}
-                    {loading && (
-                        <div className="flex justify-center items-center py-16 border-t border-slate-800/50">
-                            <div className="flex gap-2 items-center">
-                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
-                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                                <span className="ml-3 text-slate-400 font-medium text-sm tracking-wide">Analizando el mercado...</span>
-                            </div>
-                        </div>
-                    )}
                 </div>
+
+                {/* ESTADO DE CARGA ANIMADO */}
+                {loading && (
+                    <div className="flex justify-center items-center py-16 border-t border-slate-800/50">
+                        <div className="flex gap-2 items-center">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                            <span className="ml-3 text-slate-400 font-medium text-sm tracking-wide">Analizando el mercado...</span>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

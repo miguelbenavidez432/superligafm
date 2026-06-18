@@ -25,9 +25,8 @@ body {
 }
 
 img {
-    height: 20%;
-    width: 20%;
-    ;
+    max-width: 100%;
+    height: auto;
 }
 
 input, select {
@@ -119,12 +118,18 @@ table {
 table > thead > tr > th {
     text-align: left;
     padding: 0.5rem 0.5rem;
+    white-space: nowrap;
 }
 
 table > tbody > tr > td {
     padding: 0.5rem 0.5rem;
     border-bottom: 1px solid #efefef;
-    white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+    table > tbody > tr > td {
+        white-space: nowrap;
+    }
 }
 
 .card {
@@ -280,6 +285,27 @@ body::before {
     background-position: center;
     opacity: 0.5;
     z-index: -1;
+}
+
+.table-wrap td {
+    white-space: normal !important;
+    word-break: break-word;
+}
+
+.responsive-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.responsive-table table {
+    min-width: 600px;
+}
+
+@screen md {
+    .responsive-table table {
+        min-width: 0;
+    }
 }
 
 @keyframes spin {

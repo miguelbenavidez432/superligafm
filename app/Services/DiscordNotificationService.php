@@ -12,7 +12,7 @@ class DiscordNotificationService
 {
     public function sendFixtureExpiringAlert(Fixture $fixture, int $alertHour): void
     {
-        $webhookUrl = $this->resolveWebhookUrl($fixture->tournament, 'notifications');
+        $webhookUrl = $this->resolveWebhookUrl($fixture->tournament, 'avisos');
 
         if (!$webhookUrl) {
             \Log::warning("No Discord webhook configured for fixture {$fixture->id} (tournament: {$fixture->tournament?->name})");
@@ -95,7 +95,7 @@ class DiscordNotificationService
         ];
 
         if ($stage) {
-            $embed['fields'][] = ['name' => '🎯 Etapa', 'value' => trim($stage, ' •'), 'inline' => true];
+            $embed['fields'][] = ['name' => '🎯 Ronda', 'value' => trim($stage, ' •'), 'inline' => true];
         }
 
         if ($game->images->isNotEmpty()) {
