@@ -12,7 +12,7 @@ class DiscordNotificationService
 {
     public function sendFixtureExpiringAlert(Fixture $fixture, int $alertHour): void
     {
-        $webhookUrl = $this->resolveWebhookUrl($fixture->tournament, 'avisos');
+        $webhookUrl = config('discord.webhooks.notifications.default');
 
         if (!$webhookUrl) {
             \Log::warning("No Discord webhook configured for fixture {$fixture->id} (tournament: {$fixture->tournament?->name})");
