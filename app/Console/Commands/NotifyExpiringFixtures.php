@@ -48,7 +48,14 @@ class NotifyExpiringFixtures extends Command
 
                 \Log::info("Disparando alerta de {$alertHour}h para el partido {$fixture->id}");
 
-                $this->discordService->sendFixtureExpiringAlert($fixture, $alertHour);
+                try {
+                    $this->discordService->sendFixtureExpiringAlert($fixture, $alertHour);
+                } catch (\Throwable $e) {
+                    \Log::error("Error al enviar alerta fixture {$fixture->id}: {$e->getMessage()}", [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
+                }
             }
         }
     }

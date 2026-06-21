@@ -26,6 +26,10 @@ return [
             'default' => env('DISCORD_WEBHOOK_AUCTIONS'),
         ],
 
+        'avisos' => [
+            'default' => env('DISCORD_WEBHOOK_NOTIFICATIONS_URL'),
+        ],
+
         'transferibles' => [
             'default' => env('DISCORD_WEBHOOK_TRANSFERIBLES'),
         ],

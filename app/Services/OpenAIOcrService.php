@@ -174,68 +174,87 @@ class OpenAIOcrService implements OcrAnalyzerInterface
     private function buildPrompt(string $context, int $homeId, int $awayId): string
     {
         return "
-        Actúa como un experto en análisis de datos deportivos y visión artificial. Tu tarea es extraer la información de los jugadores y las estadísticas del partido de la imagen adjunta, estructurándola estrictamente en el formato JSON proporcionado.
+        Eres un analista experto en Football Manager. Tu objetivo es extraer las estadísticas de los jugadores de la imagen y devolverlas en formato JSON.
 
-Para evitar errores y omisiones de estadísticas (como goles perdidos o tarjetas no asignadas), DEBES basar la extracción de eventos EXCLUSIVAMENTE en la caja central titulada Encuentros.
+INFORMACIÓN DEL PARTIDO (CRÍTICO):
 
-Sigue estas reglas estrictas para leer la caja central, diferenciando el equipo local (izquierda) del visitante (derecha):
+EQUIPO LOCAL (ID: $homeId): Sus jugadores aparecen en la tabla de la MITAD IZQUIERDA de la imagen.
 
-1. Reglas para el Equipo Local (Mitad Izquierda del centro):
-La lectura de eventos es [Ícono] [Minuto] [Nombre 1] [Nombre 2].
+EQUIPO VISITANTE (ID: $awayId): Sus jugadores aparecen en la tabla de la MITAD DERECHA de la imagen.
 
-Gol (Balón de fútbol normal): El [Nombre 1] es el goleador (+1 goals). El [Nombre 2] es el asistente (+1 assists).
+LISTA OFICIAL DE JUGADORES (CONTEXTO):
+$context
 
-Gol Anulado / Penal Errado (Balón con punto rojo o marca): Ignora esta estadística. NO sumes goles ni asistencias.
+REGLAS CRÍTICAS DE EXTRACCIÓN:
 
-Tarjeta Amarilla (Rectángulo amarillo): Suma 1 a amarillas del jugador nombrado.
+COBERTURA TOTAL Y JUGADORES ÚNICOS (IMPORTANTE):
 
-Tarjeta Roja (Rectángulo rojo): Suma 1 a rojas del jugador nombrado.
+Debes extraer a TODOS los jugadores de la tabla izquierda y TODOS los de la tabla derecha.
 
-Lesión (Cruz roja): Marca is_injured: true al jugador nombrado.
+Lee los nombres estrictamente línea por línea. Cada fila o línea corresponde a un ÚNICO jugador.
 
-2. Reglas para el Equipo Visitante (Mitad Derecha del centro):
-La lectura de eventos es INVERSA: [Nombre 1] [Nombre 2] [Minuto] [Ícono].
+Está estrictamente prohibido combinar, concatenar o fusionar nombres de jugadores distintos (ej. \"Mbappé\" y \"Vinícius Júnior\" deben procesarse y devolverse como dos objetos completamente separados en el JSON).
 
-Gol (Balón de fútbol normal): El [Nombre 1] es el asistente (+1 assists). El [Nombre 2] (el que está pegado al minuto) es el goleador (+1 goals).
+ASIGNACIÓN DE EQUIPO:
 
-Gol Anulado / Penal Errado (Balón con punto rojo o marca): Ignora esta estadística.
+Tabla izquierda = id_team: $homeId.
 
-Tarjeta Amarilla (Rectángulo amarillo): Suma 1 a amarillas del jugador nombrado.
+Tabla derecha = id_team: $awayId.
 
-Tarjeta Roja (Rectángulo rojo): Suma 1 a rojas del jugador nombrado.
+LECTURA ESTRICTA DE GOLES Y ASISTENCIAS (TABLAS LATERALES):
 
-Lesión (Cruz roja): Marca is_injured: true al jugador nombrado.
+ESTÁ ESTRICTAMENTE PROHIBIDO mirar la caja central \"Encuentros\" para deducir goles o asistencias.
 
-3. Consolidación de Datos:
+Todo se lee bajo los encabezados laterales: Nombre, Gol, Asis, Cal.
 
-Una vez extraídos todos los eventos de la caja Encuentros, busca a esos jugadores en las tablas laterales para obtener sus calificaciones (rating).
+ANCLAJE VISUAL (CRÍTICO): Si un jugador entró de cambio, verás unas flechas de sustitución y el minuto (ejemplo: 45). El número o ícono de balón que aparece INMEDIATAMENTE a la derecha de ese minuto es OBLIGATORIAMENTE la columna GOL.
 
-El MVP (mvp: true) es el jugador con la calificación más alta de todo el partido en las listas laterales.
+EJEMPLO 1 (Titular): Pedri - sin goles ni asistencias -> Goles: 0, Asistencias: 0.
 
-Si un jugador en la lista lateral no tiene calificación numérica (guion o vacío), asigna rating: 0 y ceros en todas sus estadísticas.
+EJEMPLO 2 (Suplente con goles): Soule 45 con icono balon 2 -> Goles: 2, Asistencias: 0.
 
-Devuelve ÚNICAMENTE el JSON válido con esta estructura, sin texto adicional:
-            RESPUESTA JSON ESPERADA:
-            {
-                \"score\": { \"home\": 0, \"away\": 0 },
-                \"statistics\": [],
-                \"players\": [
-                    {
-                    \"player_name\": \"Nombre del Jugador\",
-                    \"team_name\": \"Nombre del Equipo Oficial\",
-                    \"id_team\": $homeId,
-                    \"rating\": 6.7,
-                    \"goals\": 0,
-                    \"assists\": 0,
-                    \"amarillas\": 0,
-                    \"rojas\": 0,
-                    \"is_injured\": false,
-                    \"mvp\": false
-                    }
-                ]
-            }
-        No incluyas markdown, solo el JSON puro.
+EJEMPLO 3 (Suplente con asistencia): Beier 45 con un guion y luego un 1 -> Goles: 0, Asistencias: 1.
 
+Si ves el ícono de un balón de fútbol pequeño, el número que lo acompaña es la cantidad de GOLES.
+
+EXTRACCIÓN DE TARJETAS Y LESIONES (SECCIÓN CENTRAL ENCUENTROS):
+
+Usa la caja central SOLO y EXCLUSIVAMENTE para extraer tarjetas rojas, tarjetas amarillas y lesiones.
+
+TARJETA ROJA: Rectángulo rojo sólido junto al nombre (rojas: 1).
+
+TARJETA AMARILLA: Rectángulo amarillo sólido junto al nombre (amarillas: 1).
+
+LESIÓN: Solo marcar is_injured=true si aparece un ícono médico de lesión (cruz roja) y no corresponde a un gol anulado.
+
+CRUCE DE DATOS Y MVP:
+
+Cruza los nombres de la imagen con la LISTA OFICIAL de contexto de forma individual (uno a uno). Devuelve el nombre exactamente como aparece en la lista oficial.
+
+Si un jugador de la lista oficial no aparece en la imagen, devuélvelo con rating 0 y goles 0.
+
+El jugador de TODO EL PARTIDO (ambos equipos) con el número más alto en la columna \"Cal\" (rating) debe tener el campo mvp marcado como true (solo uno en todo el JSON).
+
+RESPUESTA JSON ESPERADA:
+{
+\"score\": { \"home\": 0, \"away\": 0 },
+\"statistics\": [],
+\"players\": [
+{
+\"player_name\": \"Nombre del Jugador\",
+\"team_name\": \"Nombre del Equipo Oficial\",
+\"id_team\": $homeId,
+\"rating\": 6.7,
+\"goals\": 0,
+\"assists\": 0,
+\"amarillas\": 0,
+\"rojas\": 0,
+\"is_injured\": false,
+\"mvp\": false
+}
+]
+}
+No incluyas markdown, solo el JSON puro.
         ";
     }
 }

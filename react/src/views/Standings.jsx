@@ -145,8 +145,61 @@ const Standings = () => {
                                 </h2>
                             </div>
 
-                            {/* TABLA */}
-                            <div className="overflow-x-auto flex-1">
+                            {/* CARDS MOBILE */}
+                            <div className="md:hidden divide-y divide-slate-700/50">
+                                {(!groupedStandings[tournament.id] || groupedStandings[tournament.id].length === 0) ? (
+                                    <div className="text-center py-6 text-slate-500 italic">
+                                        No hay equipos registrados en esta tabla aún.
+                                    </div>
+                                ) : (
+                                    groupedStandings[tournament.id].map((standing, index) => (
+                                        <div key={standing.id} className="p-3 hover:bg-slate-800/50 transition-colors">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2 min-w-0">
+                                                    <span className="text-lg font-bold text-gray-500 shrink-0">{index + 1}</span>
+                                                    <span className="font-bold text-white truncate">{standing.team?.name || 'Equipo Desconocido'}</span>
+                                                </div>
+                                                <span className="font-black text-yellow-400 text-base ml-2 shrink-0">{standing.points}</span>
+                                            </div>
+                                            <div className="grid grid-cols-4 gap-1 text-center text-xs">
+                                                <div className="bg-slate-800/60 rounded p-1">
+                                                    <span className="text-gray-400 block">PJ</span>
+                                                    <span className="text-white font-bold">{standing.played}</span>
+                                                </div>
+                                                <div className="bg-slate-800/60 rounded p-1">
+                                                    <span className="text-gray-400 block">PG</span>
+                                                    <span className="text-green-400 font-bold">{standing.won}</span>
+                                                </div>
+                                                <div className="bg-slate-800/60 rounded p-1">
+                                                    <span className="text-gray-400 block">PE</span>
+                                                    <span className="text-gray-400 font-bold">{standing.drawn}</span>
+                                                </div>
+                                                <div className="bg-slate-800/60 rounded p-1">
+                                                    <span className="text-gray-400 block">PP</span>
+                                                    <span className="text-red-400 font-bold">{standing.lost}</span>
+                                                </div>
+                                                <div className="bg-slate-800/60 rounded p-1">
+                                                    <span className="text-gray-400 block">GF</span>
+                                                    <span className="text-white font-bold">{standing.goals_for}</span>
+                                                </div>
+                                                <div className="bg-slate-800/60 rounded p-1">
+                                                    <span className="text-gray-400 block">GC</span>
+                                                    <span className="text-white font-bold">{standing.goals_against}</span>
+                                                </div>
+                                                <div className="bg-slate-800/60 rounded p-1 col-span-2">
+                                                    <span className="text-gray-400 block">DG</span>
+                                                    <span className={`font-bold ${standing.goal_difference > 0 ? 'text-green-300' : standing.goal_difference < 0 ? 'text-red-300' : 'text-gray-400'}`}>
+                                                        {standing.goal_difference > 0 ? `+${standing.goal_difference}` : standing.goal_difference}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* TABLA DESKTOP */}
+                            <div className="hidden md:block overflow-x-auto flex-1">
                                 <table className="min-w-full text-sm text-left text-gray-300">
                                     <thead className="!bg-[#0f172a] text-gray-300 uppercase text-xs font-bold tracking-wider border-b-2 border-slate-700">
                                         <tr>

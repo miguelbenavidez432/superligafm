@@ -12,7 +12,7 @@ class DiscordNotificationService
 {
     public function sendFixtureExpiringAlert(Fixture $fixture, int $alertHour): void
     {
-        $webhookUrl = $this->resolveWebhookUrl($fixture->tournament, 'notifications');
+        $webhookUrl = config('discord.webhooks.notifications.default');
 
         if (!$webhookUrl) {
             \Log::warning("No Discord webhook configured for fixture {$fixture->id} (tournament: {$fixture->tournament?->name})");
@@ -21,8 +21,8 @@ class DiscordNotificationService
 
         $color = $alertHour <= 6 ? 16711680 : ($alertHour <= 12 ? 16753920 : 65280);
 
-        $homeDiscordId = $fixture->homeTeam->user->discordUser->discord_id ?? null;
-        $awayDiscordId = $fixture->awayTeam->user->discordUser->discord_id ?? null;
+        $homeDiscordId = $fixture->homeTeam?->user?->discordUser?->discord_id;
+        $awayDiscordId = $fixture->awayTeam?->user?->discordUser?->discord_id;
 
         $mentions = [];
         if ($homeDiscordId) {
@@ -65,8 +65,8 @@ class DiscordNotificationService
             return;
         }
 
-        $homeDiscordId = $game->teamHome->user->discordUser->discord_id ?? null;
-        $awayDiscordId = $game->teamAway->user->discordUser->discord_id ?? null;
+        $homeDiscordId = $game->teamHome?->user?->discordUser?->discord_id;
+        $awayDiscordId = $game->teamAway?->user?->discordUser?->discord_id;
 
         $mentions = [];
         if ($homeDiscordId) {
@@ -95,7 +95,7 @@ class DiscordNotificationService
         ];
 
         if ($stage) {
-            $embed['fields'][] = ['name' => '🎯 Etapa', 'value' => trim($stage, ' •'), 'inline' => true];
+            $embed['fields'][] = ['name' => '🎯 Ronda', 'value' => trim($stage, ' •'), 'inline' => true];
         }
 
         if ($game->images->isNotEmpty()) {

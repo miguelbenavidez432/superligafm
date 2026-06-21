@@ -293,7 +293,42 @@ export default function Dashboard() {
                         <div className="px-5 py-4 border-b border-slate-700">
                             <h2 className="text-lg font-bold text-white">Clausulas ejecutadas por el usuario</h2>
                         </div>
-                        <div className="overflow-x-auto">
+
+                        {/* CARDS MOBILE */}
+                        {executedClauses.length === 0 ? (
+                            <div className="p-5 text-center text-slate-400 md:hidden">Sin clausulas ejecutadas.</div>
+                        ) : (
+                            <div className="md:hidden divide-y divide-slate-700/50">
+                                {executedClauses.map((clause) => {
+                                    const teamId = clause?.id_team?.id || clause?.id_team;
+                                    const teamNameToShow = clause?.id_team?.name || teamNameById[teamId] || 'Sin equipo';
+                                    const playerId = clause?.id_player?.id || clause?.id_player;
+
+                                    return (
+                                        <div key={clause.id} className="p-4 hover:bg-slate-800/50 transition-colors">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="font-bold text-white truncate">{clause.name || clause?.id_player?.name || 'Sin jugador'}</span>
+                                                <span className="text-xs text-slate-500 ml-2 shrink-0">#{clause.id}</span>
+                                            </div>
+                                            <p className="text-sm text-slate-300">{teamNameToShow}</p>
+                                            <div className="flex items-center justify-between mt-2">
+                                                <span className="text-sm font-bold text-emerald-400">{formatCurrency(clause.total_value)}</span>
+                                                {playerId ? (
+                                                    <Link className="text-blue-400 hover:text-blue-300 font-semibold text-sm" to={`/app/offers/${playerId}`}>
+                                                        Ver ofertas →
+                                                    </Link>
+                                                ) : (
+                                                    <span className="text-slate-500 text-sm">Sin acciones</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {/* TABLA DESKTOP */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="min-w-full text-sm text-left text-slate-200">
                                 <thead className="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider">
                                     <tr>
@@ -387,7 +422,82 @@ export default function Dashboard() {
                             </button>
                         </div>
 
-                        <div className="overflow-x-auto">
+                        {/* CARDS MOBILE */}
+                        <div className="md:hidden">
+                            {transfersTab === 'pending' && (
+                                <>
+                                    {pendingTransfers.length === 0 ? (
+                                        <div className="p-5 text-center text-slate-400">Sin transferencias pendientes.</div>
+                                    ) : (
+                                        <div className="divide-y divide-slate-700/50">
+                                            {pendingTransfers.map((transfer) => {
+                                                const teamNameToShow = teamNameById[transfer.id_team_to] || 'Sin equipo';
+                                                const teamNameToShowFrom = teamNameById[transfer.id_team_from] || 'Sin equipo';
+
+                                                return (
+                                                    <div key={transfer.id} className="p-4 hover:bg-slate-800/50 transition-colors">
+                                                        <div className="font-medium text-white text-sm leading-snug mb-2">
+                                                            {transfer.transferred_players}
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5 text-xs text-slate-300 mb-2">
+                                                            <span className="truncate max-w-[100px]">{teamNameToShowFrom}</span>
+                                                            <svg className="w-3 h-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                                            <span className="truncate max-w-[100px] font-bold text-white">{teamNameToShow}</span>
+                                                        </div>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-sm font-bold text-emerald-400">{formatCurrency(transfer.budget)}</span>
+                                                            <button
+                                                                className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 transition text-white font-semibold text-xs"
+                                                                onClick={() => confirmTransfer(transfer.id)}
+                                                            >
+                                                                Confirmar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            {transfersTab === 'confirmed' && (
+                                <>
+                                    {confirmedTransfers.length === 0 ? (
+                                        <div className="p-5 text-center text-slate-400">Sin transferencias confirmadas.</div>
+                                    ) : (
+                                        <div className="divide-y divide-slate-700/50">
+                                            {confirmedTransfers.map((transfer) => {
+                                                const teamNameToShow = teamNameById[transfer.id_team_to] || 'Sin equipo';
+                                                const teamNameToShowFrom = teamNameById[transfer.id_team_from] || 'Sin equipo';
+                                                const confirmerName = transfer.confirmer?.name || 'Usuario desconocido';
+
+                                                return (
+                                                    <div key={transfer.id} className="p-4 bg-slate-800/20">
+                                                        <div className="font-medium text-white text-sm leading-snug mb-2">
+                                                            {transfer.transferred_players}
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5 text-xs text-slate-300 mb-2">
+                                                            <span className="truncate max-w-[100px]">{teamNameToShowFrom}</span>
+                                                            <svg className="w-3 h-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                                            <span className="truncate max-w-[100px] font-bold text-white">{teamNameToShow}</span>
+                                                        </div>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-sm font-bold text-emerald-400">{formatCurrency(transfer.budget)}</span>
+                                                            <span className="text-xs text-emerald-300 bg-emerald-900/30 px-2 py-1 rounded">
+                                                                ✓ {confirmerName}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+
+                        {/* TABLA DESKTOP */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="min-w-full text-sm text-left text-slate-200">
                                 <thead className="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider">
                                     <tr>
